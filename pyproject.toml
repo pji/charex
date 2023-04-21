@@ -12,12 +12,12 @@ addopts = [
 ]
 
 [project]
-name = "{PROJECT_NAME}"
+name = "charex"
 version = "0.0.1"
 authors = [
     {name="Paul J. Iutzi", email="pji@mac.com"},
 ]
-description = "{PROJECT_DESCRIPTION}"
+description = "A unicode and character set explorer."
 readme = "README.rst"
 requires-python = ">=3.11"
 classifiers = [
@@ -28,9 +28,9 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-"Homepage" = "https://{PROJECT_NAME}.readthedocs.io/en/latest/index.html#"
-"Documentation" = "https://{PROJECT_NAME}.readthedocs.io/en/latest/index.html#"
-"Source" = "https://github.com/pji/{PROJECT_NAME}"
+"Homepage" = "https://charex.readthedocs.io/en/latest/index.html#"
+"Documentation" = "https://charex.readthedocs.io/en/latest/index.html#"
+"Source" = "https://github.com/pji/charex"
 
 [project.scripts]
 filereader = "{SCRIPT_FILE}:{FUNCTION_NAME}"
