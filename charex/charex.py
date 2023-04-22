@@ -6,6 +6,7 @@ Tools for exploring unicode characters and other character sets.
 """
 from json import load
 from importlib.resources import files
+import unicodedata as ucd
 
 
 # Data.
@@ -18,6 +19,23 @@ DATA = {
 
 
 # Classes.
+class Character:
+    """One or more code points representing a character."""
+    def __init__(self, value: str) -> None:
+        self.__value = value
+
+    @property
+    def name(self) -> str:
+        return ucd.name(self.value)
+
+    @property
+    def value(self) -> str:
+        return self.__value
+
+    def is_normal(self, form: str) -> bool:
+        return ucd.is_normalized(form, self.value)
+
+
 class Lookup:
     """A data lookup."""
     def __init__(self, source: str) -> None:

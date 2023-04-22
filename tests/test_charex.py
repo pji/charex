@@ -7,6 +7,61 @@ import json
 from charex import charex as c
 
 
+# Test Character.
+def test_character_init():
+    """Given a string containing one or more codepoints representing
+    a character, a :class:`Character` object is initialized.
+    """
+    exp_value = 'a'
+    act = c.Character(exp_value)
+    assert act.value == exp_value
+
+
+def test_character_name():
+    """When called, :attr:`Character.name` returns the Unicode name
+    for the code point.
+    """
+    char = c.Character('a')
+    assert char.name == 'LATIN SMALL LETTER A'
+
+
+def test_character_is_normal():
+    """When called with a valid normalization form,
+    :meth:`Character.is_normal` return whether the value
+    is normalized for that form.
+    """
+    char = c.Character('a')
+    assert char.is_normal('NFC')
+
+    char = c.Character('å')
+    assert not char.is_normal('NFD')
+
+
+# Test Lookup.
+def test_lookup_init_set_source():
+    """Given a key for a data file, an instance of Lookup should be
+    created with the data file loaded.
+    """
+    exp_source = 'rev_nfc'
+    with open(f'charex/data/{exp_source}.json') as fh:
+        data = json.load(fh)
+        exp_data = {k: tuple(data[k]) for k in data}
+    act = c.Lookup(exp_source)
+    assert act.source == exp_source
+    assert act.data == exp_data
+
+
+def test_lookup_query():
+    """Given a string, :meth:`Lookup.query` should return the value
+    for that string from the loaded data.
+    """
+    exp = ("\uf907", "\uf908", "\uface")
+    key = '\u9f9c'
+    lkp = c.Lookup('rev_nfc')
+    act = lkp.query(key)
+    assert act == exp
+
+
 # Test Transformer.
 def test_transformer_init():
     """An instance of Transformer can be initialized with default
@@ -96,28 +151,3 @@ def test_transformer_from_hex_little_endian():
     tf = c.Transformer(endian='little')
     h = 'a3c3'
     assert tf.from_hex(h) == 'ã'
-
-
-# Test Lookup.
-def test_lookup_init_set_source():
-    """Given a key for a data file, an instance of Lookup should be
-    created with the data file loaded.
-    """
-    exp_source = 'rev_nfc'
-    with open(f'charex/data/{exp_source}.json') as fh:
-        data = json.load(fh)
-        exp_data = {k: tuple(data[k]) for k in data}
-    act = c.Lookup(exp_source)
-    assert act.source == exp_source
-    assert act.data == exp_data
-
-
-def test_lookup_query():
-    """Given a string, :meth:`Lookup.query` should return the value
-    for that string from the loaded data.
-    """
-    exp = ("\uf907", "\uf908", "\uface")
-    key = '\u9f9c'
-    lkp = c.Lookup('rev_nfc')
-    act = lkp.query(key)
-    assert act == exp
