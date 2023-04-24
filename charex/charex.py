@@ -4,9 +4,11 @@ charex
 
 Tools for exploring unicode characters and other character sets.
 """
+# from html.entities import codepoint2name
 from json import load
 from importlib.resources import files
 import unicodedata as ucd
+# from urllib.parse import quote
 
 
 # Data.
@@ -23,11 +25,19 @@ class Character:
     """One or more code points representing a character."""
     def __init__(self, value: str) -> None:
         self.__value = value
-        self._rev_normal_cache = {}
+        self._rev_normal_cache: dict[str, tuple[str, ...]] = {}
+
+    def __repr__(self) -> str:
+        return f'{self.code_point} ({self.name})'
 
     @property
     def category(self) -> str:
         return ucd.category(self.value)
+
+    @property
+    def code_point(self) -> str:
+        x = ord(self.value)
+        return f'U+{x:04x}'.upper()
 
     @property
     def decimal(self) -> int | None:
@@ -46,12 +56,17 @@ class Character:
         return ucd.name(self.value)
 
     @property
-    def numeric(self) -> int | None:
+    def numeric(self) -> float | int | None:
         return ucd.numeric(self.value, None)
 
     @property
     def value(self) -> str:
         return self.__value
+
+    def encode(self, codec: str) -> str:
+        b = self.value.encode(codec)
+        hexes = [f'{x:x}'.upper() for x in b]
+        return ''.join(x for x in hexes)
 
     def is_normal(self, form: str) -> bool:
         return ucd.is_normalized(form, self.value)
@@ -59,7 +74,7 @@ class Character:
     def normalize(self, form: str) -> str:
         return ucd.normalize(form, self.value)
 
-    def reverse_normalize(self, form: str) -> str:
+    def reverse_normalize(self, form: str) -> tuple[str, ...]:
         source = f'rev_{form}'
         if source not in self._rev_normal_cache:
             lkp = Lookup(source)
@@ -88,7 +103,11 @@ class Lookup:
 
     def query(self, key: str) -> tuple[str, ...]:
         """Return the value for the given string from the loaded data."""
-        return self.data[key]
+        try:
+            answer = self.data[key]
+        except KeyError:
+            answer = tuple()
+        return answer
 
 
 class Transformer:

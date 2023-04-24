@@ -27,6 +27,14 @@ def test_character_category():
     assert char.category == 'Ll'
 
 
+def test_character_code_point():
+    """When called, :attr:`Character.code_point` returns the Unicode
+    code point for the character.
+    """
+    char = c.Character('<')
+    assert char.code_point == 'U+003C'
+
+
 def test_character_decimal():
     """When called, :attr:`Character.decimal` gives the numeric value of
     the character if it has one. If the character does not have a
@@ -59,9 +67,18 @@ def test_character_digit():
     assert char.digit is None
 
 
+def test_character_encode():
+    """When called with a valid character encoding,
+    :meth:`Character.is_normal` returns a hexadecimal string
+    of the encoded form of the character.
+    """
+    char = c.Character('å')
+    assert char.encode('utf8') == 'C3A5'
+
+
 def test_character_is_normal():
     """When called with a valid normalization form,
-    :meth:`Character.is_normal` return whether the value
+    :meth:`Character.is_normal` returns whether the value
     is normalized for that form.
     """
     char = c.Character('a')
@@ -99,6 +116,14 @@ def test_character_normalize():
     assert char.normalize('NFD') == b'a\xcc\x8a'.decode('utf8')
 
 
+def test_character_repr():
+    """When called, :meth:`Character.__repr__` returns the Unicode code
+    point and name for the code point.
+    """
+    char = c.Character('a')
+    assert repr(char) == 'U+0061 (LATIN SMALL LETTER A)'
+
+
 def test_character_reverse_normalize():
     """When given a normalization form, :meth:`Character.reverse_normalize`
     should return the normalized form of the character.
@@ -130,6 +155,10 @@ def test_lookup_query():
     lkp = c.Lookup('rev_nfc')
     act = lkp.query(key)
     assert act == exp
+
+    # If key is not present in the data, return an empty tuple.
+    key = 'a'
+    assert lkp.query(key) == ()
 
 
 # Test Transformer.
