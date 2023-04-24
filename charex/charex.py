@@ -23,10 +23,31 @@ class Character:
     """One or more code points representing a character."""
     def __init__(self, value: str) -> None:
         self.__value = value
+        self._rev_normal_cache = {}
+
+    @property
+    def category(self) -> str:
+        return ucd.category(self.value)
+
+    @property
+    def decimal(self) -> int | None:
+        return ucd.decimal(self.value, None)
+
+    @property
+    def decomposition(self) -> str:
+        return ucd.decomposition(self.value)
+
+    @property
+    def digit(self) -> int | None:
+        return ucd.digit(self.value, None)
 
     @property
     def name(self) -> str:
         return ucd.name(self.value)
+
+    @property
+    def numeric(self) -> int | None:
+        return ucd.numeric(self.value, None)
 
     @property
     def value(self) -> str:
@@ -34,6 +55,16 @@ class Character:
 
     def is_normal(self, form: str) -> bool:
         return ucd.is_normalized(form, self.value)
+
+    def normalize(self, form: str) -> str:
+        return ucd.normalize(form, self.value)
+
+    def reverse_normalize(self, form: str) -> str:
+        source = f'rev_{form}'
+        if source not in self._rev_normal_cache:
+            lkp = Lookup(source)
+            self._rev_normal_cache[source] = lkp.query(self.value)
+        return self._rev_normal_cache[source]
 
 
 class Lookup:
@@ -57,7 +88,7 @@ class Lookup:
 
     def query(self, key: str) -> tuple[str, ...]:
         """Return the value for the given string from the loaded data."""
-        return self.__data[key]
+        return self.data[key]
 
 
 class Transformer:

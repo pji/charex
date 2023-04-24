@@ -4,6 +4,8 @@ test_charex
 """
 import json
 
+import pytest
+
 from charex import charex as c
 
 
@@ -17,12 +19,44 @@ def test_character_init():
     assert act.value == exp_value
 
 
-def test_character_name():
-    """When called, :attr:`Character.name` returns the Unicode name
-    for the code point.
+def test_character_category():
+    """When called, :attr:`Character.category` returns the Unicode
+    category for the character.
     """
     char = c.Character('a')
-    assert char.name == 'LATIN SMALL LETTER A'
+    assert char.category == 'Ll'
+
+
+def test_character_decimal():
+    """When called, :attr:`Character.decimal` gives the numeric value of
+    the character if it has one. If the character does not have a
+    numeric value, return None.
+    """
+    char = c.Character('2')
+    assert char.decimal == 2
+
+    char = c.Character('a')
+    assert char.decimal is None
+
+
+def test_character_decomposition():
+    """When called, :attr:`Character.decomposition` returns the Unicode
+    decomposition for the character.
+    """
+    char = c.Character('å')
+    assert char.decomposition == '0061 030A'
+
+
+def test_character_digit():
+    """When called, :attr:`Character.digit` gives the numeric value of
+    the character if it has one. If the character does not have a
+    numeric value, return None.
+    """
+    char = c.Character('2')
+    assert char.digit == 2
+
+    char = c.Character('a')
+    assert char.digit is None
 
 
 def test_character_is_normal():
@@ -35,6 +69,42 @@ def test_character_is_normal():
 
     char = c.Character('å')
     assert not char.is_normal('NFD')
+
+
+def test_character_name():
+    """When called, :attr:`Character.name` returns the Unicode name
+    for the code point.
+    """
+    char = c.Character('a')
+    assert char.name == 'LATIN SMALL LETTER A'
+
+
+def test_character_numeric():
+    """When called, :attr:`Character.numeric` gives the numeric value of
+    the character if it has one. If the character does not have a
+    numeric value, return None.
+    """
+    char = c.Character('2')
+    assert char.numeric == 2
+
+    char = c.Character('a')
+    assert char.numeric is None
+
+
+def test_character_normalize():
+    """When given a normalization form, :meth:`Character.normalize` should
+    return the normalized form of the character.
+    """
+    char = c.Character('å')
+    assert char.normalize('NFD') == b'a\xcc\x8a'.decode('utf8')
+
+
+def test_character_reverse_normalize():
+    """When given a normalization form, :meth:`Character.reverse_normalize`
+    should return the normalized form of the character.
+    """
+    char = c.Character('\u9f9c')
+    assert char.reverse_normalize('nfc') == ("\uf907", "\uf908", "\uface")
 
 
 # Test Lookup.
