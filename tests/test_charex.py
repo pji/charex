@@ -24,7 +24,7 @@ def test_character_category():
     category for the character.
     """
     char = c.Character('a')
-    assert char.category == 'Ll'
+    assert char.category == 'Lowercase Letter'
 
 
 def test_character_code_point():
@@ -74,6 +74,16 @@ def test_character_encode():
     """
     char = c.Character('å')
     assert char.encode('utf8') == 'C3A5'
+
+
+def test_character_escape():
+    """When called with a valid character escaping scheme,
+    :meth:`Character.escape` returns a string of the escaped
+    form of the character.
+    """
+    # Percent encoding for URLs.
+    char = c.Character('å')
+    assert char.escape('url', 'utf8') == '%C3%A5'
 
 
 def test_character_is_normal():

@@ -8,16 +8,68 @@ Tools for exploring unicode characters and other character sets.
 from json import load
 from importlib.resources import files
 import unicodedata as ucd
+from typing import Sequence
 # from urllib.parse import quote
 
 
-# Data.
-DATA = {
+# Constants.
+RESOURCES = {
     'rev_nfc': 'rev_nfc.json',
     'rev_nfkc': 'rev_nfkc.json',
     'rev_nfd': 'rev_nfd.json',
     'rev_nfkd': 'rev_nfkd.json',
+    'propvals': 'PropertyValueAliases.txt',
 }
+
+
+# Caches.
+propvals_cache: dict[str, dict[str, str]] = {}
+
+
+# Utility functions.
+def expand_property_value(alias: str, proptype: str) -> str:
+    """Translate the short name of a Unicode property value into the
+    long name for that property.
+    """
+    try:
+        by_alias = propvals_cache[proptype]
+
+    except KeyError:
+        lines = read_resource('propvals')
+        by_alias = parse_property_values(lines, proptype)
+        propvals_cache[proptype] = by_alias
+
+    # Return the expanded alias.
+    return by_alias[alias]
+
+
+def parse_property_values(
+    lines: Sequence[str],
+    proptype: str
+) -> dict[str, str]:
+    """Parse the contents of the property values file and return the
+    translation map for the given property type.
+    """
+    lines = [line for line in lines if line.startswith(proptype)]
+    by_alias = {}
+    for line in lines:
+        line = line.split('#', 1)[0]
+        fields = line.split(';')
+        key = fields[1].strip()
+        value = fields[2].strip()
+        value = value.replace('_', ' ')
+        by_alias[key] = value
+    return by_alias
+
+
+def read_resource(key: str) -> tuple[str, ...]:
+    """Read the data from a resource file within the package."""
+    pkg = files('charex.data')
+    data_file = pkg / RESOURCES[key]
+    fh = data_file.open()
+    lines = fh.readlines()
+    fh.close()
+    return tuple(lines)
 
 
 # Classes.
@@ -32,7 +84,8 @@ class Character:
 
     @property
     def category(self) -> str:
-        return ucd.category(self.value)
+        alias = ucd.category(self.value)
+        return expand_property_value(alias, 'gc')
 
     @property
     def code_point(self) -> str:
@@ -63,9 +116,21 @@ class Character:
     def value(self) -> str:
         return self.__value
 
+    def escape(self, scheme: str, codec: str = 'utf8') -> str:
+        scheme = scheme.casefold()
+        result = ''
+
+        # Percent encoding for URLs.
+        if scheme == 'url':
+            b = self.value.encode(codec)
+            octets = [f'%{x:02x}'.upper() for x in b]
+            result = ''.join(x for x in octets)
+
+        return result
+
     def encode(self, codec: str) -> str:
         b = self.value.encode(codec)
-        hexes = [f'{x:x}'.upper() for x in b]
+        hexes = [f'{x:02x}'.upper() for x in b]
         return ''.join(x for x in hexes)
 
     def is_normal(self, form: str) -> bool:
@@ -87,7 +152,7 @@ class Lookup:
     def __init__(self, source: str) -> None:
         self.__source = source
         pkg = files('charex.data')
-        data_file = pkg / DATA[source]
+        data_file = pkg / RESOURCES[source]
         fh = data_file.open()
         data = load(fh)
         self.__data = {k: tuple(data[k]) for k in data}
