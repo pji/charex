@@ -4,13 +4,12 @@ charex
 
 Tools for exploring unicode characters and other character sets.
 """
-# from html.entities import codepoint2name
+from collections.abc import Sequence
 from json import load
 from importlib.resources import files
 import unicodedata as ucd
-from typing import Sequence
-# from urllib.parse import quote
 
+from charex.escape import schemes
 
 # Constants.
 RESOURCES = {
@@ -118,15 +117,8 @@ class Character:
 
     def escape(self, scheme: str, codec: str = 'utf8') -> str:
         scheme = scheme.casefold()
-        result = ''
-
-        # Percent encoding for URLs.
-        if scheme == 'url':
-            b = self.value.encode(codec)
-            octets = [f'%{x:02x}'.upper() for x in b]
-            result = ''.join(x for x in octets)
-
-        return result
+        fn = schemes[scheme]
+        return fn(self.value, codec)
 
     def encode(self, codec: str) -> str:
         b = self.value.encode(codec)

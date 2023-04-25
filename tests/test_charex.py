@@ -76,7 +76,7 @@ def test_character_encode():
     assert char.encode('utf8') == 'C3A5'
 
 
-def test_character_escape():
+def test_character_escape_url():
     """When called with a valid character escaping scheme,
     :meth:`Character.escape` returns a string of the escaped
     form of the character.
@@ -84,6 +84,16 @@ def test_character_escape():
     # Percent encoding for URLs.
     char = c.Character('å')
     assert char.escape('url', 'utf8') == '%C3%A5'
+
+
+def test_character_escape_html():
+    """When called with a valid character escaping scheme,
+    :meth:`Character.escape` returns a string of the escaped
+    form of the character.
+    """
+    # Percent encoding for URLs.
+    char = c.Character('å')
+    assert char.escape('html') == '&#229;'
 
 
 def test_character_is_normal():
