@@ -7,19 +7,13 @@ Mainline for :mod:`charex`.
 from argparse import ArgumentParser, Namespace
 
 from charex.charex import Character
+from charex.denormal import denormalize
 
 
 def mode_denormal(args: Namespace) -> None:
-    chars = (Character(c) for c in args.base)
-    result = ''
-    for char in chars:
-        normal = char.reverse_normalize(args.form)
-        if normal:
-            result += normal[0]
-        else:
-            result += char.value
-    print(result)
-    print()
+    results = denormalize(args.base, args.form)
+    for result in results:
+        print(result)
 
 
 def mode_details(args: Namespace) -> None:

@@ -29,6 +29,8 @@ The following are the functional requirements for :mod:`charex`. It can:
 *   Show escaped versions of a given code point,
 *   Show full details for a given code point,
 *   Guess the code point for a given text.
+*   Show the denormalized forms of a given string.
+*   Put practical limits on the number of denormalized forms given.
 
 
 Technical Requirements
@@ -38,3 +40,18 @@ The following are the technical requirements for :mod:`charset`. It:
 *   Supports a list of common character sets,
 *   Supports big and little endian byte order,
 *   Has a command line interface.
+
+
+Design Discussion
+=================
+The purpose of this section is to think through design challenges
+encountered in the course of developing `charex`. As this is a living
+process, information here is not guaranteed to describe the current
+state of the package.
+
+
+Denormalize
+-----------
+The problem is: denormalizing long strings with lots of denormalization
+options can become a very deep recursion. It may hit the recursion limit.
+But, maybe I don't start with worrying about it.
