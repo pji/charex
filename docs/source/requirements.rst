@@ -55,3 +55,10 @@ Denormalize
 The problem is: denormalizing long strings with lots of denormalization
 options can become a very deep recursion. It may hit the recursion limit.
 But, maybe I don't start with worrying about it.
+
+
+List of Codecs
+--------------
+Python doesn't have an easy way to get all the codecs. There are ways
+to do it, but they run into problems. May be best to hardcode this
+list in.

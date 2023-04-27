@@ -7,13 +7,19 @@ Mainline for :mod:`charex`.
 from argparse import ArgumentParser, Namespace
 
 from charex.charex import Character
-from charex.denormal import denormalize
+from charex.denormal import count_denormalizations, denormalize
 
 
 def mode_denormal(args: Namespace) -> None:
-    results = denormalize(args.base, args.form)
-    for result in results:
-        print(result)
+    if args.count:
+        count = count_denormalizations(args.base, args.form, args.maxdepth)
+        print(f'{count:,}')
+
+    else:
+        results = denormalize(args.base, args.form, args.maxdepth)
+        for result in results:
+            print(result)
+        print()
 
 
 def mode_details(args: Namespace) -> None:
@@ -54,7 +60,7 @@ def mode_details(args: Namespace) -> None:
     print()
 
 
-if __name__ == '__main__':
+def parse_invocation() -> None:
     p = ArgumentParser(
         description='Unicode and character set explorer.',
         prog='charex'
@@ -74,11 +80,26 @@ if __name__ == '__main__':
         type=str
     )
     sp_denormal.add_argument(
+        '--count', '-c',
+        help='Count the total number of denormalizations.',
+        action='store_true'
+    )
+    sp_denormal.add_argument(
         '--form', '-f',
         help='Normalization form.',
         default='nfkd',
         action='store',
         type=str
+    )
+    sp_denormal.add_argument(
+        '--maxdepth', '-m',
+        help=(
+            'Maximum number of reverse normalizations to use '
+            'for each character.'
+        ),
+        default=0,
+        action='store',
+        type=int
     )
     sp_denormal.set_defaults(func=mode_denormal)
 
@@ -98,3 +119,7 @@ if __name__ == '__main__':
 
     args = p.parse_args()
     args.func(args)
+
+
+if __name__ == '__main__':
+    parse_invocation()
