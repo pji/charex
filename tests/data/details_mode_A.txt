@@ -1,0 +1,46 @@
+             display: A
+                name: LATIN CAPITAL LETTER A
+          code_point: U+0041
+            category: Uppercase Letter
+               uft-8: 41
+           uft-16 BE: 0041
+           uft-16 LE: 4100
+           uft-32 BE: 00000041
+           uft-32 LE: 41000000
+         url encoded: %41
+        html encoded: &#65;
+        reverse nfkc: ᴬ U+1D2C (MODIFIER LETTER CAPITAL A)
+                      Ⓐ U+24B6 (CIRCLED LATIN CAPITAL LETTER A)
+                      Ａ U+FF21 (FULLWIDTH LATIN CAPITAL LETTER A)
+                      𝐀 U+1D400 (MATHEMATICAL BOLD CAPITAL A)
+                      𝐴 U+1D434 (MATHEMATICAL ITALIC CAPITAL A)
+                      𝑨 U+1D468 (MATHEMATICAL BOLD ITALIC CAPITAL A)
+                      𝒜 U+1D49C (MATHEMATICAL SCRIPT CAPITAL A)
+                      𝓐 U+1D4D0 (MATHEMATICAL BOLD SCRIPT CAPITAL A)
+                      𝔄 U+1D504 (MATHEMATICAL FRAKTUR CAPITAL A)
+                      𝔸 U+1D538 (MATHEMATICAL DOUBLE-STRUCK CAPITAL A)
+                      𝕬 U+1D56C (MATHEMATICAL BOLD FRAKTUR CAPITAL A)
+                      𝖠 U+1D5A0 (MATHEMATICAL SANS-SERIF CAPITAL A)
+                      𝗔 U+1D5D4 (MATHEMATICAL SANS-SERIF BOLD CAPITAL A)
+                      𝘈 U+1D608 (MATHEMATICAL SANS-SERIF ITALIC CAPITAL A)
+                      𝘼 U+1D63C (MATHEMATICAL SANS-SERIF BOLD ITALIC CAPITAL A)
+                      𝙰 U+1D670 (MATHEMATICAL MONOSPACE CAPITAL A)
+                      🄰 U+1F130 (SQUARED LATIN CAPITAL LETTER A)
+        reverse nfkd: ᴬ U+1D2C (MODIFIER LETTER CAPITAL A)
+                      Ⓐ U+24B6 (CIRCLED LATIN CAPITAL LETTER A)
+                      Ａ U+FF21 (FULLWIDTH LATIN CAPITAL LETTER A)
+                      𝐀 U+1D400 (MATHEMATICAL BOLD CAPITAL A)
+                      𝐴 U+1D434 (MATHEMATICAL ITALIC CAPITAL A)
+                      𝑨 U+1D468 (MATHEMATICAL BOLD ITALIC CAPITAL A)
+                      𝒜 U+1D49C (MATHEMATICAL SCRIPT CAPITAL A)
+                      𝓐 U+1D4D0 (MATHEMATICAL BOLD SCRIPT CAPITAL A)
+                      𝔄 U+1D504 (MATHEMATICAL FRAKTUR CAPITAL A)
+                      𝔸 U+1D538 (MATHEMATICAL DOUBLE-STRUCK CAPITAL A)
+                      𝕬 U+1D56C (MATHEMATICAL BOLD FRAKTUR CAPITAL A)
+                      𝖠 U+1D5A0 (MATHEMATICAL SANS-SERIF CAPITAL A)
+                      𝗔 U+1D5D4 (MATHEMATICAL SANS-SERIF BOLD CAPITAL A)
+                      𝘈 U+1D608 (MATHEMATICAL SANS-SERIF ITALIC CAPITAL A)
+                      𝘼 U+1D63C (MATHEMATICAL SANS-SERIF BOLD ITALIC CAPITAL A)
+                      𝙰 U+1D670 (MATHEMATICAL MONOSPACE CAPITAL A)
+                      🄰 U+1F130 (SQUARED LATIN CAPITAL LETTER A)
+

@@ -116,6 +116,14 @@ def test_character_name():
     assert char.name == 'LATIN SMALL LETTER A'
 
 
+def test_character_name_null():
+    """When called, :attr:`Character.name` returns the Unicode name
+    for the code point.
+    """
+    char = c.Character('\u0000')
+    assert char.name == '<NULL>'
+
+
 def test_character_numeric():
     """When called, :attr:`Character.numeric` gives the numeric value of
     the character if it has one. If the character does not have a

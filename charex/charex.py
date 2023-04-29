@@ -5,6 +5,7 @@ charex
 Tools for exploring unicode characters and other character sets.
 """
 from collections.abc import Sequence
+from dataclasses import dataclass
 from json import load
 from importlib.resources import files
 import unicodedata as ucd
@@ -18,11 +19,32 @@ RESOURCES = {
     'rev_nfd': 'rev_nfd.json',
     'rev_nfkd': 'rev_nfkd.json',
     'propvals': 'PropertyValueAliases.txt',
+    'unicodedata': 'UnicodeData.txt',
 }
 
 
 # Caches.
 propvals_cache: dict[str, dict[str, str]] = {}
+
+
+# Data classes.
+@dataclass
+class UnicodeDatum:
+    code_point: str
+    name: str
+    general_category: str
+    canonical_combining_class: str
+    bidi_class: str
+    decomposition_type: str
+    decimal: str
+    digit: str
+    numeric: str
+    bidi_mirrored: str
+    unicode_1_name: str
+    iso_comment: str
+    simple_uppercase_mapping: str
+    simple_lowercase_mapping: str
+    simple_titlecase_mapping: str
 
 
 # Utility functions.
@@ -59,6 +81,15 @@ def parse_property_values(
         value = value.replace('_', ' ')
         by_alias[key] = value
     return by_alias
+
+
+def parse_unicode_data(lines: Sequence[str]) -> dict[str, UnicodeDatum]:
+    result = {}
+    for line in lines:
+        fields = line.split(';')
+        datum = UnicodeDatum(*fields)
+        result['U+' + datum.code_point] = datum
+    return result
 
 
 def read_resource(key: str) -> tuple[str, ...]:
@@ -105,7 +136,14 @@ class Character:
 
     @property
     def name(self) -> str:
-        return ucd.name(self.value)
+        try:
+            name = ucd.name(self.value)
+        except ValueError:
+            lines = read_resource('unicodedata')
+            data = parse_unicode_data(lines)
+            point = self.code_point
+            name = f'<{data[point].unicode_1_name}>'
+        return name
 
     @property
     def numeric(self) -> float | int | None:

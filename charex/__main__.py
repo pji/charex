@@ -5,9 +5,42 @@ __main__
 Mainline for :mod:`charex`.
 """
 from argparse import ArgumentParser, Namespace
+import unicodedata as ucd
 
-from charex.charex import Character
+from charex import charsets as cs
+from charex.charex import Character, Transformer
 from charex.denormal import count_denormalizations, denormalize
+
+
+# Utility functions.
+def neutralize_control_characters(value: str) -> str:
+    """Transform a control character into the symbol for that character."""
+    result = ''
+    for c in value:
+        if ucd.category(c) == 'Cc':
+            num = ord(c)
+            result += chr(num + 0x2400)
+        else:
+            result += c
+    return result
+
+
+# Running modes.
+def mode_charset(args: Namespace) -> None:
+    results = cs.multiencode(args.base, (codec for codec in cs.codecs))
+    width = max(len(k) for k in cs.codecs)
+    for key in results:
+        if results[key]:
+            c = results[key]
+            details = ''
+            if len(c) > 1:
+                details = '*** multiple characters ***'
+            else:
+                char = Character(c)
+                details = f'{char.code_point} {char.name}'
+            c = neutralize_control_characters(c)
+            print(f'{key:>{width}}: {c} {details}')
+    print()
 
 
 def mode_denormal(args: Namespace) -> None:
@@ -40,10 +73,10 @@ def mode_details(args: Namespace) -> None:
         ('code_point', char.code_point),
         ('category', char.category),
         ('uft-8', char.encode('utf8')),
-        ('uft-16 BE', char.encode('utf_16be')),
-        ('uft-16 LE', char.encode('utf_16le')),
-        ('uft-32 BE', char.encode('utf_32be')),
-        ('uft-32 LE', char.encode('utf_32le')),
+        ('uft-16 BE', char.encode('utf_16_be')),
+        ('uft-16 LE', char.encode('utf_16_le')),
+        ('uft-32 BE', char.encode('utf_32_be')),
+        ('uft-32 LE', char.encode('utf_32_le')),
         ('decomposition', char.decomposition),
         ('url encoded', char.escape('url')),
         ('html encoded', char.escape('html')),
@@ -60,12 +93,30 @@ def mode_details(args: Namespace) -> None:
     print()
 
 
+# Command parsing.
 def parse_invocation() -> None:
     p = ArgumentParser(
         description='Unicode and character set explorer.',
         prog='charex'
     )
     sp = p.add_subparsers(required=True)
+
+    # Charset.
+    sp_charset = sp.add_parser(
+        'charset',
+        aliases=['cset',],
+        help=(
+            'Show the characters the integer could be in different '
+            'characer sets.'
+        )
+    )
+    sp_charset.add_argument(
+        'base',
+        help='The base integer.',
+        action='store',
+        type=str
+    )
+    sp_charset.set_defaults(func=mode_charset)
 
     # Denormal.
     sp_denormal = sp.add_parser(
@@ -121,5 +172,6 @@ def parse_invocation() -> None:
     args.func(args)
 
 
+# Mainline.
 if __name__ == '__main__':
     parse_invocation()
