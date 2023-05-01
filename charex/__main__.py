@@ -4,12 +4,13 @@ __main__
 
 Mainline for :mod:`charex`.
 """
-from argparse import ArgumentParser, Namespace
+from argparse import ArgumentParser, Namespace, _SubParsersAction
 import unicodedata as ucd
 
 from charex import charsets as cs
 from charex.charex import Character, Transformer
 from charex.denormal import count_denormalizations, denormalize
+from charex.util import bin2bytes, hex2bytes
 
 
 # Utility functions.
@@ -27,7 +28,12 @@ def neutralize_control_characters(value: str) -> str:
 
 # Running modes.
 def mode_charset(args: Namespace) -> None:
-    results = cs.multiencode(args.base, (codec for codec in cs.codecs))
+    if args.binary:
+        base = bin2bytes(args.base)
+    else:
+        base = hex2bytes(args.base)
+
+    results = cs.multiencode(base, (codec for codec in cs.codecs))
     width = max(len(k) for k in cs.codecs)
     for key in results:
         if results[key]:
@@ -94,15 +100,9 @@ def mode_details(args: Namespace) -> None:
 
 
 # Command parsing.
-def parse_invocation() -> None:
-    p = ArgumentParser(
-        description='Unicode and character set explorer.',
-        prog='charex'
-    )
-    sp = p.add_subparsers(required=True)
-
-    # Charset.
-    sp_charset = sp.add_parser(
+def parse_charset(spa: _SubParsersAction) -> None:
+    """Add the charset mode subparser."""
+    sp = spa.add_parser(
         'charset',
         aliases=['cset',],
         help=(
@@ -110,39 +110,46 @@ def parse_invocation() -> None:
             'characer sets.'
         )
     )
-    sp_charset.add_argument(
+    sp.add_argument(
         'base',
-        help='The base integer.',
+        help='The base integer. Defaults to being read as hex.',
         action='store',
         type=str
     )
-    sp_charset.set_defaults(func=mode_charset)
+    sp.add_argument(
+        '--binary', '-b',
+        help='Interpret the base integer as binary rather than hex.',
+        action='store_true'
+    )
+    sp.set_defaults(func=mode_charset)
 
-    # Denormal.
-    sp_denormal = sp.add_parser(
+
+def parse_denormal(spa: _SubParsersAction) -> None:
+    """Add the denormal mode subparser."""
+    sp = spa.add_parser(
         'denormal',
         aliases=['n',],
         help='Generate strings that normalize to the given string.'
     )
-    sp_denormal.add_argument(
+    sp.add_argument(
         'base',
         help='The base normalized string.',
         action='store',
         type=str
     )
-    sp_denormal.add_argument(
+    sp.add_argument(
         '--count', '-c',
         help='Count the total number of denormalizations.',
         action='store_true'
     )
-    sp_denormal.add_argument(
+    sp.add_argument(
         '--form', '-f',
         help='Normalization form.',
         default='nfkd',
         action='store',
         type=str
     )
-    sp_denormal.add_argument(
+    sp.add_argument(
         '--maxdepth', '-m',
         help=(
             'Maximum number of reverse normalizations to use '
@@ -152,22 +159,39 @@ def parse_invocation() -> None:
         action='store',
         type=int
     )
-    sp_denormal.set_defaults(func=mode_denormal)
+    sp.set_defaults(func=mode_denormal)
 
-    # Details.
-    sp_details = sp.add_parser(
+
+def parse_details(spa: _SubParsersAction) -> None:
+    """Add the details mode subparser."""
+    sp = spa.add_parser(
         'details',
         aliases=['d', 'deets'],
         help='Display the details for the given code point.'
     )
-    sp_details.add_argument(
+    sp.add_argument(
         'codepoint',
         help='The code point.',
         action='store',
         type=str
     )
-    sp_details.set_defaults(func=mode_details)
+    sp.set_defaults(func=mode_details)
 
+
+def parse_invocation() -> None:
+    # Build argument parser.
+    p = ArgumentParser(
+        description='Unicode and character set explorer.',
+        prog='charex'
+    )
+
+    # Build subparser for each mode.
+    spa = p.add_subparsers(required=True)
+    parse_charset(spa)
+    parse_denormal(spa)
+    parse_details(spa)
+
+    # Execute.
     args = p.parse_args()
     args.func(args)
 

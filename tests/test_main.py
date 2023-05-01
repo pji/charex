@@ -6,6 +6,8 @@ Unit tests for the mainline of the `charex` package.
 """
 import sys
 
+import pytest as pt
+
 import charex.__main__ as m
 
 
@@ -39,6 +41,37 @@ def test_charset(capsys):
     sys.argv = orig_cmd
 
 
+def test_charset_binary(capsys):
+    """Called with -b, charset mode should interpret the base string as
+    binary and return the character or characters that hex string becomes
+    in each of the known character sets.
+    """
+    # Expected result.
+    with open('tests/data/charset_mode_41.txt') as fh:
+        exp = fh.read()
+
+    # Test setup.
+    cmd = (
+        'python -m charex',
+        'charset',
+        '01000001',
+        '-b'
+    )
+    orig_cmd = sys.argv
+    sys.argv = cmd
+
+    # Run test.
+    m.parse_invocation()
+
+    # Gather actual result and compare.
+    captured = capsys.readouterr()
+    assert captured.out == exp
+
+    # Test tear down.
+    sys.argv = orig_cmd
+
+
+# @pt.mark.skip
 def test_charset_control_character(capsys):
     """Called with an hex string, charset mode should return the character
     or characters that hex string becomes in each of the known character

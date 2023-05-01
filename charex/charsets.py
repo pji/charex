@@ -119,14 +119,18 @@ codecs = {
 
 
 # Functions.
-def multiencode(x: int | str, codecs_: Iterator[str]) -> dict[str, str]:
-    if isinstance(x, str):
-        x = int(x, 16)
-    b_ = x.to_bytes((x.bit_length() + 7) // 8)
+def multiencode(
+    value: int | str | bytes,
+    codecs_: Iterator[str]
+) -> dict[str, str]:
+    if isinstance(value, str):
+        value = int(value, 16)
+    if isinstance(value, int):
+        value = value.to_bytes((value.bit_length() + 7) // 8)
 
     results = {}
     for codec in codecs_:
-        b = b_
+        b = value
 
         # Pad for 2 or 4 byte codecs.
         while len(b) < codecs[codec].size:
