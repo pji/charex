@@ -8,13 +8,13 @@ import sys
 
 sys.path.insert(0, os.path.abspath("../.."))
 
-import {PROJECT_NAME}
+import charex
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = '{PROJECT_NAME}'
-copyright = '2022, Paul J. Iutzi'
+project = 'charex'
+copyright = '2023, Paul J. Iutzi'
 author = 'Paul J. Iutzi'
 release = '0.0.1'
 
