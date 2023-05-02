@@ -12,11 +12,17 @@ from sys import byteorder
 # Data classes.
 @dataclass
 class CodecDetails:
+    """Information for working with the specific codec.
+
+    :param size: (Optional.) The number of bytes used to address
+        characters with the given character set.
+    :param endian: (Optional.) The byte order used by the codec.
+    """
     size: int = 1
     endian: str = byteorder
 
 
-# Encoding schemes.',
+# Encoding schemes.
 codecs = {
     'ascii': CodecDetails(),
     'big5': CodecDetails(),
@@ -120,14 +126,46 @@ codecs = {
 
 # Functions.
 def multiencode(
+    value: str,
+    codecs_: Iterator[str]
+) -> dict[str, bytes]:
+    """Provide the address for the given character for each of the
+    given character sets.
+
+    :param value: The character to encode.
+    :param codecs_: The codecs to encode to.
+    :return: The encoded value for each character set as a :class:`dict`.
+    :rtype: dict
+    """
+    results = {}
+    for codec in codecs_:
+        try:
+            results[codec] = value.encode(codec)
+        except UnicodeEncodeError:
+            results[codec] = b''
+    return results
+
+
+def multidecode(
     value: int | str | bytes,
     codecs_: Iterator[str]
 ) -> dict[str, str]:
+    """Provide the code point for the given address for each of the
+    given character sets.
+
+    :param value: The address to decode. This can be passed as either
+        an :class:`int`, :class:`str`, or :class:`bytes`.
+    :param codec_: The codecs to decode to.
+    :return: The decoded value for each character set as a :class:`dict`.
+    :rtype: dict
+    """
+    # Coerce the given value into ints.
     if isinstance(value, str):
         value = int(value, 16)
     if isinstance(value, int):
         value = value.to_bytes((value.bit_length() + 7) // 8)
 
+    # Decode the value into the character sets.
     results = {}
     for codec in codecs_:
         b = value

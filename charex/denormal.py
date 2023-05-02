@@ -16,7 +16,17 @@ def count_denormalizations(
     form: str,
     maxdepth: int | None = None
 ) -> int:
-    """Determine the number of denormalizations exist for the string."""
+    """Determine the number of denormalizations exist for the string.
+
+    :param base: The :class:`str` to denormalize.
+    :param form: The Unicode normalization for to denormalize from.
+        Valid values are: NFC, NFD, NFKC, NFKD.
+    :param maxdepth: How many individual characters to use when
+        denormalizing the base. This is used to limit the total
+        number of denormalizations of the overall base.
+    :return: The number of denormalizations as a :class:`int`.
+    :rtype: int
+    """
     chars = (Character(c) for c in base)
     counts = []
     for char in chars:
@@ -34,7 +44,17 @@ def denormalize(
     form: str,
     maxdepth: int | None = None
 ) -> tuple[str, ...]:
-    """Denormalize a string."""
+    """Denormalize a string.
+
+    :param base: The :class:`str` to denormalize.
+    :param form: The Unicode normalization for to denormalize from.
+        Valid values are: NFC, NFD, NFKC, NFKD.
+    :param maxdepth: How many individual characters to use when
+        denormalizing the base. This is used to limit the total
+        number of denormalizations of the overall base.
+    :return: The denormalizations as a :class:`tuple`.
+    :rtype: tuple
+    """
     char = Character(base[0])
     dechars = char.reverse_normalize(form)
     if not dechars:

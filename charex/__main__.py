@@ -2,7 +2,7 @@
 __main__
 ~~~~~~~~
 
-Mainline for :mod:`charex`.
+Mainline for command line invocations of :mod:`charex`.
 """
 from argparse import ArgumentParser, Namespace, _SubParsersAction
 import unicodedata as ucd
@@ -15,28 +15,43 @@ from charex.util import bin2bytes, hex2bytes
 
 # Utility functions.
 def neutralize_control_characters(value: str) -> str:
-    """Transform a control character into the symbol for that character."""
-    result = ''
-    for c in value:
-        if ucd.category(c) == 'Cc':
-            num = ord(c)
-            result += chr(num + 0x2400)
-        else:
-            result += c
-    return result
+    """Transform control characters in a string into the Unicode
+    symbol for those characters.
+
+    :param value: The :class:`str` to neutralize.
+    :return: The neutralized :class:`str`.
+    :rtype: str
+    """
+    def neutralize(char: str) -> str:
+        if ucd.category(char) == 'Cc':
+            num = ord(char)
+            new = chr(num + 0x2400)
+            return new
+        return char
+
+    return ''.join(neutralize(char) for char in value)
 
 
 # Running modes.
 def mode_charset(args: Namespace) -> None:
-    if args.binary:
-        base = bin2bytes(args.base)
-    else:
-        base = hex2bytes(args.base)
+    """Perform character set lookups.
 
-    results = cs.multiencode(base, (codec for codec in cs.codecs))
-    width = max(len(k) for k in cs.codecs)
-    for key in results:
-        if results[key]:
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    def core(args: Namespace, width: int) -> None:
+        """Look up characer values for address."""
+        if args.binary:
+            base = bin2bytes(args.base)
+        elif args.character:
+            base = args.base.encode(args.character)
+        else:
+            base = hex2bytes(args.base)
+        results = cs.multidecode(base, (codec for codec in cs.codecs))
+
+        # Write the output.
+        for key in results:
             c = results[key]
             details = ''
             if len(c) > 1:
@@ -46,14 +61,39 @@ def mode_charset(args: Namespace) -> None:
                 details = f'{char.code_point} {char.name}'
             c = neutralize_control_characters(c)
             print(f'{key:>{width}}: {c} {details}')
+
+    def reverse(args: Namespace, width: int) -> None:
+        """Look up addresses for code point."""
+        results = cs.multiencode(args.base, (codec for codec in cs.codecs))
+
+        # Write the output.
+        for key in results:
+            if b := results[key]:
+                c = ''.join(f'{n:>02x}'.upper() for n in b)
+                print(f'{key:>{width}}: {c}')
+
+    # Determine whether this is a code point or address lookup.
+    width = max(len(k) for k in cs.codecs)
+    if not args.reverse:
+        core(args, width)
+    else:
+        reverse(args, width)
     print()
 
 
 def mode_denormal(args: Namespace) -> None:
+    """Perform denormalizations.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    # Just count the number of denormalizations.
     if args.count:
         count = count_denormalizations(args.base, args.form, args.maxdepth)
         print(f'{count:,}')
 
+    # List all the denormalizations.
     else:
         results = denormalize(args.base, args.form, args.maxdepth)
         for result in results:
@@ -62,6 +102,12 @@ def mode_denormal(args: Namespace) -> None:
 
 
 def mode_details(args: Namespace) -> None:
+    """Display details for a code point.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
     def rev_normalize(char: Character, form: str) -> str:
         points = char.reverse_normalize(form)
         chars = (Character(point) for point in points)
@@ -70,9 +116,8 @@ def mode_details(args: Namespace) -> None:
             return ''
         return ('\n' + ' ' * 22).join(v for v in values)
 
+    # Gather the details for display.
     char = Character(args.codepoint)
-
-    width = 20
     details = (
         ('display', char.value),
         ('name', char.name),
@@ -92,6 +137,8 @@ def mode_details(args: Namespace) -> None:
         ('reverse nfkd', rev_normalize(char, 'nfkd')),
     )
 
+    # Display the details.
+    width = 20
     for detail in details:
         label, value = detail
         if value:
@@ -101,7 +148,13 @@ def mode_details(args: Namespace) -> None:
 
 # Command parsing.
 def parse_charset(spa: _SubParsersAction) -> None:
-    """Add the charset mode subparser."""
+    """Add the charset mode subparser.
+
+    :param spa: The subparser action used to add a new subparser to
+        the main parser.
+    :return: None.
+    :rtype: NoneType
+    """
     sp = spa.add_parser(
         'charset',
         aliases=['cset',],
@@ -121,11 +174,33 @@ def parse_charset(spa: _SubParsersAction) -> None:
         help='Interpret the base integer as binary rather than hex.',
         action='store_true'
     )
+    sp.add_argument(
+        '--character', '-c',
+        help=(
+            'Interpret the base integer as a character in the given '
+            'character set.'
+        ),
+        action='store'
+    )
+    sp.add_argument(
+        '--reverse', '-r',
+        help=(
+            'Show the address for the character in the different '
+            'character sets.'
+        ),
+        action='store_true'
+    )
     sp.set_defaults(func=mode_charset)
 
 
 def parse_denormal(spa: _SubParsersAction) -> None:
-    """Add the denormal mode subparser."""
+    """Add the denormal mode subparser.
+
+    :param spa: The subparser action used to add a new subparser to
+        the main parser.
+    :return: None.
+    :rtype: NoneType
+    """
     sp = spa.add_parser(
         'denormal',
         aliases=['n',],
@@ -163,7 +238,13 @@ def parse_denormal(spa: _SubParsersAction) -> None:
 
 
 def parse_details(spa: _SubParsersAction) -> None:
-    """Add the details mode subparser."""
+    """Add the details mode subparser.
+
+    :param spa: The subparser action used to add a new subparser to
+        the main parser.
+    :return: None.
+    :rtype: NoneType
+    """
     sp = spa.add_parser(
         'details',
         aliases=['d', 'deets'],
@@ -179,13 +260,16 @@ def parse_details(spa: _SubParsersAction) -> None:
 
 
 def parse_invocation() -> None:
-    # Build argument parser.
+    """Parse the arguments used to invoke the script and execute
+    the script.
+    """
+    # Build the argument parser.
     p = ArgumentParser(
         description='Unicode and character set explorer.',
         prog='charex'
     )
 
-    # Build subparser for each mode.
+    # Build subparsers for each mode.
     spa = p.add_subparsers(required=True)
     parse_charset(spa)
     parse_denormal(spa)
