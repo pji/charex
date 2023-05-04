@@ -40,6 +40,48 @@ The process of transforming two different things that are equal into
 the same thing is, for the purposes of this discussion, normalization.
 
 
+How to Normalize?
+=================
+Broadly, there are two different axes to consider when normalizing
+Unicode strings:
+
+*   Composition
+*   Compatibility
+
+
+Composition
+-----------
+This boils down to the question: should combining marks be kept as part
+of the character or should they be split into separate characters?
+
+While it's rare to see combining marks in English, they can exist.
+You'll see them in loan words from other languages, like the mark
+above the letters E in "résumé." You will also occasionally see a
+diaeresis used when a prefix ending in a vowel is attached to a word
+starting with a vowel, such as "coöperation."
+
+The options for composition are:
+
+*   Composed: Use the combined form of the character.
+*   Decomposed: Split all the marks into individual characters.
+
+So in the case of the "é" character:
+
+*   Composed: U+00E9 `é`
+*   Decomposed: U+0065 `e` + U+0301 `´`
+
+Composition normalizations are usually lossless. The composed and
+decomposed forms are just two different ways to store the same
+semantic unit. In most cases, you can flip back and forth between them
+without losing data.
+
+
+Compatibility
+-------------
+This boils down to the question: should human intuition that the two
+characters are the same be recognized?
+
+
 Further Reading
 ===============
 The following provide more information on normalization:
