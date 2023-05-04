@@ -1,0 +1,27 @@
+:root {
+    --highlight: red;
+    --page: black;
+    --text: #CCCCCC;
+}
+
+body {
+    background: var(--page);
+    color: var(--text);
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 1.5em;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+p.quote {
+    font-size: 3em;
+    padding-top: 2em;
+    text-align: center;
+}
+p.citation {
+    text-align: right;
+}
+
+span.issue {
+    color: var(--highlight);
+}

@@ -6,7 +6,7 @@ A web interface for mod:`charex`.
 """
 from unicodedata import normalize
 
-from flask import Flask, make_response, request
+from flask import Flask, make_response, request, send_from_directory
 
 from charex import charex
 
@@ -99,6 +99,12 @@ def shutdown():
     """Process request to shutdown the server."""
     shutdown_server()
     return 'Shutting down'
+
+
+@app.route('/styles/<path:path>')
+def styles(path):
+    """Serve static files."""
+    return send_from_directory('static/styles', path)
 
 
 # Mainline.
