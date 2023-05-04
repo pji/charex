@@ -38,3 +38,17 @@ be the same or different.
 
 The process of transforming two different things that are equal into
 the same thing is, for the purposes of this discussion, normalization.
+
+
+Further Reading
+===============
+The following provide more information on normalization:
+
+*   `Unicode_Normalization_Forms`_
+*   `Unicode_Normalization_FAQ`_
+*   `Input_Validation_and_Data_Sanitization`_
+
+.. _Unicode_Normalization_Forms: https://www.unicode.org/reports/tr15/tr15-51.html#Introduction
+.. _Unicode_Normalization_FAQ: https://unicode.org/faq/normalization.html
+.. _Input_Validation_and_Data_Sanitization: https://wiki.sei.cmu.edu/confluence/display/java/Input+Validation+and+Data+Sanitization
+
