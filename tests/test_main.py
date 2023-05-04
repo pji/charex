@@ -170,6 +170,72 @@ def test_denormal(capsys):
     sys.argv = orig_cmd
 
 
+def test_denormal_number(capsys):
+    """Called with -n and an integer, denormal mode should return no
+    more than that number of results.
+    """
+    # Expected result.
+    exp = (
+        '\ufe64\ufe63\ufe65\n'
+        '\ufe64\ufe63\uff1e\n'
+        '\ufe64\uff0d\ufe65\n'
+        '\ufe64\uff0d\uff1e\n'
+        '\n'
+    )
+
+    # Test setup.
+    cmd = (
+        'python -m charex',
+        'denormal',
+        '<->',
+        '-n', '4'
+    )
+    orig_cmd = sys.argv
+    sys.argv = cmd
+
+    # Run test.
+    m.parse_invocation()
+
+    # Gather actual result and compare.
+    captured = capsys.readouterr()
+    assert captured.out == exp
+
+    # Test tear down.
+    sys.argv = orig_cmd
+
+
+def test_denormal_random(capsys):
+    """Called with -r, denormal mode should return a randomly
+    denormalized string.
+    """
+    # Expected result.
+    exp = (
+        '﹤－﹥\n'
+        '\n'
+    )
+
+    # Test setup.
+    cmd = (
+        'python -m charex',
+        'denormal',
+        '<->',
+        '-r',
+        '-s', 'spam'
+    )
+    orig_cmd = sys.argv
+    sys.argv = cmd
+
+    # Run test.
+    m.parse_invocation()
+
+    # Gather actual result and compare.
+    captured = capsys.readouterr()
+    assert captured.out == exp
+
+    # Test tear down.
+    sys.argv = orig_cmd
+
+
 # Test details mode.
 def test_details(capsys):
     """Called with a character, details mode should the details for the

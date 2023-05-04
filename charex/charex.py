@@ -14,12 +14,19 @@ from charex.escape import schemes
 
 # Constants.
 RESOURCES = {
+    # Denormalization lookups.
     'rev_nfc': 'rev_nfc.json',
     'rev_nfkc': 'rev_nfkc.json',
     'rev_nfd': 'rev_nfd.json',
     'rev_nfkd': 'rev_nfkd.json',
+
+    # Unicode data.
     'propvals': 'PropertyValueAliases.txt',
     'unicodedata': 'UnicodeData.txt',
+
+    # HTML examples.
+    'result': 'result.html',
+    'quote': 'quote.html',
 }
 
 
@@ -142,7 +149,7 @@ def parse_unicode_data(lines: Sequence[str]) -> dict[str, UnicodeDatum]:
     return unicodedata_cache
 
 
-def read_resource(key: str) -> tuple[str, ...]:
+def read_resource(key: str, codec: str = 'utf_8') -> tuple[str, ...]:
     """Read the data from a resource file within the package.
 
     :param key: The key for the file in the RESOURCES constant.
@@ -151,7 +158,7 @@ def read_resource(key: str) -> tuple[str, ...]:
     """
     pkg = files('charex.data')
     data_file = pkg / RESOURCES[key]
-    fh = data_file.open()
+    fh = data_file.open(encoding=codec)
     lines = fh.readlines()
     fh.close()
     return tuple(lines)

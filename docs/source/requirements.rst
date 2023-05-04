@@ -54,7 +54,8 @@ Denormalize
 -----------
 The problem is: denormalizing long strings with lots of denormalization
 options can become a very deep recursion. It may hit the recursion limit.
-But, maybe I don't start with worrying about it.
+But, maybe I don't start with worrying about it. I can add a maximum
+depth to it later to help control that a little.
 
 
 List of Codecs

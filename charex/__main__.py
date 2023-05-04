@@ -95,7 +95,14 @@ def mode_denormal(args: Namespace) -> None:
 
     # List all the denormalizations.
     else:
-        results = denormalize(args.base, args.form, args.maxdepth)
+        results = denormalize(
+            args.base,
+            args.form,
+            args.maxdepth,
+            args.number,
+            args.random,
+            args.seed
+        )
         for result in results:
             print(result)
         print()
@@ -233,6 +240,24 @@ def parse_denormal(spa: _SubParsersAction) -> None:
         default=0,
         action='store',
         type=int
+    )
+    sp.add_argument(
+        '--number', '-n',
+        help='Maximum number of results to return.',
+        default=0,
+        action='store',
+        type=int
+    )
+    sp.add_argument(
+        '--random', '-r',
+        help='Randomize the denormalization.',
+        action='store_true'
+    )
+    sp.add_argument(
+        '--seed', '-s',
+        help='Seed the randomized denormalization.',
+        action='store',
+        default=''
     )
     sp.set_defaults(func=mode_denormal)
 

@@ -10,6 +10,7 @@ Welcome to :mod:`charex` documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   /requirements.rst
 
 
 Indices and tables
