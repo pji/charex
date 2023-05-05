@@ -54,7 +54,9 @@ def mode_charset(args: Namespace) -> None:
         for key in results:
             c = results[key]
             details = ''
-            if len(c) > 1:
+            if len(c) < 1:
+                details = '*** no character ***'
+            elif len(c) > 1:
                 details = '*** multiple characters ***'
             else:
                 char = Character(c)

@@ -132,6 +132,36 @@ def test_charset_control_character(capsys):
     sys.argv = orig_cmd
 
 
+def test_charset_no_character(capsys):
+    """Called with an hex string, charset mode should return the character
+    or characters that hex string becomes in each of the known character
+    sets. If some character sets do not have characters for the given
+    address, that should be indicated in the output.
+    """
+    # Expected result.
+    with open('tests/data/charset_mode_e9.txt') as fh:
+        exp = fh.read()
+
+    # Test setup.
+    cmd = (
+        'python -m charex',
+        'charset',
+        'e9'
+    )
+    orig_cmd = sys.argv
+    sys.argv = cmd
+
+    # Run test.
+    m.parse_invocation()
+
+    # Gather actual result and compare.
+    captured = capsys.readouterr()
+    assert captured.out == exp
+
+    # Test tear down.
+    sys.argv = orig_cmd
+
+
 # Test denormal mode.
 def test_denormal(capsys):
     """Called with a base string, denormal mode should print the

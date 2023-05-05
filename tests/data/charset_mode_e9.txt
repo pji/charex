@@ -1,0 +1,98 @@
+          ascii:  *** no character ***
+           big5:  *** no character ***
+      big5hkscs:  *** no character ***
+          cp037: Z U+005A LATIN CAPITAL LETTER Z
+          cp273: Z U+005A LATIN CAPITAL LETTER Z
+          cp424: Z U+005A LATIN CAPITAL LETTER Z
+          cp437: Θ U+0398 GREEK CAPITAL LETTER THETA
+          cp500: Z U+005A LATIN CAPITAL LETTER Z
+          cp720: ل U+0644 ARABIC LETTER LAM
+          cp737: ώ U+03CE GREEK SMALL LETTER OMEGA WITH TONOS
+          cp775: ķ U+0137 LATIN SMALL LETTER K WITH CEDILLA
+          cp850: Ú U+00DA LATIN CAPITAL LETTER U WITH ACUTE
+          cp852: Ú U+00DA LATIN CAPITAL LETTER U WITH ACUTE
+          cp855: ж U+0436 CYRILLIC SMALL LETTER ZHE
+          cp856:  *** no character ***
+          cp857: Ú U+00DA LATIN CAPITAL LETTER U WITH ACUTE
+          cp858: Ú U+00DA LATIN CAPITAL LETTER U WITH ACUTE
+          cp860: Θ U+0398 GREEK CAPITAL LETTER THETA
+          cp861: Θ U+0398 GREEK CAPITAL LETTER THETA
+          cp862: Θ U+0398 GREEK CAPITAL LETTER THETA
+          cp863: Θ U+0398 GREEK CAPITAL LETTER THETA
+          cp864: ﻯ U+FEEF ARABIC LETTER ALEF MAKSURA ISOLATED FORM
+          cp865: Θ U+0398 GREEK CAPITAL LETTER THETA
+          cp866: щ U+0449 CYRILLIC SMALL LETTER SHCHA
+          cp869: ο U+03BF GREEK SMALL LETTER OMICRON
+          cp874: ้ U+0E49 THAI CHARACTER MAI THO
+          cp875: Z U+005A LATIN CAPITAL LETTER Z
+          cp932:  *** no character ***
+          cp949:  *** no character ***
+          cp950:  *** no character ***
+         cp1006: ﻠ U+FEE0 ARABIC LETTER LAM MEDIAL FORM
+         cp1026: Z U+005A LATIN CAPITAL LETTER Z
+         cp1125: щ U+0449 CYRILLIC SMALL LETTER SHCHA
+         cp1140: Z U+005A LATIN CAPITAL LETTER Z
+         cp1250: é U+00E9 LATIN SMALL LETTER E WITH ACUTE
+         cp1251: й U+0439 CYRILLIC SMALL LETTER SHORT I
+         cp1252: é U+00E9 LATIN SMALL LETTER E WITH ACUTE
+         cp1253: ι U+03B9 GREEK SMALL LETTER IOTA
+         cp1254: é U+00E9 LATIN SMALL LETTER E WITH ACUTE
+         cp1255: י U+05D9 HEBREW LETTER YOD
+         cp1256: é U+00E9 LATIN SMALL LETTER E WITH ACUTE
+         cp1257: é U+00E9 LATIN SMALL LETTER E WITH ACUTE
+         cp1258: é U+00E9 LATIN SMALL LETTER E WITH ACUTE
+         euc_jp:  *** no character ***
+   euc_jis_2004:  *** no character ***
+   euc_jisx0213:  *** no character ***
+         euc_kr:  *** no character ***
+         gb2312:  *** no character ***
+            gbk:  *** no character ***
+        gb18030:  *** no character ***
+             hz:  *** no character ***
+     iso2022_jp:  *** no character ***
+   iso2022_jp_1:  *** no character ***
+   iso2022_jp_2:  *** no character ***
+iso2022_jp_2004:  *** no character ***
+   iso2022_jp_3:  *** no character ***
+ iso2022_jp_ext:  *** no character ***
+     iso2022_kr:  *** no character ***
+        latin_1: é U+00E9 LATIN SMALL LETTER E WITH ACUTE
+      iso8859_2: é U+00E9 LATIN SMALL LETTER E WITH ACUTE
+      iso8859_3: é U+00E9 LATIN SMALL LETTER E WITH ACUTE
+      iso8859_4: é U+00E9 LATIN SMALL LETTER E WITH ACUTE
+      iso8859_5: щ U+0449 CYRILLIC SMALL LETTER SHCHA
+      iso8859_6: ى U+0649 ARABIC LETTER ALEF MAKSURA
+      iso8859_7: ι U+03B9 GREEK SMALL LETTER IOTA
+      iso8859_8: י U+05D9 HEBREW LETTER YOD
+      iso8859_9: é U+00E9 LATIN SMALL LETTER E WITH ACUTE
+     iso8859_10: é U+00E9 LATIN SMALL LETTER E WITH ACUTE
+     iso8859_11: ้ U+0E49 THAI CHARACTER MAI THO
+     iso8859_13: é U+00E9 LATIN SMALL LETTER E WITH ACUTE
+     iso8859_14: é U+00E9 LATIN SMALL LETTER E WITH ACUTE
+     iso8859_15: é U+00E9 LATIN SMALL LETTER E WITH ACUTE
+     iso8859_16: é U+00E9 LATIN SMALL LETTER E WITH ACUTE
+          johab:  *** no character ***
+         koi8_r: И U+0418 CYRILLIC CAPITAL LETTER I
+         koi8_t: И U+0418 CYRILLIC CAPITAL LETTER I
+         koi8_u: И U+0418 CYRILLIC CAPITAL LETTER I
+         kz1048: й U+0439 CYRILLIC SMALL LETTER SHORT I
+   mac_cyrillic: й U+0439 CYRILLIC SMALL LETTER SHORT I
+      mac_greek: ι U+03B9 GREEK SMALL LETTER IOTA
+    mac_iceland: È U+00C8 LATIN CAPITAL LETTER E WITH GRAVE
+     mac_latin2: ť U+0165 LATIN SMALL LETTER T WITH CARON
+      mac_roman: È U+00C8 LATIN CAPITAL LETTER E WITH GRAVE
+    mac_turkish: È U+00C8 LATIN CAPITAL LETTER E WITH GRAVE
+        ptcp154: й U+0439 CYRILLIC SMALL LETTER SHORT I
+      shift_jis:  *** no character ***
+ shift_jis_2004:  *** no character ***
+ shift_jisx0213:  *** no character ***
+         utf_32: é U+00E9 LATIN SMALL LETTER E WITH ACUTE
+      utf_32_be: é U+00E9 LATIN SMALL LETTER E WITH ACUTE
+      utf_32_le: é U+00E9 LATIN SMALL LETTER E WITH ACUTE
+         utf_16: é U+00E9 LATIN SMALL LETTER E WITH ACUTE
+      utf_16_be: é U+00E9 LATIN SMALL LETTER E WITH ACUTE
+      utf_16_le: é U+00E9 LATIN SMALL LETTER E WITH ACUTE
+          utf_7:  *** no character ***
+          utf_8:  *** no character ***
+      utf_8_sig:  *** no character ***
+
