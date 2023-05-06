@@ -11,6 +11,7 @@ from textwrap import wrap
 from charex import charsets as cs
 from charex.charex import Character, Transformer
 from charex.denormal import count_denormalizations, denormalize
+from charex.shell import Shell
 from charex.util import bin2bytes, hex2bytes, neutralize_control_characters
 
 
@@ -160,6 +161,16 @@ def mode_details(args: Namespace) -> None:
         if value:
             print(f'{label:>{width}}: {value}')
     print()
+
+
+def mode_shell(args: Namespace) -> None:
+    """Run :mod:`charex` in an interactive shell.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    Shell().cmdloop()
 
 
 # Command parsing.
@@ -322,6 +333,24 @@ def parse_details(spa: _SubParsersAction) -> None:
     sp.set_defaults(func=mode_details)
 
 
+def parse_shell(spa: _SubParsersAction) -> None:
+    """Add the shell mode subparser.
+
+    :param spa: The subparser action used to add a new subparser to
+        the main parser.
+    :return: None.
+    :rtype: NoneType
+    """
+    sp = spa.add_parser(
+        'shell',
+        aliases=['sh',],
+        help=(
+            'Run charex in an interactive shell.'
+        )
+    )
+    sp.set_defaults(func=mode_shell)
+
+
 def parse_invocation() -> None:
     """Parse the arguments used to invoke the script and execute
     the script.
@@ -338,6 +367,7 @@ def parse_invocation() -> None:
     parse_charsetlist(spa)
     parse_denormal(spa)
     parse_details(spa)
+    parse_shell(spa)
 
     # Execute.
     args = p.parse_args()
