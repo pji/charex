@@ -124,6 +124,14 @@ def test_character_name_null():
     assert char.name == '<NULL>'
 
 
+def test_character_name_private_use():
+    """When called, :attr:`Character.name` returns the Unicode name
+    for the code point.
+    """
+    char = c.Character('\ue90a')
+    assert char.name == 'PRIVATE USE CHARACTER'
+
+
 def test_character_numeric():
     """When called, :attr:`Character.numeric` gives the numeric value of
     the character if it has one. If the character does not have a

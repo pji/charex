@@ -11,26 +11,7 @@ from textwrap import wrap
 from charex import charsets as cs
 from charex.charex import Character, Transformer
 from charex.denormal import count_denormalizations, denormalize
-from charex.util import bin2bytes, hex2bytes
-
-
-# Utility functions.
-def neutralize_control_characters(value: str) -> str:
-    """Transform control characters in a string into the Unicode
-    symbol for those characters.
-
-    :param value: The :class:`str` to neutralize.
-    :return: The neutralized :class:`str`.
-    :rtype: str
-    """
-    def neutralize(char: str) -> str:
-        if ucd.category(char) == 'Cc':
-            num = ord(char)
-            new = chr(num + 0x2400)
-            return new
-        return char
-
-    return ''.join(neutralize(char) for char in value)
+from charex.util import bin2bytes, hex2bytes, neutralize_control_characters
 
 
 # Running modes.

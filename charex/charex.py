@@ -216,13 +216,26 @@ class Character:
         # 14.0.0. So, we have to look up the Unicode 1 names for
         # them, which are in the 14.0.0 UnicodeData.txt file.
         except ValueError:
-            if not unicodedata_cache:
-                lines = read_resource('unicodedata')
-                data = parse_unicode_data(lines)
+            cat = ucd.category(self.value)
+
+            # Control characters.
+            if cat == 'Cc':
+                if not unicodedata_cache:
+                    lines = read_resource('unicodedata')
+                    data = parse_unicode_data(lines)
+                else:
+                    data = unicodedata_cache
+                point = self.code_point
+                name = f'<{data[point].unicode_1_name}>'
+
+            # Private use characters.
+            elif cat == 'Co':
+                name = 'PRIVATE USE CHARACTER'
+
+            # Fall back if there are more code points without names.
             else:
-                data = unicodedata_cache
-            point = self.code_point
-            name = f'<{data[point].unicode_1_name}>'
+                name = '?? UNKNOWN ??'
+
         return name
 
     @property

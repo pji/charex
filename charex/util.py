@@ -5,6 +5,7 @@ util
 Utility functions for :mod:`charex`.
 """
 from math import log
+import unicodedata as ucd
 
 
 def bin2bytes(value: str, endian: str = 'big') -> bytes:
@@ -52,6 +53,24 @@ def hex2bytes(value: str, endian: str = 'big') -> bytes:
     nums = [int(s, 16) for s in parts]
     octets = [n.to_bytes((n.bit_length() + 7) // 8) for n in nums]
     return b''.join(octets)
+
+
+def neutralize_control_characters(value: str) -> str:
+    """Transform control characters in a string into the Unicode
+    symbol for those characters.
+
+    :param value: The :class:`str` to neutralize.
+    :return: The neutralized :class:`str`.
+    :rtype: str
+    """
+    def neutralize(char: str) -> str:
+        if ucd.category(char) == 'Cc':
+            num = ord(char)
+            new = chr(num + 0x2400)
+            return new
+        return char
+
+    return ''.join(neutralize(char) for char in value)
 
 
 def pad_byte(value: str, endian: str = 'big', base: int = 16) -> str:
