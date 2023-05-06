@@ -162,6 +162,63 @@ def test_charset_no_character(capsys):
     sys.argv = orig_cmd
 
 
+# Test charsetlist mode.
+def test_charsetlist(capsys):
+    """When invoked, charsetlist mode should return a list of registered
+    character set codecs.
+    """
+    # Expected result.
+    with open('tests/data/charsetlist.txt') as fh:
+        exp = fh.read()
+
+    # Test setup.
+    cmd = (
+        'python -m charex',
+        'charsetlist'
+    )
+    orig_cmd = sys.argv
+    sys.argv = cmd
+
+    # Run test.
+    m.parse_invocation()
+
+    # Gather actual result and compare.
+    captured = capsys.readouterr()
+    assert captured.out == exp
+
+    # Test tear down.
+    sys.argv = orig_cmd
+
+
+def test_charsetlist_description(capsys):
+    """When invoked with -d, charsetlist mode should return a list of
+    registered character set codecs and a brief description of each
+    one.
+    """
+    # Expected result.
+    with open('tests/data/charsetlist_d.txt') as fh:
+        exp = fh.read()
+
+    # Test setup.
+    cmd = (
+        'python -m charex',
+        'charsetlist',
+        '-d'
+    )
+    orig_cmd = sys.argv
+    sys.argv = cmd
+
+    # Run test.
+    m.parse_invocation()
+
+    # Gather actual result and compare.
+    captured = capsys.readouterr()
+    assert captured.out == exp
+
+    # Test tear down.
+    sys.argv = orig_cmd
+
+
 # Test denormal mode.
 def test_denormal(capsys):
     """Called with a base string, denormal mode should print the
