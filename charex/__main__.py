@@ -6,6 +6,7 @@ Mainline for command line invocations of :mod:`charex`.
 """
 from argparse import ArgumentParser, Namespace, _SubParsersAction
 import unicodedata as ucd
+from textwrap import wrap
 
 from charex import charsets as cs
 from charex.charex import Character, Transformer
@@ -33,6 +34,31 @@ def neutralize_control_characters(value: str) -> str:
 
 
 # Running modes.
+def mode_charsetlist(args: Namespace) -> None:
+    """List registered character sets.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    width = max(len(k) for k in cs.codecs)
+
+    codecs = cs.get_codecs()
+    for codec in codecs:
+        if args.description:
+            descript = cs.get_codec_description(codec)
+            if descript:
+                wrapped = wrap(descript, 77 - width)
+                print(f'{codec:<{width}}  {wrapped[0]}')
+                for line in wrapped[1:]:
+                    print(f'{"":<{width}}  {line}')
+            else:
+                print(codec)
+        else:
+            print(codec)
+    print()
+
+
 def mode_charset(args: Namespace) -> None:
     """Perform character set lookups.
 
@@ -76,10 +102,10 @@ def mode_charset(args: Namespace) -> None:
 
     # Determine whether this is a code point or address lookup.
     width = max(len(k) for k in cs.codecs)
-    if not args.reverse:
-        core(args, width)
-    else:
+    if args.reverse:
         reverse(args, width)
+    else:
+        core(args, width)
     print()
 
 
@@ -192,6 +218,11 @@ def parse_charset(spa: _SubParsersAction) -> None:
         action='store'
     )
     sp.add_argument(
+        '--list', '-l',
+        help='List the registered character sets.',
+        action='store_true'
+    )
+    sp.add_argument(
         '--reverse', '-r',
         help=(
             'Show the address for the character in the different '
@@ -200,6 +231,30 @@ def parse_charset(spa: _SubParsersAction) -> None:
         action='store_true'
     )
     sp.set_defaults(func=mode_charset)
+
+
+def parse_charsetlist(spa: _SubParsersAction) -> None:
+    """Add the charsetlist mode subparser.
+
+    :param spa: The subparser action used to add a new subparser to
+        the main parser.
+    :return: None.
+    :rtype: NoneType
+    """
+    sp = spa.add_parser(
+        'charsetlist',
+        aliases=['csetlist', 'cslist'],
+        help=(
+            'Show the characters the integer could be in different '
+            'characer sets.'
+        )
+    )
+    sp.add_argument(
+        '--description', '-d',
+        help='Show the description for the character sets.',
+        action='store_true'
+    )
+    sp.set_defaults(func=mode_charsetlist)
 
 
 def parse_denormal(spa: _SubParsersAction) -> None:
@@ -299,6 +354,7 @@ def parse_invocation() -> None:
     # Build subparsers for each mode.
     spa = p.add_subparsers(required=True)
     parse_charset(spa)
+    parse_charsetlist(spa)
     parse_denormal(spa)
     parse_details(spa)
 

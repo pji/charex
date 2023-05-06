@@ -7,7 +7,25 @@ Unit tests for :mod:`charex.charsets`.
 from charex import charsets as cs
 
 
-# Unit tests.
+# Tests for get_codecs.
+def test_get_codecs():
+    """WHen called, return a tuple of registered codecs."""
+    exp = tuple(codec for codec in cs.codecs.keys())
+    assert cs.get_codecs() == exp
+
+
+# Test get_codec_description.
+def test_get_codec_description():
+    """Given the name of a character set codec, return the description
+    of that codec.
+    """
+    codec = 'ascii'
+    info = cs.codecs[codec]
+    exp = info.description
+    assert cs.get_codec_description(codec) == exp
+
+
+# Tests for multiencode.
 def test_multiencode():
     """Given a code point and a list of character sets, return the
     :class:`bytes` for that code point in each character set as a
@@ -42,6 +60,7 @@ def test_multiencode():
     assert exp == act
 
 
+# Tests for multidecode.
 def test_multidecode_bytes():
     """Given bytes and a sequence of strings that reference
     decoding codecs, :func:`charex.charsets.multiencode` returns

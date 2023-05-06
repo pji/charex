@@ -20,111 +20,539 @@ class CodecDetails:
     """
     size: int = 1
     endian: str = byteorder
+    description: str = ''
 
 
 # Encoding schemes.
 codecs = {
-    'ascii': CodecDetails(),
-    'big5': CodecDetails(),
-    'big5hkscs': CodecDetails(),
-    'cp037': CodecDetails(),
-    'cp273': CodecDetails(),
-    'cp424': CodecDetails(),
-    'cp437': CodecDetails(),
-    'cp500': CodecDetails(),
-    'cp720': CodecDetails(),
-    'cp737': CodecDetails(),
-    'cp775': CodecDetails(),
-    'cp850': CodecDetails(),
-    'cp852': CodecDetails(),
-    'cp855': CodecDetails(),
-    'cp856': CodecDetails(),
-    'cp857': CodecDetails(),
-    'cp858': CodecDetails(),
-    'cp860': CodecDetails(),
-    'cp861': CodecDetails(),
-    'cp862': CodecDetails(),
-    'cp863': CodecDetails(),
-    'cp864': CodecDetails(),
-    'cp865': CodecDetails(),
-    'cp866': CodecDetails(),
-    'cp869': CodecDetails(),
-    'cp874': CodecDetails(),
-    'cp875': CodecDetails(),
-    'cp932': CodecDetails(),
-    'cp949': CodecDetails(),
-    'cp950': CodecDetails(),
-    'cp1006': CodecDetails(),
-    'cp1026': CodecDetails(),
-    'cp1125': CodecDetails(),
-    'cp1140': CodecDetails(),
-    'cp1250': CodecDetails(),
-    'cp1251': CodecDetails(),
-    'cp1252': CodecDetails(),
-    'cp1253': CodecDetails(),
-    'cp1254': CodecDetails(),
-    'cp1255': CodecDetails(),
-    'cp1256': CodecDetails(),
-    'cp1257': CodecDetails(),
-    'cp1258': CodecDetails(),
-    'euc_jp': CodecDetails(),
-    'euc_jis_2004': CodecDetails(),
-    'euc_jisx0213': CodecDetails(),
-    'euc_kr': CodecDetails(),
-    'gb2312': CodecDetails(),
-    'gbk': CodecDetails(),
-    'gb18030': CodecDetails(),
-    'hz': CodecDetails(),
-    'iso2022_jp': CodecDetails(),
-    'iso2022_jp_1': CodecDetails(),
-    'iso2022_jp_2': CodecDetails(),
-    'iso2022_jp_2004': CodecDetails(),
-    'iso2022_jp_3': CodecDetails(),
-    'iso2022_jp_ext': CodecDetails(),
-    'iso2022_kr': CodecDetails(),
-    'latin_1': CodecDetails(),
-    'iso8859_2': CodecDetails(),
-    'iso8859_3': CodecDetails(),
-    'iso8859_4': CodecDetails(),
-    'iso8859_5': CodecDetails(),
-    'iso8859_6': CodecDetails(),
-    'iso8859_7': CodecDetails(),
-    'iso8859_8': CodecDetails(),
-    'iso8859_9': CodecDetails(),
-    'iso8859_10': CodecDetails(),
-    'iso8859_11': CodecDetails(),
-    'iso8859_13': CodecDetails(),
-    'iso8859_14': CodecDetails(),
-    'iso8859_15': CodecDetails(),
-    'iso8859_16': CodecDetails(),
-    'johab': CodecDetails(),
-    'koi8_r': CodecDetails(),
-    'koi8_t': CodecDetails(),
-    'koi8_u': CodecDetails(),
-    'kz1048': CodecDetails(),
-    'mac_cyrillic': CodecDetails(),
-    'mac_greek': CodecDetails(),
-    'mac_iceland': CodecDetails(),
-    'mac_latin2': CodecDetails(),
-    'mac_roman': CodecDetails(),
-    'mac_turkish': CodecDetails(),
-    'ptcp154': CodecDetails(),
-    'shift_jis': CodecDetails(2),
-    'shift_jis_2004': CodecDetails(2),
-    'shift_jisx0213': CodecDetails(2),
-    'utf_32': CodecDetails(4),
-    'utf_32_be': CodecDetails(4, 'big'),
-    'utf_32_le': CodecDetails(4, 'little'),
-    'utf_16': CodecDetails(2),
-    'utf_16_be': CodecDetails(2, 'big'),
-    'utf_16_le': CodecDetails(2, 'little'),
-    'utf_7': CodecDetails(),
-    'utf_8': CodecDetails(),
-    'utf_8_sig': CodecDetails(),
+    'ascii': CodecDetails(
+        description=(
+            'RFC20 The ASCII format for Network Interchange.'
+        )
+    ),
+    'big5': CodecDetails(
+        description=(
+            'The Big5 encoding method for traditional Chinese characters '
+            'developed by the Institute for Information Industry of Taiwan '
+            'in 1984.'
+        )
+    ),
+    'big5hkscs': CodecDetails(
+        description=(
+            'Hong Kong Supplementary Character Set to the Big5 traditional '
+            'Chinese character set.'
+        )
+    ),
+    'cp037': CodecDetails(
+        description=(
+            'EBCDIC code page 37, USA/Canada Country Extended Code Page.'
+        )
+    ),
+    'cp273': CodecDetails(
+        description=(
+            'EBCDIC code page 273, Germany/Austria.'
+        )
+    ),
+    'cp424': CodecDetails(
+        description=(
+            'EBCDIC code page 424, Israel with supprt for Hebrew.'
+        )
+    ),
+    'cp437': CodecDetails(
+        description=(
+            'Code page 424, default character set for the IBM PC.'
+        )
+    ),
+    'cp500': CodecDetails(
+        description=(
+            'EBCDIC code page 500, full support of the Latin-1 character set.'
+        )
+    ),
+    'cp720': CodecDetails(
+        description=(
+            'Code page 720, Arabic support for DOS.'
+        )
+    ),
+    'cp737': CodecDetails(
+        description=(
+            'Code page 720, Greek support for DOS.'
+        )
+    ),
+    'cp775': CodecDetails(
+        description=(
+            'Code page 775, Baltic language support for DOS.'
+        )
+    ),
+    'cp850': CodecDetails(
+        description=(
+            'Code page 850, Western European language support for DOS.'
+        )
+    ),
+    'cp852': CodecDetails(
+        description=(
+            'Code page 852, Central European language support for DOS.'
+        )
+    ),
+    'cp855': CodecDetails(
+        description=(
+            'Code page 855, Cyrillic support for DOS.'
+        )
+    ),
+    'cp856': CodecDetails(
+        description=(
+            'Code page 856, Hebrew language support for DOS.'
+        )
+    ),
+    'cp857': CodecDetails(
+        description=(
+            'Code page 857, Turkish language support for DOS.'
+        )
+    ),
+    'cp858': CodecDetails(
+        description=(
+            'Code page 858, Western European language support for DOS, '
+            'modifying code page 850 by adding the Euro symbol.'
+        )
+    ),
+    'cp860': CodecDetails(
+        description=(
+            'Code page 860, Portugese language support for DOS.'
+        )
+    ),
+    'cp861': CodecDetails(
+        description=(
+            'Code page 861, Icelandic language support for DOS.'
+        )
+    ),
+    'cp862': CodecDetails(
+        description=(
+            'Code page 862, Hebrew language support for DOS.'
+        )
+    ),
+    'cp863': CodecDetails(
+        description=(
+            'Code page 863, Canadian French language support for DOS.'
+        )
+    ),
+    'cp864': CodecDetails(
+        description=(
+            'Code page 864, Hebrew language support for DOS.'
+        )
+    ),
+    'cp865': CodecDetails(
+        description=(
+            'Code page 865, Arabic language support for DOS.'
+        )
+    ),
+    'cp866': CodecDetails(
+        description=(
+            'Code page 866, Nordic language support for DOS.'
+        )
+    ),
+    'cp869': CodecDetails(
+        description=(
+            'Code page 869, Greek language support for DOS.'
+        )
+    ),
+    'cp874': CodecDetails(
+        description=(
+            'Code page 874, Thai language support for DOS.'
+        )
+    ),
+    'cp875': CodecDetails(
+        description=(
+            'EBCDIC code page 875, Greek.'
+        )
+    ),
+    'cp932': CodecDetails(
+        description=(
+            'Code page 932, Japanese language support for Windows.'
+        )
+    ),
+    'cp949': CodecDetails(
+        description=(
+            'Code page 949, Korean language support by IBM.'
+        )
+    ),
+    'cp950': CodecDetails(
+        description=(
+            'Code page 932, Traditional Chinese language support for Windows.'
+        )
+    ),
+    'cp1006': CodecDetails(
+        description=(
+            'Code page 1006, Urdu language support for AIX.'
+        )
+    ),
+    'cp1026': CodecDetails(
+        description=(
+            'EBCDIC code page 1026, Turkish.'
+        )
+    ),
+    'cp1125': CodecDetails(
+        description=(
+            'IBM code page 1125, Ukraine.'
+        )
+    ),
+    'cp1140': CodecDetails(
+        description=(
+            'EBCDIC code page 1140, USA/Canada with Euro character.'
+        )
+    ),
+    'cp1250': CodecDetails(
+        description=(
+            'Code page 1250, Central European language support for Windows.'
+        )
+    ),
+    'cp1251': CodecDetails(
+        description=(
+            'Code page 1251, Cyrillic support for Windows.'
+        )
+    ),
+    'cp1252': CodecDetails(
+        description=(
+            'Code page 1252, Latin-1 character set for Windows.'
+        )
+    ),
+    'cp1253': CodecDetails(
+        description=(
+            'Code page 1253, Greek support for Windows.'
+        )
+    ),
+    'cp1254': CodecDetails(
+        description=(
+            'Code page 1254, Turkish support for Windows.'
+        )
+    ),
+    'cp1255': CodecDetails(
+        description=(
+            'Code page 1255, Hebrew support for Windows.'
+        )
+    ),
+    'cp1256': CodecDetails(
+        description=(
+            'Code page 1256, Arabic support for Windows.'
+        )
+    ),
+    'cp1257': CodecDetails(
+        description=(
+            'Code page 1257, Baltic language support for Windows.'
+        )
+    ),
+    'cp1258': CodecDetails(
+        description=(
+            'Code page 1258, Vietamese support for Windows.'
+        )
+    ),
+    'euc_jp': CodecDetails(
+        description=(
+            'Extended Unix Code Japanese.'
+        )
+    ),
+    'euc_jis_2004': CodecDetails(
+        description=(
+            'Extended Unix Code Japanese Industrial Standard 2004.'
+        )
+    ),
+    'euc_jisx0213': CodecDetails(
+        description=(
+            'Extended Unix Code Japanese Industrial Standard X 213.'
+        )
+    ),
+    'euc_kr': CodecDetails(
+        description=(
+            'Extended Unix Code Korean.'
+        )
+    ),
+    'gb2312': CodecDetails(
+        description=(
+            'Extended Unix Code Simplified Chinese.'
+        )
+    ),
+    'gbk': CodecDetails(
+        description=(
+            'Extended Unix Code Simplified Chinese extended to include '
+            'all unified CJK characters.'
+        )
+    ),
+    'gb18030': CodecDetails(
+        description=(
+            'Chinese National Standard GB 18030-2005: Information '
+            'Technology—Chinese coded character set.'
+        )
+    ),
+    'hz': CodecDetails(
+        description=(
+            'Extended Unix Code Simplified Chinese for email.'
+        )
+    ),
+    'iso2022_jp': CodecDetails(
+        description=(
+            'ISO 2022 standard for Japanese.'
+        )
+    ),
+    'iso2022_jp_1': CodecDetails(
+        description=(
+            'ISO 2022 standard for Japanese, extension 1.'
+        )
+    ),
+    'iso2022_jp_2': CodecDetails(
+        description=(
+            'ISO 2022 standard for Japanese, extension 2.'
+        )
+    ),
+    'iso2022_jp_2004': CodecDetails(
+        description=(
+            'ISO 2022 standard for Japanese, extension 2004.'
+        )
+    ),
+    'iso2022_jp_3': CodecDetails(
+        description=(
+            'ISO 2022 standard for Japanese, extension 3.'
+        )
+    ),
+    'iso2022_jp_ext': CodecDetails(
+        description=(
+            'ISO 2022 standard for Japanese, extension.'
+        )
+    ),
+    'iso2022_kr': CodecDetails(
+        description=(
+            'RFC1557 Korean Character Encoding for Internet Messages.'
+        )
+    ),
+    'latin_1': CodecDetails(
+        description=(
+            'ISO-8859-1, Latin alphabet number 1 for western Europe.'
+        )
+    ),
+    'iso8859_2': CodecDetails(
+        description=(
+            'ISO-8859-2, Latin alphabet number 2 for central Europe.'
+        )
+    ),
+    'iso8859_3': CodecDetails(
+        description=(
+            'ISO-8859-3, Latin alphabet number 3 for southern Europe.'
+        )
+    ),
+    'iso8859_4': CodecDetails(
+        description=(
+            'ISO-8859-4, Latin alphabet number 4 for northern Europe.'
+        )
+    ),
+    'iso8859_5': CodecDetails(
+        description=(
+            'ISO-8859-5, Latin/Cyrillic alphabet.'
+        )
+    ),
+    'iso8859_6': CodecDetails(
+        description=(
+            'ISO-8859-6, Latin/Arabic alphabet.'
+        )
+    ),
+    'iso8859_7': CodecDetails(
+        description=(
+            'ISO-8859-7, Latin/Greek alphabet.'
+        )
+    ),
+    'iso8859_8': CodecDetails(
+        description=(
+            'ISO-8859-8, Latin/Herbrew alphabet.'
+        )
+    ),
+    'iso8859_9': CodecDetails(
+        description=(
+            'ISO-8859-9, Latin alphabet number 5 for Turkish.'
+        )
+    ),
+    'iso8859_10': CodecDetails(
+        description=(
+            'ISO-8859-10, Latin alphabet number 6 for Nordic languages.'
+        )
+    ),
+    'iso8859_11': CodecDetails(
+        description=(
+            'ISO-8859-11, Latin/Thai alphabet.'
+        )
+    ),
+    'iso8859_13': CodecDetails(
+        description=(
+            'ISO-8859-13, Latin alphabet number 7 for Baltic Rim languages.'
+        )
+    ),
+    'iso8859_14': CodecDetails(
+        description=(
+            'ISO-8859-14, Latin alphabet number 8 for Celtic languages.'
+        )
+    ),
+    'iso8859_15': CodecDetails(
+        description=(
+            'ISO-8859-15, Latin alphabet number 9 for Western European '
+            'languages, including the Euro symbol.'
+        )
+    ),
+    'iso8859_16': CodecDetails(
+        description=(
+            'ISO-8859-16, Latin alphabet number 10 for south-eastern Europe.'
+        )
+    ),
+    'johab': CodecDetails(
+        description=(
+            'KS X 1001 alternative character set for South Korean Hangul '
+            'and Hanja.'
+        )
+    ),
+    'koi8_r': CodecDetails(
+        description=(
+            'Kod Obmena Informatsiey, 8 bit, for Russian and Bulgarian.'
+        )
+    ),
+    'koi8_t': CodecDetails(
+        description=(
+            'Kod Obmena Informatsiey, 8 bit, for Tajik Cyrillic.'
+        )
+    ),
+    'koi8_u': CodecDetails(
+        description=(
+            'RFC2319 Ukrainian Character Set KOI8-U.'
+        )
+    ),
+    'kz1048': CodecDetails(
+        description=(
+            'Windows-1251 variant for Kazakh.'
+        )
+    ),
+    'mac_cyrillic': CodecDetails(
+        description=(
+            'Mac OS Cyrillic.'
+        )
+    ),
+    'mac_greek': CodecDetails(
+        description=(
+            'Mac OS Greek.'
+        )
+    ),
+    'mac_iceland': CodecDetails(
+        description=(
+            'Mac OS Icelandic.'
+        )
+    ),
+    'mac_latin2': CodecDetails(
+        description=(
+            'Mac OS Central European, Microsoft code page 10029.'
+        )
+    ),
+    'mac_roman': CodecDetails(
+        description=(
+            'Mac OS Western Europe.'
+        )
+    ),
+    'mac_turkish': CodecDetails(
+        description=(
+            'Mac OS Turkish.'
+        )
+    ),
+    'ptcp154': CodecDetails(
+        description=(
+            'Cyrillic-Asian.'
+        )
+    ),
+    'shift_jis': CodecDetails(
+        2,
+        description=(
+            'Japanese Industrial Standard with shifted first bytes.'
+        )
+    ),
+    'shift_jis_2004': CodecDetails(
+        2,
+        description=(
+            'Superset of Japanese Industrial Standard with shifted '
+            'first bytes.'
+        )
+    ),
+    'shift_jisx0213': CodecDetails(
+        2,
+        description=(
+            'Superset of Japanese Industrial Standard with shifted '
+            'first bytes.'
+        )
+    ),
+    'utf_32': CodecDetails(
+        4,
+        description=(
+            '32-bit Unicode Transformation format.'
+        )
+    ),
+    'utf_32_be': CodecDetails(
+        4,
+        'big',
+        description=(
+            '32-bit Unicode Transformation format, big endian.'
+        )
+    ),
+    'utf_32_le': CodecDetails(
+        4,
+        'little',
+        description=(
+            '32-bit Unicode Transformation format, little endian.'
+        )
+    ),
+    'utf_16': CodecDetails(
+        2,
+        description=(
+            '16-bit Unicode Transformation format.'
+        )
+    ),
+    'utf_16_be': CodecDetails(
+        2,
+        'big',
+        description=(
+            '16-bit Unicode Transformation format, big endian.'
+        )
+    ),
+    'utf_16_le': CodecDetails(
+        2,
+        'little',
+        description=(
+            '16-bit Unicode Transformation format, little endian.'
+        )
+    ),
+    'utf_7': CodecDetails(
+        description=(
+            '7-bit Unicode Transformation format.'
+        )
+    ),
+    'utf_8': CodecDetails(
+        description=(
+            '8-bit Unicode Transformation format.'
+        )
+    ),
+    'utf_8_sig': CodecDetails(
+        description=(
+            '8-bit Unicode Transformation format, treating the BOM '
+            'as metadata.'
+        )
+    ),
 }
 
 
 # Functions.
+def get_codecs() -> tuple[str, ...]:
+    """Return the registered codecs.
+
+    :return: The codecs as a :class:`tuple`.
+    :rtype: tuple
+    """
+    return tuple(codec for codec in codecs)
+
+
+def get_codec_description(codec: str) -> str:
+    """Provide the description for the given codec."""
+    info = codecs[codec]
+    return info.description
+
+
 def multiencode(
     value: str,
     codecs_: Iterator[str]

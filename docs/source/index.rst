@@ -11,6 +11,7 @@ Welcome to :mod:`charex` documentation!
    :caption: Contents:
 
    /requirements.rst
+   /unicode.rst
 
 
 Indices and tables
