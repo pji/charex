@@ -11,7 +11,7 @@ from textwrap import wrap
 from charex import charsets as cs
 from charex.charex import Character, Transformer
 from charex.denormal import count_denormalizations, denormalize
-from charex.shell import detail_char, Shell
+import charex.shell as sh
 from charex.util import bin2bytes, hex2bytes, neutralize_control_characters
 
 
@@ -100,8 +100,7 @@ def mode_denormal(args: Namespace) -> None:
     """
     # Just count the number of denormalizations.
     if args.count:
-        count = count_denormalizations(args.base, args.form, args.maxdepth)
-        print(f'{count:,}')
+        sh.write_count_denormalizations(args.base, args.form, args.maxdepth)
 
     # List all the denormalizations.
     else:
@@ -125,7 +124,7 @@ def mode_details(args: Namespace) -> None:
     :return: None.
     :rtype: NoneType
     """
-    detail_char(args.codepoint)
+    sh.write_char_detail(args.codepoint)
 
 
 def mode_shell(args: Namespace) -> None:
@@ -135,7 +134,7 @@ def mode_shell(args: Namespace) -> None:
     :return: None.
     :rtype: NoneType
     """
-    Shell().cmdloop()
+    sh.Shell().cmdloop()
 
 
 # Command parsing.

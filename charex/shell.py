@@ -14,7 +14,7 @@ from charex.util import neutralize_control_characters
 
 
 # Output functions.
-def detail_char(codepoint) -> None:
+def write_char_detail(codepoint) -> None:
     """Print the details of the given character."""
     def rev_normalize(char: ch.Character, form: str) -> str:
         points = char.reverse_normalize(form)
@@ -52,6 +52,14 @@ def detail_char(codepoint) -> None:
         if value:
             print(f'{label:>{width}}: {value}')
     print()
+
+
+def write_count_denormalizations(base: str, form: str, maxdepth: int) -> None:
+    """Print the number of denormalizations for the given character
+    and form.
+    """
+    count = dn.count_denormalizations(base, form, maxdepth)
+    print(f'{count:,}')
 
 
 # Classes.
@@ -94,7 +102,15 @@ class Shell(Cmd):
 
     def do_details(self, arg):
         """Display the details for the given character."""
-        detail_char(arg)
+        write_char_detail(arg)
+
+    def do_dnfcnum(self, arg):
+        """Count the number of NFC denormalizations."""
+        write_count_denormalizations(arg, 'nfc', maxdepth=0)
+
+    def do_dnfkcnum(self, arg):
+        """Count the number of NFKC denormalizations."""
+        write_count_denormalizations(arg, 'nfkc', maxdepth=0)
 
     def do_dnfc(self, arg):
         """Denormalize with NFC."""
