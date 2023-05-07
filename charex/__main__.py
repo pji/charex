@@ -11,7 +11,7 @@ from textwrap import wrap
 from charex import charsets as cs
 from charex.charex import Character, Transformer
 from charex.denormal import count_denormalizations, denormalize
-from charex.shell import Shell
+from charex.shell import detail_char, Shell
 from charex.util import bin2bytes, hex2bytes, neutralize_control_characters
 
 
@@ -125,42 +125,7 @@ def mode_details(args: Namespace) -> None:
     :return: None.
     :rtype: NoneType
     """
-    def rev_normalize(char: Character, form: str) -> str:
-        points = char.reverse_normalize(form)
-        chars = (Character(point) for point in points)
-        values = [f'{c.value} {c.code_point} ({c.name})' for c in chars]
-        if not values:
-            return ''
-        return ('\n' + ' ' * 22).join(v for v in values)
-
-    # Gather the details for display.
-    char = Character(args.codepoint)
-    details = (
-        ('display', char.value),
-        ('name', char.name),
-        ('code_point', char.code_point),
-        ('category', char.category),
-        ('uft-8', char.encode('utf8')),
-        ('uft-16 BE', char.encode('utf_16_be')),
-        ('uft-16 LE', char.encode('utf_16_le')),
-        ('uft-32 BE', char.encode('utf_32_be')),
-        ('uft-32 LE', char.encode('utf_32_le')),
-        ('decomposition', char.decomposition),
-        ('url encoded', char.escape('url')),
-        ('html encoded', char.escape('html')),
-        ('reverse nfc', rev_normalize(char, 'nfc')),
-        ('reverse nfd', rev_normalize(char, 'nfd')),
-        ('reverse nfkc', rev_normalize(char, 'nfkc')),
-        ('reverse nfkd', rev_normalize(char, 'nfkd')),
-    )
-
-    # Display the details.
-    width = 20
-    for detail in details:
-        label, value = detail
-        if value:
-            print(f'{label:>{width}}: {value}')
-    print()
+    detail_char(args.codepoint)
 
 
 def mode_shell(args: Namespace) -> None:

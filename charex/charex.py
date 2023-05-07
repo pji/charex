@@ -11,6 +11,7 @@ from importlib.resources import files
 import unicodedata as ucd
 
 from charex.escape import schemes
+from charex.util import neutralize_control_characters
 
 # Constants.
 RESOURCES = {
@@ -306,6 +307,15 @@ class Character:
             lkp = Lookup(source)
             self._rev_normal_cache[source] = lkp.query(self.value)
         return self._rev_normal_cache[source]
+
+    def summarize(self) -> str:
+        """Return a summary of the character's information.
+
+        :return: The character information as a :class:`str`.
+        :rtype: str
+        """
+        value = neutralize_control_characters(self.value)
+        return f'{value} {self!r}'
 
 
 class Lookup:

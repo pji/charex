@@ -13,6 +13,47 @@ from charex import denormal as dn
 from charex.util import neutralize_control_characters
 
 
+# Output functions.
+def detail_char(codepoint) -> None:
+    """Print the details of the given character."""
+    def rev_normalize(char: ch.Character, form: str) -> str:
+        points = char.reverse_normalize(form)
+        chars = (ch.Character(point) for point in points)
+        values = [f'{c.summarize()}' for c in chars]
+        if not values:
+            return ''
+        return ('\n' + ' ' * 22).join(v for v in values)
+
+    # Gather the details for display.
+    char = ch.Character(codepoint)
+    details = (
+        ('display', char.value),
+        ('name', char.name),
+        ('code_point', char.code_point),
+        ('category', char.category),
+        ('uft-8', char.encode('utf8')),
+        ('uft-16 BE', char.encode('utf_16_be')),
+        ('uft-16 LE', char.encode('utf_16_le')),
+        ('uft-32 BE', char.encode('utf_32_be')),
+        ('uft-32 LE', char.encode('utf_32_le')),
+        ('decomposition', char.decomposition),
+        ('url encoded', char.escape('url')),
+        ('html encoded', char.escape('html')),
+        ('reverse nfc', rev_normalize(char, 'nfc')),
+        ('reverse nfd', rev_normalize(char, 'nfd')),
+        ('reverse nfkc', rev_normalize(char, 'nfkc')),
+        ('reverse nfkd', rev_normalize(char, 'nfkd')),
+    )
+
+    # Display the details.
+    width = 20
+    for detail in details:
+        label, value = detail
+        if value:
+            print(f'{label:>{width}}: {value}')
+    print()
+
+
 # Classes.
 class Shell(Cmd):
     """A command shell for :mod:`charex`."""
@@ -25,6 +66,35 @@ class Shell(Cmd):
         results = cset.get_codecs()
         for result in results:
             print(result)
+
+    def do_csmdecode(self, arg):
+        """Decode the given hexadecimal string in each character set."""
+        codecs = cset.get_codecs()
+        width = max(len(codec) for codec in codecs) + 1
+        results = cset.multidecode(arg, codecs)
+        for codec in codecs:
+            result = results[codec]
+            value = neutralize_control_characters(result)
+            codec += ':'
+            if len(result) == 1:
+                c = ch.Character(result)
+                print(f'{codec:<{width}} {value} {c.code_point} {c.name}')
+            elif len(result) > 1:
+                print(f'{codec:<{width}} {value} ** multiple characters **')
+
+    def do_csmencode(self, arg):
+        """Encode the given character in each character set."""
+        codecs = cset.get_codecs()
+        width = max(len(codec) for codec in codecs) + 1
+        results = cset.multiencode(arg, codecs)
+        for key in results:
+            if b := results[key]:
+                c = ''.join(f'{n:>02x}'.upper() for n in b)
+                print(f'{key:>{width}}: {c}')
+
+    def do_details(self, arg):
+        """Display the details for the given character."""
+        detail_char(arg)
 
     def do_dnfc(self, arg):
         """Denormalize with NFC."""
@@ -52,21 +122,6 @@ class Shell(Cmd):
         """Exit the charex shell."""
         print('Exiting charex.')
         return True
-
-    def do_csmdecode(self, arg):
-        """Decode the given hexadecimal string in each character set."""
-        codecs = cset.get_codecs()
-        width = max(len(codec) for codec in codecs) + 1
-        results = cset.multidecode(arg, codecs)
-        for codec in codecs:
-            result = results[codec]
-            value = neutralize_control_characters(result)
-            codec += ':'
-            if len(result) == 1:
-                c = ch.Character(result)
-                print(f'{codec:<{width}} {value} {c.code_point} {c.name}')
-            elif len(result) > 1:
-                print(f'{codec:<{width}} {value} ** multiple characters **')
 
     # Utility methods.
     def denorm(self, base, form, maxdepth=None, maxcount=None, random=False):

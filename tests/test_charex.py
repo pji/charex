@@ -168,6 +168,24 @@ def test_character_reverse_normalize():
     assert char.reverse_normalize('nfc') == ("\uf907", "\uf908", "\uface")
 
 
+def test_character_summarize():
+    """When called, :meth:`Character.summarize` returns a summary of the
+    character's information as a :class:`str`.
+    """
+    exp = 'a U+0061 (LATIN SMALL LETTER A)'
+    char = c.Character('a')
+    assert char.summarize() == exp
+
+
+def test_character_summarize_control():
+    """When called, :meth:`Character.summarize` returns a summary of the
+    character's information as a :class:`str`.
+    """
+    exp = '\u240a U+000A (<LINE FEED (LF)>)'
+    char = c.Character('\n')
+    assert char.summarize() == exp
+
+
 # Test Lookup.
 def test_lookup_init_set_source():
     """Given a key for a data file, an instance of Lookup should be
