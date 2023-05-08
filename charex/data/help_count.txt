@@ -1,5 +1,5 @@
 NAME
-    count - count of denormalization results
+    ct - count of denormalization results
 
 SYNOPSIS
     count {form} {base} [{maxdepth}]

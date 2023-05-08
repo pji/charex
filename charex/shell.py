@@ -91,7 +91,7 @@ class Shell(Cmd):
     prompt = 'charex> '
 
     # Commands.
-    def do_count(self, arg):
+    def do_ct(self, arg):
         """Count denormalization results."""
         form, base, *rest = arg.split()
         maxdepth = 0
