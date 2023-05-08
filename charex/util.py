@@ -4,10 +4,33 @@ util
 
 Utility functions for :mod:`charex`.
 """
+from importlib.resources import files
 from math import log
 import unicodedata as ucd
 
 
+# Constants.
+RESOURCES = {
+    # Command help.
+    'help_count': 'help_count.txt',
+
+    # Denormalization lookups.
+    'rev_nfc': 'rev_nfc.json',
+    'rev_nfkc': 'rev_nfkc.json',
+    'rev_nfd': 'rev_nfd.json',
+    'rev_nfkd': 'rev_nfkd.json',
+
+    # Unicode data.
+    'propvals': 'PropertyValueAliases.txt',
+    'unicodedata': 'UnicodeData.txt',
+
+    # HTML examples.
+    'result': 'result.html',
+    'quote': 'quote.html',
+}
+
+
+# Functions
 def bin2bytes(value: str, endian: str = 'big') -> bytes:
     """Convert a binary string into :class:`bytes`.
 
@@ -96,3 +119,18 @@ def pad_byte(value: str, endian: str = 'big', base: int = 16) -> str:
             return zeros + value
         return value[:-1 * gap] + zeros + value[-1 * gap:]
     return value
+
+
+def read_resource(key: str, codec: str = 'utf_8') -> tuple[str, ...]:
+    """Read the data from a resource file within the package.
+
+    :param key: The key for the file in the RESOURCES constant.
+    :return: The contents of the file as a :class:`tuple`.
+    :rtype: tuple
+    """
+    pkg = files('charex.data')
+    data_file = pkg / RESOURCES[key]
+    fh = data_file.open(encoding=codec)
+    lines = fh.readlines()
+    fh.close()
+    return tuple(lines)

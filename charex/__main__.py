@@ -104,7 +104,7 @@ def mode_denormal(args: Namespace) -> None:
 
     # List all the denormalizations.
     else:
-        results = denormalize(
+        sh.write_denormalizations(
             args.base,
             args.form,
             args.maxdepth,
@@ -112,9 +112,6 @@ def mode_denormal(args: Namespace) -> None:
             args.random,
             args.seed
         )
-        for result in results:
-            print(result)
-        print()
 
 
 def mode_details(args: Namespace) -> None:
@@ -134,7 +131,7 @@ def mode_shell(args: Namespace) -> None:
     :return: None.
     :rtype: NoneType
     """
-    sh.Shell().cmdloop()
+    sh.Shell(completekey='tab').cmdloop()
 
 
 # Command parsing.

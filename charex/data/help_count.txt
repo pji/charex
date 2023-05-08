@@ -1,0 +1,18 @@
+NAME
+    count - count of denormalization results
+
+SYNOPSIS
+    count {form} {base} [{maxdepth}]
+
+DESCRIPTION
+    The parameters are as follows:
+    
+    form        The Unicode normalization form for the denormalization.
+                The valid values are: NFC, NFD, NFKC, NFKD.
+
+    base        The string to denormalize.
+
+    maxdepth    (Optional.) How many denormalizations to use per character.
+                This can be used to reduce the number of denormalizations
+                for a string into a manageable subset of the total number
+                of denormalizations.

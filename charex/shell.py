@@ -10,7 +10,7 @@ import readline
 from charex import charex as ch
 from charex import charsets as cset
 from charex import denormal as dn
-from charex.util import neutralize_control_characters
+from charex.util import neutralize_control_characters, read_resource
 
 
 # Output functions.
@@ -62,6 +62,28 @@ def write_count_denormalizations(base: str, form: str, maxdepth: int) -> None:
     print(f'{count:,}')
 
 
+def write_denormalizations(
+    base: str,
+    form: str,
+    maxdepth: int = 0,
+    number: int = 0,
+    random: bool = False,
+    seed: bytes | int | str = ''
+) -> None:
+    """Print the denormalizations for the given string."""
+    results = dn.denormalize(
+        base,
+        form,
+        maxdepth,
+        number,
+        random,
+        seed
+    )
+    for result in results:
+        print(result)
+    print()
+
+
 # Classes.
 class Shell(Cmd):
     """A command shell for :mod:`charex`."""
@@ -69,65 +91,89 @@ class Shell(Cmd):
     prompt = 'charex> '
 
     # Commands.
-    def do_cslist(self, arg):
-        """List the registered character sets."""
-        results = cset.get_codecs()
-        for result in results:
-            print(result)
+    def do_count(self, arg):
+        """Count denormalization results."""
+        form, base, *rest = arg.split()
+        maxdepth = 0
+        if rest:
+            maxdepth = rest[0]
+        write_count_denormalizations(base, form, maxdepth)
 
-    def do_csmdecode(self, arg):
-        """Decode the given hexadecimal string in each character set."""
-        codecs = cset.get_codecs()
-        width = max(len(codec) for codec in codecs) + 1
-        results = cset.multidecode(arg, codecs)
-        for codec in codecs:
-            result = results[codec]
-            value = neutralize_control_characters(result)
-            codec += ':'
-            if len(result) == 1:
-                c = ch.Character(result)
-                print(f'{codec:<{width}} {value} {c.code_point} {c.name}')
-            elif len(result) > 1:
-                print(f'{codec:<{width}} {value} ** multiple characters **')
+    # Command help.
+    def help_count(self):
+        """Help for the count command."""
+        lines = read_resource('help_count')
+        print(''.join(lines))
 
-    def do_csmencode(self, arg):
-        """Encode the given character in each character set."""
-        codecs = cset.get_codecs()
-        width = max(len(codec) for codec in codecs) + 1
-        results = cset.multiencode(arg, codecs)
-        for key in results:
-            if b := results[key]:
-                c = ''.join(f'{n:>02x}'.upper() for n in b)
-                print(f'{key:>{width}}: {c}')
+    # Command completions.
+#     def completedefault(self, text, line, begidx, endidx):
+#         completions = {
+#             'co': 'count',
+#             'ct': 'count',
+#         }
+#         if text in completions:
+#             return completions[text]
+#         return text
 
-    def do_details(self, arg):
-        """Display the details for the given character."""
-        write_char_detail(arg)
-
-    def do_dnfcnum(self, arg):
-        """Count the number of NFC denormalizations."""
-        write_count_denormalizations(arg, 'nfc', maxdepth=0)
-
-    def do_dnfkcnum(self, arg):
-        """Count the number of NFKC denormalizations."""
-        write_count_denormalizations(arg, 'nfkc', maxdepth=0)
-
-    def do_dnfc(self, arg):
-        """Denormalize with NFC."""
-        self.denorm(arg, 'nfc')
-
-    def do_dnfd(self, arg):
-        """Denormalize with NFD."""
-        self.denorm(arg, 'nfd')
-
-    def do_dnfkc(self, arg):
-        """Denormalize with NFKC."""
-        self.denorm(arg, 'nfkc')
-
-    def do_dnfkd(self, arg):
-        """Denormalize with NFKD."""
-        self.denorm(arg, 'nfkd')
-
+#     def do_cslist(self, arg):
+#         """List the registered character sets."""
+#         results = cset.get_codecs()
+#         for result in results:
+#             print(result)
+#
+#     def do_csmdecode(self, arg):
+#         """Decode the given hexadecimal string in each character set."""
+#         codecs = cset.get_codecs()
+#         width = max(len(codec) for codec in codecs) + 1
+#         results = cset.multidecode(arg, codecs)
+#         for codec in codecs:
+#             result = results[codec]
+#             value = neutralize_control_characters(result)
+#             codec += ':'
+#             if len(result) == 1:
+#                 c = ch.Character(result)
+#                 print(f'{codec:<{width}} {value} {c.code_point} {c.name}')
+#             elif len(result) > 1:
+#                 print(f'{codec:<{width}} {value} ** multiple characters **')
+#
+#     def do_csmencode(self, arg):
+#         """Encode the given character in each character set."""
+#         codecs = cset.get_codecs()
+#         width = max(len(codec) for codec in codecs) + 1
+#         results = cset.multiencode(arg, codecs)
+#         for key in results:
+#             if b := results[key]:
+#                 c = ''.join(f'{n:>02x}'.upper() for n in b)
+#                 print(f'{key:>{width}}: {c}')
+#
+#     def do_details(self, arg):
+#         """Display the details for the given character."""
+#         write_char_detail(arg)
+#
+#     def do_dnfcnum(self, arg):
+#         """Count the number of NFC denormalizations."""
+#         write_count_denormalizations(arg, 'nfc', maxdepth=0)
+#
+#     def do_dnfkcnum(self, arg):
+#         """Count the number of NFKC denormalizations."""
+#         write_count_denormalizations(arg, 'nfkc', maxdepth=0)
+#
+#     def do_dnfc(self, arg):
+#         """Denormalize with NFC."""
+#         self.denorm(arg, 'nfc')
+#
+#     def do_dnfd(self, arg):
+#         """Denormalize with NFD."""
+#         self.denorm(arg, 'nfd')
+#
+#     def do_dnfkc(self, arg):
+#         """Denormalize with NFKC."""
+#         self.denorm(arg, 'nfkc')
+#
+#     def do_dnfkd(self, arg):
+#         """Denormalize with NFKD."""
+#         self.denorm(arg, 'nfkd')
+#
     def do_EOF(self, arg):
         """Exit the charex shell."""
         print()
@@ -140,11 +186,11 @@ class Shell(Cmd):
         return True
 
     # Utility methods.
-    def denorm(self, base, form, maxdepth=None, maxcount=None, random=False):
-        """Perform a denormalization."""
-        results = dn.denormalize(base, form, maxdepth, maxcount, random)
-        for result in results:
-            print(result)
+#     def denorm(self, base, form, maxdepth=None, maxcount=None, random=False):
+#         """Perform a denormalization."""
+#         results = dn.denormalize(base, form, maxdepth, maxcount, random)
+#         for result in results:
+#             print(result)
 
 
 # Mainline.

@@ -6,29 +6,11 @@ Tools for exploring unicode characters and other character sets.
 """
 from collections.abc import Sequence
 from dataclasses import dataclass
-from json import load
-from importlib.resources import files
+from json import loads
 import unicodedata as ucd
 
+from charex import util
 from charex.escape import schemes
-from charex.util import neutralize_control_characters
-
-# Constants.
-RESOURCES = {
-    # Denormalization lookups.
-    'rev_nfc': 'rev_nfc.json',
-    'rev_nfkc': 'rev_nfkc.json',
-    'rev_nfd': 'rev_nfd.json',
-    'rev_nfkd': 'rev_nfkd.json',
-
-    # Unicode data.
-    'propvals': 'PropertyValueAliases.txt',
-    'unicodedata': 'UnicodeData.txt',
-
-    # HTML examples.
-    'result': 'result.html',
-    'quote': 'quote.html',
-}
 
 
 # Data classes.
@@ -103,7 +85,7 @@ def expand_property_value(alias: str, proptype: str) -> str:
     # If it's not in the cache, then we have to load the data from
     # file.
     except KeyError:
-        lines = read_resource('propvals')
+        lines = util.read_resource('propvals')
         by_alias = parse_property_values(lines, proptype)
         propvals_cache[proptype] = by_alias
 
@@ -148,21 +130,6 @@ def parse_unicode_data(lines: Sequence[str]) -> dict[str, UnicodeDatum]:
             datum = UnicodeDatum(*fields)
             unicodedata_cache['U+' + datum.code_point] = datum
     return unicodedata_cache
-
-
-def read_resource(key: str, codec: str = 'utf_8') -> tuple[str, ...]:
-    """Read the data from a resource file within the package.
-
-    :param key: The key for the file in the RESOURCES constant.
-    :return: The contents of the file as a :class:`tuple`.
-    :rtype: tuple
-    """
-    pkg = files('charex.data')
-    data_file = pkg / RESOURCES[key]
-    fh = data_file.open(encoding=codec)
-    lines = fh.readlines()
-    fh.close()
-    return tuple(lines)
 
 
 # Classes.
@@ -222,7 +189,7 @@ class Character:
             # Control characters.
             if cat == 'Cc':
                 if not unicodedata_cache:
-                    lines = read_resource('unicodedata')
+                    lines = util.read_resource('unicodedata')
                     data = parse_unicode_data(lines)
                 else:
                     data = unicodedata_cache
@@ -314,7 +281,7 @@ class Character:
         :return: The character information as a :class:`str`.
         :rtype: str
         """
-        value = neutralize_control_characters(self.value)
+        value = util.neutralize_control_characters(self.value)
         return f'{value} {self!r}'
 
 
@@ -326,12 +293,10 @@ class Lookup:
     """
     def __init__(self, source: str) -> None:
         self.__source = source
-        pkg = files('charex.data')
-        data_file = pkg / RESOURCES[source]
-        fh = data_file.open()
-        data = load(fh)
+        lines = util.read_resource(source)
+        json = '\n'.join(lines)
+        data = loads(json)
         self.__data = {k: tuple(data[k]) for k in data}
-        fh.close()
 
     @property
     def data(self) -> dict[str, tuple[str, ...]]:
