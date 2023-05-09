@@ -1,0 +1,15 @@
+NAME
+    es - escape a string
+
+SYNOPSIS
+    es {scheme} {base} [{codec}]
+
+DESCRIPTION
+    The parameters are as follows:
+    
+    scheme      The key for the registered escape scheme to use when
+                escaping the string.
+    
+    base        The string to escape.
+    
+    codec       (Optional.) The codec to use for the escape.

@@ -11,8 +11,8 @@ from textwrap import wrap
 from charex import charex as ch
 from charex import charsets as cset
 from charex import denormal as dn
+from charex import escape as esc
 from charex import util
-from charex.util import neutralize_control_characters, read_resource
 
 
 # Output functions.
@@ -58,7 +58,7 @@ def write_cset_multidecode(value: bytes) -> None:
         else:
             char = ch.Character(c)
             details = f'{char.code_point} {char.name}'
-        c = neutralize_control_characters(c)
+        c = util.neutralize_control_characters(c)
         print(f'{key:>{width}}: {c} {details}')
 
 
@@ -147,6 +147,13 @@ def write_denormalizations(
     print()
 
 
+def write_escape(base: str, scheme: str, codec: str = 'utf8') -> None:
+    """Print the string escaped using the given scheme."""
+    result = esc.escape(base, scheme, codec)
+    print(result)
+    print()
+
+
 # Classes.
 class Shell(Cmd):
     """A command shell for :mod:`charex`."""
@@ -217,6 +224,14 @@ class Shell(Cmd):
         print()
         return True
 
+    def do_es(self, arg):
+        """Escape the string."""
+        scheme, base, *opt = arg.split()
+        codec = 'utf8'
+        if opt:
+            codec = opt[0]
+        write_escape(base, scheme, codec)
+
     def do_xt(self, arg):
         """Exit the charex shell."""
         print('Exiting charex.')
@@ -226,37 +241,42 @@ class Shell(Cmd):
     # Command help.
     def help_cd(self):
         """Help for the cd command."""
-        lines = read_resource('help_cd')
+        lines = util.read_resource('help_cd')
         print(''.join(lines))
 
     def help_ce(self):
-        lines = read_resource('help_ce')
+        lines = util.read_resource('help_ce')
         print(''.join(lines))
 
     def help_cl(self):
-        lines = read_resource('help_cl')
+        lines = util.read_resource('help_cl')
         print(''.join(lines))
 
     def help_ct(self):
         """Help for the ct command."""
-        lines = read_resource('help_count')
+        lines = util.read_resource('help_count')
         print(''.join(lines))
 
     def help_dn(self):
         """Help for the dn command."""
-        lines = read_resource('help_dn')
+        lines = util.read_resource('help_dn')
         print(''.join(lines))
 
     def help_dt(self):
         """Help for the dt command."""
-        lines = read_resource('help_dt')
+        lines = util.read_resource('help_dt')
+        print(''.join(lines))
+
+    def help_es(self):
+        """Help for the es command."""
+        lines = util.read_resource('help_es')
         print(''.join(lines))
 
     def help_rd(self):
         """Help for the rd command."""
-        lines = read_resource('help_rd')
+        lines = util.read_resource('help_rd')
         print(''.join(lines))
 
     def help_xt(self):
-        lines = read_resource('help_xt')
+        lines = util.read_resource('help_xt')
         print(''.join(lines))

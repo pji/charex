@@ -6,14 +6,9 @@ Mainline for command line invocations of :mod:`charex`.
 """
 from argparse import ArgumentParser, Namespace, _SubParsersAction
 from sys import argv
-import unicodedata as ucd
-from textwrap import wrap
 
-from charex import charsets as cs
-from charex.charex import Character, Transformer
-from charex.denormal import count_denormalizations, denormalize
 import charex.shell as sh
-from charex.util import bin2bytes, hex2bytes, neutralize_control_characters
+from charex.util import bin2bytes, hex2bytes
 
 
 # Running modes.
@@ -45,7 +40,6 @@ def mode_charset(args: Namespace) -> None:
         sh.write_cset_multidecode(base)
 
     # Determine whether this is a code point or address lookup.
-    width = max(len(k) for k in cs.codecs)
     if args.reverse:
         sh.write_cset_multidecode(args.base)
     else:
