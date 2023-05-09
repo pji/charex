@@ -5,6 +5,7 @@ __main__
 Mainline for command line invocations of :mod:`charex`.
 """
 from argparse import ArgumentParser, Namespace, _SubParsersAction
+from sys import argv
 import unicodedata as ucd
 from textwrap import wrap
 
@@ -23,22 +24,7 @@ def mode_charsetlist(args: Namespace) -> None:
     :return: None.
     :rtype: NoneType
     """
-    width = max(len(k) for k in cs.codecs)
-
-    codecs = cs.get_codecs()
-    for codec in codecs:
-        if args.description:
-            descript = cs.get_codec_description(codec)
-            if descript:
-                wrapped = wrap(descript, 77 - width)
-                print(f'{codec:<{width}}  {wrapped[0]}')
-                for line in wrapped[1:]:
-                    print(f'{"":<{width}}  {line}')
-            else:
-                print(codec)
-        else:
-            print(codec)
-    print()
+    sh.write_cset_list(args.description)
 
 
 def mode_charset(args: Namespace) -> None:
@@ -48,7 +34,7 @@ def mode_charset(args: Namespace) -> None:
     :return: None.
     :rtype: NoneType
     """
-    def core(args: Namespace, width: int) -> None:
+    def core(args: Namespace) -> None:
         """Look up characer values for address."""
         if args.binary:
             base = bin2bytes(args.base)
@@ -56,38 +42,14 @@ def mode_charset(args: Namespace) -> None:
             base = args.base.encode(args.character)
         else:
             base = hex2bytes(args.base)
-        results = cs.multidecode(base, (codec for codec in cs.codecs))
-
-        # Write the output.
-        for key in results:
-            c = results[key]
-            details = ''
-            if len(c) < 1:
-                details = '*** no character ***'
-            elif len(c) > 1:
-                details = '*** multiple characters ***'
-            else:
-                char = Character(c)
-                details = f'{char.code_point} {char.name}'
-            c = neutralize_control_characters(c)
-            print(f'{key:>{width}}: {c} {details}')
-
-    def reverse(args: Namespace, width: int) -> None:
-        """Look up addresses for code point."""
-        results = cs.multiencode(args.base, (codec for codec in cs.codecs))
-
-        # Write the output.
-        for key in results:
-            if b := results[key]:
-                c = ''.join(f'{n:>02x}'.upper() for n in b)
-                print(f'{key:>{width}}: {c}')
+        sh.write_cset_multidecode(base)
 
     # Determine whether this is a code point or address lookup.
     width = max(len(k) for k in cs.codecs)
     if args.reverse:
-        reverse(args, width)
+        sh.write_cset_multidecode(args.base)
     else:
-        core(args, width)
+        core(args)
     print()
 
 
@@ -124,7 +86,7 @@ def mode_details(args: Namespace) -> None:
     sh.write_char_detail(args.codepoint)
 
 
-def mode_shell(args: Namespace) -> None:
+def mode_shell(args: Namespace | None) -> None:
     """Run :mod:`charex` in an interactive shell.
 
     :param args: The arguments used when the script was invoked.
@@ -145,7 +107,7 @@ def parse_charset(spa: _SubParsersAction) -> None:
     """
     sp = spa.add_parser(
         'charset',
-        aliases=['cset',],
+        aliases=['cd', 'cset',],
         help=(
             'Show the characters the integer could be in different '
             'characer sets.'
@@ -196,7 +158,7 @@ def parse_charsetlist(spa: _SubParsersAction) -> None:
     """
     sp = spa.add_parser(
         'charsetlist',
-        aliases=['csetlist', 'cslist'],
+        aliases=['cl', 'csetlist', 'cslist'],
         help=(
             'Show the characters the integer could be in different '
             'characer sets.'
@@ -220,7 +182,7 @@ def parse_denormal(spa: _SubParsersAction) -> None:
     """
     sp = spa.add_parser(
         'denormal',
-        aliases=['n',],
+        aliases=['dn', 'n',],
         help='Generate strings that normalize to the given string.'
     )
     sp.add_argument(
@@ -282,7 +244,7 @@ def parse_details(spa: _SubParsersAction) -> None:
     """
     sp = spa.add_parser(
         'details',
-        aliases=['d', 'deets'],
+        aliases=['d', 'deets', 'dt'],
         help='Display the details for the given code point.'
     )
     sp.add_argument(
@@ -337,4 +299,10 @@ def parse_invocation() -> None:
 
 # Mainline.
 if __name__ == '__main__':
-    parse_invocation()
+    # If there were no arguments passed, drop into the command shell.
+    if len(argv) < 2:
+        mode_shell(None)
+
+    # Otherwise parse the arguments and execute.
+    else:
+        parse_invocation()

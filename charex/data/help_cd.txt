@@ -1,0 +1,12 @@
+NAME
+    cd - decode the hex string into all supported character sets
+
+SYNOPSIS
+    cd {hex}
+
+DESCRIPTION
+    The parameters are as follows:
+    
+    hex         A hexadecimal representation of the bytes for a character.
+                It is just the digits themselves with no prefix. So the
+                number 0xe9 would just be "e9".

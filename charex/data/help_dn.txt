@@ -1,8 +1,8 @@
 NAME
-    ct - count of denormalization results
+    dn - denormalize a string
 
 SYNOPSIS
-    ct {form} {base} [{maxdepth}]
+    dn {form} {base} [{maxdepth}]
 
 DESCRIPTION
     The parameters are as follows:

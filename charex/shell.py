@@ -6,14 +6,76 @@ An interactive command shell for :mod:`charex`.
 """
 from cmd import Cmd
 import readline
+from textwrap import wrap
 
 from charex import charex as ch
 from charex import charsets as cset
 from charex import denormal as dn
+from charex import util
 from charex.util import neutralize_control_characters, read_resource
 
 
 # Output functions.
+def write_cset_list(show_desc=False) -> None:
+    """Print the registered character sets."""
+    # Get the data.
+    codecs = cset.get_codecs()
+
+    # Print the data.
+    width = max(len(codec) for codec in codecs)
+    for codec in codecs:
+        if show_desc:
+            descript = cset.get_codec_description(codec)
+            if descript:
+                wrapped = wrap(descript, 77 - width)
+                print(f'{codec:<{width}}  {wrapped[0]}')
+                for line in wrapped[1:]:
+                    print(f'{"":<{width}}  {line}')
+            else:
+                print(codec)
+        else:
+            print(codec)
+    print()
+
+
+def write_cset_multidecode(value: bytes) -> None:
+    """Print the character that the given hex string decodes to in each
+    registered character set.
+    """
+    # Get the data.
+    codecs = cset.get_codecs()
+    results = cset.multidecode(value, (codec for codec in codecs))
+
+    # Write the output.
+    width = max(len(codec) for codec in codecs)
+    for key in results:
+        c = results[key]
+        details = ''
+        if len(c) < 1:
+            details = '*** no character ***'
+        elif len(c) > 1:
+            details = '*** multiple characters ***'
+        else:
+            char = ch.Character(c)
+            details = f'{char.code_point} {char.name}'
+        c = neutralize_control_characters(c)
+        print(f'{key:>{width}}: {c} {details}')
+
+
+def write_cset_multiencode(value: str) -> None:
+    """Print the addresses for the character in each character set."""
+    # Get the data.
+    codecs = cset.get_codecs()
+    results = cset.multiencode(value, (codec for codec in codecs))
+
+    # Write the output.
+    width = max(len(codec) for codec in codecs)
+    for key in results:
+        if b := results[key]:
+            c = ''.join(f'{n:>02x}'.upper() for n in b)
+            print(f'{key:>{width}}: {c}')
+
+
 def write_char_detail(codepoint) -> None:
     """Print the details of the given character."""
     def rev_normalize(char: ch.Character, form: str) -> str:
@@ -60,6 +122,7 @@ def write_count_denormalizations(base: str, form: str, maxdepth: int) -> None:
     """
     count = dn.count_denormalizations(base, form, maxdepth)
     print(f'{count:,}')
+    print()
 
 
 def write_denormalizations(
@@ -91,108 +154,109 @@ class Shell(Cmd):
     prompt = 'charex> '
 
     # Commands.
+    def do_cd(self, arg):
+        """Decode the given hex string in all codecs."""
+        value = util.hex2bytes(arg)
+        write_cset_multidecode(value)
+
+    def do_ce(self, arg):
+        """Encode the given character in all codecs."""
+        write_cset_multiencode(arg)
+
+    def do_cl(self, arg):
+        """List the registered character sets."""
+        show_desc = True
+        if arg == 'hide':
+            show_desc = False
+        write_cset_list(show_desc)
+
     def do_ct(self, arg):
         """Count denormalization results."""
         form, base, *rest = arg.split()
+        form = form.lower()
         maxdepth = 0
         if rest:
             maxdepth = rest[0]
         write_count_denormalizations(base, form, maxdepth)
 
-    # Command help.
-    def help_count(self):
-        """Help for the count command."""
-        lines = read_resource('help_count')
-        print(''.join(lines))
+    def do_dn(self, arg):
+        """Denormalize the given string."""
+        form, base, *rest = arg.split()
+        form = form.lower()
+        maxdepth = 0
+        if rest:
+            maxdepth = int(rest[0])
+        write_denormalizations(base, form, maxdepth)
 
-    # Command completions.
-#     def completedefault(self, text, line, begidx, endidx):
-#         completions = {
-#             'co': 'count',
-#             'ct': 'count',
-#         }
-#         if text in completions:
-#             return completions[text]
-#         return text
+    def do_dt(self, arg):
+        """Get details for the given character."""
+        write_char_detail(arg)
 
-#     def do_cslist(self, arg):
-#         """List the registered character sets."""
-#         results = cset.get_codecs()
-#         for result in results:
-#             print(result)
-#
-#     def do_csmdecode(self, arg):
-#         """Decode the given hexadecimal string in each character set."""
-#         codecs = cset.get_codecs()
-#         width = max(len(codec) for codec in codecs) + 1
-#         results = cset.multidecode(arg, codecs)
-#         for codec in codecs:
-#             result = results[codec]
-#             value = neutralize_control_characters(result)
-#             codec += ':'
-#             if len(result) == 1:
-#                 c = ch.Character(result)
-#                 print(f'{codec:<{width}} {value} {c.code_point} {c.name}')
-#             elif len(result) > 1:
-#                 print(f'{codec:<{width}} {value} ** multiple characters **')
-#
-#     def do_csmencode(self, arg):
-#         """Encode the given character in each character set."""
-#         codecs = cset.get_codecs()
-#         width = max(len(codec) for codec in codecs) + 1
-#         results = cset.multiencode(arg, codecs)
-#         for key in results:
-#             if b := results[key]:
-#                 c = ''.join(f'{n:>02x}'.upper() for n in b)
-#                 print(f'{key:>{width}}: {c}')
-#
-#     def do_details(self, arg):
-#         """Display the details for the given character."""
-#         write_char_detail(arg)
-#
-#     def do_dnfcnum(self, arg):
-#         """Count the number of NFC denormalizations."""
-#         write_count_denormalizations(arg, 'nfc', maxdepth=0)
-#
-#     def do_dnfkcnum(self, arg):
-#         """Count the number of NFKC denormalizations."""
-#         write_count_denormalizations(arg, 'nfkc', maxdepth=0)
-#
-#     def do_dnfc(self, arg):
-#         """Denormalize with NFC."""
-#         self.denorm(arg, 'nfc')
-#
-#     def do_dnfd(self, arg):
-#         """Denormalize with NFD."""
-#         self.denorm(arg, 'nfd')
-#
-#     def do_dnfkc(self, arg):
-#         """Denormalize with NFKC."""
-#         self.denorm(arg, 'nfkc')
-#
-#     def do_dnfkd(self, arg):
-#         """Denormalize with NFKD."""
-#         self.denorm(arg, 'nfkd')
-#
+    def do_rd(self, arg):
+        """Return random results from a denormalization."""
+        form, base, *rest = arg.split()
+        form = form.lower()
+        number = 0
+        seed = ''
+        if len(rest) > 0:
+            number = int(rest[0])
+        if len(rest) > 1:
+            seed = rest[1]
+        write_denormalizations(
+            base,
+            form,
+            number=number,
+            random=True,
+            seed=seed
+        )
+
     def do_EOF(self, arg):
         """Exit the charex shell."""
         print()
         print('Exiting charex.')
+        print()
         return True
 
-    def do_exit(self, arg):
+    def do_xt(self, arg):
         """Exit the charex shell."""
         print('Exiting charex.')
+        print()
         return True
 
-    # Utility methods.
-#     def denorm(self, base, form, maxdepth=None, maxcount=None, random=False):
-#         """Perform a denormalization."""
-#         results = dn.denormalize(base, form, maxdepth, maxcount, random)
-#         for result in results:
-#             print(result)
+    # Command help.
+    def help_cd(self):
+        """Help for the cd command."""
+        lines = read_resource('help_cd')
+        print(''.join(lines))
 
+    def help_ce(self):
+        lines = read_resource('help_ce')
+        print(''.join(lines))
 
-# Mainline.
-if __name__ == '__main__':
-    Shell().cmdloop()
+    def help_cl(self):
+        lines = read_resource('help_cl')
+        print(''.join(lines))
+
+    def help_ct(self):
+        """Help for the ct command."""
+        lines = read_resource('help_count')
+        print(''.join(lines))
+
+    def help_dn(self):
+        """Help for the dn command."""
+        lines = read_resource('help_dn')
+        print(''.join(lines))
+
+    def help_dt(self):
+        """Help for the dt command."""
+        lines = read_resource('help_dt')
+        print(''.join(lines))
+
+    def help_rd(self):
+        """Help for the rd command."""
+        lines = read_resource('help_rd')
+        print(''.join(lines))
+
+    def help_xt(self):
+        lines = read_resource('help_xt')
+        print(''.join(lines))

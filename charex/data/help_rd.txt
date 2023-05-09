@@ -1,0 +1,18 @@
+NAME
+    rd - get random choices from a string denormalization
+
+SYNOPSIS
+    rd {form} {base} [{number}] [{seed}]
+
+DESCRIPTION
+    The parameters are as follows:
+    
+    form        The Unicode normalization form for the denormalization.
+                The valid values are: NFC, NFD, NFKC, NFKD.
+
+    base        The string to denormalize.
+
+    number      (Optional.) The total number of denormalizations to
+                return.
+    
+    seed        (Optional.) A seed to use for the random generation.

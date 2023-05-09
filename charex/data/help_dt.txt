@@ -1,0 +1,10 @@
+NAME
+    dt - get details for a character
+
+SYNOPSIS
+    dt {char}
+
+DESCRIPTION
+    The parameters are as follows:
+    
+    char        The character to get details for.

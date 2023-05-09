@@ -1,0 +1,8 @@
+NAME
+    xt - quit charex
+
+SYNOPSIS
+    xt
+
+DESCRIPTION
+    Quits the charex shell. This can also be done by pressing ctrl-d.
