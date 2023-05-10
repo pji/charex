@@ -41,7 +41,7 @@ def mode_charset(args: Namespace) -> None:
 
     # Determine whether this is a code point or address lookup.
     if args.reverse:
-        sh.write_cset_multidecode(args.base)
+        sh.write_cset_multiencode(args.base)
     else:
         core(args)
 
