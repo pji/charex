@@ -44,7 +44,6 @@ def mode_charset(args: Namespace) -> None:
         sh.write_cset_multidecode(args.base)
     else:
         core(args)
-    print()
 
 
 def mode_denormal(args: Namespace) -> None:
@@ -78,6 +77,26 @@ def mode_details(args: Namespace) -> None:
     :rtype: NoneType
     """
     sh.write_char_detail(args.codepoint)
+
+
+def mode_escape(args: Namespace) -> None:
+    """Escape a string using the given scheme.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    sh.write_escape(args.base, args.scheme)
+
+
+def mode_esclist(args: Namespace) -> None:
+    """List the registered escape schemes.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    sh.write_schemes_list()
 
 
 def mode_shell(args: Namespace | None) -> None:
@@ -250,6 +269,51 @@ def parse_details(spa: _SubParsersAction) -> None:
     sp.set_defaults(func=mode_details)
 
 
+def parse_escape(spa: _SubParsersAction) -> None:
+    """Add the escape mode subparser.
+
+    :param spa: The subparser action used to add a new subparser to
+        the main parser.
+    :return: None.
+    :rtype: NoneType
+    """
+    sp = spa.add_parser(
+        'escape',
+        aliases=['es', 'esc',],
+        help='Escape the given string with the given scheme.'
+    )
+    sp.add_argument(
+        'base',
+        help='The string to escape.',
+        action='store',
+        type=str
+    )
+    sp.add_argument(
+        '--scheme', '-s',
+        help='The scheme to escape with.',
+        action='store',
+        default='url',
+        type=str
+    )
+    sp.set_defaults(func=mode_escape)
+
+
+def parse_esclist(spa: _SubParsersAction) -> None:
+    """Add the esclist mode subparser.
+
+    :param spa: The subparser action used to add a new subparser to
+        the main parser.
+    :return: None.
+    :rtype: NoneType
+    """
+    sp = spa.add_parser(
+        'esclist',
+        aliases=['el',],
+        help='List the registered escape schemes.'
+    )
+    sp.set_defaults(func=mode_esclist)
+
+
 def parse_shell(spa: _SubParsersAction) -> None:
     """Add the shell mode subparser.
 
@@ -284,6 +348,8 @@ def parse_invocation() -> None:
     parse_charsetlist(spa)
     parse_denormal(spa)
     parse_details(spa)
+    parse_escape(spa)
+    parse_esclist(spa)
     parse_shell(spa)
 
     # Execute.

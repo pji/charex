@@ -162,6 +162,35 @@ def test_charset_no_character(capsys):
     sys.argv = orig_cmd
 
 
+def test_charset_reverse(capsys):
+    """Called with an character and -r, charset mode should return the
+    address for the character in each of the registered character sets.
+    """
+    # Expected result.
+    with open('tests/data/charset_mode_r.txt') as fh:
+        exp = fh.read()
+
+    # Test setup.
+    cmd = (
+        'python -m charex',
+        'charset',
+        'A',
+        '-r',
+    )
+    orig_cmd = sys.argv
+    sys.argv = cmd
+
+    # Run test.
+    m.parse_invocation()
+
+    # Gather actual result and compare.
+    captured = capsys.readouterr()
+    assert captured.out == exp
+
+    # Test tear down.
+    sys.argv = orig_cmd
+
+
 # Test charsetlist mode.
 def test_charsetlist(capsys):
     """When invoked, charsetlist mode should return a list of registered
@@ -337,6 +366,94 @@ def test_details(capsys):
         'python -m charex',
         'details',
         'A'
+    )
+    orig_cmd = sys.argv
+    sys.argv = cmd
+
+    # Run test.
+    m.parse_invocation()
+
+    # Gather actual result and compare.
+    captured = capsys.readouterr()
+    assert captured.out == exp
+
+    # Test tear down.
+    sys.argv = orig_cmd
+
+
+# Test escape mode.
+def test_escape(capsys):
+    """Called with a base string, escape mode should escape the string
+    using the "url" scheme and display the escaped string.
+    """
+    # Expected result.
+    exp = '%41\n\n'
+
+    # Test setup.
+    cmd = (
+        'python -m charex',
+        'escape',
+        'A',
+    )
+    orig_cmd = sys.argv
+    sys.argv = cmd
+
+    # Run test.
+    m.parse_invocation()
+
+    # Gather actual result and compare.
+    captured = capsys.readouterr()
+    assert captured.out == exp
+
+    # Test tear down.
+    sys.argv = orig_cmd
+
+
+def test_escape_with_scheme(capsys):
+    """Invoked with a base string and a scheme, escape mode should
+    escape the string using the scheme and display the escaped string.
+    """
+    # Expected result.
+    exp = '&#65;\n\n'
+
+    # Test setup.
+    cmd = (
+        'python -m charex',
+        'escape',
+        'A',
+        '-s', 'html',
+    )
+    orig_cmd = sys.argv
+    sys.argv = cmd
+
+    # Run test.
+    m.parse_invocation()
+
+    # Gather actual result and compare.
+    captured = capsys.readouterr()
+    assert captured.out == exp
+
+    # Test tear down.
+    sys.argv = orig_cmd
+
+
+# Test esclist mode.
+def test_esclist(capsys):
+    """Whne invoked, esclist mode returns a list of the registered
+    escape modes.
+    """
+    # Expected result.
+    exp = (
+        'cu\n'
+        'html\n'
+        'url\n'
+        '\n'
+    )
+
+    # Test setup.
+    cmd = (
+        'python -m charex',
+        'esclist',
     )
     orig_cmd = sys.argv
     sys.argv = cmd

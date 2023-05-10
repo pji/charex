@@ -24,16 +24,31 @@ the root of the repository, run `charex` as a module::
 That will bring you to the `charex` shell::
 
     Welcome to the charex shell.
+    Press ? for a list of comands.
+    
     charex>
 
 From here you can type `?` to see the list of available commands::
 
     Welcome to the charex shell.
+    Press ? for a list of comands.
+    
     charex> ?
+    The following commands are available:
 
-    Documented commands (type help <topic>):
-    ========================================
-    EOF  cd  ce  cl  ct  dn  dt  es  help  rd  xt
+    *  cd: Decode the given hex string in all codecs.
+    *  ce: Encode the given character in all codecs.
+    *  cl: List the registered character sets.
+    *  ct: Count denormalization results.
+    *  dn: Denormalize the given string.
+    *  dt: Get details for the given character.
+    *  el: List the registered escape schemes.
+    *  es: Escape the string.
+    *  help: Display command list.
+    *  rd: Return random results from a denormalization.
+    *  xt: Exit the charex shell.
+
+    For help on individual commands, use "help {command}".
 
     charex>
 
@@ -61,16 +76,3 @@ it does::
                     of denormalizations.
 
     charex>
-
-A quick summary of the available commands:
-
-*   cd: Decode a given hex string into all registered character sets.
-*   ce: Get the address for a character in the registered character sets.
-*   cl: List the registered character sets.
-*   ct: Count denormalization results.
-*   dn: Denormalize a string.
-*   dt: Get character details.
-*   es: Escape a string.
-*   help: Get the list of commands.
-*   rd: Denormalize a string and return random results.
-*   xt: Exit the charex shell.

@@ -29,6 +29,24 @@ class reg_escape:
 
 
 # Escape schemes.
+@reg_escape('cu')
+def escape_cu(char: str, codec: str) -> str:
+    """Escape scheme for C/C++ Unicode escape sequences.
+
+    :param char: The character to escape.
+    :param codec: Unused.
+    :return: The escaped character as a :class:`str`.
+    :rtype: str
+    """
+    try:
+        x = ord(char)
+        return f'\\u{x:04x}'
+    except TypeError as ex:
+        b = char.encode('unicode_escape')
+        s = b.decode('ascii')
+        return f'\\U{s[2:]:>08}'
+
+
 @reg_escape('html')
 def escape_html(char: str, codec: str) -> str:
     """Escape scheme for HTML entities.
@@ -70,3 +88,8 @@ def escape(s: str, schemekey: str, codec: str = 'utf8') -> str:
     """
     scheme = schemes[schemekey]
     return ''.join(scheme(char, codec) for char in s)
+
+
+def get_schemes() -> tuple[str, ...]:
+    """Return the names of the registered escape schemes."""
+    return tuple(scheme for scheme in schemes)

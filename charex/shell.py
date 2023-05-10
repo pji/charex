@@ -60,6 +60,7 @@ def write_cset_multidecode(value: bytes) -> None:
             details = f'{char.code_point} {char.name}'
         c = util.neutralize_control_characters(c)
         print(f'{key:>{width}}: {c} {details}')
+    print()
 
 
 def write_cset_multiencode(value: str) -> None:
@@ -74,6 +75,7 @@ def write_cset_multiencode(value: str) -> None:
         if b := results[key]:
             c = ''.join(f'{n:>02x}'.upper() for n in b)
             print(f'{key:>{width}}: {c}')
+    print()
 
 
 def write_char_detail(codepoint) -> None:
@@ -154,10 +156,21 @@ def write_escape(base: str, scheme: str, codec: str = 'utf8') -> None:
     print()
 
 
+def write_schemes_list() -> None:
+    """Print the names of the registered escape schemes."""
+    results = esc.get_schemes()
+    for scheme in results:
+        print(scheme)
+    print()
+
+
 # Classes.
 class Shell(Cmd):
     """A command shell for :mod:`charex`."""
-    intro = 'Welcome to the charex shell.'
+    intro = (
+        'Welcome to the charex shell.\n'
+        'Press ? for a list of comands.\n'
+    )
     prompt = 'charex> '
 
     # Commands.
@@ -224,6 +237,10 @@ class Shell(Cmd):
         print()
         return True
 
+    def do_el(self, arg):
+        """List the registered escape schemes."""
+        write_schemes_list()
+
     def do_es(self, arg):
         """Escape the string."""
         scheme, base, *opt = arg.split()
@@ -231,6 +248,27 @@ class Shell(Cmd):
         if opt:
             codec = opt[0]
         write_escape(base, scheme, codec)
+
+    def do_help(self, arg):
+        """Display command list."""
+        if not arg:
+            print('The following commands are available:')
+            print()
+            cmds = (
+                cmd for cmd in dir(self)
+                if cmd.startswith('do')
+                and not cmd.endswith('EOF')
+                and not cmd.endswith('eader')
+            )
+            for cmd in cmds:
+                meth = getattr(self, cmd)
+                print(f'*  {cmd[3:]}: {meth.__doc__}')
+            print()
+            print('For help on individual commands, use "help {command}".')
+            print()
+
+        else:
+            super().do_help(arg)
 
     def do_xt(self, arg):
         """Exit the charex shell."""
@@ -265,6 +303,11 @@ class Shell(Cmd):
     def help_dt(self):
         """Help for the dt command."""
         lines = util.read_resource('help_dt')
+        print(''.join(lines))
+
+    def help_el(self):
+        """Help for the el command."""
+        lines = util.read_resource('help_el')
         print(''.join(lines))
 
     def help_es(self):
