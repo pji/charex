@@ -38,13 +38,21 @@ def write_cset_list(show_desc=False) -> None:
     print()
 
 
-def write_cset_multidecode(value: bytes) -> None:
+def write_cset_multidecode(value: str) -> None:
     """Print the character that the given hex string decodes to in each
     registered character set.
     """
+    # Normalize the data.
+    if value.startswith('0b'):
+        b = util.bin2bytes(value[2:])
+    elif value.startswith('0x'):
+        b = util.hex2bytes(value[2:])
+    else:
+        b = value.encode('utf8')
+
     # Get the data.
     codecs = cset.get_codecs()
-    results = cset.multidecode(value, (codec for codec in codecs))
+    results = cset.multidecode(b, (codec for codec in codecs))
 
     # Write the output.
     width = max(len(codec) for codec in codecs)
@@ -175,9 +183,8 @@ class Shell(Cmd):
 
     # Commands.
     def do_cd(self, arg):
-        """Decode the given hex string in all codecs."""
-        value = util.hex2bytes(arg)
-        write_cset_multidecode(value)
+        """Decode the given address in all codecs."""
+        write_cset_multidecode(arg)
 
     def do_ce(self, arg):
         """Encode the given character in all codecs."""

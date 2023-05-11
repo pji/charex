@@ -1,12 +1,14 @@
 NAME
-    cd - decode the hex string into all supported character sets
+    cd - decode the address into all supported character sets
 
 SYNOPSIS
-    cd {hex}
+    cd {address}
 
 DESCRIPTION
     The parameters are as follows:
     
-    hex         A hexadecimal representation of the bytes for a character.
-                It is just the digits themselves with no prefix. So the
-                number 0xe9 would just be "e9".
+    address     The address to look up in each character set. If prefixed
+                with "0x" it will be read as a hexadecimal number. If
+                prefixed with "0b" it will be read as a binary number. If
+                there is no prefix, the UTF-8 address of the character
+                will be used.

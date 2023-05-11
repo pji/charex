@@ -29,21 +29,11 @@ def mode_charset(args: Namespace) -> None:
     :return: None.
     :rtype: NoneType
     """
-    def core(args: Namespace) -> None:
-        """Look up characer values for address."""
-        if args.binary:
-            base = bin2bytes(args.base)
-        elif args.character:
-            base = args.base.encode(args.character)
-        else:
-            base = hex2bytes(args.base)
-        sh.write_cset_multidecode(base)
-
     # Determine whether this is a code point or address lookup.
     if args.reverse:
         sh.write_cset_multiencode(args.base)
     else:
-        core(args)
+        sh.write_cset_multidecode(args.base)
 
 
 def mode_denormal(args: Namespace) -> None:
@@ -128,27 +118,13 @@ def parse_charset(spa: _SubParsersAction) -> None:
     )
     sp.add_argument(
         'base',
-        help='The base integer. Defaults to being read as hex.',
+        help=(
+            'The base integer. Prefix the integer with "0x" for hex '
+            'or "0b" for binary. No prefix will be interpreted as the'
+            'UTF-8 address of the character.'
+        ),
         action='store',
         type=str
-    )
-    sp.add_argument(
-        '--binary', '-b',
-        help='Interpret the base integer as binary rather than hex.',
-        action='store_true'
-    )
-    sp.add_argument(
-        '--character', '-c',
-        help=(
-            'Interpret the base integer as a character in the given '
-            'character set.'
-        ),
-        action='store'
-    )
-    sp.add_argument(
-        '--list', '-l',
-        help='List the registered character sets.',
-        action='store_true'
     )
     sp.add_argument(
         '--reverse', '-r',

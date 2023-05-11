@@ -36,7 +36,7 @@ From here you can type `?` to see the list of available commands::
     charex> ?
     The following commands are available:
 
-    *  cd: Decode the given hex string in all codecs.
+    *  cd: Decode the given address in all codecs.
     *  ce: Encode the given character in all codecs.
     *  cl: List the registered character sets.
     *  ct: Count denormalization results.

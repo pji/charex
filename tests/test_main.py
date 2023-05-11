@@ -25,7 +25,7 @@ def test_charset(capsys):
     cmd = (
         'python -m charex',
         'charset',
-        '41'
+        '0x41'
     )
     orig_cmd = sys.argv
     sys.argv = cmd
@@ -54,8 +54,7 @@ def test_charset_binary(capsys):
     cmd = (
         'python -m charex',
         'charset',
-        '01000001',
-        '-b'
+        '0b01000001',
     )
     orig_cmd = sys.argv
     sys.argv = cmd
@@ -86,7 +85,6 @@ def test_charset_code_point(capsys):
         'python -m charex',
         'charset',
         'A',
-        '-c', 'utf8'
     )
     orig_cmd = sys.argv
     sys.argv = cmd
@@ -116,7 +114,7 @@ def test_charset_control_character(capsys):
     cmd = (
         'python -m charex',
         'charset',
-        '0a'
+        '0x0a'
     )
     orig_cmd = sys.argv
     sys.argv = cmd
@@ -146,7 +144,7 @@ def test_charset_no_character(capsys):
     cmd = (
         'python -m charex',
         'charset',
-        'e9'
+        '0xe9'
     )
     orig_cmd = sys.argv
     sys.argv = cmd
