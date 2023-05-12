@@ -11,239 +11,158 @@ import pytest as pt
 import charex.__main__ as m
 
 
-# Test charset mode.
-def test_charset(capsys):
+# Test cd mode.
+def test_cd(capsys):
     """Called with an hex string, charset mode should return the character
     or characters that hex string becomes in each of the known character
     sets.
     """
-    # Expected result.
     with open('tests/data/charset_mode_41.txt') as fh:
         exp = fh.read()
-
-    # Test setup.
     cmd = (
         'python -m charex',
-        'charset',
+        'cd',
         '0x41'
     )
-    orig_cmd = sys.argv
-    sys.argv = cmd
-
-    # Run test.
-    m.parse_invocation()
-
-    # Gather actual result and compare.
-    captured = capsys.readouterr()
-    assert captured.out == exp
-
-    # Test tear down.
-    sys.argv = orig_cmd
+    cli_test(exp, cmd, capsys)
 
 
-def test_charset_binary(capsys):
-    """Called with -b, charset mode should interpret the base string as
-    binary and return the character or characters that hex string becomes
-    in each of the known character sets.
+def test_cd_binary(capsys):
+    """Called with a number prefixed with "0b", cd mode should interpret
+    the base string as binary and return the character or characters that
+    binary string becomes in each of the known character sets.
     """
-    # Expected result.
     with open('tests/data/charset_mode_41.txt') as fh:
         exp = fh.read()
-
-    # Test setup.
     cmd = (
         'python -m charex',
-        'charset',
+        'cd',
         '0b01000001',
     )
-    orig_cmd = sys.argv
-    sys.argv = cmd
-
-    # Run test.
-    m.parse_invocation()
-
-    # Gather actual result and compare.
-    captured = capsys.readouterr()
-    assert captured.out == exp
-
-    # Test tear down.
-    sys.argv = orig_cmd
+    cli_test(exp, cmd, capsys)
 
 
-def test_charset_code_point(capsys):
-    """Called with -c followed by a recognized character set, charset
-    mode should interpret the base string as binary and return the
-    character or characters that hex string becomes in each of the
-    known character sets.
+def test_cd_code_point(capsys):
+    """Called with a character, cd mode should interpret the base
+    string as binary and return the character or characters that hex
+    string becomes in each of the known character sets.
     """
-    # Expected result.
     with open('tests/data/charset_mode_41.txt') as fh:
         exp = fh.read()
-
-    # Test setup.
     cmd = (
         'python -m charex',
-        'charset',
+        'cd',
         'A',
     )
-    orig_cmd = sys.argv
-    sys.argv = cmd
-
-    # Run test.
-    m.parse_invocation()
-
-    # Gather actual result and compare.
-    captured = capsys.readouterr()
-    assert captured.out == exp
-
-    # Test tear down.
-    sys.argv = orig_cmd
+    cli_test(exp, cmd, capsys)
 
 
-def test_charset_control_character(capsys):
-    """Called with an hex string, charset mode should return the character
+def test_cd_control_character(capsys):
+    """Called with an hex string, cd mode should return the character
     or characters that hex string becomes in each of the known character
     sets. If the hex string becomes a control character, print the symbol
     for that character rather than the character itself.
     """
-    # Expected result.
     with open('tests/data/charset_mode_0a.txt') as fh:
         exp = fh.read()
-
-    # Test setup.
     cmd = (
         'python -m charex',
-        'charset',
+        'cd',
         '0x0a'
     )
-    orig_cmd = sys.argv
-    sys.argv = cmd
-
-    # Run test.
-    m.parse_invocation()
-
-    # Gather actual result and compare.
-    captured = capsys.readouterr()
-    assert captured.out == exp
-
-    # Test tear down.
-    sys.argv = orig_cmd
+    cli_test(exp, cmd, capsys)
 
 
-def test_charset_no_character(capsys):
-    """Called with an hex string, charset mode should return the character
+def test_cd_no_character(capsys):
+    """Called with an hex string, cd mode should return the character
     or characters that hex string becomes in each of the known character
     sets. If some character sets do not have characters for the given
     address, that should be indicated in the output.
     """
-    # Expected result.
     with open('tests/data/charset_mode_e9.txt') as fh:
         exp = fh.read()
-
-    # Test setup.
     cmd = (
         'python -m charex',
-        'charset',
+        'cd',
         '0xe9'
     )
-    orig_cmd = sys.argv
-    sys.argv = cmd
-
-    # Run test.
-    m.parse_invocation()
-
-    # Gather actual result and compare.
-    captured = capsys.readouterr()
-    assert captured.out == exp
-
-    # Test tear down.
-    sys.argv = orig_cmd
+    cli_test(exp, cmd, capsys)
 
 
-def test_charset_reverse(capsys):
-    """Called with an character and -r, charset mode should return the
-    address for the character in each of the registered character sets.
+# Test ce mode.
+def test_ce(capsys):
+    """Called with an character, ce mode should return the address
+    for the character in each of the registered character sets.
     """
-    # Expected result.
     with open('tests/data/charset_mode_r.txt') as fh:
         exp = fh.read()
-
-    # Test setup.
     cmd = (
         'python -m charex',
-        'charset',
+        'ce',
         'A',
-        '-r',
     )
-    orig_cmd = sys.argv
-    sys.argv = cmd
-
-    # Run test.
-    m.parse_invocation()
-
-    # Gather actual result and compare.
-    captured = capsys.readouterr()
-    assert captured.out == exp
-
-    # Test tear down.
-    sys.argv = orig_cmd
+    cli_test(exp, cmd, capsys)
 
 
-# Test charsetlist mode.
-def test_charsetlist(capsys):
-    """When invoked, charsetlist mode should return a list of registered
+# Test cl mode.
+def test_cl(capsys):
+    """When invoked, cl mode should return a list of registered
     character set codecs.
     """
-    # Expected result.
     with open('tests/data/charsetlist.txt') as fh:
         exp = fh.read()
-
-    # Test setup.
     cmd = (
         'python -m charex',
-        'charsetlist'
+        'cl'
     )
-    orig_cmd = sys.argv
-    sys.argv = cmd
-
-    # Run test.
-    m.parse_invocation()
-
-    # Gather actual result and compare.
-    captured = capsys.readouterr()
-    assert captured.out == exp
-
-    # Test tear down.
-    sys.argv = orig_cmd
+    cli_test(exp, cmd, capsys)
 
 
-def test_charsetlist_description(capsys):
-    """When invoked with -d, charsetlist mode should return a list of
+def test_cl_description(capsys):
+    """When invoked with -d, cl mode should return a list of
     registered character set codecs and a brief description of each
     one.
     """
-    # Expected result.
     with open('tests/data/charsetlist_d.txt') as fh:
         exp = fh.read()
-
-    # Test setup.
     cmd = (
         'python -m charex',
-        'charsetlist',
-        '-d'
+        'cl',
+        '-d',
     )
-    orig_cmd = sys.argv
-    sys.argv = cmd
+    cli_test(exp, cmd, capsys)
 
-    # Run test.
-    m.parse_invocation()
 
-    # Gather actual result and compare.
-    captured = capsys.readouterr()
-    assert captured.out == exp
+# Test ct mode.
+def test_ct(capsys):
+    """Invoked with a normalization form and a base string, ct mode
+    should print the number of denormalizations using the given form to
+    stdout.
+    """
+    exp = '120,270,240\n\n'
+    cmd = (
+        'python -m charex',
+        'ct',
+        'nfkd',
+        '<script>'
+    )
+    cli_test(exp, cmd, capsys)
 
-    # Test tear down.
-    sys.argv = orig_cmd
+
+def test_ct_maxdepth(capsys):
+    """Invoked with "-m" and an integer, ct mode limit the number of
+    denormalizations per character to the given integer and print the
+    number of denormalizations using the given form to stdout.
+    """
+    exp = '256\n\n'
+    cmd = (
+        'python -m charex',
+        'ct',
+        'nfkd',
+        '<script>',
+        '-m', '2',
+    )
+    cli_test(exp, cmd, capsys)
 
 
 # Test denormal mode.
@@ -263,32 +182,18 @@ def test_denormal(capsys):
         '\uff1c\uff0d\uff1e\n'
         '\n'
     )
-
-    # Test setup.
     cmd = (
         'python -m charex',
         'denormal',
         '<->'
     )
-    orig_cmd = sys.argv
-    sys.argv = cmd
-
-    # Run test.
-    m.parse_invocation()
-
-    # Gather actual result and compare.
-    captured = capsys.readouterr()
-    assert captured.out == exp
-
-    # Test tear down.
-    sys.argv = orig_cmd
+    cli_test(exp, cmd, capsys)
 
 
 def test_denormal_number(capsys):
     """Called with -n and an integer, denormal mode should return no
     more than that number of results.
     """
-    # Expected result.
     exp = (
         '\ufe64\ufe63\ufe65\n'
         '\ufe64\ufe63\uff1e\n'
@@ -296,39 +201,23 @@ def test_denormal_number(capsys):
         '\ufe64\uff0d\uff1e\n'
         '\n'
     )
-
-    # Test setup.
     cmd = (
         'python -m charex',
         'denormal',
         '<->',
         '-n', '4'
     )
-    orig_cmd = sys.argv
-    sys.argv = cmd
-
-    # Run test.
-    m.parse_invocation()
-
-    # Gather actual result and compare.
-    captured = capsys.readouterr()
-    assert captured.out == exp
-
-    # Test tear down.
-    sys.argv = orig_cmd
+    cli_test(exp, cmd, capsys)
 
 
 def test_denormal_random(capsys):
     """Called with -r, denormal mode should return a randomly
     denormalized string.
     """
-    # Expected result.
     exp = (
         '﹤－﹥\n'
         '\n'
     )
-
-    # Test setup.
     cmd = (
         'python -m charex',
         'denormal',
@@ -336,18 +225,7 @@ def test_denormal_random(capsys):
         '-r',
         '-s', 'spam'
     )
-    orig_cmd = sys.argv
-    sys.argv = cmd
-
-    # Run test.
-    m.parse_invocation()
-
-    # Gather actual result and compare.
-    captured = capsys.readouterr()
-    assert captured.out == exp
-
-    # Test tear down.
-    sys.argv = orig_cmd
+    cli_test(exp, cmd, capsys)
 
 
 # Test details mode.
@@ -355,28 +233,14 @@ def test_details(capsys):
     """Called with a character, details mode should the details for the
     character.
     """
-    # Expected result.
     with open('tests/data/details_mode_A.txt') as fh:
         exp = fh.read()
-
-    # Test setup.
     cmd = (
         'python -m charex',
         'details',
         'A'
     )
-    orig_cmd = sys.argv
-    sys.argv = cmd
-
-    # Run test.
-    m.parse_invocation()
-
-    # Gather actual result and compare.
-    captured = capsys.readouterr()
-    assert captured.out == exp
-
-    # Test tear down.
-    sys.argv = orig_cmd
+    cli_test(exp, cmd, capsys)
 
 
 # Test escape mode.
@@ -384,55 +248,27 @@ def test_escape(capsys):
     """Called with a base string, escape mode should escape the string
     using the "url" scheme and display the escaped string.
     """
-    # Expected result.
     exp = '%41\n\n'
-
-    # Test setup.
     cmd = (
         'python -m charex',
         'escape',
         'A',
     )
-    orig_cmd = sys.argv
-    sys.argv = cmd
-
-    # Run test.
-    m.parse_invocation()
-
-    # Gather actual result and compare.
-    captured = capsys.readouterr()
-    assert captured.out == exp
-
-    # Test tear down.
-    sys.argv = orig_cmd
+    cli_test(exp, cmd, capsys)
 
 
 def test_escape_with_scheme(capsys):
     """Invoked with a base string and a scheme, escape mode should
     escape the string using the scheme and display the escaped string.
     """
-    # Expected result.
     exp = '&#65;\n\n'
-
-    # Test setup.
     cmd = (
         'python -m charex',
         'escape',
         'A',
         '-s', 'html',
     )
-    orig_cmd = sys.argv
-    sys.argv = cmd
-
-    # Run test.
-    m.parse_invocation()
-
-    # Gather actual result and compare.
-    captured = capsys.readouterr()
-    assert captured.out == exp
-
-    # Test tear down.
-    sys.argv = orig_cmd
+    cli_test(exp, cmd, capsys)
 
 
 # Test esclist mode.
@@ -440,24 +276,31 @@ def test_esclist(capsys):
     """Whne invoked, esclist mode returns a list of the registered
     escape modes.
     """
-    # Expected result.
     exp = (
         'cu\n'
+        'culong\n'
         'html\n'
+        'htmlhex\n'
+        'htmlnamed\n'
         'url\n'
         '\n'
     )
-
-    # Test setup.
     cmd = (
         'python -m charex',
         'esclist',
     )
+    cli_test(exp, cmd, capsys)
+
+
+# Utility functions.
+def cli_test(exp, cmd, capsys):
+    """Test command line invocation."""
+    # Test set up.
     orig_cmd = sys.argv
     sys.argv = cmd
 
     # Run test.
-    m.parse_invocation()
+    m.sh.parse_invocation()
 
     # Gather actual result and compare.
     captured = capsys.readouterr()

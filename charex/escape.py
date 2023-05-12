@@ -5,6 +5,9 @@ escape
 Character escape schemes.
 """
 from collections.abc import Callable
+from json import loads
+
+from charex import util
 
 
 # Registry.
@@ -28,6 +31,24 @@ class reg_escape:
         return fn
 
 
+# Caches.
+cached_entities: dict[str, str] = {}
+
+
+# Load data.
+def get_named_entity(char: str) -> str:
+    """Get a named entity from the HTML entity data."""
+    lines = util.read_resource('entities')
+    json = ''.join(lines)
+    data = loads(json)
+    by_char = {data[key]['characters']: key for key in data}
+    try:
+        cached_entities[char] = by_char[char]
+    except KeyError:
+        cached_entities[char] = escape_html(char, '')
+    return cached_entities[char]
+
+
 # Escape schemes.
 @reg_escape('cu')
 def escape_cu(char: str, codec: str) -> str:
@@ -46,10 +67,28 @@ def escape_cu(char: str, codec: str) -> str:
         s = b.decode('ascii')
         return f'\\U{s[2:]:>08}'
 
+@reg_escape('culong')
+def escape_culong(char: str, codec: str) -> str:
+    """Escape scheme for four byte C/C++ Unicode escape sequences.
+
+    :param char: The character to escape.
+    :param codec: Unused.
+    :return: The escaped character as a :class:`str`.
+    :rtype: str
+    """
+    try:
+        x = ord(char)
+        return f'\\U{x:08x}'
+    except TypeError as ex:
+        b = char.encode('unicode_escape')
+        s = b.decode('ascii')
+        x = s[2:]
+        return f'\\U{s[2:]:>08}'
+
 
 @reg_escape('html')
 def escape_html(char: str, codec: str) -> str:
-    """Escape scheme for HTML entities.
+    """Escape scheme for HTML decimal numeric character references.
 
     :param char: The character to escape.
     :param codec: Unused.
@@ -58,6 +97,36 @@ def escape_html(char: str, codec: str) -> str:
     """
     n = ord(char)
     return f'&#{n};'
+
+
+@reg_escape('htmlhex')
+def escape_htmlhex(char: str, codec: str) -> str:
+    """Escape scheme for HTML hexadecimal numeric character references.
+
+    :param char: The character to escape.
+    :param codec: Unused.
+    :return: The escaped character as a :class:`str`.
+    :rtype: str
+    """
+    n = ord(char)
+    h = hex(n)
+    return f'&#x{h[2:]};'
+
+
+@reg_escape('htmlnamed')
+def escape_htmlnamed(char: str, codec: str) -> str:
+    """Escape scheme for HTML named character references. It will return
+    the decimal numeric character references if no named entity exists.
+
+    :param char: The character to escape.
+    :param codec: Unused.
+    :return: The escaped character as a :class:`str`.
+    :rtype: str
+    """
+    try:
+        return cached_entities[char]
+    except KeyError:
+        return get_named_entity(char)
 
 
 @reg_escape('url')

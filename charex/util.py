@@ -32,6 +32,9 @@ RESOURCES = {
     'propvals': 'PropertyValueAliases.txt',
     'unicodedata': 'UnicodeData.txt',
 
+    # HTML data.
+    'entities': 'entities.json',
+
     # HTML examples.
     'result': 'result.html',
     'quote': 'quote.html',

@@ -93,6 +93,7 @@ def expand_property_value(alias: str, proptype: str) -> str:
     return by_alias[alias]
 
 
+# Data parsing functions.
 def parse_property_values(
     lines: Sequence[str],
     proptype: str

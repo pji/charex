@@ -37,6 +37,16 @@ def test_escape_cu_4_byte():
     assert esc.escape_cu('\u10000', '') == exp
 
 
+# Test escape_culong.
+def test_escape_culong():
+    """Given a character and a codec, return the C/C++ Unicode escape
+    sequence for the character. Note: the codec doesn't do anything,
+    it's just here for compatibility.
+    """
+    exp = r'\U00000061'
+    assert esc.escape_culong('a', '') == exp
+
+
 # Test escape_html.
 def test_escape_html():
     """Given a character and a codec, return the HTML entity for the
@@ -44,6 +54,34 @@ def test_escape_html():
     """
     exp = '&#97;'
     assert esc.escape_html('a', 'utf8')
+
+
+# Test escape_htmlhex.
+def test_escape_htmlhex():
+    """Given a character and a codec, return the HTML hexadecimal
+    entity for the given character. Note: codec doesn't do anything,
+    it's just included for compatibility.
+    """
+    exp = '&#x61;'
+    assert esc.escape_htmlhex('a', '')
+
+
+# Test escape_htmlnamed.
+def test_htmlnamed():
+    """Given a character and a codec, return the HTML named entity for
+    the given character. Note: codec doesn't do anything, it's just
+    included for compatibility."""
+    exp = "&qout;"
+    assert esc.escape_htmlnamed('"', '')
+
+
+def test_htmlnamed_no_name():
+    """Given a character and a codec, return the HTML named entity for
+    the given character. Note: codec doesn't do anything, it's just
+    included for compatibility. If there is no specific named entity,
+    return the decimal encoded entity."""
+    exp = "&#97;"
+    assert esc.escape_htmlnamed('a', '')
 
 
 # Test escape_url.
