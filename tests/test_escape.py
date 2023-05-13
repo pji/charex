@@ -145,6 +145,115 @@ def test_escape_javau_4_byte_character():
     assert esc.escape_javau('\U00010000', '') == exp
 
 
+# Test escape_js.
+def test_escape_js():
+    """Given a character and a codec, return the JavaScript escape
+    sequence for the character. Note: the codec doesn't do anything,
+    it's just here for compatibility.
+    """
+    exp = r'\n'
+    assert esc.escape_js('\u000A', '') == exp
+
+
+# Test escape_jso.
+def test_escape_jso():
+    """Given a character and a codec, return the JavaScript octal escape
+    sequence for the character. Note: the codec doesn't do anything,
+    it's just here for compatibility.
+    """
+    exp = r'\141'
+    assert esc.escape_jso('a', '') == exp
+
+
+# Test escape_jsu.
+def test_escape_jsu():
+    """Given a character and a codec, return the JavaScript Unicode
+    escape sequence for the character. Note: the codec doesn't do
+    anything, it's just here for compatibility.
+    """
+    exp = r'\u0041'
+    assert esc.escape_jsu('A', '') == exp
+
+
+def test_escape_jsu_4_byte_character():
+    """Given a character and a codec, return the JavaScript Unicode
+    escape sequence for the character. Note: the codec doesn't do
+    anything, it's just here for compatibility.
+    """
+    exp = r'\u{10000}'
+    assert esc.escape_jsu('\U00010000', '') == exp
+
+
+# Test escape_jscp.
+def test_escape_jscp():
+    """Given a character and a codec, return the JavaScript code point
+    escape sequence for the character. Note: the codec doesn't do
+    anything, it's just here for compatibility.
+    """
+    exp = r'\u{41}'
+    assert esc.escape_jscp('A', '') == exp
+
+
+# Test escape_json.
+def test_escape_json():
+    """Given a character and a codec, return the JSON escape
+    sequence for the character. Note: the codec doesn't do anything,
+    it's just here for compatibility.
+    """
+    exp = r'\n'
+    assert esc.escape_json('\u000A', '') == exp
+
+
+# Test escape_jsonu.
+def test_escape_jsonu():
+    """Given a character and a codec, return the JSON Unicode escape
+    sequence for the character. Note: the codec doesn't do anything,
+    it's just here for compatibility.
+    """
+    exp = r'\u0041'
+    assert esc.escape_jsonu('A', '') == exp
+
+
+def test_escape_jsonu_special():
+    """Given a character and a codec, return the JSON Unicode escape
+    sequence for the character. Note: the codec doesn't do anything,
+    it's just here for compatibility.
+    """
+    exp = r'\u000a'
+    assert esc.escape_jsonu('\n', '') == exp
+
+
+def test_escape_jsonu_4_byte_character():
+    """Given a character and a codec, return the Java Unicode escape
+    sequence for the character. Note: the codec doesn't do anything,
+    it's just here for compatibility. Characters over U+FFFF have to
+    be returned as two characters because Java encodes strings with
+    UTF-16.
+    """
+    exp = r'\ud800\udc00'
+    assert esc.escape_jsonu('\U00010000', '') == exp
+
+
+# Test escape_sql.
+def test_escape_sql():
+    """Given a character and a codec, return the SQL escape
+    sequence for the character. Note: the codec doesn't do anything,
+    it's just here for compatibility.
+    """
+    exp = r'\n'
+    assert esc.escape_sql('\u000A', '') == exp
+
+
+# Test escape_sqldoublequote.
+def test_escape_sqldoublequote():
+    """Given a character and a codec, return the SQL escape
+    sequence for the character. Note: the codec doesn't do anything,
+    it's just here for compatibility.
+    """
+    exp = r'""'
+    assert esc.escape_sqldoublequote('\u0022', '') == exp
+
+
 # Test escape_url.
 def test_escape_url():
     """Given a character and a codec, return the URL encoding for the

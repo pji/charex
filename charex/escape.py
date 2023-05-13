@@ -35,7 +35,12 @@ class reg_escape:
         return fn
 
 
-# Load data.
+# Exceptions.
+class EscapeError(ValueError):
+    """The escape scheme could not escape the character."""
+
+
+# Utility functions.
 def get_named_entity(char: str) -> str:
     """Get a named entity from the HTML entity data."""
     lines = util.read_resource('entities')
@@ -47,6 +52,80 @@ def get_named_entity(char: str) -> str:
     except KeyError:
         cached_entities[char] = escape_html(char, '')
     return cached_entities[char]
+
+
+def hex_byte_escape(char: str) -> str:
+    """Perform the common single hexadecimal byte escape on the
+    character.
+
+    :param char: The character to escape.
+    :return: The escaped character as a :class:`str`.
+    :rtype: str
+    """
+    n = ord(char)
+    if n > 0xFF:
+        raise EscapeError('Cannot escape characters over 0xFF.')
+    return f'\\x{n:02x}'
+
+
+def lookup_escape(char: str, table: dict[str, str]) -> str:
+    """Perform a table lookup to escape the character.
+
+    :param char: The character to escape.
+    :param table: The table for the lookup.
+    :return: The escaped character as a :class:`str`.
+    :rtype: str
+    """
+    try:
+        return table[char]
+    except KeyError:
+        raise EscapeError('Character not in table.')
+
+
+def octal_escape(char: str) -> str:
+    """Perform the common octal escape on the character.
+
+    :param char: The character to escape.
+    :return: The escaped character as a :class:`str`.
+    :rtype: str
+    """
+    n = ord(char)
+    if n > 0o377:
+        raise EscapeError('Cannot escape characters over 0o377.')
+    return f'\\{n:o}'
+
+
+def unicode_2_byte_escape(char: str) -> str:
+    """Perform the common Unicode two byte escape on the
+    character.
+
+    :param char: The character to escape.
+    :return: The escaped character as a :class:`str`.
+    :rtype: str
+    """
+    n = ord(char)
+    if n > 0xFFFF:
+        raise EscapeError('Cannot escape characters over 0xFFFF.')
+    return f'\\u{n:04x}'
+
+
+def unicode_utf16_escape(char: str) -> str:
+    """Perform the common Unicode UTF-16 escape on the character.
+
+    :param char: The character to escape.
+    :return: The escaped character as a :class:`str`.
+    :rtype: str
+    """
+    try:
+        return unicode_2_byte_escape(char)
+    except EscapeError:
+        b = char.encode('utf_16_be')
+        result = ''
+        for i in range(0, len(b), 2):
+            result += '\\u'
+            result += f'{b[i]:02x}'
+            result += f'{b[i + 1]:02x}'
+        return result
 
 
 # Escape schemes.
@@ -75,9 +154,10 @@ def escape_c(char: str, codec: str) -> str:
         '\u003f': r'\?',
         '\u005c': r'\\',
     }
-    if char in table:
-        return table[char]
-    return char
+    try:
+        return lookup_escape(char, table)
+    except EscapeError:
+        return escape_co(char, codec)
 
 
 @reg_escape('co')
@@ -91,10 +171,10 @@ def escape_co(char: str, codec: str) -> str:
     :return: The escaped character as a :class:`str`.
     :rtype: str
     """
-    n = ord(char)
-    if n > 0o777:
+    try:
+        return octal_escape(char)
+    except EscapeError:
         return escape_cu(char, codec)
-    return f'\\{n:o}'
 
 
 @reg_escape('cu')
@@ -106,10 +186,10 @@ def escape_cu(char: str, codec: str) -> str:
     :return: The escaped character as a :class:`str`.
     :rtype: str
     """
-    x = ord(char)
-    if x > 0xFFFF:
+    try:
+        return unicode_2_byte_escape(char)
+    except EscapeError:
         return escape_culong(char, codec)
-    return f'\\u{x:04x}'
 
 
 @reg_escape('culong')
@@ -190,9 +270,10 @@ def escape_java(char: str, codec: str) -> str:
         '\u0022': r'\"',
         '\u005c': r'\\',
     }
-    if char in table:
-        return table[char]
-    return escape_javao(char, codec)
+    try:
+        return lookup_escape(char, table)
+    except EscapeError:
+        return escape_javao(char, codec)
 
 
 @reg_escape('javao')
@@ -207,10 +288,10 @@ def escape_javao(char: str, codec: str) -> str:
     :return: The escaped character as a :class:`str`.
     :rtype: str
     """
-    n = ord(char)
-    if n > 0o377:
+    try:
+        return octal_escape(char)
+    except EscapeError:
         return escape_javau(char, codec)
-    return f'\\{n:o}'
 
 
 @reg_escape('javau')
@@ -225,13 +306,197 @@ def escape_javau(char: str, codec: str) -> str:
     :return: The escaped character as a :class:`str`.
     :rtype: str
     """
-    b = char.encode('utf_16_be')
-    result = ''
-    for i in range(0, len(b), 2):
-        result += '\\u'
-        result += f'{b[i]:02x}'
-        result += f'{b[i + 1]:02x}'
-    return result
+    return unicode_utf16_escape(char)
+
+
+@reg_escape('js')
+def escape_js(char: str, codec: str) -> str:
+    """Escape scheme for JavaScript encoding, based on the ECMA-262
+    Specification `here.`_
+
+    .. _here: https://262.ecma-international.org/13.0/\
+#sec-literals-string-literals
+
+    :param char: The character to escape.
+    :param codec: The character set to use when encoding the character.
+    :return: The escaped character as a :class:`str`.
+    :rtype: str
+    """
+    table = {
+        '\u0008': r'\b',
+        '\u0009': r'\t',
+        '\u000a': r'\n',
+        '\u000b': r'\v',
+        '\u000c': r'\f',
+        '\u000d': r'\r',
+        '\u0022': r'\"',
+        '\u005c': r'\\',
+    }
+    try:
+        return lookup_escape(char, table)
+    except EscapeError:
+        return escape_jso(char, codec)
+
+
+@reg_escape('jso')
+def escape_jso(char: str, codec: str) -> str:
+    """Escape scheme for JavaScript octal encoding, based on the
+    ECMA-262 Specification `here.`_
+
+    .. _here: https://262.ecma-international.org/13.0/\
+#sec-literals-string-literals
+
+    :param char: The character to escape.
+    :param codec: The character set to use when encoding the character.
+    :return: The escaped character as a :class:`str`.
+    :rtype: str
+    """
+    try:
+        return octal_escape(char)
+    except EscapeError:
+        return escape_jsu(char, codec)
+
+
+@reg_escape('jsu')
+def escape_jsu(char: str, codec: str) -> str:
+    """Escape scheme for JavaScript unicode encoding, based on the
+    ECMA-262 Specification `here.`_
+
+    .. _here: https://262.ecma-international.org/13.0/\
+#sec-literals-string-literals
+
+    :param char: The character to escape.
+    :param codec: Unused.
+    :return: The escaped character as a :class:`str`.
+    :rtype: str
+    """
+    try:
+        return unicode_2_byte_escape(char)
+    except EscapeError:
+        return escape_jscp(char, codec)
+
+
+@reg_escape('jscp')
+def escape_jscp(char: str, codec: str) -> str:
+    """Escape scheme for JavaScript code point encoding, based on the
+    ECMA-262 Specification `here.`_
+
+    .. _here: https://262.ecma-international.org/13.0/\
+#sec-literals-string-literals
+
+    :param char: The character to escape.
+    :param codec: The character set to use when encoding the character.
+    :return: The escaped character as a :class:`str`.
+    :rtype: str
+    """
+    x = ord(char)
+    return f'\\u{{{x:x}}}'
+
+
+@reg_escape('json')
+def escape_json(char: str, codec: str) -> str:
+    """Escape scheme for JSON encoding, based on the ECMA-404
+    Specification `here.`_
+
+    .. _here: https://www.ecma-international.org/publications-and-standards/\
+standards/ecma-404/ECMA-404_2nd_edition_december_2017.pdf
+
+    :param char: The character to escape.
+    :param codec: The character set to use when encoding the character.
+    :return: The escaped character as a :class:`str`.
+    :rtype: str
+    """
+    table = {
+        '\u0022': r'\"',
+        '\u005c': r'\\',
+        '\u002f': r'\/',
+        '\u0008': r'\b',
+        '\u000c': r'\f',
+        '\u000a': r'\n',
+        '\u000d': r'\r',
+        '\u0009': r'\t',
+    }
+    if char in table:
+        return table[char]
+    return escape_jsonu(char, codec)
+
+
+@reg_escape('jsonu')
+def escape_jsonu(char: str, codec: str) -> str:
+    """Escape scheme for JSON Unicode encoding, based on the ECMA-404
+    Specification `here.`_
+
+    .. _here: https://www.ecma-international.org/publications-and-standards/\
+standards/ecma-404/ECMA-404_2nd_edition_december_2017.pdf
+
+    :param char: The character to escape.
+    :param codec: The character set to use when encoding the character.
+    :return: The escaped character as a :class:`str`.
+    :rtype: str
+    """
+    return unicode_utf16_escape(char)
+
+
+@reg_escape('sql')
+def escape_sql(char: str, codec: str) -> str:
+    """Escape scheme for MySQL encoding, based on the MySQL
+    Specification `here.`_
+
+    .. _here: https://dev.mysql.com/doc/refman/8.0/en/string-literals.html
+
+    :param char: The character to escape.
+    :param codec: The character set to use when encoding the character.
+    :return: The escaped character as a :class:`str`.
+    :rtype: str
+    """
+    table = {
+        '\u0000': r'\0',
+        '\u0027': r"\'",
+        '\u0022': r'\"',
+        '\u0008': r'\b',
+        '\u000a': r'\n',
+        '\u000d': r'\r',
+        '\u0009': r'\t',
+        '\u0026': r'\Z',
+        '\u005c': r'\\',
+        '\u0025': r'\%',
+        '\u005f': r'\_',
+    }
+    try:
+        return lookup_escape(char, table)
+    except EscapeError:
+        return char
+
+
+@reg_escape('sqldoublequote')
+def escape_sqldoublequote(char: str, codec: str) -> str:
+    """Escape scheme for MySQL encoding, based on the MySQL
+    Specification `here.`_
+
+    .. _here: https://dev.mysql.com/doc/refman/8.0/en/string-literals.html
+
+    :param char: The character to escape.
+    :param codec: The character set to use when encoding the character.
+    :return: The escaped character as a :class:`str`.
+    :rtype: str
+    """
+    table = {
+        '\u0000': r'\0',
+        '\u0027': r"''",
+        '\u0022': r'""',
+        '\u0008': r'\b',
+        '\u000a': r'\n',
+        '\u000d': r'\r',
+        '\u0009': r'\t',
+        '\u0026': r'\Z',
+        '\u005c': r'\\',
+        '\u0025': r'\%',
+        '\u005f': r'\_',
+    }
+    try:
+        return lookup_escape(char, table)
+    except EscapeError:
+        return char
 
 
 @reg_escape('url')
