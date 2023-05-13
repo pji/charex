@@ -13,7 +13,7 @@ import charex.shell as sh
 if __name__ == '__main__':
     # If there were no arguments passed, drop into the command shell.
     if len(argv) < 2:
-        sh.mode_shell(None)
+        sh.mode_sh(None)
 
     # Otherwise parse the arguments and execute.
     else:

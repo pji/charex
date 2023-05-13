@@ -6,9 +6,8 @@ Unit tests for the mainline of the `charex` package.
 """
 import sys
 
-import pytest as pt
-
-import charex.__main__ as m
+from charex import __main__ as m
+from charex import escape as esc
 
 
 # Test cd mode.
@@ -165,10 +164,10 @@ def test_ct_maxdepth(capsys):
     cli_test(exp, cmd, capsys)
 
 
-# Test denormal mode.
-def test_denormal(capsys):
-    """Called with a base string, denormal mode should print the
-    denormalizations for the base string to stdout.
+# Test dn mode.
+def test_dn(capsys):
+    """Invoked with a normalization form and a base string, dn mode
+    should print the denormalizations for the base string to stdout.
     """
     # Expected result.
     exp = (
@@ -184,14 +183,15 @@ def test_denormal(capsys):
     )
     cmd = (
         'python -m charex',
-        'denormal',
+        'dn',
+        'nfkd',
         '<->'
     )
     cli_test(exp, cmd, capsys)
 
 
-def test_denormal_number(capsys):
-    """Called with -n and an integer, denormal mode should return no
+def test_dn_number(capsys):
+    """Invoked with -n and an integer, dn mode should return no
     more than that number of results.
     """
     exp = (
@@ -203,16 +203,17 @@ def test_denormal_number(capsys):
     )
     cmd = (
         'python -m charex',
-        'denormal',
+        'dn',
+        'nfkd',
         '<->',
         '-n', '4'
     )
     cli_test(exp, cmd, capsys)
 
 
-def test_denormal_random(capsys):
-    """Called with -r, denormal mode should return a randomly
-    denormalized string.
+def test_dn_random(capsys):
+    """Called with -r, dn mode should return a randomly
+    denormalize the string.
     """
     exp = (
         '﹤－﹥\n'
@@ -220,7 +221,8 @@ def test_denormal_random(capsys):
     )
     cmd = (
         'python -m charex',
-        'denormal',
+        'dn',
+        'nfkd',
         '<->',
         '-r',
         '-s', 'spam'
@@ -228,66 +230,46 @@ def test_denormal_random(capsys):
     cli_test(exp, cmd, capsys)
 
 
-# Test details mode.
-def test_details(capsys):
-    """Called with a character, details mode should the details for the
-    character.
+# Test dt mode.
+def test_dt(capsys):
+    """Invoked with a character, details mode should print the details
+    for the character.
     """
     with open('tests/data/details_mode_A.txt') as fh:
         exp = fh.read()
     cmd = (
         'python -m charex',
-        'details',
+        'dt',
         'A'
     )
     cli_test(exp, cmd, capsys)
 
 
-# Test escape mode.
-def test_escape(capsys):
-    """Called with a base string, escape mode should escape the string
-    using the "url" scheme and display the escaped string.
+# Test el mode.
+def test_el(capsys):
+    """When invoked, el mode returns a list of the registered
+    escape schemes.
+    """
+    exp = '\n'.join(scheme for scheme in esc.schemes) + '\n\n'
+    cmd = (
+        'python -m charex',
+        'el',
+    )
+    cli_test(exp, cmd, capsys)
+
+
+# Test es mode.
+def test_es(capsys):
+    """Invoked with a scheme and a base string, escape mode should
+    escape the string using the given scheme and print the escaped
+    string.
     """
     exp = '%41\n\n'
     cmd = (
         'python -m charex',
-        'escape',
+        'es',
+        'url',
         'A',
-    )
-    cli_test(exp, cmd, capsys)
-
-
-def test_escape_with_scheme(capsys):
-    """Invoked with a base string and a scheme, escape mode should
-    escape the string using the scheme and display the escaped string.
-    """
-    exp = '&#65;\n\n'
-    cmd = (
-        'python -m charex',
-        'escape',
-        'A',
-        '-s', 'html',
-    )
-    cli_test(exp, cmd, capsys)
-
-
-# Test esclist mode.
-def test_esclist(capsys):
-    """Whne invoked, esclist mode returns a list of the registered
-    escape modes.
-    """
-    exp = (
-        'cu\n'
-        'culong\n'
-        'html\n'
-        'htmlhex\n'
-        'htmlnamed\n'
-        'url\n'
-        '\n'
-    )
-    cmd = (
-        'python -m charex',
-        'esclist',
     )
     cli_test(exp, cmd, capsys)
 

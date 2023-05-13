@@ -4,6 +4,7 @@ test_shell
 
 Unit tests for :mod:`charex.shell`.
 """
+from charex import escape as esc
 from charex import shell as sh
 
 
@@ -88,6 +89,108 @@ def test_ct_maxdepth(capsys):
     """
     exp = '256\n\n'
     cmd = 'ct nfkd <script> -m 2'
+    shell_test(exp, cmd, capsys)
+
+
+# Test dn mode.
+def test_dn(capsys):
+    """Invoked with a normalization form and a base string, dn mode
+    should print the denormalizations for the base string to stdout.
+    """
+    # Expected result.
+    exp = (
+        '\ufe64\ufe63\ufe65\n'
+        '\ufe64\ufe63\uff1e\n'
+        '\ufe64\uff0d\ufe65\n'
+        '\ufe64\uff0d\uff1e\n'
+        '\uff1c\ufe63\ufe65\n'
+        '\uff1c\ufe63\uff1e\n'
+        '\uff1c\uff0d\ufe65\n'
+        '\uff1c\uff0d\uff1e\n'
+        '\n'
+    )
+    cmd = (
+        'dn '
+        'nfkd '
+        '<->'
+    )
+    shell_test(exp, cmd, capsys)
+
+
+def test_dn_number(capsys):
+    """Invoked with -n and an integer, dn mode should return no
+    more than that number of results.
+    """
+    exp = (
+        '\ufe64\ufe63\ufe65\n'
+        '\ufe64\ufe63\uff1e\n'
+        '\ufe64\uff0d\ufe65\n'
+        '\ufe64\uff0d\uff1e\n'
+        '\n'
+    )
+    cmd = (
+        'dn '
+        'nfkd '
+        '<-> '
+        '-n 4'
+    )
+    shell_test(exp, cmd, capsys)
+
+
+def test_dn_random(capsys):
+    """Called with -r, dn mode should return a randomly
+    denormalize the string.
+    """
+    exp = (
+        '﹤－﹥\n'
+        '\n'
+    )
+    cmd = (
+        'dn '
+        'nfkd '
+        '<-> '
+        '-r '
+        '-s spam'
+    )
+    shell_test(exp, cmd, capsys)
+
+
+# Test dt mode.
+def test_dt(capsys):
+    """Invoked with a character, details mode should print the details
+    for the character.
+    """
+    with open('tests/data/details_mode_A.txt') as fh:
+        exp = fh.read()
+    cmd = (
+        'dt '
+        'A'
+    )
+    shell_test(exp, cmd, capsys)
+
+
+# Test el mode.
+def test_el(capsys):
+    """When invoked, el mode returns a list of the registered
+    escape schemes.
+    """
+    exp = '\n'.join(scheme for scheme in esc.schemes) + '\n\n'
+    cmd = 'el'
+    shell_test(exp, cmd, capsys)
+
+
+# Test es mode.
+def test_es(capsys):
+    """Invoked with a scheme and a base string, escape mode should
+    escape the string using the given scheme and print the escaped
+    string.
+    """
+    exp = '%41\n\n'
+    cmd = (
+        'es '
+        'url '
+        'A'
+    )
     shell_test(exp, cmd, capsys)
 
 

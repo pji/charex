@@ -1,8 +1,0 @@
-NAME
-    el - list the registered escape schemes
-
-SYNOPSIS
-    el
-
-DESCRIPTION
-    Lists the registered escape schemes.

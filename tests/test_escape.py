@@ -17,6 +17,26 @@ def test_escape():
     assert esc.escape('spam', 'url')
 
 
+# Test escape_c.
+def test_escape_c():
+    """Given a character and a codec, return the C/C++ escape
+    sequence for the character. Note: the codec doesn't do anything,
+    it's just here for compatibility.
+    """
+    exp = r'\n'
+    assert esc.escape_c('\u000a', '') == exp
+
+
+# Test escape_co.
+def test_escape_co():
+    """Given a character and a codec, return the C/C++ octal escape
+    sequence for the character. Note: the codec doesn't do anything,
+    it's just here for compatibility.
+    """
+    exp = r'\141'
+    assert esc.escape_co('a', '') == exp
+
+
 # Test escape_cu.
 def test_escape_cu():
     """Given a character and a codec, return the C/C++ Unicode escape
@@ -34,7 +54,7 @@ def test_escape_cu_4_byte():
     codec doesn't do anything, it's just here for compatibility.
     """
     exp = r'\U00010000'
-    assert esc.escape_cu('\u10000', '') == exp
+    assert esc.escape_cu('\U00010000', '') == exp
 
 
 # Test escape_culong.
@@ -82,6 +102,47 @@ def test_htmlnamed_no_name():
     return the decimal encoded entity."""
     exp = "&#97;"
     assert esc.escape_htmlnamed('a', '')
+
+
+# Test escape_java.
+def test_escape_java():
+    """Given a character and a codec, return the Java escape
+    sequence for the character. Note: the codec doesn't do anything,
+    it's just here for compatibility.
+    """
+    exp = r'\n'
+    assert esc.escape_java('\u000A', '') == exp
+
+
+# Test escape_javao.
+def test_escape_javao():
+    """Given a character and a codec, return the Java octal escape
+    sequence for the character. Note: the codec doesn't do anything,
+    it's just here for compatibility.
+    """
+    exp = r'\141'
+    assert esc.escape_javao('a', '') == exp
+
+
+# Test escape_javau.
+def test_escape_javau():
+    """Given a character and a codec, return the Java Unicode escape
+    sequence for the character. Note: the codec doesn't do anything,
+    it's just here for compatibility.
+    """
+    exp = r'\u0041'
+    assert esc.escape_javau('A', '') == exp
+
+
+def test_escape_javau_4_byte_character():
+    """Given a character and a codec, return the Java Unicode escape
+    sequence for the character. Note: the codec doesn't do anything,
+    it's just here for compatibility. Characters over U+FFFF have to
+    be returned as two characters because Java encodes strings with
+    UTF-16.
+    """
+    exp = r'\ud800\udc00'
+    assert esc.escape_javau('\U00010000', '') == exp
 
 
 # Test escape_url.

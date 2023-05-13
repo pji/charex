@@ -25,7 +25,7 @@ part is what's interesting to me, and where a lot of fun problems lie.
 How Do I Use This?
 ==================
 Right now, the best way to use it is to clone the repository. Then in
-the root of the repository, run `charex` as a module::
+the root of the repository, run `charex` as a module.::
 
     python -m charex
 
@@ -53,7 +53,6 @@ From here you can type `?` to see the list of available commands::
     *  el: List the registered escape schemes.
     *  es: Escape the string.
     *  help: Display command list.
-    *  rd: Return random results from a denormalization.
     *  xt: Exit the charex shell.
 
     For help on individual commands, use "help {command}".

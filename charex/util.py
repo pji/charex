@@ -12,14 +12,6 @@ import unicodedata as ucd
 # Constants.
 RESOURCES = {
     # Command help.
-    'help_cd': 'help_cd.txt',
-    'help_ce': 'help_ce.txt',
-    'help_cl': 'help_cl.txt',
-    'help_count': 'help_count.txt',
-    'help_dn': 'help_dn.txt',
-    'help_dt': 'help_dt.txt',
-    'help_es': 'help_es.txt',
-    'help_rd': 'help_rd.txt',
     'help_xt': 'help_xt.txt',
 
     # Denormalization lookups.

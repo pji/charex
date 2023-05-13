@@ -7,6 +7,7 @@ An interactive command shell for :mod:`charex`.
 from argparse import ArgumentParser, Namespace, _SubParsersAction
 from cmd import Cmd
 import readline
+from shlex import split
 from textwrap import wrap
 
 from charex import charex as ch
@@ -16,44 +17,21 @@ from charex import escape as esc
 from charex import util
 
 
-# Cached values.
-p: ArgumentParser | None = None
+# Running modes.
+def mode_cd(args: Namespace) -> None:
+    """Decode the given address in all codecs.
 
-
-# Output functions.
-def write_cset_list(show_desc=False) -> None:
-    """Print the registered character sets."""
-    # Get the data.
-    codecs = cset.get_codecs()
-
-    # Print the data.
-    width = max(len(codec) for codec in codecs)
-    for codec in codecs:
-        if show_desc:
-            descript = cset.get_codec_description(codec)
-            if descript:
-                wrapped = wrap(descript, 77 - width)
-                print(f'{codec:<{width}}  {wrapped[0]}')
-                for line in wrapped[1:]:
-                    print(f'{"":<{width}}  {line}')
-            else:
-                print(codec)
-        else:
-            print(codec)
-    print()
-
-
-def write_cset_multidecode(value: str) -> None:
-    """Print the character that the given hex string decodes to in each
-    registered character set.
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
     """
     # Normalize the data.
-    if value.startswith('0b'):
-        b = util.bin2bytes(value[2:])
-    elif value.startswith('0x'):
-        b = util.hex2bytes(value[2:])
+    if args.base.startswith('0b'):
+        b = util.bin2bytes(args.base[2:])
+    elif args.base.startswith('0x'):
+        b = util.hex2bytes(args.base[2:])
     else:
-        b = value.encode('utf8')
+        b = args.base.encode('utf8')
 
     # Get the data.
     codecs = cset.get_codecs()
@@ -76,11 +54,16 @@ def write_cset_multidecode(value: str) -> None:
     print()
 
 
-def write_cset_multiencode(value: str) -> None:
-    """Print the addresses for the character in each character set."""
+def mode_ce(args: Namespace) -> None:
+    """Encode the given character in all codecs.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
     # Get the data.
     codecs = cset.get_codecs()
-    results = cset.multiencode(value, (codec for codec in codecs))
+    results = cset.multiencode(args.base, (codec for codec in codecs))
 
     # Write the output.
     width = max(len(codec) for codec in codecs)
@@ -91,8 +74,72 @@ def write_cset_multiencode(value: str) -> None:
     print()
 
 
-def write_char_detail(codepoint) -> None:
-    """Print the details of the given character."""
+def mode_cl(args: Namespace) -> None:
+    """List registered character sets.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    # Get the data.
+    codecs = cset.get_codecs()
+
+    # Print the data.
+    width = max(len(codec) for codec in codecs)
+    for codec in codecs:
+        if args.description:
+            descript = cset.get_codec_description(codec)
+            if descript:
+                wrapped = wrap(descript, 77 - width)
+                print(f'{codec:<{width}}  {wrapped[0]}')
+                for line in wrapped[1:]:
+                    print(f'{"":<{width}}  {line}')
+            else:
+                print(codec)
+        else:
+            print(codec)
+    print()
+
+
+def mode_ct(args: Namespace) -> None:
+    """Count denormalization results.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    count = dn.count_denormalizations(args.base, args.form, args.maxdepth)
+    print(f'{count:,}')
+    print()
+
+
+def mode_dn(args: Namespace) -> None:
+    """Perform denormalizations.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    results = dn.denormalize(
+        args.base,
+        args.form,
+        args.maxdepth,
+        args.number,
+        args.random,
+        args.seed
+    )
+    for result in results:
+        print(result)
+    print()
+
+
+def mode_dt(args: Namespace) -> None:
+    """Display details for a code point.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
     def rev_normalize(char: ch.Character, form: str) -> str:
         points = char.reverse_normalize(form)
         chars = (ch.Character(point) for point in points)
@@ -102,7 +149,7 @@ def write_char_detail(codepoint) -> None:
         return ('\n' + ' ' * 22).join(v for v in values)
 
     # Gather the details for display.
-    char = ch.Character(codepoint)
+    char = ch.Character(args.codepoint)
     details = (
         ('display', char.value),
         ('name', char.name),
@@ -131,147 +178,32 @@ def write_char_detail(codepoint) -> None:
     print()
 
 
-def write_count_denormalizations(base: str, form: str, maxdepth: int) -> None:
-    """Print the number of denormalizations for the given character
-    and form.
-    """
-    count = dn.count_denormalizations(base, form, maxdepth)
-    print(f'{count:,}')
-    print()
-
-
-def write_denormalizations(
-    base: str,
-    form: str,
-    maxdepth: int = 0,
-    number: int = 0,
-    random: bool = False,
-    seed: bytes | int | str = ''
-) -> None:
-    """Print the denormalizations for the given string."""
-    results = dn.denormalize(
-        base,
-        form,
-        maxdepth,
-        number,
-        random,
-        seed
-    )
-    for result in results:
-        print(result)
-    print()
-
-
-def write_escape(base: str, scheme: str, codec: str = 'utf8') -> None:
-    """Print the string escaped using the given scheme."""
-    result = esc.escape(base, scheme, codec)
-    print(result)
-    print()
-
-
-def write_schemes_list() -> None:
-    """Print the names of the registered escape schemes."""
-    results = esc.get_schemes()
-    for scheme in results:
-        print(scheme)
-    print()
-
-
-# Running modes.
-def mode_cd(args: Namespace) -> None:
-    """Decode the given address in all codecs.
-
-    :param args: The arguments used when the script was invoked.
-    :return: None.
-    :rtype: NoneType
-    """
-    write_cset_multidecode(args.base)
-
-
-def mode_ce(args: Namespace) -> None:
-    """Encode the given character in all codecs.
-
-    :param args: The arguments used when the script was invoked.
-    :return: None.
-    :rtype: NoneType
-    """
-    write_cset_multiencode(args.base)
-
-
-def mode_cl(args: Namespace) -> None:
-    """List registered character sets.
-
-    :param args: The arguments used when the script was invoked.
-    :return: None.
-    :rtype: NoneType
-    """
-    write_cset_list(args.description)
-
-
-def mode_ct(args: Namespace) -> None:
-    """Count denormalization results.
-
-    :param args: The arguments used when the script was invoked.
-    :return: None.
-    :rtype: NoneType
-    """
-    write_count_denormalizations(args.base, args.form, args.maxdepth)
-
-
-def mode_denormal(args: Namespace) -> None:
-    """Perform denormalizations.
-
-    :param args: The arguments used when the script was invoked.
-    :return: None.
-    :rtype: NoneType
-    """
-    # Just count the number of denormalizations.
-    if args.count:
-        write_count_denormalizations(args.base, args.form, args.maxdepth)
-
-    # List all the denormalizations.
-    else:
-        write_denormalizations(
-            args.base,
-            args.form,
-            args.maxdepth,
-            args.number,
-            args.random,
-            args.seed
-        )
-
-
-def mode_details(args: Namespace) -> None:
-    """Display details for a code point.
-
-    :param args: The arguments used when the script was invoked.
-    :return: None.
-    :rtype: NoneType
-    """
-    write_char_detail(args.codepoint)
-
-
-def mode_escape(args: Namespace) -> None:
-    """Escape a string using the given scheme.
-
-    :param args: The arguments used when the script was invoked.
-    :return: None.
-    :rtype: NoneType
-    """
-    write_escape(args.base, args.scheme)
-
-
-def mode_esclist(args: Namespace) -> None:
+def mode_el(args: Namespace) -> None:
     """List the registered escape schemes.
 
     :param args: The arguments used when the script was invoked.
     :return: None.
     :rtype: NoneType
     """
-    write_schemes_list()
+    results = esc.get_schemes()
+    for scheme in results:
+        print(scheme)
+    print()
 
 
-def mode_shell(args: Namespace | None) -> None:
+def mode_es(args: Namespace) -> None:
+    """Escape a string using the given scheme.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    result = esc.escape(args.base, args.scheme, 'utf8')
+    print(result)
+    print()
+
+
+def mode_sh(args: Namespace | None) -> None:
     """Run :mod:`charex` in an interactive shell.
 
     :param args: The arguments used when the script was invoked.
@@ -282,6 +214,33 @@ def mode_shell(args: Namespace | None) -> None:
 
 
 # Command parsing.
+def build_parser() -> ArgumentParser:
+    """Build the argument parser.
+
+    :return: The :class:`argparse.ArgumentParser`.
+    :rtype: argparse.ArgumentParser
+    """
+    # Build the argument parser.
+    p = ArgumentParser(
+        description='Unicode and character set explorer.',
+        prog='charex'
+    )
+
+    # Build subparsers for each mode.
+    spa = p.add_subparsers(required=True)
+    parse_cd(spa)
+    parse_ce(spa)
+    parse_cl(spa)
+    parse_ct(spa)
+    parse_dn(spa)
+    parse_dt(spa)
+    parse_el(spa)
+    parse_es(spa)
+    parse_sh(spa)
+
+    return p
+
+
 def parse_cd(spa: _SubParsersAction) -> None:
     """Add the cd mode subparser.
 
@@ -342,7 +301,7 @@ def parse_cl(spa: _SubParsersAction) -> None:
         help='List the registered character sets.'
     )
     sp.add_argument(
-        '--description', '-d',
+        '-d', '--description',
         help='Show the description for the character sets.',
         action='store_true'
     )
@@ -360,13 +319,12 @@ def parse_ct(spa: _SubParsersAction) -> None:
     sp = spa.add_parser(
         'ct',
         aliases=['count',],
-        help='Count denormalization results.'
+        help='Count of denormalization results.'
     )
     sp.add_argument(
         'form',
-        help='Normalization form.',
-        action='store',
-        type=str
+        help='The Unicode normalization form for the denormalization.',
+        choices=('nfc', 'nfd', 'nfkc', 'nfkd',)
     )
     sp.add_argument(
         'base',
@@ -375,7 +333,7 @@ def parse_ct(spa: _SubParsersAction) -> None:
         type=str
     )
     sp.add_argument(
-        '--maxdepth', '-m',
+        '-m', '--maxdepth',
         help=(
             'Maximum number of reverse normalizations to use '
             'for each character.'
@@ -387,8 +345,8 @@ def parse_ct(spa: _SubParsersAction) -> None:
     sp.set_defaults(func=mode_ct)
 
 
-def parse_denormal(spa: _SubParsersAction) -> None:
-    """Add the denormal mode subparser.
+def parse_dn(spa: _SubParsersAction) -> None:
+    """Add the dn mode subparser.
 
     :param spa: The subparser action used to add a new subparser to
         the main parser.
@@ -396,9 +354,14 @@ def parse_denormal(spa: _SubParsersAction) -> None:
     :rtype: NoneType
     """
     sp = spa.add_parser(
-        'denormal',
-        aliases=['dn', 'n',],
-        help='Generate strings that normalize to the given string.'
+        'dn',
+        aliases=['denormal',],
+        help='Denormalize a string.'
+    )
+    sp.add_argument(
+        'form',
+        help='The Unicode normalization form for the denormalization.',
+        choices=('nfc', 'nfd', 'nfkc', 'nfkd',)
     )
     sp.add_argument(
         'base',
@@ -407,19 +370,7 @@ def parse_denormal(spa: _SubParsersAction) -> None:
         type=str
     )
     sp.add_argument(
-        '--count', '-c',
-        help='Count the total number of denormalizations.',
-        action='store_true'
-    )
-    sp.add_argument(
-        '--form', '-f',
-        help='Normalization form.',
-        default='nfkd',
-        action='store',
-        type=str
-    )
-    sp.add_argument(
-        '--maxdepth', '-m',
+        '-m', '--maxdepth',
         help=(
             'Maximum number of reverse normalizations to use '
             'for each character.'
@@ -429,28 +380,28 @@ def parse_denormal(spa: _SubParsersAction) -> None:
         type=int
     )
     sp.add_argument(
-        '--number', '-n',
+        '-n', '--number',
         help='Maximum number of results to return.',
         default=0,
         action='store',
         type=int
     )
     sp.add_argument(
-        '--random', '-r',
+        '-r', '--random',
         help='Randomize the denormalization.',
         action='store_true'
     )
     sp.add_argument(
-        '--seed', '-s',
+        '-s', '--seed',
         help='Seed the randomized denormalization.',
         action='store',
         default=''
     )
-    sp.set_defaults(func=mode_denormal)
+    sp.set_defaults(func=mode_dn)
 
 
-def parse_details(spa: _SubParsersAction) -> None:
-    """Add the details mode subparser.
+def parse_dt(spa: _SubParsersAction) -> None:
+    """Add the dt mode subparser.
 
     :param spa: The subparser action used to add a new subparser to
         the main parser.
@@ -458,8 +409,8 @@ def parse_details(spa: _SubParsersAction) -> None:
     :rtype: NoneType
     """
     sp = spa.add_parser(
-        'details',
-        aliases=['d', 'deets', 'dt'],
+        'dt',
+        aliases=['details',],
         help='Display the details for the given code point.'
     )
     sp.add_argument(
@@ -468,10 +419,26 @@ def parse_details(spa: _SubParsersAction) -> None:
         action='store',
         type=str
     )
-    sp.set_defaults(func=mode_details)
+    sp.set_defaults(func=mode_dt)
 
 
-def parse_escape(spa: _SubParsersAction) -> None:
+def parse_el(spa: _SubParsersAction) -> None:
+    """Add the el mode subparser.
+
+    :param spa: The subparser action used to add a new subparser to
+        the main parser.
+    :return: None.
+    :rtype: NoneType
+    """
+    sp = spa.add_parser(
+        'el',
+        aliases=['escapelist', 'esclist',],
+        help='List the registered escape schemes.'
+    )
+    sp.set_defaults(func=mode_el)
+
+
+def parse_es(spa: _SubParsersAction) -> None:
     """Add the escape mode subparser.
 
     :param spa: The subparser action used to add a new subparser to
@@ -480,9 +447,16 @@ def parse_escape(spa: _SubParsersAction) -> None:
     :rtype: NoneType
     """
     sp = spa.add_parser(
-        'escape',
-        aliases=['es', 'esc',],
-        help='Escape the given string with the given scheme.'
+        'es',
+        aliases=['escape', 'esc',],
+        help='Escape the string.'
+    )
+    sp.add_argument(
+        'scheme',
+        help='The scheme to escape with.',
+        action='store',
+        default='url',
+        type=str
     )
     sp.add_argument(
         'base',
@@ -490,33 +464,10 @@ def parse_escape(spa: _SubParsersAction) -> None:
         action='store',
         type=str
     )
-    sp.add_argument(
-        '--scheme', '-s',
-        help='The scheme to escape with.',
-        action='store',
-        default='url',
-        type=str
-    )
-    sp.set_defaults(func=mode_escape)
+    sp.set_defaults(func=mode_es)
 
 
-def parse_esclist(spa: _SubParsersAction) -> None:
-    """Add the esclist mode subparser.
-
-    :param spa: The subparser action used to add a new subparser to
-        the main parser.
-    :return: None.
-    :rtype: NoneType
-    """
-    sp = spa.add_parser(
-        'esclist',
-        aliases=['el',],
-        help='List the registered escape schemes.'
-    )
-    sp.set_defaults(func=mode_esclist)
-
-
-def parse_shell(spa: _SubParsersAction) -> None:
+def parse_sh(spa: _SubParsersAction) -> None:
     """Add the shell mode subparser.
 
     :param spa: The subparser action used to add a new subparser to
@@ -525,50 +476,33 @@ def parse_shell(spa: _SubParsersAction) -> None:
     :rtype: NoneType
     """
     sp = spa.add_parser(
-        'shell',
-        aliases=['sh',],
+        'sh',
+        aliases=['shell',],
         help=(
             'Run charex in an interactive shell.'
         )
     )
-    sp.set_defaults(func=mode_shell)
+    sp.set_defaults(func=mode_sh)
 
 
-def parse_invocation(cmd: str | None = None) -> None:
+def parse_invocation(
+    cmd: str | None = None,
+    p: ArgumentParser | None = None
+) -> None:
     """Parse the arguments used to invoke the script and execute
     the script.
     """
-    global p
-
     if not p:
-        # Build the argument parser.
-        p = ArgumentParser(
-            description='Unicode and character set explorer.',
-            prog='charex'
-        )
-
-        # Build subparsers for each mode.
-        spa = p.add_subparsers(required=True)
-        parse_cd(spa)
-        parse_ce(spa)
-        parse_cl(spa)
-        parse_ct(spa)
-        parse_denormal(spa)
-        parse_details(spa)
-        parse_escape(spa)
-        parse_esclist(spa)
-        parse_shell(spa)
-
-    # Execute.
+        p = build_parser()
     if cmd:
-        argv = cmd.split()
+        argv = split(cmd)
         args = p.parse_args(argv)
     else:
         args = p.parse_args()
     args.func(args)
 
 
-# Classes.
+# The interactive shell.
 class Shell(Cmd):
     """A command shell for :mod:`charex`."""
     intro = (
@@ -576,6 +510,10 @@ class Shell(Cmd):
         'Press ? for a list of comands.\n'
     )
     prompt = 'charex> '
+
+    def __init__(self, *args, **kwargs) -> None:
+        self.parser = build_parser()
+        super().__init__(*args, **kwargs)
 
     # Commands.
     def do_cd(self, arg):
@@ -585,54 +523,33 @@ class Shell(Cmd):
 
     def do_ce(self, arg):
         """Encode the given character in all codecs."""
-        write_cset_multiencode(arg)
+        cmd = f'ce {arg}'
+        self._run_cmd(cmd)
 
     def do_cl(self, arg):
         """List the registered character sets."""
-        show_desc = False
-        if arg in ['-d', '--description']:
-            show_desc = True
-        write_cset_list(show_desc)
+        cmd = f'cl {arg}'
+        self._run_cmd(cmd)
 
     def do_ct(self, arg):
         """Count denormalization results."""
-        form, base, *rest = arg.split()
-        form = form.lower()
-        maxdepth = 0
-        if rest:
-            maxdepth = int(rest[1])
-        write_count_denormalizations(base, form, maxdepth)
+        cmd = f'ct {arg}'
+        self._run_cmd(cmd)
 
     def do_dn(self, arg):
         """Denormalize the given string."""
-        form, base, *rest = arg.split()
-        form = form.lower()
-        maxdepth = 0
-        if rest:
-            maxdepth = int(rest[0])
-        write_denormalizations(base, form, maxdepth)
+        cmd = f'dn {arg}'
+        self._run_cmd(cmd)
 
     def do_dt(self, arg):
         """Get details for the given character."""
-        write_char_detail(arg)
+        cmd = f'dt {arg}'
+        self._run_cmd(cmd)
 
-    def do_rd(self, arg):
-        """Return random results from a denormalization."""
-        form, base, *rest = arg.split()
-        form = form.lower()
-        number = 0
-        seed = ''
-        if len(rest) > 0:
-            number = int(rest[0])
-        if len(rest) > 1:
-            seed = rest[1]
-        write_denormalizations(
-            base,
-            form,
-            number=number,
-            random=True,
-            seed=seed
-        )
+    def do_el(self, arg):
+        """List the registered escape schemes."""
+        cmd = f'el {arg}'
+        self._run_cmd(cmd)
 
     def do_EOF(self, arg):
         """Exit the charex shell."""
@@ -641,17 +558,10 @@ class Shell(Cmd):
         print()
         return True
 
-    def do_el(self, arg):
-        """List the registered escape schemes."""
-        write_schemes_list()
-
     def do_es(self, arg):
         """Escape the string."""
-        scheme, base, *opt = arg.split()
-        codec = 'utf8'
-        if opt:
-            codec = opt[0]
-        write_escape(base, scheme, codec)
+        cmd = f'es {arg}'
+        self._run_cmd(cmd)
 
     def do_help(self, arg):
         """Display command list."""
@@ -687,42 +597,37 @@ class Shell(Cmd):
         self._run_cmd(cmd)
 
     def help_ce(self):
-        lines = util.read_resource('help_ce')
-        print(''.join(lines))
+        cmd = f'ce -h'
+        self._run_cmd(cmd)
 
     def help_cl(self):
-        lines = util.read_resource('help_cl')
-        print(''.join(lines))
+        cmd = f'cl -h'
+        self._run_cmd(cmd)
 
     def help_ct(self):
         """Help for the ct command."""
-        lines = util.read_resource('help_count')
-        print(''.join(lines))
+        cmd = f'ct -h'
+        self._run_cmd(cmd)
 
     def help_dn(self):
         """Help for the dn command."""
-        lines = util.read_resource('help_dn')
-        print(''.join(lines))
+        cmd = f'dn -h'
+        self._run_cmd(cmd)
 
     def help_dt(self):
         """Help for the dt command."""
-        lines = util.read_resource('help_dt')
-        print(''.join(lines))
+        cmd = f'dt -h'
+        self._run_cmd(cmd)
 
     def help_el(self):
         """Help for the el command."""
-        lines = util.read_resource('help_el')
-        print(''.join(lines))
+        cmd = f'el -h'
+        self._run_cmd(cmd)
 
     def help_es(self):
         """Help for the es command."""
-        lines = util.read_resource('help_es')
-        print(''.join(lines))
-
-    def help_rd(self):
-        """Help for the rd command."""
-        lines = util.read_resource('help_rd')
-        print(''.join(lines))
+        cmd = f'es -h'
+        self._run_cmd(cmd)
 
     def help_xt(self):
         lines = util.read_resource('help_xt')
@@ -732,6 +637,6 @@ class Shell(Cmd):
     def _run_cmd(self, cmd):
         """Run the given command."""
         try:
-            parse_invocation(cmd)
+            parse_invocation(cmd, self.parser)
         except SystemExit as ex:
             print()
