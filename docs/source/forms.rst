@@ -7,37 +7,55 @@ Unicode 14.0.0, which is the version supported by Python's
 :mod:`unicodedata`.
 
 
-Why Normalize?
-==============
-The main reason to normalize is to make it easier to match string
-comparison results to human needs and expectations. Let's take, for
-example, the following two characters:
+The Problem
+===========
+Probably the simplest way for native English speakers to think about
+the problem is to think about the problem of case sensitivity.
 
-*   Ω (U+03A9 GREEK CAPITAL LETTER OMEGA)
-*   Ω (U+2126 OHM SIGN)
+Consider the following words:
 
-The two characters look the same. You would make the same motions when
-writing them by hand. The vectors to draw the glyphs are the same. They
-are, to our eye, the same character.
+*   first
+*   First
+*   FIRST
 
-But, there is a semantic difference. The first is a letter you use when
-writing words with the greek alphabet. The other is a symbol you use
-when writing a measurement of electrical resistance. They are semantically
-different characters.
+Are they the same word? It depends. Usually capitalization doesn't
+change meaning in English, but:
 
-But, there is nuance even there. It's not a coincidence the unit symbol
-for electrical resistance looks like a Greek capital letter omega. The
-ohm symbol was defined as the Greek capital letter omega. So, while they
-are semantically different, it's not really wrong to use them
-interchangeably.
+*   `First` could be someone's last name or OS autocapitalization.
+*   `FIRST` could be the "Forum of Incident Response and Security Teams"
+    or an accidental caps lock.
+*   `first` could be the name of either the person or the group as
+    typed by someone who doesn't do capitalization.
 
-We end up with a situation where different things sometimes need to be
-considered the same thing. Computers are bad at that. It's easier if
-we just decide upfront whether our program needs for those characters
-be the same or different.
+Sometimes `f` is the same thing as `F`. Sometimes they are different.
 
-The process of transforming two different things that are equal into
-the same thing is, for the purposes of this discussion, normalization.
+Unicode isn't English. For Unicode, those are two different characters:
+
+*   `f U+0066 (LATIN SMALL LETTER F)`
+*   `F U+0046 (LATIN CAPITAL LETTER F)`
+
+However, English speakers don't speak Unicode. English speakers speak
+English. And, English speakers get really frustrated when they spend
+all day trying to figure out why their computer isn't obeying them only
+to discover it was because they were typing `first` instead of `First`.
+
+On the flip-side, if the computer needs to treat `f` and `F` the same,
+it gets really complicated to check every time for both of them. Things
+that are really complicated are also things that break easily. So,
+it's much easier for the computer if you just decide which of the two
+forms you want up front and transform them into the same form before
+you do any processing on them.
+
+To summarize:
+
+*   Sometimes different characters have different meanings.
+*   Sometimes different characters have the same meanings.
+*   Computers are bad at having different things mean the same thing.
+*   So, when different characters mean the same thing, it's best to
+    transform them into the same thing.
+
+That process of transforming different things with the same meaning into
+the same thing is :dfn:`normalization`.
 
 
 How to Normalize?
@@ -88,9 +106,11 @@ The following provide more information on normalization:
 
 *   `Unicode_Normalization_Forms`_
 *   `Unicode_Normalization_FAQ`_
+*   `UTR36 Unicode Security Considerations`_
 *   `Input_Validation_and_Data_Sanitization`_
 
 .. _Unicode_Normalization_Forms: https://www.unicode.org/reports/tr15/tr15-51.html#Introduction
 .. _Unicode_Normalization_FAQ: https://unicode.org/faq/normalization.html
+.. _`UTR36 Unicode Security Considerations`: https://unicode.org/reports/tr36/
 .. _Input_Validation_and_Data_Sanitization: https://wiki.sei.cmu.edu/confluence/display/java/Input+Validation+and+Data+Sanitization
 

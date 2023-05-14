@@ -281,7 +281,7 @@ def parse_cd(spa: _SubParsersAction) -> None:
     """
     sp = spa.add_parser(
         'cd',
-        help='Decode the given address in all codecs.'
+        description='Decode the given address in all codecs.'
     )
     sp.add_argument(
         'base',
@@ -306,7 +306,7 @@ def parse_ce(spa: _SubParsersAction) -> None:
     """
     sp = spa.add_parser(
         'ce',
-        help='Encode the given character in all codecs.'
+        description='Encode the given character in all codecs.'
     )
     sp.add_argument(
         'base',
@@ -328,7 +328,7 @@ def parse_cl(spa: _SubParsersAction) -> None:
     sp = spa.add_parser(
         'cl',
         aliases=['charsetlist', 'csetlist', 'cslist'],
-        help='List the registered character sets.'
+        description='List the registered character sets.'
     )
     sp.add_argument(
         '-d', '--description',
@@ -349,7 +349,7 @@ def parse_ct(spa: _SubParsersAction) -> None:
     sp = spa.add_parser(
         'ct',
         aliases=['count',],
-        help='Count of denormalization results.'
+        description='Count of denormalization results.'
     )
     sp.add_argument(
         'form',
@@ -386,7 +386,7 @@ def parse_dn(spa: _SubParsersAction) -> None:
     sp = spa.add_parser(
         'dn',
         aliases=['denormal',],
-        help='Denormalize a string.'
+        description='Denormalize a string.'
     )
     sp.add_argument(
         'form',
@@ -441,7 +441,7 @@ def parse_dt(spa: _SubParsersAction) -> None:
     sp = spa.add_parser(
         'dt',
         aliases=['details',],
-        help='Display the details for the given code point.'
+        description='Display the details for the given code point.'
     )
     sp.add_argument(
         'codepoint',
@@ -463,7 +463,7 @@ def parse_el(spa: _SubParsersAction) -> None:
     sp = spa.add_parser(
         'el',
         aliases=['escapelist', 'esclist',],
-        help='List the registered escape schemes.'
+        description='List the registered escape schemes.'
     )
     sp.add_argument(
         '-d', '--description',
@@ -484,7 +484,7 @@ def parse_es(spa: _SubParsersAction) -> None:
     sp = spa.add_parser(
         'es',
         aliases=['escape', 'esc',],
-        help='Escape the string.'
+        description='Escape the string.'
     )
     sp.add_argument(
         'scheme',
@@ -513,9 +513,7 @@ def parse_sh(spa: _SubParsersAction) -> None:
     sp = spa.add_parser(
         'sh',
         aliases=['shell',],
-        help=(
-            'Run charex in an interactive shell.'
-        )
+        description='Run charex in an interactive shell.'
     )
     sp.set_defaults(func=mode_sh)
 

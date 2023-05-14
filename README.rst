@@ -55,23 +55,24 @@ And then type `help` then a name of one of the commands to learn what
 it does::
 
     charex> help dn
-    NAME
-        dn - denormalize a string
+    usage: charex dn [-h] [-m MAXDEPTH] [-n NUMBER] [-r] [-s SEED]
+                     {nfc,nfd,nfkc,nfkd} base
 
-    SYNOPSIS
-        dn {form} {base} [{maxdepth}]
+    Denormalize a string.
 
-    DESCRIPTION
-        The parameters are as follows:
+    positional arguments:
+      {nfc,nfd,nfkc,nfkd}   The Unicode normalization form for the
+                            denormalization.
+      base                  The base normalized string.
 
-        form        The Unicode normalization form for the denormalization.
-                    The valid values are: NFC, NFD, NFKC, NFKD.
-
-        base        The string to denormalize.
-
-        maxdepth    (Optional.) How many denormalizations to use per character.
-                    This can be used to reduce the number of denormalizations
-                    for a string into a manageable subset of the total number
-                    of denormalizations.
+    options:
+      -h, --help            show this help message and exit
+      -m MAXDEPTH, --maxdepth MAXDEPTH
+                            Maximum number of reverse normalizations to use for
+                            each character.
+      -n NUMBER, --number NUMBER
+                            Maximum number of results to return.
+      -r, --random          Randomize the denormalization.
+      -s SEED, --seed SEED  Seed the randomized denormalization.
 
     charex>
