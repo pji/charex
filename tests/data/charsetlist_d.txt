@@ -1,112 +1,209 @@
 ascii            RFC20 The ASCII format for Network Interchange.
+
 big5             The Big5 encoding method for traditional Chinese characters
                  developed by the Institute for Information Industry of Taiwan
                  in 1984.
+
 big5hkscs        Hong Kong Supplementary Character Set to the Big5 traditional
                  Chinese character set.
+
 cp037            EBCDIC code page 37, USA/Canada Country Extended Code Page.
+
 cp273            EBCDIC code page 273, Germany/Austria.
+
 cp424            EBCDIC code page 424, Israel with supprt for Hebrew.
+
 cp437            Code page 424, default character set for the IBM PC.
+
 cp500            EBCDIC code page 500, full support of the Latin-1 character
                  set.
+
 cp720            Code page 720, Arabic support for DOS.
+
 cp737            Code page 720, Greek support for DOS.
+
 cp775            Code page 775, Baltic language support for DOS.
+
 cp850            Code page 850, Western European language support for DOS.
+
 cp852            Code page 852, Central European language support for DOS.
+
 cp855            Code page 855, Cyrillic support for DOS.
+
 cp856            Code page 856, Hebrew language support for DOS.
+
 cp857            Code page 857, Turkish language support for DOS.
+
 cp858            Code page 858, Western European language support for DOS,
                  modifying code page 850 by adding the Euro symbol.
+
 cp860            Code page 860, Portugese language support for DOS.
+
 cp861            Code page 861, Icelandic language support for DOS.
+
 cp862            Code page 862, Hebrew language support for DOS.
+
 cp863            Code page 863, Canadian French language support for DOS.
+
 cp864            Code page 864, Hebrew language support for DOS.
+
 cp865            Code page 865, Arabic language support for DOS.
+
 cp866            Code page 866, Nordic language support for DOS.
+
 cp869            Code page 869, Greek language support for DOS.
+
 cp874            Code page 874, Thai language support for DOS.
+
 cp875            EBCDIC code page 875, Greek.
+
 cp932            Code page 932, Japanese language support for Windows.
+
 cp949            Code page 949, Korean language support by IBM.
+
 cp950            Code page 932, Traditional Chinese language support for
                  Windows.
+
 cp1006           Code page 1006, Urdu language support for AIX.
+
 cp1026           EBCDIC code page 1026, Turkish.
+
 cp1125           IBM code page 1125, Ukraine.
+
 cp1140           EBCDIC code page 1140, USA/Canada with Euro character.
+
 cp1250           Code page 1250, Central European language support for Windows.
+
 cp1251           Code page 1251, Cyrillic support for Windows.
+
 cp1252           Code page 1252, Latin-1 character set for Windows.
+
 cp1253           Code page 1253, Greek support for Windows.
+
 cp1254           Code page 1254, Turkish support for Windows.
+
 cp1255           Code page 1255, Hebrew support for Windows.
+
 cp1256           Code page 1256, Arabic support for Windows.
+
 cp1257           Code page 1257, Baltic language support for Windows.
+
 cp1258           Code page 1258, Vietamese support for Windows.
+
 euc_jp           Extended Unix Code Japanese.
+
 euc_jis_2004     Extended Unix Code Japanese Industrial Standard 2004.
+
 euc_jisx0213     Extended Unix Code Japanese Industrial Standard X 213.
+
 euc_kr           Extended Unix Code Korean.
+
 gb2312           Extended Unix Code Simplified Chinese.
+
 gbk              Extended Unix Code Simplified Chinese extended to include all
                  unified CJK characters.
+
 gb18030          Chinese National Standard GB 18030-2005: Information
                  Technology—Chinese coded character set.
+
 hz               Extended Unix Code Simplified Chinese for email.
+
 iso2022_jp       ISO 2022 standard for Japanese.
+
 iso2022_jp_1     ISO 2022 standard for Japanese, extension 1.
+
 iso2022_jp_2     ISO 2022 standard for Japanese, extension 2.
+
 iso2022_jp_2004  ISO 2022 standard for Japanese, extension 2004.
+
 iso2022_jp_3     ISO 2022 standard for Japanese, extension 3.
+
 iso2022_jp_ext   ISO 2022 standard for Japanese, extension.
+
 iso2022_kr       RFC1557 Korean Character Encoding for Internet Messages.
+
 latin_1          ISO-8859-1, Latin alphabet number 1 for western Europe.
+
 iso8859_2        ISO-8859-2, Latin alphabet number 2 for central Europe.
+
 iso8859_3        ISO-8859-3, Latin alphabet number 3 for southern Europe.
+
 iso8859_4        ISO-8859-4, Latin alphabet number 4 for northern Europe.
+
 iso8859_5        ISO-8859-5, Latin/Cyrillic alphabet.
+
 iso8859_6        ISO-8859-6, Latin/Arabic alphabet.
+
 iso8859_7        ISO-8859-7, Latin/Greek alphabet.
+
 iso8859_8        ISO-8859-8, Latin/Herbrew alphabet.
+
 iso8859_9        ISO-8859-9, Latin alphabet number 5 for Turkish.
+
 iso8859_10       ISO-8859-10, Latin alphabet number 6 for Nordic languages.
+
 iso8859_11       ISO-8859-11, Latin/Thai alphabet.
+
 iso8859_13       ISO-8859-13, Latin alphabet number 7 for Baltic Rim languages.
+
 iso8859_14       ISO-8859-14, Latin alphabet number 8 for Celtic languages.
+
 iso8859_15       ISO-8859-15, Latin alphabet number 9 for Western European
                  languages, including the Euro symbol.
+
 iso8859_16       ISO-8859-16, Latin alphabet number 10 for south-eastern
                  Europe.
+
 johab            KS X 1001 alternative character set for South Korean Hangul
                  and Hanja.
+
 koi8_r           Kod Obmena Informatsiey, 8 bit, for Russian and Bulgarian.
+
 koi8_t           Kod Obmena Informatsiey, 8 bit, for Tajik Cyrillic.
+
 koi8_u           RFC2319 Ukrainian Character Set KOI8-U.
+
 kz1048           Windows-1251 variant for Kazakh.
+
 mac_cyrillic     Mac OS Cyrillic.
+
 mac_greek        Mac OS Greek.
+
 mac_iceland      Mac OS Icelandic.
+
 mac_latin2       Mac OS Central European, Microsoft code page 10029.
+
 mac_roman        Mac OS Western Europe.
+
 mac_turkish      Mac OS Turkish.
+
 ptcp154          Cyrillic-Asian.
+
 shift_jis        Japanese Industrial Standard with shifted first bytes.
+
 shift_jis_2004   Superset of Japanese Industrial Standard with shifted first
                  bytes.
+
 shift_jisx0213   Superset of Japanese Industrial Standard with shifted first
                  bytes.
+
 utf_32           32-bit Unicode Transformation format.
+
 utf_32_be        32-bit Unicode Transformation format, big endian.
+
 utf_32_le        32-bit Unicode Transformation format, little endian.
+
 utf_16           16-bit Unicode Transformation format.
+
 utf_16_be        16-bit Unicode Transformation format, big endian.
+
 utf_16_le        16-bit Unicode Transformation format, little endian.
+
 utf_7            7-bit Unicode Transformation format.
+
 utf_8            8-bit Unicode Transformation format.
+
 utf_8_sig        8-bit Unicode Transformation format, treating the BOM as
                  metadata.
+
 

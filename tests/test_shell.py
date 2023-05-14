@@ -179,6 +179,16 @@ def test_el(capsys):
     shell_test(exp, cmd, capsys)
 
 
+def test_el_description(capsys):
+    """Invoked with "-d", `el` returns the list of registered character
+    sets with descriptions.
+    """
+    with open('tests/data/el_d.txt') as fh:
+        exp = fh.read()
+    cmd = 'el -d'
+    shell_test(exp, cmd, capsys)
+
+
 # Test es mode.
 def test_es(capsys):
     """Invoked with a scheme and a base string, escape mode should

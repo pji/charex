@@ -50,8 +50,29 @@ def get_named_entity(char: str) -> str:
     try:
         cached_entities[char] = by_char[char]
     except KeyError:
-        cached_entities[char] = escape_html(char, '')
+        cached_entities[char] = escape_htmldec(char, '')
     return cached_entities[char]
+
+
+def get_description(schemekey: str) -> str:
+    """Get the description for the scheme.
+
+    :param schemekey: The key for the scheme in the scheme registry.
+    :return: The description as a :class:`str`.
+    :rtype: str
+    """
+    scheme = schemes[schemekey]
+    doc = scheme.__doc__
+    if doc:
+        paragraphs = doc.split('\n\n')
+        descr = paragraphs[0]
+        return descr.replace('    ', ' ')
+    return ''
+
+
+def get_schemes() -> tuple[str, ...]:
+    """Return the names of the registered escape schemes."""
+    return tuple(scheme for scheme in schemes)
 
 
 def hex_byte_escape(char: str) -> str:
@@ -131,9 +152,10 @@ def unicode_utf16_escape(char: str) -> str:
 # Escape schemes.
 @reg_escape('c')
 def escape_c(char: str, codec: str) -> str:
-    """Escape scheme for C/C++ escape sequences. This is derived from
-    the Wikipedia list, since I don't have access to the C17
-    specification.
+    """Escape scheme for C escape sequences as defined by C17.
+
+    This is derived from the Wikipedia list, since I don't have access
+    to the C17 specification.
 
     :param char: The character to escape.
     :param codec: Unused.
@@ -148,7 +170,7 @@ def escape_c(char: str, codec: str) -> str:
         '\u000d': r'\r',
         '\u0009': r'\t',
         '\u000b': r'\v',
-        '\u001b': r'\e',    # Non-standard, supported by gcc, clang, tcc.
+        # '\u001b': r'\e',    # Non-standard, supported by gcc, clang, tcc.
         '\u0027': r"\'",
         '\u0022': r'\"',
         '\u003f': r'\?',
@@ -162,9 +184,10 @@ def escape_c(char: str, codec: str) -> str:
 
 @reg_escape('co')
 def escape_co(char: str, codec: str) -> str:
-    """Escape scheme for C/C++ octal escape sequences. This is derived
-    from the Wikipedia list, since I don't have access to the C17
-    specification.
+    """Escape scheme for C octal escape sequences as defined by C17.
+
+    This is derived from the Wikipedia list, since I don't have access
+    to the C17 specification.
 
     :param char: The character to escape.
     :param codec: Unused.
@@ -179,7 +202,7 @@ def escape_co(char: str, codec: str) -> str:
 
 @reg_escape('cu')
 def escape_cu(char: str, codec: str) -> str:
-    """Escape scheme for C/C++ Unicode escape sequences.
+    """Escape scheme for C Unicode escape sequences as defined by C17.
 
     :param char: The character to escape.
     :param codec: Unused.
@@ -194,7 +217,8 @@ def escape_cu(char: str, codec: str) -> str:
 
 @reg_escape('culong')
 def escape_culong(char: str, codec: str) -> str:
-    """Escape scheme for four byte C/C++ Unicode escape sequences.
+    """Escape scheme for four byte C Unicode escape sequences as
+    defined by C17.
 
     :param char: The character to escape.
     :param codec: Unused.
@@ -207,6 +231,22 @@ def escape_culong(char: str, codec: str) -> str:
 
 @reg_escape('html')
 def escape_html(char: str, codec: str) -> str:
+    """Escape scheme for HTML named character references. It will return
+    the decimal numeric character references if no named entity exists.
+
+    :param char: The character to escape.
+    :param codec: Unused.
+    :return: The escaped character as a :class:`str`.
+    :rtype: str
+    """
+    try:
+        return cached_entities[char]
+    except KeyError:
+        return get_named_entity(char)
+
+
+@reg_escape('htmldec')
+def escape_htmldec(char: str, codec: str) -> str:
     """Escape scheme for HTML decimal numeric character references.
 
     :param char: The character to escape.
@@ -231,26 +271,12 @@ def escape_htmlhex(char: str, codec: str) -> str:
     return f'&#x{n:x};'
 
 
-@reg_escape('htmlnamed')
-def escape_htmlnamed(char: str, codec: str) -> str:
-    """Escape scheme for HTML named character references. It will return
-    the decimal numeric character references if no named entity exists.
-
-    :param char: The character to escape.
-    :param codec: Unused.
-    :return: The escaped character as a :class:`str`.
-    :rtype: str
-    """
-    try:
-        return cached_entities[char]
-    except KeyError:
-        return get_named_entity(char)
-
-
 @reg_escape('java')
 def escape_java(char: str, codec: str) -> str:
     """Escape scheme for Java encoding, based on the Java SE
-    Specification `here.`_
+    Specification.
+
+    The specification can be found `here.`_
 
     .. _here: https://docs.oracle.com/javase/specs/jls/se20/html/jls-3.html
 
@@ -279,7 +305,9 @@ def escape_java(char: str, codec: str) -> str:
 @reg_escape('javao')
 def escape_javao(char: str, codec: str) -> str:
     """Escape scheme for Java octal encoding, based on the Java SE
-    Specification `here.`_
+    Specification.
+
+    The specification can be found `here.`_
 
     .. _here: https://docs.oracle.com/javase/specs/jls/se20/html/jls-3.html
 
@@ -297,7 +325,9 @@ def escape_javao(char: str, codec: str) -> str:
 @reg_escape('javau')
 def escape_javau(char: str, codec: str) -> str:
     """Escape scheme for Java Unicode encoding, based on the Java SE
-    Specification `here.`_
+    Specification.
+
+    The specification can be found `here.`_
 
     .. _here: https://docs.oracle.com/javase/specs/jls/se20/html/jls-3.html
 
@@ -312,7 +342,9 @@ def escape_javau(char: str, codec: str) -> str:
 @reg_escape('js')
 def escape_js(char: str, codec: str) -> str:
     """Escape scheme for JavaScript encoding, based on the ECMA-262
-    Specification `here.`_
+    Specification.
+
+    The specification can be found `here.`_
 
     .. _here: https://262.ecma-international.org/13.0/\
 #sec-literals-string-literals
@@ -341,7 +373,9 @@ def escape_js(char: str, codec: str) -> str:
 @reg_escape('jso')
 def escape_jso(char: str, codec: str) -> str:
     """Escape scheme for JavaScript octal encoding, based on the
-    ECMA-262 Specification `here.`_
+    ECMA-262 Specification.
+
+    The specification can be found `here.`_
 
     .. _here: https://262.ecma-international.org/13.0/\
 #sec-literals-string-literals
@@ -360,7 +394,9 @@ def escape_jso(char: str, codec: str) -> str:
 @reg_escape('jsu')
 def escape_jsu(char: str, codec: str) -> str:
     """Escape scheme for JavaScript unicode encoding, based on the
-    ECMA-262 Specification `here.`_
+    ECMA-262 Specification.
+
+    The specification can be found `here.`_
 
     .. _here: https://262.ecma-international.org/13.0/\
 #sec-literals-string-literals
@@ -379,7 +415,9 @@ def escape_jsu(char: str, codec: str) -> str:
 @reg_escape('jscp')
 def escape_jscp(char: str, codec: str) -> str:
     """Escape scheme for JavaScript code point encoding, based on the
-    ECMA-262 Specification `here.`_
+    ECMA-262 Specification.
+
+    The specification can be found `here.`_
 
     .. _here: https://262.ecma-international.org/13.0/\
 #sec-literals-string-literals
@@ -396,7 +434,9 @@ def escape_jscp(char: str, codec: str) -> str:
 @reg_escape('json')
 def escape_json(char: str, codec: str) -> str:
     """Escape scheme for JSON encoding, based on the ECMA-404
-    Specification `here.`_
+    Specification.
+
+    The specification can be found `here.`_
 
     .. _here: https://www.ecma-international.org/publications-and-standards/\
 standards/ecma-404/ECMA-404_2nd_edition_december_2017.pdf
@@ -424,7 +464,9 @@ standards/ecma-404/ECMA-404_2nd_edition_december_2017.pdf
 @reg_escape('jsonu')
 def escape_jsonu(char: str, codec: str) -> str:
     """Escape scheme for JSON Unicode encoding, based on the ECMA-404
-    Specification `here.`_
+    Specification.
+
+    The specification can be found `here.`_
 
     .. _here: https://www.ecma-international.org/publications-and-standards/\
 standards/ecma-404/ECMA-404_2nd_edition_december_2017.pdf
@@ -440,7 +482,9 @@ standards/ecma-404/ECMA-404_2nd_edition_december_2017.pdf
 @reg_escape('sql')
 def escape_sql(char: str, codec: str) -> str:
     """Escape scheme for MySQL encoding, based on the MySQL
-    Specification `here.`_
+    Specification.
+
+    The specification can be found `here.`_
 
     .. _here: https://dev.mysql.com/doc/refman/8.0/en/string-literals.html
 
@@ -468,10 +512,13 @@ def escape_sql(char: str, codec: str) -> str:
         return char
 
 
-@reg_escape('sqldoublequote')
-def escape_sqldoublequote(char: str, codec: str) -> str:
+@reg_escape('sqldq')
+def escape_sqldq(char: str, codec: str) -> str:
     """Escape scheme for MySQL encoding, based on the MySQL
-    Specification `here.`_
+    Specification. This escapes qoutes by doubling them rather
+    than using a backslash.
+
+    The specification can be found `here.`_
 
     .. _here: https://dev.mysql.com/doc/refman/8.0/en/string-literals.html
 
@@ -527,8 +574,3 @@ def escape(s: str, schemekey: str, codec: str = 'utf8') -> str:
     """
     scheme = schemes[schemekey]
     return ''.join(scheme(char, codec) for char in s)
-
-
-def get_schemes() -> tuple[str, ...]:
-    """Return the names of the registered escape schemes."""
-    return tuple(scheme for scheme in schemes)

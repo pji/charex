@@ -68,12 +68,30 @@ def test_escape_culong():
 
 
 # Test escape_html.
-def test_escape_html():
+def test_html():
+    """Given a character and a codec, return the HTML named entity for
+    the given character. Note: codec doesn't do anything, it's just
+    included for compatibility."""
+    exp = "&qout;"
+    assert esc.escape_html('"', '')
+
+
+def test_html_no_name():
+    """Given a character and a codec, return the HTML named entity for
+    the given character. Note: codec doesn't do anything, it's just
+    included for compatibility. If there is no specific named entity,
+    return the decimal encoded entity."""
+    exp = "&#97;"
+    assert esc.escape_html('a', '')
+
+
+# Test escape_htmldec.
+def test_escape_htmldec():
     """Given a character and a codec, return the HTML entity for the
     address of that character.
     """
     exp = '&#97;'
-    assert esc.escape_html('a', 'utf8')
+    assert esc.escape_htmldec('a', 'utf8')
 
 
 # Test escape_htmlhex.
@@ -84,24 +102,6 @@ def test_escape_htmlhex():
     """
     exp = '&#x61;'
     assert esc.escape_htmlhex('a', '')
-
-
-# Test escape_htmlnamed.
-def test_htmlnamed():
-    """Given a character and a codec, return the HTML named entity for
-    the given character. Note: codec doesn't do anything, it's just
-    included for compatibility."""
-    exp = "&qout;"
-    assert esc.escape_htmlnamed('"', '')
-
-
-def test_htmlnamed_no_name():
-    """Given a character and a codec, return the HTML named entity for
-    the given character. Note: codec doesn't do anything, it's just
-    included for compatibility. If there is no specific named entity,
-    return the decimal encoded entity."""
-    exp = "&#97;"
-    assert esc.escape_htmlnamed('a', '')
 
 
 # Test escape_java.
@@ -244,14 +244,14 @@ def test_escape_sql():
     assert esc.escape_sql('\u000A', '') == exp
 
 
-# Test escape_sqldoublequote.
-def test_escape_sqldoublequote():
+# Test escape_sqldq.
+def test_escape_sqldq():
     """Given a character and a codec, return the SQL escape
     sequence for the character. Note: the codec doesn't do anything,
     it's just here for compatibility.
     """
     exp = r'""'
-    assert esc.escape_sqldoublequote('\u0022', '') == exp
+    assert esc.escape_sqldq('\u0022', '') == exp
 
 
 # Test escape_url.
@@ -261,6 +261,32 @@ def test_escape_url():
     """
     exp = '%61'
     assert esc.escape_url('a', 'utf8')
+
+
+# Tests for get_description.
+def test_get_description():
+    """Given the key for an escape scheme,
+    :func:`charex.escape.get_description` should
+    return the first paragraph of the docstring of
+    that scheme.
+    """
+    # Expected value.
+    exp = 'Eggs bacon.'
+
+    # Test set up.
+    @esc.reg_escape('__test_get_description')
+    def escape_spam(char, codec):
+        """Eggs bacon.
+
+        Ham and toast.
+        """
+        return char
+
+    # Run test and determine result.
+    assert esc.get_description('__test_get_description') == exp
+
+    # Test clean up.
+    del esc.schemes['__test_get_description']
 
 
 # Tests for get_schemes.

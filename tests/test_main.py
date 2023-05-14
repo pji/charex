@@ -258,6 +258,21 @@ def test_el(capsys):
     cli_test(exp, cmd, capsys)
 
 
+def test_el_description(capsys):
+    """When invoked with -d, cl mode should return a list of
+    registered character set codecs and a brief description of each
+    one.
+    """
+    with open('tests/data/el_d.txt') as fh:
+        exp = fh.read()
+    cmd = (
+        'python -m charex',
+        'el',
+        '-d',
+    )
+    cli_test(exp, cmd, capsys)
+
+
 # Test es mode.
 def test_es(capsys):
     """Invoked with a scheme and a base string, escape mode should

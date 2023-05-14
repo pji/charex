@@ -93,7 +93,7 @@ def test_character_escape_html():
     """
     # Percent encoding for URLs.
     char = c.Character('å')
-    assert char.escape('html') == '&#229;'
+    assert char.escape('html') == '&aring;'
 
 
 def test_character_is_normal():

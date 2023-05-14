@@ -4,8 +4,10 @@ shell
 
 An interactive command shell for :mod:`charex`.
 """
+from collections.abc import Callable, Sequence
 from argparse import ArgumentParser, Namespace, _SubParsersAction
 from cmd import Cmd
+from itertools import zip_longest
 import readline
 from shlex import split
 from textwrap import wrap
@@ -15,6 +17,51 @@ from charex import charsets as cset
 from charex import denormal as dn
 from charex import escape as esc
 from charex import util
+
+
+# Utility functions.
+def make_description_row(name: str, namewidth: int, descr: str) -> str:
+    """Create a two column row with a name and description.
+
+    :param name: The content for the first column.
+    :param namewidth: The width of the first column.
+    :param descr: The content for the second column.
+    :return: The row as a :class:`str`.
+    :rtype: str
+    """
+    name_lines = wrap(name, namewidth)
+    descr_lines = wrap(descr, 77 - namewidth)
+    lines = (
+        f'{n:<{namewidth}}  {d}'
+        for n, d in zip_longest(name_lines, descr_lines, fillvalue='')
+    )
+    return '\n'.join(lines)
+
+
+def write_list(
+    items: Sequence[str],
+    get_descr: Callable[[str], str],
+    show_descr: bool
+) -> None:
+    """Output the given list.
+
+    :param items: The items to list.
+    :param get_descr: The function used to look up the discription
+        of each item.
+    :param show_descr: Whether include the descriptions of each item
+        in the output.
+    :return: None.
+    :rtype: NoneType
+    """
+    width = max(len(item) for item in items)
+    for item in items:
+        if show_descr:
+            descr = get_descr(item)
+            row = make_description_row(item, width, descr)
+            print(row)
+            print()
+        else:
+            print(item)
 
 
 # Running modes.
@@ -81,23 +128,8 @@ def mode_cl(args: Namespace) -> None:
     :return: None.
     :rtype: NoneType
     """
-    # Get the data.
     codecs = cset.get_codecs()
-
-    # Print the data.
-    width = max(len(codec) for codec in codecs)
-    for codec in codecs:
-        if args.description:
-            descript = cset.get_codec_description(codec)
-            if descript:
-                wrapped = wrap(descript, 77 - width)
-                print(f'{codec:<{width}}  {wrapped[0]}')
-                for line in wrapped[1:]:
-                    print(f'{"":<{width}}  {line}')
-            else:
-                print(codec)
-        else:
-            print(codec)
+    write_list(codecs, cset.get_codec_description, args.description)
     print()
 
 
@@ -185,9 +217,8 @@ def mode_el(args: Namespace) -> None:
     :return: None.
     :rtype: NoneType
     """
-    results = esc.get_schemes()
-    for scheme in results:
-        print(scheme)
+    schemes = esc.get_schemes()
+    write_list(schemes, esc.get_description, args.description)
     print()
 
 
@@ -434,6 +465,11 @@ def parse_el(spa: _SubParsersAction) -> None:
         'el',
         aliases=['escapelist', 'esclist',],
         help='List the registered escape schemes.'
+    )
+    sp.add_argument(
+        '-d', '--description',
+        help='Show the description for the character sets.',
+        action='store_true'
     )
     sp.set_defaults(func=mode_el)
 
