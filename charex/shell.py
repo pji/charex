@@ -183,22 +183,21 @@ def mode_dt(args: Namespace) -> None:
     # Gather the details for display.
     char = ch.Character(args.codepoint)
     details = (
-        ('display', char.value),
-        ('name', char.name),
-        ('code_point', char.code_point),
-        ('category', char.category),
-        ('uft-8', char.encode('utf8')),
-        ('uft-16 BE', char.encode('utf_16_be')),
-        ('uft-16 LE', char.encode('utf_16_le')),
-        ('uft-32 BE', char.encode('utf_32_be')),
-        ('uft-32 LE', char.encode('utf_32_le')),
-        ('decomposition', char.decomposition),
-        ('url encoded', char.escape('url')),
-        ('html encoded', char.escape('html')),
-        ('reverse nfc', rev_normalize(char, 'nfc')),
-        ('reverse nfd', rev_normalize(char, 'nfd')),
-        ('reverse nfkc', rev_normalize(char, 'nfkc')),
-        ('reverse nfkd', rev_normalize(char, 'nfkd')),
+        ('Display', char.value),
+        ('Name', char.name),
+        ('Code Point', char.code_point),
+        ('Category', char.category),
+        ('UTF-8', char.encode('utf8')),
+        ('UTF-16', char.encode('utf_16_be')),
+        ('UTF-32', char.encode('utf_32_be')),
+        ('Decomposition', char.decomposition),
+        ('C encoded', char.escape('c')),
+        ('URL encoded', char.escape('url')),
+        ('HTML encoded', char.escape('html')),
+        ('Reverse NFC', rev_normalize(char, 'nfc')),
+        ('Reverse NFD', rev_normalize(char, 'nfd')),
+        ('Reverse NFKC', rev_normalize(char, 'nfkc')),
+        ('Reverse NFKD', rev_normalize(char, 'nfkd')),
     )
 
     # Display the details.
