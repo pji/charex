@@ -297,7 +297,7 @@ def cli_test(exp, cmd, capsys):
     sys.argv = cmd
 
     # Run test.
-    m.sh.parse_invocation()
+    m.sh.invoke()
 
     # Gather actual result and compare.
     captured = capsys.readouterr()

@@ -17,4 +17,4 @@ if __name__ == '__main__':
 
     # Otherwise parse the arguments and execute.
     else:
-        sh.parse_invocation()
+        sh.invoke()

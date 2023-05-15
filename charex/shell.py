@@ -5,11 +5,17 @@ shell
 An interactive command shell for :mod:`charex`.
 """
 from collections.abc import Callable, Sequence
-from argparse import ArgumentParser, Namespace, _SubParsersAction
+from argparse import (
+    ArgumentParser,
+    Namespace,
+    _SubParsersAction,
+    RawDescriptionHelpFormatter
+)
 from cmd import Cmd
 from itertools import zip_longest
 import readline
 from shlex import split
+from shutil import get_terminal_size
 from textwrap import wrap
 
 from charex import charex as ch
@@ -234,7 +240,7 @@ def mode_es(args: Namespace) -> None:
 
 
 def mode_sh(args: Namespace | None) -> None:
-    """Run :mod:`charex` in an interactive shell.
+    """Run sin an interactive shell.
 
     :param args: The arguments used when the script was invoked.
     :return: None.
@@ -253,11 +259,17 @@ def build_parser() -> ArgumentParser:
     # Build the argument parser.
     p = ArgumentParser(
         description='Unicode and character set explorer.',
+        epilog=describe_modes(),
+        formatter_class=RawDescriptionHelpFormatter,
         prog='charex'
     )
 
     # Build subparsers for each mode.
-    spa = p.add_subparsers(required=True)
+    spa = p.add_subparsers(
+        help=list_modes(),
+        metavar='mode',
+        required=True
+    )
     parse_cd(spa)
     parse_ce(spa)
     parse_cl(spa)
@@ -518,7 +530,7 @@ def parse_sh(spa: _SubParsersAction) -> None:
     sp.set_defaults(func=mode_sh)
 
 
-def parse_invocation(
+def invoke(
     cmd: str | None = None,
     p: ArgumentParser | None = None
 ) -> None:
@@ -670,6 +682,42 @@ class Shell(Cmd):
     def _run_cmd(self, cmd):
         """Run the given command."""
         try:
-            parse_invocation(cmd, self.parser)
+            invoke(cmd, self.parser)
         except SystemExit as ex:
             print()
+
+
+# Mode registry.
+modes = {
+    name: globals()[name]
+    for name in dir()
+    if name.startswith('mode_')
+}
+
+
+def describe_modes() -> str:
+    """Return a description of the operating modes."""
+    global modes
+    width, height = get_terminal_size((80, 20))
+    text = wrap((
+        'The following are brief desciptions of each of the '
+        'available options for the mode:'
+    ), width)
+    result = '\n'.join(text) + '\n\n'
+    for mode in modes:
+        name = mode.split('_')[1]
+        doc = modes[mode].__doc__
+        descr = doc.split('\n\n')[0]
+        result += f'  * {name}: {descr}\n'
+    return result
+
+
+def list_modes() -> str:
+    """Return a description of the available modes."""
+    global modes
+    result = 'The following modes are available: '
+    names = ', '.join(mode.split('_')[1] for mode in modes)
+    result += names
+    return result
+
+
