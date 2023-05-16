@@ -4,17 +4,17 @@ co       Escape scheme for C octal escape sequences as defined by C17.
 
 cu       Escape scheme for C Unicode escape sequences as defined by C17.
 
-culong   Escape scheme for four byte C Unicode escape sequences as  defined by
+culong   Escape scheme for four byte C Unicode escape sequences as defined by
          C17.
 
-html     Escape scheme for HTML named character references. It will return  the
+html     Escape scheme for HTML named character references. It will return the
          decimal numeric character references if no named entity exists.
 
 htmldec  Escape scheme for HTML decimal numeric character references.
 
 htmlhex  Escape scheme for HTML hexadecimal numeric character references.
 
-java     Escape scheme for Java encoding, based on the Java SE  Specification.
+java     Escape scheme for Java encoding, based on the Java SE Specification.
 
 javao    Escape scheme for Java octal encoding, based on the Java SE
          Specification.
@@ -25,24 +25,24 @@ javau    Escape scheme for Java Unicode encoding, based on the Java SE
 js       Escape scheme for JavaScript encoding, based on the ECMA-262
          Specification.
 
-jso      Escape scheme for JavaScript octal encoding, based on the  ECMA-262
+jso      Escape scheme for JavaScript octal encoding, based on the ECMA-262
          Specification.
 
-jsu      Escape scheme for JavaScript unicode encoding, based on the  ECMA-262
+jsu      Escape scheme for JavaScript unicode encoding, based on the ECMA-262
          Specification.
 
 jscp     Escape scheme for JavaScript code point encoding, based on the
          ECMA-262 Specification.
 
-json     Escape scheme for JSON encoding, based on the ECMA-404  Specification.
+json     Escape scheme for JSON encoding, based on the ECMA-404 Specification.
 
 jsonu    Escape scheme for JSON Unicode encoding, based on the ECMA-404
          Specification.
 
-sql      Escape scheme for MySQL encoding, based on the MySQL  Specification.
+sql      Escape scheme for MySQL encoding, based on the MySQL Specification.
 
-sqldq    Escape scheme for MySQL encoding, based on the MySQL  Specification.
-         This escapes qoutes by doubling them rather  than using a backslash.
+sqldq    Escape scheme for MySQL encoding, based on the MySQL Specification.
+         This escapes qoutes by doubling them rather than using a backslash.
 
 url      Escape scheme for URL percent encoding.
 

@@ -62,12 +62,7 @@ def get_description(schemekey: str) -> str:
     :rtype: str
     """
     scheme = schemes[schemekey]
-    doc = scheme.__doc__
-    if doc:
-        paragraphs = doc.split('\n\n')
-        descr = paragraphs[0]
-        return descr.replace('    ', ' ')
-    return ''
+    return util.get_description_from_docstring(scheme)
 
 
 def get_schemes() -> tuple[str, ...]:

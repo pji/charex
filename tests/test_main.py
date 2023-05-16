@@ -318,6 +318,22 @@ def test_fl_description(capsys):
     cli_test(exp, cmd, capsys)
 
 
+# Test nl mode.
+def test_nl(capsys):
+    """When invoked with a normalization form and a base string,
+    nl mode returns the normalization of the base string using the
+    given form.
+    """
+    exp = 'A\n\n'
+    cmd = (
+        'python -m charex',
+        'nl',
+        'nfkc',
+        '\u24b6',
+    )
+    cli_test(exp, cmd, capsys)
+
+
 # Utility functions.
 def cli_test(exp, cmd, capsys):
     """Test command line invocation."""

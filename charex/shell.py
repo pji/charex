@@ -152,6 +152,19 @@ def mode_ct(args: Namespace) -> None:
     print()
 
 
+def mode_dm(args: Namespace) -> None:
+    """Build a denormalization map.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    normal_fn = nl.forms[args.form]
+    results = nl.build_denormalization_map(normal_fn)
+    print(results)
+    print()
+
+
 def mode_dn(args: Namespace) -> None:
     """Perform denormalizations.
 
@@ -299,6 +312,7 @@ def build_parser() -> ArgumentParser:
     parse_ce(spa)
     parse_cl(spa)
     parse_ct(spa)
+    parse_dm(spa)
     parse_dn(spa)
     parse_dt(spa)
     parse_el(spa)
@@ -414,6 +428,33 @@ def parse_ct(spa: _SubParsersAction) -> None:
     sp.set_defaults(func=mode_ct)
 
 
+def parse_dm(spa: _SubParsersAction) -> None:
+    """Add the dm mode subparser.
+
+    :param spa: The subparser action used to add a new subparser to
+        the main parser.
+    :return: None.
+    :rtype: NoneType
+    """
+    valid_forms = ', '.join(form for form in nl.get_forms())
+
+    sp = spa.add_parser(
+        'dm',
+        aliases=['denormalmap',],
+        description='Build a denormalization map.'
+    )
+    sp.add_argument(
+        'form',
+        choices=nl.get_forms(),
+        help=(
+            'The normalization form for the normalization. Valid '
+            f'options are: {valid_forms}.'
+        ),
+        metavar='form'
+    )
+    sp.set_defaults(func=mode_dm)
+
+
 def parse_dn(spa: _SubParsersAction) -> None:
     """Add the dn mode subparser.
 
@@ -422,6 +463,8 @@ def parse_dn(spa: _SubParsersAction) -> None:
     :return: None.
     :rtype: NoneType
     """
+    valid_forms = ', '.join(form for form in nl.get_forms())
+
     sp = spa.add_parser(
         'dn',
         aliases=['denormal',],
@@ -429,8 +472,12 @@ def parse_dn(spa: _SubParsersAction) -> None:
     )
     sp.add_argument(
         'form',
-        help='The Unicode normalization form for the denormalization.',
-        choices=('nfc', 'nfd', 'nfkc', 'nfkd',)
+        choices=nl.get_forms(),
+        help=(
+            'The normalization form for the denormalization. Valid '
+            f'options are: {valid_forms}.'
+        ),
+        metavar='form'
     )
     sp.add_argument(
         'base',
@@ -587,7 +634,7 @@ def parse_nl(spa: _SubParsersAction) -> None:
         'form',
         choices=nl.get_forms(),
         help=(
-            'The normalization form for the denormalization. Valid '
+            'The normalization form for the normalization. Valid '
             f'options are: {valid_forms}.'
         ),
         metavar='form'
@@ -666,6 +713,11 @@ class Shell(Cmd):
     def do_ct(self, arg):
         """Count denormalization results."""
         cmd = f'ct {arg}'
+        self._run_cmd(cmd)
+
+    def do_dm(self, arg):
+        """Build a denormalization map."""
+        cmd = f'dm {arg}'
         self._run_cmd(cmd)
 
     def do_dn(self, arg):
@@ -754,6 +806,11 @@ class Shell(Cmd):
     def help_dn(self):
         """Help for the dn command."""
         cmd = f'dn -h'
+        self._run_cmd(cmd)
+
+    def help_dm(self):
+        """Help for the dm command."""
+        cmd = f'dm -h'
         self._run_cmd(cmd)
 
     def help_dt(self):

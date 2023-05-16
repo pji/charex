@@ -5,7 +5,10 @@ normal
 Functions for normalizing strings.
 """
 from collections.abc import Callable
+from json import dumps
 import unicodedata as ucd
+
+from charex import util
 
 
 # Registry.
@@ -30,6 +33,24 @@ class reg_form:
 
 
 # Utility functions.
+def build_denormalization_map(norm_fn: Callable[[str], str]) -> str:
+    """Create a JSON string mapping each Unicode character to the
+    other Unicode characters that normalize to it.
+
+    :param norm_fn: The normalization function.
+    :return: The denormalization map as a JSON :class:`str`.
+    :rtype: str
+    """
+    dn_map: dict[str, list[str]] = {}
+    for n in range(0x10FFFF):
+        base = chr(n)
+        normal = norm_fn(base)
+        if normal and normal != base:
+            dn_map.setdefault(normal, list())
+            dn_map[normal].append(base)
+    return dumps(dn_map, indent=4)
+
+
 def get_description(formkey: str) -> str:
     """Get the description for the normalization form.
 
@@ -38,12 +59,7 @@ def get_description(formkey: str) -> str:
     :rtype: str
     """
     form = forms[formkey]
-    doc = form.__doc__
-    if doc:
-        paragraphs = doc.split('\n\n')
-        descr = paragraphs[0]
-        return descr.replace('    ', ' ')
-    return ''
+    return util.get_description_from_docstring(form)
 
 
 def get_forms() -> tuple[str, ...]:

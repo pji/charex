@@ -15,6 +15,7 @@ RESOURCES = {
     'help_xt': 'help_xt.txt',
 
     # Denormalization lookups.
+    'rev_casefold': 'rev_casefold.json',
     'rev_nfc': 'rev_nfc.json',
     'rev_nfkc': 'rev_nfkc.json',
     'rev_nfd': 'rev_nfd.json',
@@ -54,6 +55,23 @@ def bin2bytes(value: str, endian: str = 'big') -> bytes:
     nums = [int(s, 2) for s in parts]
     octets = [n.to_bytes((n.bit_length() + 7) // 8) for n in nums]
     return b''.join(octets)
+
+
+def get_description_from_docstring(obj: object) -> str:
+    """Get the first paragraph of the docstring from the given object.
+
+    :param obj: An object with a docstring.
+    :return: The first paragraph of the object's docstring as a :class:`str`.
+    :rtype: str
+    """
+    doc = obj.__doc__
+    if doc:
+        paragraphs = doc.split('\n\n')
+        descr = paragraphs[0]
+        lines = descr.split('\n')
+        lines = [line.lstrip() for line in lines]
+        return ' '.join(lines)
+    return ''
 
 
 def hex2bytes(value: str, endian: str = 'big') -> bytes:
