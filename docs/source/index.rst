@@ -52,7 +52,9 @@ From here you can type `?` to see the list of available commands::
     *  dt: Get details for the given character.
     *  el: List the registered escape schemes.
     *  es: Escape the string.
+    *  fl: List registered normalization forms.
     *  help: Display command list.
+    *  nl: Perform normalizations.
     *  xt: Exit the charex shell.
 
     For help on individual commands, use "help {command}".

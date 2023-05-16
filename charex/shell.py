@@ -22,6 +22,7 @@ from charex import charex as ch
 from charex import charsets as cset
 from charex import denormal as dn
 from charex import escape as esc
+from charex import normal as nl
 from charex import util
 
 
@@ -239,8 +240,32 @@ def mode_es(args: Namespace) -> None:
     print()
 
 
+def mode_fl(args: Namespace) -> None:
+    """List registered normalization forms.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    forms = nl.get_forms()
+    write_list(forms, nl.get_description, args.description)
+    print()
+
+
+def mode_nl(args: Namespace) -> None:
+    """Perform normalizations.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    result = nl.normalize(args.form, args.base)
+    print(result)
+    print()
+
+
 def mode_sh(args: Namespace | None) -> None:
-    """Run sin an interactive shell.
+    """Run in an interactive shell.
 
     :param args: The arguments used when the script was invoked.
     :return: None.
@@ -278,6 +303,8 @@ def build_parser() -> ArgumentParser:
     parse_dt(spa)
     parse_el(spa)
     parse_es(spa)
+    parse_fl(spa)
+    parse_nl(spa)
     parse_sh(spa)
 
     return p
@@ -493,6 +520,8 @@ def parse_es(spa: _SubParsersAction) -> None:
     :return: None.
     :rtype: NoneType
     """
+    valid_schemes = ', '.join(scheme for scheme in esc.get_schemes())
+
     sp = spa.add_parser(
         'es',
         aliases=['escape', 'esc',],
@@ -500,10 +529,14 @@ def parse_es(spa: _SubParsersAction) -> None:
     )
     sp.add_argument(
         'scheme',
-        help='The scheme to escape with.',
         action='store',
+        choices=esc.get_schemes(),
         default='url',
-        type=str
+        help=(
+            'The scheme to escape with. The valid schemes '
+            f'are: {valid_schemes}.'
+        ),
+        metavar='scheme'
     )
     sp.add_argument(
         'base',
@@ -512,6 +545,60 @@ def parse_es(spa: _SubParsersAction) -> None:
         type=str
     )
     sp.set_defaults(func=mode_es)
+
+
+def parse_fl(spa: _SubParsersAction) -> None:
+    """Add the fl mode subparser.
+
+    :param spa: The subparser action used to add a new subparser to
+        the main parser.
+    :return: None.
+    :rtype: NoneType
+    """
+    sp = spa.add_parser(
+        'fl',
+        aliases=['formlist', 'flist',],
+        description='List the registered normalization forms.'
+    )
+    sp.add_argument(
+        '-d', '--description',
+        help='Show the description for the character sets.',
+        action='store_true'
+    )
+    sp.set_defaults(func=mode_fl)
+
+
+def parse_nl(spa: _SubParsersAction) -> None:
+    """Add the nl mode subparser.
+
+    :param spa: The subparser action used to add a new subparser to
+        the main parser.
+    :return: None.
+    :rtype: NoneType
+    """
+    valid_forms = ', '.join(form for form in nl.get_forms())
+
+    sp = spa.add_parser(
+        'nl',
+        aliases=['normal',],
+        description='Normalize a string.'
+    )
+    sp.add_argument(
+        'form',
+        choices=nl.get_forms(),
+        help=(
+            'The normalization form for the denormalization. Valid '
+            f'options are: {valid_forms}.'
+        ),
+        metavar='form'
+    )
+    sp.add_argument(
+        'base',
+        help='The base normalized string.',
+        action='store',
+        type=str
+    )
+    sp.set_defaults(func=mode_nl)
 
 
 def parse_sh(spa: _SubParsersAction) -> None:
@@ -608,6 +695,11 @@ class Shell(Cmd):
         cmd = f'es {arg}'
         self._run_cmd(cmd)
 
+    def do_fl(self, arg):
+        """List the registered normalization forms."""
+        cmd = f'fl {arg}'
+        self._run_cmd(cmd)
+
     def do_help(self, arg):
         """Display command list."""
         if not arg:
@@ -628,6 +720,11 @@ class Shell(Cmd):
 
         else:
             super().do_help(arg)
+
+    def do_nl(self, arg):
+        """Normalize the given string."""
+        cmd = f'nl {arg}'
+        self._run_cmd(cmd)
 
     def do_xt(self, arg):
         """Exit the charex shell."""
@@ -672,6 +769,16 @@ class Shell(Cmd):
     def help_es(self):
         """Help for the es command."""
         cmd = f'es -h'
+        self._run_cmd(cmd)
+
+    def help_fl(self):
+        """Help for the fl command."""
+        cmd = f'fl -h'
+        self._run_cmd(cmd)
+
+    def help_nl(self):
+        """Help for the nl command."""
+        cmd = f'nl -h'
         self._run_cmd(cmd)
 
     def help_xt(self):
@@ -719,5 +826,3 @@ def list_modes() -> str:
     names = ', '.join(mode.split('_')[1] for mode in modes)
     result += names
     return result
-
-

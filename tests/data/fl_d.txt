@@ -1,0 +1,11 @@
+casefold  Remove all case distinctions from the string.
+
+nfc       Normalization form composition.
+
+nfd       Normalization form decomposition.
+
+nfkc      Normalization form compatibility composition.
+
+nfkd      Normalization form compatibility decomposition.
+
+

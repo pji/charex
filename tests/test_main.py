@@ -8,6 +8,7 @@ import sys
 
 from charex import __main__ as m
 from charex import escape as esc
+from charex import normal as nl
 
 
 # Test cd mode.
@@ -260,7 +261,7 @@ def test_el(capsys):
 
 def test_el_description(capsys):
     """When invoked with -d, cl mode should return a list of
-    registered character set codecs and a brief description of each
+    registered escape schemes and a brief description of each
     one.
     """
     with open('tests/data/el_d.txt') as fh:
@@ -285,6 +286,34 @@ def test_es(capsys):
         'es',
         'url',
         'A',
+    )
+    cli_test(exp, cmd, capsys)
+
+
+# Test fl mode.
+def test_fl(capsys):
+    """When invoked, fl mode returns a list of the registered
+    normalization forms.
+    """
+    exp = '\n'.join(form for form in nl.forms) + '\n\n'
+    cmd = (
+        'python -m charex',
+        'fl',
+    )
+    cli_test(exp, cmd, capsys)
+
+
+def test_fl_description(capsys):
+    """When invoked with -d, fl mode should return a list of
+    registered normalization forms and a brief description of each
+    one.
+    """
+    with open('tests/data/fl_d.txt') as fh:
+        exp = fh.read()
+    cmd = (
+        'python -m charex',
+        'fl',
+        '-d',
     )
     cli_test(exp, cmd, capsys)
 
