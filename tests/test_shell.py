@@ -5,6 +5,7 @@ test_shell
 Unit tests for :mod:`charex.shell`.
 """
 from charex import escape as esc
+from charex import normal as nl
 from charex import shell as sh
 
 
@@ -200,6 +201,47 @@ def test_es(capsys):
         'es '
         'url '
         'A'
+    )
+    shell_test(exp, cmd, capsys)
+
+
+# Test fl mode.
+def test_fl(capsys):
+    """When invoked, fl mode returns a list of the registered
+    normalization forms.
+    """
+    exp = '\n'.join(form for form in nl.forms) + '\n\n'
+    cmd = (
+        'fl'
+    )
+    shell_test(exp, cmd, capsys)
+
+
+def test_fl_description(capsys):
+    """When invoked with -d, fl mode should return a list of
+    registered normalization forms and a brief description of each
+    one.
+    """
+    with open('tests/data/fl_d.txt') as fh:
+        exp = fh.read()
+    cmd = (
+        'fl '
+        '-d'
+    )
+    shell_test(exp, cmd, capsys)
+
+
+# Test nl mode.
+def test_nl(capsys):
+    """When invoked with a normalization form and a base string,
+    nl mode returns the normalization of the base string using the
+    given form.
+    """
+    exp = 'A\n\n'
+    cmd = (
+        'nl '
+        'nfkc '
+        '\u24b6'
     )
     shell_test(exp, cmd, capsys)
 
