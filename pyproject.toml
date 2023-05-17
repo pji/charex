@@ -33,4 +33,4 @@ dependencies = []
 "Source" = "https://github.com/pji/charex"
 
 [project.scripts]
-filereader = "{SCRIPT_FILE}:{FUNCTION_NAME}"
+charex = "charex.__main__:main"

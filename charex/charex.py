@@ -217,6 +217,20 @@ class Character:
         """The code point as a string."""
         return self.__value
 
+    def denormalize(self, form: str) -> tuple[str, ...]:
+        """Return the characters that normalize to the character using
+        the given form.
+
+        :param form: The normalization form to check against.
+        :return: The denormalization results in a :class:`tuple`.
+        :rtype: tuple
+        """
+        source = f'rev_{form}'
+        if source not in self._rev_normal_cache:
+            lkp = Lookup(source)
+            self._rev_normal_cache[source] = lkp.query(self.value)
+        return self._rev_normal_cache[source]
+
     def escape(self, scheme: str, codec: str = 'utf8') -> str:
         """The escaped version of the character.
 
@@ -261,20 +275,6 @@ class Character:
         :rtype: str
         """
         return ucd.normalize(form, self.value)
-
-    def reverse_normalize(self, form: str) -> tuple[str, ...]:
-        """Return the characters that normalize to the character using
-        the given form.
-
-        :param form: The normalization form to check against.
-        :return: The denormalization results in a :class:`tuple`.
-        :rtype: tuple
-        """
-        source = f'rev_{form}'
-        if source not in self._rev_normal_cache:
-            lkp = Lookup(source)
-            self._rev_normal_cache[source] = lkp.query(self.value)
-        return self._rev_normal_cache[source]
 
     def summarize(self) -> str:
         """Return a summary of the character's information.

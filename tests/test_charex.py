@@ -160,12 +160,13 @@ def test_character_repr():
     assert repr(char) == 'U+0061 (LATIN SMALL LETTER A)'
 
 
-def test_character_reverse_normalize():
+def test_character_denormalize():
     """When given a normalization form, :meth:`Character.reverse_normalize`
     should return the normalized form of the character.
     """
+    exp = ("\uf907", "\uf908", "\uface")
     char = c.Character('\u9f9c')
-    assert char.reverse_normalize('nfc') == ("\uf907", "\uf908", "\uface")
+    assert char.denormalize('nfc') == exp
 
 
 def test_character_summarize():

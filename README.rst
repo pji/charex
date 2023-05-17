@@ -36,18 +36,19 @@ From here you can type `?` to see the list of available commands::
     charex> ?
     The following commands are available:
 
-    *  cd: Decode the given address in all codecs.
-    *  ce: Encode the given character in all codecs.
-    *  cl: List the registered character sets.
-    *  ct: Count denormalization results.
-    *  dn: Denormalize the given string.
-    *  dt: Get details for the given character.
-    *  el: List the registered escape schemes.
-    *  es: Escape the string.
-    *  fl: List registered normalization forms.
-    *  help: Display command list.
-    *  nl: Perform normalizations.
-    *  xt: Exit the charex shell.
+    * cd: Decode the given address in all codecs.
+    * ce: Encode the given character in all codecs.
+    * cl: List registered character sets.
+    * ct: Count denormalization results.
+    * dm: Build a denormalization map.
+    * dn: Perform denormalizations.
+    * dt: Display details for a code point.
+    * el: List the registered escape schemes.
+    * es: Escape a string using the given scheme.
+    * fl: List registered normalization forms.
+    * help: Display command list.
+    * nl: Perform normalizations.
+    * sh: Run in an interactive shell.
 
     For help on individual commands, use "help {command}".
 

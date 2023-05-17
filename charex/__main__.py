@@ -10,7 +10,7 @@ import charex.shell as sh
 
 
 # Mainline.
-if __name__ == '__main__':
+def main() -> None:
     # If there were no arguments passed, drop into the command shell.
     if len(argv) < 2:
         sh.mode_sh(None)
@@ -18,3 +18,7 @@ if __name__ == '__main__':
     # Otherwise parse the arguments and execute.
     else:
         sh.invoke()
+
+
+if __name__ == '__main__':
+    main()

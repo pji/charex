@@ -5,10 +5,15 @@ normal
 Functions for normalizing strings.
 """
 from collections.abc import Callable
+from itertools import permutations
 from json import dumps
 import unicodedata as ucd
 
 from charex import util
+
+
+# Constants.
+LEN_UNICODE = 0x10FFFF
 
 
 # Registry.
@@ -41,14 +46,63 @@ def build_denormalization_map(norm_fn: Callable[[str], str]) -> str:
     :return: The denormalization map as a JSON :class:`str`.
     :rtype: str
     """
-    dn_map: dict[str, list[str]] = {}
-    for n in range(0x10FFFF):
+    # The denormalization map.
+    dn_map: dict[str, set[str]] = {}
+
+    # Process every Unicode character.
+    for n in range(LEN_UNICODE):
         base = chr(n)
+
+        # If the character normalizes to a different character,
+        # add that relationship to the map.
         normal = norm_fn(base)
         if normal and normal != base:
-            dn_map.setdefault(normal, list())
-            dn_map[normal].append(base)
-    return dumps(dn_map, indent=4)
+            dn_map.setdefault(normal, set())
+            dn_map[normal].add(base)
+
+        # If the character decomposes, add the relationship between
+        # the character and its possible decompositions to the map.
+        decomp = form_nfd(base)
+        if len(decomp) > 1:
+            root, marks = decomp[0], decomp[1:]
+            for mut in permutations(marks):
+                rmut = root + ''.join(mut)
+                normal = norm_fn(rmut)
+                if normal != rmut:
+                    dn_map.setdefault(normal, set())
+                    dn_map[normal].add(rmut)
+
+    # Test to ensure decompositions are accurate and not redundant.
+    for normal in dn_map:
+        for base in dn_map[normal]:
+            actual = norm_fn(base)
+            assert actual == normal
+            assert actual != base
+            assert normal != base
+
+    # Return the map as a JSON string.
+    listed = {k: list(dn_map[k]) for k in dn_map}
+    ordered = {k: sorted(listed[k]) for k in listed}
+    return dumps(ordered, indent=4)
+
+
+def find_max_decomposition() -> tuple[str, int]:
+    """Find the longest single character decomposition.
+
+    :return: The character and the number of characters in the
+        decomposition as a :class:`tuple`.
+    :rtype: tuple
+    """
+    long_char = ''
+    decomp_max = 0
+    for n in range(LEN_UNICODE):
+        char = chr(n)
+        decomp_char = form_nfd(char)
+        decomp_len = len(decomp_char)
+        if decomp_len > decomp_max:
+            long_char = char
+            decomp_max = decomp_len
+    return long_char, decomp_max
 
 
 def get_description(formkey: str) -> str:

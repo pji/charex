@@ -193,9 +193,14 @@ def mode_dt(args: Namespace) -> None:
     :rtype: NoneType
     """
     def rev_normalize(char: ch.Character, form: str) -> str:
-        points = char.reverse_normalize(form)
-        chars = (ch.Character(point) for point in points)
-        values = [f'{c.summarize()}' for c in chars]
+        points = char.denormalize(form)
+        values = []
+        for point in points:
+            if len(point) == 1:
+                c = ch.Character(point)
+                values.append(c.summarize())
+            elif len(point) > 1:
+                values.append(f'{point} *** multiple characters ***')
         if not values:
             return ''
         return ('\n' + ' ' * 22).join(v for v in values)
@@ -214,6 +219,7 @@ def mode_dt(args: Namespace) -> None:
         ('C encoded', char.escape('c')),
         ('URL encoded', char.escape('url')),
         ('HTML encoded', char.escape('html')),
+        ('Reverse Cfold', rev_normalize(char, 'casefold')),
         ('Reverse NFC', rev_normalize(char, 'nfc')),
         ('Reverse NFD', rev_normalize(char, 'nfd')),
         ('Reverse NFKC', rev_normalize(char, 'nfkc')),

@@ -92,3 +92,33 @@ def test_normalize():
     scheme = 'nfkc'
     base = '\u24b6'
     assert nl.normalize(scheme, base) == exp
+
+
+# Tests for build_denormalization_map().
+def test_build_denormalization_map():
+    """When given a denormalization function,
+    :func:`charex.normal.build_denormalization_map` will return a map
+    of every character that normalizes into a character as a
+    JSON string.
+    """
+    with open('charex/data/rev_nfc.json') as fh:
+        exp = fh.read()[:-2]
+    form = nl.form_nfc
+    act = nl.build_denormalization_map(form)
+    alines = act.split('\n')
+    elines = exp.split('\n')
+    for i, lines in enumerate(zip(alines, elines)):
+        a, e = lines
+        assert (i, a) == (i, e)
+    assert act == exp
+
+
+# Tests for find_max_decomposition().
+def test_find_max_decomposition():
+    """When called, :func:`charex.normal.find_max_decomposition` finds
+    the character that decomposes into the largest string, then returns
+    that character and the length of the string it decomposes into as
+    a tuple.
+    """
+    exp = ('ᾂ', 4)
+    assert nl.find_max_decomposition() == exp

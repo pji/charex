@@ -31,7 +31,7 @@ def count_denormalizations(
     chars = (Character(c) for c in base)
     counts = []
     for char in chars:
-        count = len(char.reverse_normalize(form))
+        count = len(char.denormalize(form))
         if count == 0:
             count = 1
         if maxdepth and count > maxdepth:
@@ -72,7 +72,7 @@ def denormalize(
 
     # Get the denormalized forms of the first character.
     char = Character(base[0])
-    dechars = list(char.reverse_normalize(form))
+    dechars = list(char.denormalize(form))
 
     # If there are no denormalized forms, then it is the denormalized form.
     if not dechars:
