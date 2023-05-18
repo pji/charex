@@ -16,3 +16,4 @@
 # Build infrastructure.
 *dist
 *charex.egg-info
+*docs/build/*
