@@ -539,9 +539,9 @@ codecs = {
 
 # Functions.
 def get_codecs() -> tuple[str, ...]:
-    """Return the registered codecs.
+    """Return the keys of the registered codecs.
 
-    :return: The codecs as a :class:`tuple`.
+    :return: The keys of the codecs as a :class:`tuple`.
     :rtype: tuple
     """
     return tuple(codec for codec in codecs)

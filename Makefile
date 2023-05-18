@@ -8,10 +8,9 @@ build:
 clean:
 	rm -rf docs/build/html
 	rm -rf dist
-	rm -rf {PROJECT_NAME}.egg-info
-	rm -rf examples/__pycache__
+	rm -rf charex.egg-info
 	rm -rf tests/__pycache__
-	rm -rf thurible/__pycache__
+	rm -rf charex/__pycache__
 
 .PHONY: docs
 docs:

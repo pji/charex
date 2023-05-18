@@ -201,6 +201,9 @@ def mode_dt(args: Namespace) -> None:
                 values.append(c.summarize())
             elif len(point) > 1:
                 values.append(f'{point} *** multiple characters ***')
+                for c in point:
+                    char = ch.Character(c)
+                    values.append('  ' + char.summarize())
         if not values:
             return ''
         return ('\n' + ' ' * 22).join(v for v in values)

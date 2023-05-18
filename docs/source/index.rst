@@ -4,14 +4,16 @@
    contain the root `toctree` directive.
 
 Welcome to :mod:`charex` documentation!
-==================================
+=======================================
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   /requirements.rst
    /unicode.rst
+   /forms.rst
+   /api.rst
+   /requirements.rst
 
 
 Why Did I Make This?

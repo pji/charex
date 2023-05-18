@@ -25,7 +25,9 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-dependencies = []
+dependencies = [
+    'flask',
+]
 
 [project.urls]
 "Homepage" = "https://charex.readthedocs.io/en/latest/index.html#"

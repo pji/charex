@@ -117,7 +117,7 @@ def get_description(formkey: str) -> str:
 
 
 def get_forms() -> tuple[str, ...]:
-    """Return the names of the registered normalization forms.
+    """Return the keys of the registered normalization forms.
 
     :return: The names of the normalization forms as a :class:`tuple`.
     :rtype: tuple

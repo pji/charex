@@ -66,7 +66,11 @@ def get_description(schemekey: str) -> str:
 
 
 def get_schemes() -> tuple[str, ...]:
-    """Return the names of the registered escape schemes."""
+    """Return the keys of the registered escape schemes.
+
+    :return: The scheme keys as a :class:`tuple`.
+    :rtype: tuple
+    """
     return tuple(scheme for scheme in schemes)
 
 
@@ -557,7 +561,7 @@ def escape_url(char: str, codec: str) -> str:
 
 # Bulk escape.
 def escape(s: str, schemekey: str, codec: str = 'utf8') -> str:
-    """Escape the string wit the scheme.
+    """Escape the string with the scheme.
 
     :param s: The string to escape.
     :param scheme: The key in the `schemes` :class:`dict` to use for

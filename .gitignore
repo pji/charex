@@ -10,3 +10,7 @@
 
 # Ignore test infrastructure.
 .coverage
+
+# Build infrastructure.
+*dist
+*charex.egg-info

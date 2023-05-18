@@ -17,15 +17,15 @@ def count_denormalizations(
     form: str,
     maxdepth: int | None = None
 ) -> int:
-    """Determine the number of denormalizations exist for the string.
+    """Determine the number of denormalizations that exist for the string.
 
     :param base: The :class:`str` to denormalize.
-    :param form: The Unicode normalization for to denormalize from.
-        Valid values are: NFC, NFD, NFKC, NFKD.
-    :param maxdepth: How many individual characters to use when
-        denormalizing the base. This is used to limit the total
+    :param form: The Unicode normalization form to denormalize from.
+        Valid values are: casefold, nfc, nfd, nfkc, nfkd.
+    :param maxdepth: (Optional.) How many individual characters to use
+        when denormalizing the base. This is used to limit the total
         number of denormalizations of the overall base.
-    :return: The number of denormalizations as a :class:`int`.
+    :return: The number of denormalizations as an :class:`int`.
     :rtype: int
     """
     chars = (Character(c) for c in base)
@@ -51,8 +51,8 @@ def denormalize(
     """Denormalize a string.
 
     :param base: The :class:`str` to denormalize.
-    :param form: The Unicode normalization for to denormalize from.
-        Valid values are: NFC, NFD, NFKC, NFKD.
+    :param form: The Unicode normalization form to denormalize from.
+        Valid values are: casefold, nfc, nfd, nfkc, nfkd.
     :param maxdepth: (Optional.) How many individual characters to use
         when denormalizing the base. This is used to limit the total
         number of denormalizations of the overall base.
