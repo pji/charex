@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>charex.charsets &mdash; charex 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            charex
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../unicode.html">Unicode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../forms.html">Unicode Normalization Forms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../requirements.html">charex Requirements</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">charex</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">charex.charsets</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for charex.charsets</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">charsets</span>
+<span class="sd">~~~~~~~~</span>
+
+<span class="sd">Data and functions for working with character sets.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterator</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">byteorder</span>
+
+
+<span class="c1"># Data classes.</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">CodecDetails</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Information for working with the specific codec.</span>
+
+<span class="sd">    :param size: (Optional.) The number of bytes used to address</span>
+<span class="sd">        characters with the given character set.</span>
+<span class="sd">    :param endian: (Optional.) The byte order used by the codec.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">endian</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">byteorder</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+
+<span class="c1"># Encoding schemes.</span>
+<span class="n">codecs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;ascii&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;RFC20 The ASCII format for Network Interchange.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;big5&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;The Big5 encoding method for traditional Chinese characters &#39;</span>
+            <span class="s1">&#39;developed by the Institute for Information Industry of Taiwan &#39;</span>
+            <span class="s1">&#39;in 1984.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;big5hkscs&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Hong Kong Supplementary Character Set to the Big5 traditional &#39;</span>
+            <span class="s1">&#39;Chinese character set.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp037&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;EBCDIC code page 37, USA/Canada Country Extended Code Page.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp273&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;EBCDIC code page 273, Germany/Austria.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp424&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;EBCDIC code page 424, Israel with supprt for Hebrew.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp437&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 424, default character set for the IBM PC.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp500&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;EBCDIC code page 500, full support of the Latin-1 character set.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp720&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 720, Arabic support for DOS.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp737&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 720, Greek support for DOS.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp775&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 775, Baltic language support for DOS.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp850&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 850, Western European language support for DOS.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp852&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 852, Central European language support for DOS.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp855&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 855, Cyrillic support for DOS.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp856&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 856, Hebrew language support for DOS.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp857&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 857, Turkish language support for DOS.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp858&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 858, Western European language support for DOS, &#39;</span>
+            <span class="s1">&#39;modifying code page 850 by adding the Euro symbol.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp860&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 860, Portugese language support for DOS.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp861&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 861, Icelandic language support for DOS.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp862&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 862, Hebrew language support for DOS.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp863&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 863, Canadian French language support for DOS.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp864&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 864, Hebrew language support for DOS.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp865&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 865, Arabic language support for DOS.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp866&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 866, Nordic language support for DOS.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp869&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 869, Greek language support for DOS.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp874&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 874, Thai language support for DOS.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp875&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;EBCDIC code page 875, Greek.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp932&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 932, Japanese language support for Windows.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp949&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 949, Korean language support by IBM.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp950&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 932, Traditional Chinese language support for Windows.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp1006&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 1006, Urdu language support for AIX.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp1026&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;EBCDIC code page 1026, Turkish.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp1125&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;IBM code page 1125, Ukraine.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp1140&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;EBCDIC code page 1140, USA/Canada with Euro character.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp1250&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 1250, Central European language support for Windows.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp1251&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 1251, Cyrillic support for Windows.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp1252&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 1252, Latin-1 character set for Windows.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp1253&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 1253, Greek support for Windows.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp1254&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 1254, Turkish support for Windows.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp1255&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 1255, Hebrew support for Windows.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp1256&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 1256, Arabic support for Windows.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp1257&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 1257, Baltic language support for Windows.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;cp1258&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Code page 1258, Vietamese support for Windows.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;euc_jp&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Extended Unix Code Japanese.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;euc_jis_2004&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Extended Unix Code Japanese Industrial Standard 2004.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;euc_jisx0213&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Extended Unix Code Japanese Industrial Standard X 213.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;euc_kr&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Extended Unix Code Korean.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;gb2312&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Extended Unix Code Simplified Chinese.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;gbk&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Extended Unix Code Simplified Chinese extended to include &#39;</span>
+            <span class="s1">&#39;all unified CJK characters.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;gb18030&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Chinese National Standard GB 18030-2005: Information &#39;</span>
+            <span class="s1">&#39;Technology—Chinese coded character set.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;hz&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Extended Unix Code Simplified Chinese for email.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;iso2022_jp&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;ISO 2022 standard for Japanese.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;iso2022_jp_1&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;ISO 2022 standard for Japanese, extension 1.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;iso2022_jp_2&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;ISO 2022 standard for Japanese, extension 2.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;iso2022_jp_2004&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;ISO 2022 standard for Japanese, extension 2004.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;iso2022_jp_3&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;ISO 2022 standard for Japanese, extension 3.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;iso2022_jp_ext&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;ISO 2022 standard for Japanese, extension.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;iso2022_kr&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;RFC1557 Korean Character Encoding for Internet Messages.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;latin_1&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;ISO-8859-1, Latin alphabet number 1 for western Europe.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;iso8859_2&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;ISO-8859-2, Latin alphabet number 2 for central Europe.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;iso8859_3&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;ISO-8859-3, Latin alphabet number 3 for southern Europe.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;iso8859_4&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;ISO-8859-4, Latin alphabet number 4 for northern Europe.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;iso8859_5&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;ISO-8859-5, Latin/Cyrillic alphabet.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;iso8859_6&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;ISO-8859-6, Latin/Arabic alphabet.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;iso8859_7&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;ISO-8859-7, Latin/Greek alphabet.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;iso8859_8&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;ISO-8859-8, Latin/Herbrew alphabet.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;iso8859_9&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;ISO-8859-9, Latin alphabet number 5 for Turkish.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;iso8859_10&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;ISO-8859-10, Latin alphabet number 6 for Nordic languages.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;iso8859_11&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;ISO-8859-11, Latin/Thai alphabet.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;iso8859_13&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;ISO-8859-13, Latin alphabet number 7 for Baltic Rim languages.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;iso8859_14&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;ISO-8859-14, Latin alphabet number 8 for Celtic languages.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;iso8859_15&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;ISO-8859-15, Latin alphabet number 9 for Western European &#39;</span>
+            <span class="s1">&#39;languages, including the Euro symbol.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;iso8859_16&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;ISO-8859-16, Latin alphabet number 10 for south-eastern Europe.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;johab&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;KS X 1001 alternative character set for South Korean Hangul &#39;</span>
+            <span class="s1">&#39;and Hanja.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;koi8_r&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Kod Obmena Informatsiey, 8 bit, for Russian and Bulgarian.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;koi8_t&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Kod Obmena Informatsiey, 8 bit, for Tajik Cyrillic.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;koi8_u&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;RFC2319 Ukrainian Character Set KOI8-U.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;kz1048&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Windows-1251 variant for Kazakh.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;mac_cyrillic&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Mac OS Cyrillic.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;mac_greek&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Mac OS Greek.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;mac_iceland&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Mac OS Icelandic.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;mac_latin2&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Mac OS Central European, Microsoft code page 10029.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;mac_roman&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Mac OS Western Europe.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;mac_turkish&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Mac OS Turkish.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;ptcp154&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Cyrillic-Asian.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;shift_jis&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="mi">2</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Japanese Industrial Standard with shifted first bytes.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;shift_jis_2004&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="mi">2</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Superset of Japanese Industrial Standard with shifted &#39;</span>
+            <span class="s1">&#39;first bytes.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;shift_jisx0213&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="mi">2</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;Superset of Japanese Industrial Standard with shifted &#39;</span>
+            <span class="s1">&#39;first bytes.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;utf_32&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="mi">4</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;32-bit Unicode Transformation format.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;utf_32_be&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="mi">4</span><span class="p">,</span>
+        <span class="s1">&#39;big&#39;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;32-bit Unicode Transformation format, big endian.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;utf_32_le&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="mi">4</span><span class="p">,</span>
+        <span class="s1">&#39;little&#39;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;32-bit Unicode Transformation format, little endian.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;utf_16&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="mi">2</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;16-bit Unicode Transformation format.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;utf_16_be&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="mi">2</span><span class="p">,</span>
+        <span class="s1">&#39;big&#39;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;16-bit Unicode Transformation format, big endian.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;utf_16_le&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="mi">2</span><span class="p">,</span>
+        <span class="s1">&#39;little&#39;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;16-bit Unicode Transformation format, little endian.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;utf_7&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;7-bit Unicode Transformation format.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;utf_8&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;8-bit Unicode Transformation format.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+    <span class="s1">&#39;utf_8_sig&#39;</span><span class="p">:</span> <span class="n">CodecDetails</span><span class="p">(</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s1">&#39;8-bit Unicode Transformation format, treating the BOM &#39;</span>
+            <span class="s1">&#39;as metadata.&#39;</span>
+        <span class="p">)</span>
+    <span class="p">),</span>
+<span class="p">}</span>
+
+
+<span class="c1"># Functions.</span>
+<div class="viewcode-block" id="get_codecs"><a class="viewcode-back" href="../../api.html#charex.get_codecs">[docs]</a><span class="k">def</span> <span class="nf">get_codecs</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the keys of the registered codecs.</span>
+
+<span class="sd">    :return: The keys of the codecs as a :class:`tuple`.</span>
+<span class="sd">    :rtype: tuple</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">codec</span> <span class="k">for</span> <span class="n">codec</span> <span class="ow">in</span> <span class="n">codecs</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">get_codec_description</span><span class="p">(</span><span class="n">codec</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Provide the description for the given codec.&quot;&quot;&quot;</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="n">codecs</span><span class="p">[</span><span class="n">codec</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">info</span><span class="o">.</span><span class="n">description</span>
+
+
+<div class="viewcode-block" id="multiencode"><a class="viewcode-back" href="../../api.html#charex.multiencode">[docs]</a><span class="k">def</span> <span class="nf">multiencode</span><span class="p">(</span>
+    <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">codecs_</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Provide the address for the given character for each of the</span>
+<span class="sd">    given character sets.</span>
+
+<span class="sd">    :param value: The character to encode.</span>
+<span class="sd">    :param codecs_: The codecs to encode to.</span>
+<span class="sd">    :return: The encoded value for each character set as a :class:`dict`.</span>
+<span class="sd">    :rtype: dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">codec</span> <span class="ow">in</span> <span class="n">codecs_</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">codec</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">codec</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">UnicodeEncodeError</span><span class="p">:</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">codec</span><span class="p">]</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">results</span></div>
+
+
+<div class="viewcode-block" id="multidecode"><a class="viewcode-back" href="../../api.html#charex.multidecode">[docs]</a><span class="k">def</span> <span class="nf">multidecode</span><span class="p">(</span>
+    <span class="n">value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bytes</span><span class="p">,</span>
+    <span class="n">codecs_</span><span class="p">:</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Provide the code point for the given address for each of the</span>
+<span class="sd">    given character sets.</span>
+
+<span class="sd">    :param value: The address to decode. This can be passed as either</span>
+<span class="sd">        an :class:`int`, :class:`str`, or :class:`bytes`.</span>
+<span class="sd">    :param codec_: The codecs to decode to.</span>
+<span class="sd">    :return: The decoded value for each character set as a :class:`dict`.</span>
+<span class="sd">    :rtype: dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Coerce the given value into ints.</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">((</span><span class="n">value</span><span class="o">.</span><span class="n">bit_length</span><span class="p">()</span> <span class="o">+</span> <span class="mi">7</span><span class="p">)</span> <span class="o">//</span> <span class="mi">8</span><span class="p">)</span>
+
+    <span class="c1"># Decode the value into the character sets.</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">codec</span> <span class="ow">in</span> <span class="n">codecs_</span><span class="p">:</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="c1"># Pad for 2 or 4 byte codecs.</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">codecs</span><span class="p">[</span><span class="n">codec</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">codecs</span><span class="p">[</span><span class="n">codec</span><span class="p">]</span><span class="o">.</span><span class="n">endian</span> <span class="o">==</span> <span class="s1">&#39;little&#39;</span><span class="p">:</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="n">b</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">b</span>
+
+        <span class="c1"># Decode.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">codec</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">codec</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">UnicodeDecodeError</span><span class="p">:</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">codec</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">results</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Paul J. Iutzi.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
