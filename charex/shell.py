@@ -209,7 +209,13 @@ def mode_dt(args: Namespace) -> None:
         return ('\n' + ' ' * 22).join(v for v in values)
 
     # Gather the details for display.
-    char = ch.Character(args.codepoint)
+    cp = args.codepoint
+    if cp.startswith('U+'):
+        cp = '0x' + cp[2:]
+    if cp.startswith('0x'):
+        n = int(cp, 16)
+        cp = chr(n)
+    char = ch.Character(cp)
     details = (
         ('Display', char.value),
         ('Name', char.name),
@@ -283,6 +289,13 @@ def mode_nl(args: Namespace) -> None:
     """
     result = nl.normalize(args.form, args.base)
     print(result)
+    if args.expand:
+        for item in result:
+            char = ch.Character(item)
+            indent = '  '
+            if 'mark' in char.category.casefold():
+                indent += ' '
+            print(f'  {char.summarize()}')
     print()
 
 
@@ -653,6 +666,11 @@ def parse_nl(spa: _SubParsersAction) -> None:
         help='The base normalized string.',
         action='store',
         type=str
+    )
+    sp.add_argument(
+        '-e', '--expand',
+        help='Show each character in the normalized string.',
+        action='store_true'
     )
     sp.set_defaults(func=mode_nl)
 
