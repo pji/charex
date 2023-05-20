@@ -137,11 +137,24 @@ def parse_unicode_data(lines: Sequence[str]) -> dict[str, UnicodeDatum]:
 class Character:
     """One or more code points representing a character.
 
-    :param value: The character to gather data for.
+    :param value: The character to gather data for. See below for the
+        formats the value can be passed in.
     :return: None.
     :rtype: NoneType
+
+    Character Formats
+    =================
+    The value can be passed in a couple of different formats:
+
+    *   *Single-Character string*: The value is a :class:`str` of
+        length one.
+    *   *Hex string*: The value is a hexadecimal number between 0x00
+        and 0x10FFFF passed as a :class:`str` prefixed with "0x".
+    *   *Address string*: The value is a hexadecimal number between
+        0x00 and 0x10FFFF passed as a :class:`str` prefixed with "U+".
     """
     def __init__(self, value: str) -> None:
+        value = util.to_char(value)
         self.__value = value
         self._rev_normal_cache: dict[str, tuple[str, ...]] = {}
 

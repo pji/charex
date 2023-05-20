@@ -8,6 +8,8 @@ from collections.abc import Iterator
 from dataclasses import dataclass
 from sys import byteorder
 
+from charex import util
+
 
 # Data classes.
 @dataclass
@@ -554,7 +556,7 @@ def get_codec_description(codec: str) -> str:
 
 
 def multiencode(
-    value: str,
+    value: bytes | int | str,
     codecs_: Iterator[str]
 ) -> dict[str, bytes]:
     """Provide the address for the given character for each of the
@@ -565,6 +567,7 @@ def multiencode(
     :return: The encoded value for each character set as a :class:`dict`.
     :rtype: dict
     """
+    value = util.to_char(value)
     results = {}
     for codec in codecs_:
         try:
@@ -587,11 +590,8 @@ def multidecode(
     :return: The decoded value for each character set as a :class:`dict`.
     :rtype: dict
     """
-    # Coerce the given value into ints.
-    if isinstance(value, str):
-        value = int(value, 16)
-    if isinstance(value, int):
-        value = value.to_bytes((value.bit_length() + 7) // 8)
+    # Coerce the given value into bytes.
+    value = util.to_bytes(value)
 
     # Decode the value into the character sets.
     results = {}

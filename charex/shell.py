@@ -79,17 +79,9 @@ def mode_cd(args: Namespace) -> None:
     :return: None.
     :rtype: NoneType
     """
-    # Normalize the data.
-    if args.base.startswith('0b'):
-        b = util.bin2bytes(args.base[2:])
-    elif args.base.startswith('0x'):
-        b = util.hex2bytes(args.base[2:])
-    else:
-        b = args.base.encode('utf8')
-
     # Get the data.
     codecs = cset.get_codecs()
-    results = cset.multidecode(b, (codec for codec in codecs))
+    results = cset.multidecode(args.base, (codec for codec in codecs))
 
     # Write the output.
     width = max(len(codec) for codec in codecs)
@@ -210,11 +202,6 @@ def mode_dt(args: Namespace) -> None:
 
     # Gather the details for display.
     cp = args.codepoint
-    if cp.startswith('U+'):
-        cp = '0x' + cp[2:]
-    if cp.startswith('0x'):
-        n = int(cp, 16)
-        cp = chr(n)
     char = ch.Character(cp)
     details = (
         ('Display', char.value),

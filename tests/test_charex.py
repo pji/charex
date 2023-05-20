@@ -4,18 +4,36 @@ test_charex
 """
 import json
 
-import pytest
-
 from charex import charex as c
 
 
 # Test Character.
 def test_character_init():
-    """Given a string containing one or more codepoints representing
-    a character, a :class:`Character` object is initialized.
+    """Given a string containing a character, a :class:`Character`
+    object is initialized.
     """
     exp_value = 'a'
     act = c.Character(exp_value)
+    assert act.value == exp_value
+
+
+def test_character_init_with_hex():
+    """Given a string containing a hexadecimal number starting with
+    "0x", a :class:`Character` object is initialized with the character
+    at that address.
+    """
+    exp_value = 'a'
+    act = c.Character('0x0061')
+    assert act.value == exp_value
+
+
+def test_character_init_with_code_point():
+    """Given a string containing a unicode code point starting with
+    "U+", a :class:`Character` object is initialized with the character
+    at that address.
+    """
+    exp_value = 'a'
+    act = c.Character('U+0061')
     assert act.value == exp_value
 
 

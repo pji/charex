@@ -34,6 +34,11 @@ RESOURCES = {
 }
 
 
+# Exceptions.
+class NotCharacterError(ValueError):
+    """The value cannot be used as a character."""
+
+
 # Functions
 def bin2bytes(value: str, endian: str = 'big') -> bytes:
     """Convert a binary string into :class:`bytes`.
@@ -155,3 +160,56 @@ def read_resource(key: str, codec: str = 'utf_8') -> tuple[str, ...]:
     lines = fh.readlines()
     fh.close()
     return tuple(lines)
+
+
+def to_bytes(value: bytes | int | str, endian: str = 'big') -> bytes:
+    """Transform the given value to :class:`bytes`.
+
+    :param value: The value to transform.
+    :param endian: (Optional.) An indicator for the endianness of the
+        a number string. Valid values are: big, little. It defaults to
+        big.
+    :return: A :class:`bytes`.
+    :rtype: bytes
+    """
+    if isinstance(value, str) and value.startswith('0b'):
+        value = bin2bytes(value[2:], endian)
+    elif isinstance(value, str) and value.startswith('0x'):
+        value = hex2bytes(value[2:], endian)
+    elif isinstance(value, str) and value.startswith('U+'):
+        n = int(value[2:], 16)
+        char = chr(n)
+        value = char.encode('utf8')
+    elif isinstance(value, str):
+        value = value.encode('utf8')
+    elif isinstance(value, int):
+        value = value.to_bytes((value.bit_length() + 7) // 8)
+    return value
+
+
+def to_char(value: bytes | int | str) -> str:
+    """Transform the given value to a one character :class:`str`.
+
+    :param value: The value to transform.
+    :return: A :class:`str` of length one.
+    :rtype: str
+    """
+    prefixes = {
+        '0b': 2,
+        '0d': 10,
+        '0o': 8,
+        '0x': 16,
+        'U+': 16,
+    }
+
+    if isinstance(value, bytes):
+        value = value.decode('utf8')
+    elif isinstance(value, int):
+        value = chr(value)
+    elif value[:2] in prefixes:
+        n = int(value[2:], prefixes[value[:2]])
+        value = chr(n)
+    elif not isinstance(value, str) or len(value) != 1:
+        msg = 'Value cannot be made a str with length one.'
+        raise NotCharacterError(msg)
+    return value

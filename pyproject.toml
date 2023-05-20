@@ -13,7 +13,7 @@ addopts = [
 
 [project]
 name = "charex"
-version = "0.0.2"
+version = "0.0.3-dev"
 authors = [
     {name="Paul J. Iutzi", email="pji@mac.com"},
 ]
