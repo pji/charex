@@ -132,6 +132,17 @@ def mode_cl(args: Namespace) -> None:
     print()
 
 
+def mode_clear(args: Namespace) -> None:
+    """Clear the terminal.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    print('\x1b[2J')
+    print('\x1b[1;1H', end='')
+
+
 def mode_ct(args: Namespace) -> None:
     """Count denormalization results.
 
@@ -320,6 +331,7 @@ def build_parser() -> ArgumentParser:
     parse_cd(spa)
     parse_ce(spa)
     parse_cl(spa)
+    parse_clear(spa)
     parse_ct(spa)
     parse_dm(spa)
     parse_dn(spa)
@@ -349,8 +361,8 @@ def parse_cd(spa: _SubParsersAction) -> None:
         'base',
         help=(
             'The base integer. Prefix the integer with "0x" for hex '
-            'or "0b" for binary. No prefix will be interpreted as the'
-            'UTF-8 address of the character.'
+            'or "0b" for binary. No prefix or a Unicode code point '
+            'will be interpreted as the UTF-8 address of the character.'
         ),
         action='store',
         type=str
@@ -398,6 +410,22 @@ def parse_cl(spa: _SubParsersAction) -> None:
         action='store_true'
     )
     sp.set_defaults(func=mode_cl)
+
+
+def parse_clear(spa: _SubParsersAction) -> None:
+    """Clear the terminal.
+
+    :param spa: The subparser action used to add a new subparser to
+        the main parser.
+    :return: None.
+    :rtype: NoneType
+    """
+    sp = spa.add_parser(
+        'clear',
+        aliases=['clr',],
+        description='Clear the terminal.'
+    )
+    sp.set_defaults(func=mode_clear)
 
 
 def parse_ct(spa: _SubParsersAction) -> None:
@@ -724,6 +752,11 @@ class Shell(Cmd):
         cmd = f'cl {arg}'
         self._run_cmd(cmd)
 
+    def do_clear(self, arg):
+        """Clear the terminal."""
+        cmd = f'clear {arg}'
+        self._run_cmd(cmd)
+
     def do_ct(self, arg):
         """Count denormalization results."""
         cmd = f'ct {arg}'
@@ -810,6 +843,10 @@ class Shell(Cmd):
 
     def help_cl(self):
         cmd = f'cl -h'
+        self._run_cmd(cmd)
+
+    def help_clear(self):
+        cmd = f'clear -h'
         self._run_cmd(cmd)
 
     def help_ct(self):

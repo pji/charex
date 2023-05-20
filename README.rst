@@ -39,6 +39,7 @@ From here you can type `?` to see the list of available commands::
     * cd: Decode the given address in all codecs.
     * ce: Encode the given character in all codecs.
     * cl: List registered character sets.
+    * clear: Clear the terminal.
     * ct: Count denormalization results.
     * dm: Build a denormalization map.
     * dn: Perform denormalizations.
