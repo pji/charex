@@ -19,6 +19,7 @@ from shutil import get_terminal_size
 from textwrap import wrap
 
 from charex import charex as ch
+from charex import cmds
 from charex import charsets as cset
 from charex import denormal as dn
 from charex import escape as esc
@@ -79,24 +80,8 @@ def mode_cd(args: Namespace) -> None:
     :return: None.
     :rtype: NoneType
     """
-    # Get the data.
-    codecs = cset.get_codecs()
-    results = cset.multidecode(args.base, (codec for codec in codecs))
-
-    # Write the output.
-    width = max(len(codec) for codec in codecs)
-    for key in results:
-        c = results[key]
-        details = ''
-        if len(c) < 1:
-            details = '*** no character ***'
-        elif len(c) > 1:
-            details = '*** multiple characters ***'
-        else:
-            char = ch.Character(c)
-            details = f'{char.code_point} {char.name}'
-        c = util.neutralize_control_characters(c)
-        print(f'{key:>{width}}: {c} {details}')
+    for line in cmds.cd(args.base):
+        print(line)
     print()
 
 
@@ -107,16 +92,8 @@ def mode_ce(args: Namespace) -> None:
     :return: None.
     :rtype: NoneType
     """
-    # Get the data.
-    codecs = cset.get_codecs()
-    results = cset.multiencode(args.base, (codec for codec in codecs))
-
-    # Write the output.
-    width = max(len(codec) for codec in codecs)
-    for key in results:
-        if b := results[key]:
-            c = ' '.join(f'{n:>02x}'.upper() for n in b)
-            print(f'{key:>{width}}: {c}')
+    for line in cmds.ce(args.base):
+        print(line)
     print()
 
 
@@ -127,8 +104,10 @@ def mode_cl(args: Namespace) -> None:
     :return: None.
     :rtype: NoneType
     """
-    codecs = cset.get_codecs()
-    write_list(codecs, cset.get_codec_description, args.description)
+    for line in cmds.cl(args.description):
+        print(line)
+        if args.description:
+            print()
     print()
 
 
@@ -150,8 +129,8 @@ def mode_ct(args: Namespace) -> None:
     :return: None.
     :rtype: NoneType
     """
-    count = dn.count_denormalizations(args.base, args.form, args.maxdepth)
-    print(f'{count:,}')
+    count = cmds.ct(args.base, args.form, args.maxdepth)
+    print(count)
     print()
 
 
