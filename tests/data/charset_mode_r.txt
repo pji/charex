@@ -86,13 +86,13 @@ iso2022_jp_2004: 41
       shift_jis: 41
  shift_jis_2004: 41
  shift_jisx0213: 41
-         utf_32: FFFE000041000000
-      utf_32_be: 00000041
-      utf_32_le: 41000000
-         utf_16: FFFE4100
-      utf_16_be: 0041
-      utf_16_le: 4100
+         utf_32: FF FE 00 00 41 00 00 00
+      utf_32_be: 00 00 00 41
+      utf_32_le: 41 00 00 00
+         utf_16: FF FE 41 00
+      utf_16_be: 00 41
+      utf_16_le: 41 00
           utf_7: 41
           utf_8: 41
-      utf_8_sig: EFBBBF41
+      utf_8_sig: EF BB BF 41
 

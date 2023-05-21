@@ -16,10 +16,14 @@ part is what's interesting to me, and where a lot of fun problems lie.
 
 How Do I Use This?
 ==================
-Right now, the best way to use it is to clone the repository. Then in
-the root of the repository, run `charex` as a module.::
+It's in PyPI, so you can install it with `pip`, as long as you are
+using Python 3.11 or higher::
 
-    python -m charex
+    pip install charex
+
+You should then be able to run it from the command line::
+
+    charex
 
 That will bring you to the `charex` shell::
 

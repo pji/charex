@@ -115,7 +115,7 @@ def mode_ce(args: Namespace) -> None:
     width = max(len(codec) for codec in codecs)
     for key in results:
         if b := results[key]:
-            c = ''.join(f'{n:>02x}'.upper() for n in b)
+            c = ' '.join(f'{n:>02x}'.upper() for n in b)
             print(f'{key:>{width}}: {c}')
     print()
 

@@ -113,11 +113,15 @@ def neutralize_control_characters(value: str) -> str:
     :rtype: str
     """
     def neutralize(char: str) -> str:
-        if ucd.category(char) == 'Cc':
-            num = ord(char)
-            new = chr(num + 0x2400)
-            return new
-        return char
+        try:
+            if ucd.category(char) == 'Cc':
+                num = ord(char)
+                new = chr(num + 0x2400)
+                return new
+            return char
+        except TypeError as ex:
+            print(char)
+            raise ex
 
     return ''.join(neutralize(char) for char in value)
 
