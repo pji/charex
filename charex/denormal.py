@@ -4,7 +4,7 @@ denormal
 
 Functions for reversing normalization of string.
 """
-from collections.abc import Sequence
+from collections.abc import Generator, Sequence
 from math import prod
 from random import choice, seed
 
@@ -102,6 +102,43 @@ def denormalize(
     if maxresults:
         results = results[:maxresults]
     return tuple(results)
+
+
+def gen_denormalize(
+    base: str,
+    form: str,
+    maxdepth: int
+) -> Generator[str, None, None]:
+    c, rest = base[0], base[1:]
+    char = Character(c)
+    dechars = char.denormalize(form)
+    if not dechars:
+        dechars = (char.value,)
+    if maxdepth:
+        dechars = dechars[:maxdepth]
+
+    if rest:
+        for dechar in dechars:
+            for tail in gen_denormalize(rest, form, maxdepth):
+                yield dechar + tail
+
+    else:
+        for dechar in dechars:
+            yield dechar
+
+
+def gen_random_denormalize(
+    base: str,
+    form: str,
+    maxresults: int = 1,
+    seed_: bytes | int | str = ''
+) -> Generator[str, None, None]:
+    chars = [denormalize(char, form) for char in base]
+    if seed_:
+        seed(seed_)
+    for _ in range(maxresults):
+        result = ''.join(choice(char) for char in chars)
+        yield result
 
 
 def random_denormalize(

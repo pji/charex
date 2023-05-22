@@ -74,16 +74,19 @@ def cl(show_descr: bool = False) -> Generator[str, None, None]:
         yield line
 
 
-def ct(base: str, form: str, maxdepth: int) -> str:
+def ct(base: str, form: str, maxdepth: int, number: int = 0) -> str:
     """Count denormalization results.
 
     :param base: The base normalized string.
     :param form: The Unicode normalization form for the denormalization.
     :param maxdepth: Maximum number of reverse normalizations to use
         for each character.
+    :param number: (Optional.) The number of denormalizations to return.
     :return: The number of denormalizations as a :class:`str`
     :rtype: str
     """
+    if number:
+        return f'{number:,}'
     count = dn.count_denormalizations(base, form, maxdepth)
     return f'{count:,}'
 

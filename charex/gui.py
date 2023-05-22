@@ -10,6 +10,7 @@ from tkinter import ttk
 from charex import charex as ch
 from charex import cmds
 from charex import charsets as cset
+from charex import denormal as dn
 from charex import normal as nl
 from charex import util
 from charex import shell as sh
@@ -36,7 +37,7 @@ class Application:
         self.book = book
         book.grid(column=0, row=0, sticky=ALL)
         self.tabs = {}
-        names = ('cd', 'ce', 'cl', 'ct')
+        names = ('cd', 'ce', 'cl', 'ct', 'dn',)
         for i, name in enumerate(names):
             frame = ttk.Frame(book, padding='3 3 12 12')
             book.add(frame, text=name)
@@ -84,17 +85,9 @@ class Application:
         self.ct_form = tk.StringVar()
         self.ct_maxdepth = tk.StringVar()
         self.ct_maxdepth.set('0')
-        self.ct_result = self.make_results(frame, row=4, colspan=4)
+        self.ct_result = self.make_results(frame, row=5, colspan=4)
 
-        frame.columnconfigure(0, weight=0)
-        frame.columnconfigure(1, weight=1)
-        frame.columnconfigure(2, weight=0)
-        frame.columnconfigure(3, weight=1)
-        frame.columnconfigure(4, weight=0)
-        frame.rowconfigure(1, weight=0)
-        frame.rowconfigure(2, weight=0)
-        frame.rowconfigure(3, weight=0)
-        frame.rowconfigure(4, weight=1)
+        self.config_five_params_grid(frame)
 
         char_entry = self.make_entry(
             frame,
@@ -124,7 +117,72 @@ class Application:
             frame,
             'Count Denormalizations',
             self.ct,
+            row=4,
+            colspan=5
+        )
+        self.pad_kids(frame)
+
+    def init_dn(self, frame):
+        self.dn_base = tk.StringVar()
+        self.dn_form = tk.StringVar()
+        self.dn_maxdepth = tk.StringVar()
+        self.dn_maxdepth.set('0')
+        self.dn_random = tk.BooleanVar(value=False)
+        self.dn_seed = tk.StringVar()
+        self.dn_result = self.make_results(frame, row=5, colspan=4)
+
+        self.config_five_params_grid(frame)
+
+        char_entry = self.make_entry(
+            frame,
+            self.dn_base,
+            colspan=5
+        )
+
+        form_label = ttk.Label(frame, text='Form:', justify=tk.RIGHT)
+        form_label.grid(column=0, row=2, columnspan=1, sticky=SIDES)
+        form_combo = ttk.Combobox(frame, textvariable=self.dn_form)
+        form_combo['values'] = nl.get_forms()
+        form_combo.state(['readonly'])
+        form_combo.grid(column=1, row=2, columnspan=1, sticky=SIDES)
+
+        maxdepth_label = ttk.Label(frame, text='Max Depth:', justify=tk.RIGHT)
+        maxdepth_label.grid(column=2, row=2, columnspan=1, sticky=SIDES)
+        maxdepth_entry = self.make_entry(
+            frame,
+            self.dn_maxdepth,
+            width=40,
+            col=3,
+            row=2,
+            colspan=2
+        )
+
+        random_label = ttk.Label(frame, text='Random:', justify=tk.RIGHT)
+        random_label.grid(column=0, row=3, columnspan=1, sticky=SIDES)
+        random_check = ttk.Checkbutton(
+            frame,
+            variable=self.dn_random,
+            onvalue='True',
+            offvalue='False'
+        )
+        random_check.grid(column=1, row=3, columnspan=1, sticky=SIDES)
+
+        seed_label = ttk.Label(frame, text='Seed:', justify=tk.RIGHT)
+        seed_label.grid(column=2, row=3, columnspan=1, sticky=SIDES)
+        seed_entry = self.make_entry(
+            frame,
+            self.dn_seed,
+            width=40,
+            col=3,
             row=3,
+            colspan=2
+        )
+
+        cd_button = self.make_button(
+            frame,
+            'Denormalize',
+            self.dn,
+            row=4,
             colspan=5
         )
         self.pad_kids(frame)
@@ -163,6 +221,27 @@ class Application:
         line = cmds.ct(base, form, maxdepth)
         self.ct_result.insert('end', line + '\n\n')
 
+    def dn(self, *args):
+        self.dn_result.delete('0.0', 'end')
+        base = self.dn_base.get()
+        form = self.dn_form.get()
+        maxdepth = int(self.dn_maxdepth.get())
+        random = self.dn_random.get()
+        seed_ = self.dn_seed.get()
+
+        if not random:
+            for line in dn.gen_denormalize(base, form, maxdepth):
+                self.dn_result.insert('end', line + '\n')
+
+        else:
+            for line in dn.gen_random_denormalize(
+                base,
+                form,
+                maxdepth,
+                seed_
+            ):
+                self.dn_result.insert('end', line + '\n')
+
     # Context sensitive hotkey bindings.
     def execute(self, *args):
         tab_id = self.book.select()
@@ -177,6 +256,18 @@ class Application:
         frame.rowconfigure(1, weight=0)
         frame.rowconfigure(2, weight=0)
         frame.rowconfigure(3, weight=1)
+
+    def config_five_params_grid(self, frame):
+        frame.columnconfigure(0, weight=0)
+        frame.columnconfigure(1, weight=1)
+        frame.columnconfigure(2, weight=0)
+        frame.columnconfigure(3, weight=1)
+        frame.columnconfigure(4, weight=0)
+        frame.rowconfigure(1, weight=0)
+        frame.rowconfigure(2, weight=0)
+        frame.rowconfigure(3, weight=0)
+        frame.rowconfigure(4, weight=0)
+        frame.rowconfigure(5, weight=1)
 
     # Generic widget creation.
     def make_button(
