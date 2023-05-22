@@ -37,7 +37,7 @@ class Application:
         self.book = book
         book.grid(column=0, row=0, sticky=ALL)
         self.tabs = {}
-        names = ('cd', 'ce', 'cl', 'ct', 'dn',)
+        names = ('cd', 'ce', 'cl', 'ct', 'dn', 'dt')
         for i, name in enumerate(names):
             frame = ttk.Frame(book, padding='3 3 12 12')
             book.add(frame, text=name)
@@ -187,6 +187,22 @@ class Application:
         )
         self.pad_kids(frame)
 
+    def init_dt(self, frame):
+        """Initialize the "dt" tab.
+
+        :param frame: The frame for the "dt" notebook tab.
+        :return: None.
+        :rtype: NoneType
+        """
+        self.dt_char = tk.StringVar()
+        self.dt_result = self.make_results(frame)
+
+        self.config_simple_grid(frame)
+        address_entry = self.make_entry(frame, self.dt_char)
+        cd_button = self.make_button(frame, 'Character Details', self.dt)
+        self.pad_kids(frame)
+        address_entry.focus_set()
+
     # Core commands.
     def cd(self, *args):
         try:
@@ -241,6 +257,16 @@ class Application:
                 seed_
             ):
                 self.dn_result.insert('end', line + '\n')
+
+    def dt(self, *args):
+        try:
+            self.dt_result.delete('0.0', 'end')
+            base = self.dt_char.get()
+            for line in cmds.dt(base):
+                self.dt_result.insert('end', line + '\n')
+
+        except ValueError:
+            ...
 
     # Context sensitive hotkey bindings.
     def execute(self, *args):

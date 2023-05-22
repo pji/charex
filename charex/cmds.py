@@ -91,6 +91,58 @@ def ct(base: str, form: str, maxdepth: int, number: int = 0) -> str:
     return f'{count:,}'
 
 
+def dt(c: str) -> Generator[str, None, None]:
+    """Display details for a code point.
+
+    :param address: The character to encode in the codecs.
+    :return: Yields the result for each codec as a :class:`str`.
+    :rtype: str
+    """
+    def rev_normalize(char: ch.Character, form: str) -> str:
+        points = char.denormalize(form)
+        values = []
+        for point in points:
+            if len(point) == 1:
+                c = ch.Character(point)
+                values.append(c.summarize())
+            elif len(point) > 1:
+                values.append(f'{point} *** multiple characters ***')
+                for item in point:
+                    char = ch.Character(item)
+                    values.append('  ' + char.summarize())
+        if not values:
+            return ''
+        return ('\n' + ' ' * 22).join(v for v in values)
+
+    # Gather the details for display.
+    char = ch.Character(c)
+    details = (
+        ('Display', char.value),
+        ('Name', char.name),
+        ('Code Point', char.code_point),
+        ('Category', char.category),
+        ('UTF-8', char.encode('utf8')),
+        ('UTF-16', char.encode('utf_16_be')),
+        ('UTF-32', char.encode('utf_32_be')),
+        ('Decomposition', char.decomposition),
+        ('C encoded', char.escape('c')),
+        ('URL encoded', char.escape('url')),
+        ('HTML encoded', char.escape('html')),
+        ('Reverse Cfold', rev_normalize(char, 'casefold')),
+        ('Reverse NFC', rev_normalize(char, 'nfc')),
+        ('Reverse NFD', rev_normalize(char, 'nfd')),
+        ('Reverse NFKC', rev_normalize(char, 'nfkc')),
+        ('Reverse NFKD', rev_normalize(char, 'nfkd')),
+    )
+
+    # Display the details.
+    width = 20
+    for detail in details:
+        label, value = detail
+        if value:
+            yield f'{label:>{width}}: {value}'
+
+
 # Utility functions.
 def make_description_row(name: str, namewidth: int, descr: str) -> str:
     """Create a two column row with a name and description.
