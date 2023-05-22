@@ -220,6 +220,29 @@ def fl(show_descr: bool = False) -> Generator[str, None, None]:
         yield line
 
 
+def nl(form: str, base: str, expand: bool = False) -> str:
+    """Perform normalizations.
+
+    :param form: The key of a registered normalization form.
+    :param base: The string to normalize.
+    :param expand: (Optional.) Whether to provide a summary of each
+        character in the normalization.
+    :return: The normalized :class:`str`.
+    :rtype: str
+    """
+    result = nml.normalize(form, base)
+    out = result
+    if expand:
+        out += '\n'
+        for item in result:
+            char = ch.Character(item)
+            indent = '  '
+            if 'mark' in char.category.casefold():
+                indent += ' '
+            out += f'  {char.summarize()}\n'
+    return out
+
+
 # Utility functions.
 def make_description_row(name: str, namewidth: int, descr: str) -> str:
     """Create a two column row with a name and description.

@@ -12,64 +12,16 @@ from argparse import (
     RawDescriptionHelpFormatter
 )
 from cmd import Cmd
-from itertools import zip_longest
 import readline
 from shlex import split
 from shutil import get_terminal_size
 from textwrap import wrap
 
-from charex import charex as ch
 from charex import cmds
 from charex import charsets as cset
-from charex import denormal as dn
 from charex import escape as esc
+from charex import gui
 from charex import normal as nl
-from charex import util
-
-
-# Utility functions.
-def make_description_row(name: str, namewidth: int, descr: str) -> str:
-    """Create a two column row with a name and description.
-
-    :param name: The content for the first column.
-    :param namewidth: The width of the first column.
-    :param descr: The content for the second column.
-    :return: The row as a :class:`str`.
-    :rtype: str
-    """
-    name_lines = wrap(name, namewidth)
-    descr_lines = wrap(descr, 77 - namewidth)
-    lines = (
-        f'{n:<{namewidth}}  {d}'
-        for n, d in zip_longest(name_lines, descr_lines, fillvalue='')
-    )
-    return '\n'.join(lines)
-
-
-def write_list(
-    items: Sequence[str],
-    get_descr: Callable[[str], str],
-    show_descr: bool
-) -> None:
-    """Output the given list.
-
-    :param items: The items to list.
-    :param get_descr: The function used to look up the discription
-        of each item.
-    :param show_descr: Whether include the descriptions of each item
-        in the output.
-    :return: None.
-    :rtype: NoneType
-    """
-    width = max(len(item) for item in items)
-    for item in items:
-        if show_descr:
-            descr = get_descr(item)
-            row = make_description_row(item, width, descr)
-            print(row)
-            print()
-        else:
-            print(item)
 
 
 # Running modes.
@@ -217,6 +169,18 @@ def mode_fl(args: Namespace) -> None:
     print()
 
 
+def mode_gui(args: Namespace) -> None:
+    """Start the :mod:`charex` GUI.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    print('Running charex GUI....')
+    gui.main()
+    print('charex GUI stopped.')
+
+
 def mode_nl(args: Namespace) -> None:
     """Perform normalizations.
 
@@ -224,15 +188,8 @@ def mode_nl(args: Namespace) -> None:
     :return: None.
     :rtype: NoneType
     """
-    result = nl.normalize(args.form, args.base)
+    result = cmds.nl(args.form, args.base, args.expand)
     print(result)
-    if args.expand:
-        for item in result:
-            char = ch.Character(item)
-            indent = '  '
-            if 'mark' in char.category.casefold():
-                indent += ' '
-            print(f'  {char.summarize()}')
     print()
 
 
@@ -278,6 +235,7 @@ def build_parser() -> ArgumentParser:
     parse_el(spa)
     parse_es(spa)
     parse_fl(spa)
+    parse_gui(spa)
     parse_nl(spa)
     parse_sh(spa)
 
@@ -583,6 +541,22 @@ def parse_fl(spa: _SubParsersAction) -> None:
         action='store_true'
     )
     sp.set_defaults(func=mode_fl)
+
+
+def parse_gui(spa: _SubParsersAction) -> None:
+    """Run the :mod:`charex` GUI.
+
+    :param spa: The subparser action used to add a new subparser to
+        the main parser.
+    :return: None.
+    :rtype: NoneType
+    """
+    sp = spa.add_parser(
+        'gui',
+        aliases=[],
+        description='Run the charex GUI.'
+    )
+    sp.set_defaults(func=mode_gui)
 
 
 def parse_nl(spa: _SubParsersAction) -> None:

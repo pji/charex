@@ -38,7 +38,7 @@ class Application:
         self.book = book
         book.grid(column=0, row=0, sticky=ALL)
         self.tabs = {}
-        names = ('cd', 'ce', 'cl', 'ct', 'dn', 'dt', 'el', 'es', 'fl',)
+        names = ('cd', 'ce', 'cl', 'ct', 'dn', 'dt', 'el', 'es', 'fl', 'nl')
         for i, name in enumerate(names):
             frame = ttk.Frame(book, padding='3 3 12 12')
             book.add(frame, text=name)
@@ -251,6 +251,35 @@ class Application:
         )
         self.pad_kids(frame)
 
+    def init_nl(self, frame):
+        self.nl_base = tk.StringVar()
+        self.nl_form = tk.StringVar()
+        self.nl_result = self.make_results(frame, row=5, colspan=4)
+
+        self.config_five_params_grid(frame)
+
+        char_entry = self.make_entry(
+            frame,
+            self.nl_base,
+            colspan=5
+        )
+
+        form_label = ttk.Label(frame, text='Form:', justify=tk.RIGHT)
+        form_label.grid(column=0, row=2, columnspan=1, sticky=SIDES)
+        form_combo = ttk.Combobox(frame, textvariable=self.nl_form)
+        form_combo['values'] = nl.get_forms()
+        form_combo.state(['readonly'])
+        form_combo.grid(column=1, row=2, columnspan=4, sticky=SIDES)
+
+        cd_button = self.make_button(
+            frame,
+            'Normalize',
+            self.nl,
+            row=4,
+            colspan=5
+        )
+        self.pad_kids(frame)
+
     # Core commands.
     def cd(self, *args):
         try:
@@ -332,6 +361,14 @@ class Application:
         self.fl_result.delete('0.0', 'end')
         for line in cmds.fl(True):
             self.fl_result.insert('end', line + '\n\n')
+
+    def nl(self, *args):
+        self.nl_result.delete('0.0', 'end')
+        base = self.nl_base.get()
+        form = self.nl_form.get()
+
+        result = cmds.nl(form, base, True)
+        self.nl_result.insert('end', result)
 
     # Context sensitive hotkey bindings.
     def execute(self, *args):
@@ -432,7 +469,11 @@ class Application:
             child.grid_configure(padx=2, pady=4)
 
 
-if __name__ == '__main__':
+def main():
     root = tk.Tk()
     app = Application(root)
     root.mainloop()
+
+
+if __name__ == '__main__':
+    main()
