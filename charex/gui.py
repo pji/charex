@@ -37,7 +37,7 @@ class Application:
         self.book = book
         book.grid(column=0, row=0, sticky=ALL)
         self.tabs = {}
-        names = ('cd', 'ce', 'cl', 'ct', 'dn', 'dt')
+        names = ('cd', 'ce', 'cl', 'ct', 'dn', 'dt', 'el')
         for i, name in enumerate(names):
             frame = ttk.Frame(book, padding='3 3 12 12')
             book.add(frame, text=name)
@@ -77,7 +77,7 @@ class Application:
         self.cl_result = self.make_results(frame)
 
         self.config_simple_grid(frame)
-        cd_button = self.make_button(frame, 'List Character Sets', self.cl)
+        cl_button = self.make_button(frame, 'List Character Sets', self.cl)
         self.pad_kids(frame)
 
     def init_ct(self, frame):
@@ -203,6 +203,13 @@ class Application:
         self.pad_kids(frame)
         address_entry.focus_set()
 
+    def init_el(self, frame):
+        self.el_result = self.make_results(frame)
+
+        self.config_simple_grid(frame)
+        el_button = self.make_button(frame, 'List Character Sets', self.el)
+        self.pad_kids(frame)
+
     # Core commands.
     def cd(self, *args):
         try:
@@ -267,6 +274,11 @@ class Application:
 
         except ValueError:
             ...
+
+    def el(self, *args):
+        self.el_result.delete('0.0', 'end')
+        for line in cmds.el(True):
+            self.el_result.insert('end', line + '\n\n')
 
     # Context sensitive hotkey bindings.
     def execute(self, *args):

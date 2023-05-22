@@ -124,16 +124,13 @@ def test_dn_number(capsys):
     """
     exp = (
         '\ufe64\ufe63\ufe65\n'
-        '\ufe64\ufe63\uff1e\n'
-        '\ufe64\uff0d\ufe65\n'
-        '\ufe64\uff0d\uff1e\n'
         '\n'
     )
     cmd = (
         'dn '
         'nfkd '
         '<-> '
-        '-n 4'
+        '-m 1'
     )
     shell_test(exp, cmd, capsys)
 

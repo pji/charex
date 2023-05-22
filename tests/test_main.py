@@ -191,15 +191,12 @@ def test_dn(capsys):
     cli_test(exp, cmd, capsys)
 
 
-def test_dn_number(capsys):
+def test_dn_maxdepth(capsys):
     """Invoked with -n and an integer, dn mode should return no
     more than that number of results.
     """
     exp = (
         '\ufe64\ufe63\ufe65\n'
-        '\ufe64\ufe63\uff1e\n'
-        '\ufe64\uff0d\ufe65\n'
-        '\ufe64\uff0d\uff1e\n'
         '\n'
     )
     cmd = (
@@ -207,7 +204,7 @@ def test_dn_number(capsys):
         'dn',
         'nfkd',
         '<->',
-        '-n', '4'
+        '-m', '1'
     )
     cli_test(exp, cmd, capsys)
 

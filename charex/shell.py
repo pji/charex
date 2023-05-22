@@ -154,15 +154,13 @@ def mode_dn(args: Namespace) -> None:
     :return: None.
     :rtype: NoneType
     """
-    results = dn.denormalize(
+    for result in cmds.dn(
         args.base,
         args.form,
         args.maxdepth,
-        args.number,
         args.random,
         args.seed
-    )
-    for result in results:
+    ):
         print(result)
     print()
 
@@ -186,8 +184,10 @@ def mode_el(args: Namespace) -> None:
     :return: None.
     :rtype: NoneType
     """
-    schemes = esc.get_schemes()
-    write_list(schemes, esc.get_description, args.description)
+    for line in cmds.el(args.description):
+        print(line)
+        if args.description:
+            print()
     print()
 
 
@@ -462,16 +462,10 @@ def parse_dn(spa: _SubParsersAction) -> None:
     sp.add_argument(
         '-m', '--maxdepth',
         help=(
-            'Maximum number of reverse normalizations to use '
-            'for each character.'
+            'If not random, sets the maximum number of denormalizations '
+            'to use for each character. If random, sets the number of '
+            'random denormalizations to return.'
         ),
-        default=0,
-        action='store',
-        type=int
-    )
-    sp.add_argument(
-        '-n', '--number',
-        help='Maximum number of results to return.',
         default=0,
         action='store',
         type=int

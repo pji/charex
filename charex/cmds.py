@@ -10,7 +10,8 @@ from textwrap import wrap
 
 from charex import charex as ch
 from charex import charsets as cset
-from charex import denormal as dn
+from charex import denormal as dnm
+from charex import escape as esc
 from charex import util
 
 
@@ -87,8 +88,43 @@ def ct(base: str, form: str, maxdepth: int, number: int = 0) -> str:
     """
     if number:
         return f'{number:,}'
-    count = dn.count_denormalizations(base, form, maxdepth)
+    count = dnm.count_denormalizations(base, form, maxdepth)
     return f'{count:,}'
+
+
+def dn(
+    base: str,
+    form: str,
+    maxdepth: int,
+    random: bool,
+    seed: bytes | int | str
+) -> Generator[str, None, None]:
+    """Perform denormalizations.
+
+    :param base: The base normalized string.
+    :param form: The normalization form for the denormalization.
+    :param maxdepth: If not random, sets the maximum number of
+        denormalizations to use for each character. If random, sets
+        the number of random denormalizations to return.
+    :param random: Randomize the denormalization.
+    :param seed: Seed the randomized denormalization.
+    :return: Yields each codec as a :class:`str`.
+    :rtype: str
+    """
+    if not random:
+        for result in dnm.gen_denormalize(base, form, maxdepth):
+            yield result
+
+    else:
+        if not maxdepth:
+            maxdepth = 1
+        for result in dnm.gen_random_denormalize(
+            base,
+            form,
+            maxdepth,
+            seed
+        ):
+            yield result
 
 
 def dt(c: str) -> Generator[str, None, None]:
@@ -141,6 +177,19 @@ def dt(c: str) -> Generator[str, None, None]:
         label, value = detail
         if value:
             yield f'{label:>{width}}: {value}'
+
+
+def el(show_descr: bool = False) -> Generator[str, None, None]:
+    """List registered escape schemes.
+
+    :param show_descr: (Optional.) Whether to show the descriptions
+        for the character sets.
+    :return: Yields each codec as a :class:`str`.
+    :rtype: str
+    """
+    schemes = esc.get_schemes()
+    for line in write_list(schemes, esc.get_description, show_descr):
+        yield line
 
 
 # Utility functions.
