@@ -12,6 +12,7 @@ from charex import charex as ch
 from charex import charsets as cset
 from charex import denormal as dnm
 from charex import escape as esc
+from charex import normal as nml
 from charex import util
 
 
@@ -204,6 +205,19 @@ def es(base: str, scheme: str, codec: str) -> str:
     :rtype: str
     """
     return esc.escape(base, scheme, codec)
+
+
+def fl(show_descr: bool = False) -> Generator[str, None, None]:
+    """List registered normalization forms.
+
+    :param show_descr: (Optional.) Whether to show the descriptions
+        for the character sets.
+    :return: Yields each form as a :class:`str`.
+    :rtype: str
+    """
+    forms = nml.get_forms()
+    for line in write_list(forms, nml.get_description, show_descr):
+        yield line
 
 
 # Utility functions.

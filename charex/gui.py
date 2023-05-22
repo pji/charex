@@ -38,7 +38,7 @@ class Application:
         self.book = book
         book.grid(column=0, row=0, sticky=ALL)
         self.tabs = {}
-        names = ('cd', 'ce', 'cl', 'ct', 'dn', 'dt', 'el', 'es',)
+        names = ('cd', 'ce', 'cl', 'ct', 'dn', 'dt', 'el', 'es', 'fl',)
         for i, name in enumerate(names):
             frame = ttk.Frame(book, padding='3 3 12 12')
             book.add(frame, text=name)
@@ -208,7 +208,7 @@ class Application:
         self.el_result = self.make_results(frame)
 
         self.config_simple_grid(frame)
-        el_button = self.make_button(frame, 'List Character Sets', self.el)
+        el_button = self.make_button(frame, 'List Escape Schemes', self.el)
         self.pad_kids(frame)
 
     def init_es(self, frame):
@@ -237,6 +237,17 @@ class Application:
             self.es,
             row=4,
             colspan=5
+        )
+        self.pad_kids(frame)
+
+    def init_fl(self, frame):
+        self.fl_result = self.make_results(frame)
+
+        self.config_simple_grid(frame)
+        el_button = self.make_button(
+            frame,
+            'List Normalization Forms',
+            self.fl
         )
         self.pad_kids(frame)
 
@@ -316,6 +327,11 @@ class Application:
         scheme = self.es_scheme.get()
         line = cmds.es(base, scheme, 'utf8')
         self.es_result.insert('end', line)
+
+    def fl(self, *args):
+        self.fl_result.delete('0.0', 'end')
+        for line in cmds.fl(True):
+            self.fl_result.insert('end', line + '\n\n')
 
     # Context sensitive hotkey bindings.
     def execute(self, *args):

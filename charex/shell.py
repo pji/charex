@@ -210,8 +210,10 @@ def mode_fl(args: Namespace) -> None:
     :return: None.
     :rtype: NoneType
     """
-    forms = nl.get_forms()
-    write_list(forms, nl.get_description, args.description)
+    for line in cmds.fl(args.description):
+        print(line)
+        if args.description:
+            print()
     print()
 
 
