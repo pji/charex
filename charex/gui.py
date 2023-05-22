@@ -29,6 +29,7 @@ class Application:
     # Initialization.
     def __init__(self, root):
         # Configure the main window.
+        self.root = root
         root.title('charex')
         root.columnconfigure(0, weight=1)
         root.rowconfigure(0, weight=1)
@@ -38,18 +39,23 @@ class Application:
         self.book = book
         book.grid(column=0, row=0, sticky=ALL)
         self.tabs = {}
+        self.wake_focus = {}
         names = ('cd', 'ce', 'cl', 'ct', 'dn', 'dt', 'el', 'es', 'fl', 'nl')
         for i, name in enumerate(names):
             frame = ttk.Frame(book, padding='3 3 12 12')
             book.add(frame, text=name)
             init = getattr(self, f'init_{name}')
-            init(frame)
+            num = i + 1
+            if num == 1:
+                num = ''
+            init(frame, num)
             self.tabs[i] = getattr(self, name)
 
-        # Bind hot keys.
-        root.bind('<Return>', self.execute)
+        # Bind event handlers.
+        root.bind('<Return>', self.handle_return)
+        root.bind('<<NotebookTabChanged>>', self.handle_notebook_tab_changed)
 
-    def init_cd(self, frame):
+    def init_cd(self, frame, num=None):
         """Initialize the "cd" tab.
 
         :param frame: The frame for the "cd" notebook tab.
@@ -64,8 +70,9 @@ class Application:
         cd_button = self.make_button(frame, 'Decode', self.cd)
         self.pad_kids(frame)
         address_entry.focus_set()
+        self.wake_focus[f'!frame{num}'] = address_entry
 
-    def init_ce(self, frame):
+    def init_ce(self, frame, num=None):
         self.ce_char = tk.StringVar()
         self.ce_result = self.make_results(frame)
 
@@ -73,15 +80,16 @@ class Application:
         char_entry = self.make_entry(frame, self.ce_char)
         cd_button = self.make_button(frame, 'Encode', self.ce)
         self.pad_kids(frame)
+        self.wake_focus[f'!frame{num}'] = char_entry
 
-    def init_cl(self, frame):
+    def init_cl(self, frame, num=None):
         self.cl_result = self.make_results(frame)
 
         self.config_simple_grid(frame)
         cl_button = self.make_button(frame, 'List Character Sets', self.cl)
         self.pad_kids(frame)
 
-    def init_ct(self, frame):
+    def init_ct(self, frame, num=None):
         self.ct_base = tk.StringVar()
         self.ct_form = tk.StringVar()
         self.ct_maxdepth = tk.StringVar()
@@ -122,8 +130,9 @@ class Application:
             colspan=5
         )
         self.pad_kids(frame)
+        self.wake_focus[f'!frame{num}'] = char_entry
 
-    def init_dn(self, frame):
+    def init_dn(self, frame, num=None):
         self.dn_base = tk.StringVar()
         self.dn_form = tk.StringVar()
         self.dn_maxdepth = tk.StringVar()
@@ -187,8 +196,9 @@ class Application:
             colspan=5
         )
         self.pad_kids(frame)
+        self.wake_focus[f'!frame{num}'] = char_entry
 
-    def init_dt(self, frame):
+    def init_dt(self, frame, num=None):
         """Initialize the "dt" tab.
 
         :param frame: The frame for the "dt" notebook tab.
@@ -202,16 +212,16 @@ class Application:
         address_entry = self.make_entry(frame, self.dt_char)
         cd_button = self.make_button(frame, 'Character Details', self.dt)
         self.pad_kids(frame)
-        address_entry.focus_set()
+        self.wake_focus[f'!frame{num}'] = address_entry
 
-    def init_el(self, frame):
+    def init_el(self, frame, num=None):
         self.el_result = self.make_results(frame)
 
         self.config_simple_grid(frame)
         el_button = self.make_button(frame, 'List Escape Schemes', self.el)
         self.pad_kids(frame)
 
-    def init_es(self, frame):
+    def init_es(self, frame, num=None):
         self.es_base = tk.StringVar()
         self.es_scheme = tk.StringVar()
         self.es_result = self.make_results(frame, row=5, colspan=4)
@@ -239,8 +249,9 @@ class Application:
             colspan=5
         )
         self.pad_kids(frame)
+        self.wake_focus[f'!frame{num}'] = char_entry
 
-    def init_fl(self, frame):
+    def init_fl(self, frame, num=None):
         self.fl_result = self.make_results(frame)
 
         self.config_simple_grid(frame)
@@ -251,7 +262,7 @@ class Application:
         )
         self.pad_kids(frame)
 
-    def init_nl(self, frame):
+    def init_nl(self, frame, num=None):
         self.nl_base = tk.StringVar()
         self.nl_form = tk.StringVar()
         self.nl_result = self.make_results(frame, row=5, colspan=4)
@@ -279,6 +290,7 @@ class Application:
             colspan=5
         )
         self.pad_kids(frame)
+        self.wake_focus[f'!frame{num}'] = char_entry
 
     # Core commands.
     def cd(self, *args):
@@ -370,8 +382,16 @@ class Application:
         result = cmds.nl(form, base, True)
         self.nl_result.insert('end', result)
 
-    # Context sensitive hotkey bindings.
-    def execute(self, *args):
+    # Event handlers.
+    def handle_notebook_tab_changed(self, event):
+        focus = self.root.focus_get()
+        name = str(focus)
+        frame = name.split('.')[-2]
+        if frame in self.wake_focus:
+            entry = self.wake_focus[frame]
+            entry.focus_set()
+
+    def handle_return(self, *args):
         tab_id = self.book.select()
         tab = self.book.index(tab_id)
         cmd = self.tabs[tab]

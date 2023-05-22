@@ -170,7 +170,7 @@ def mode_fl(args: Namespace) -> None:
 
 
 def mode_gui(args: Namespace) -> None:
-    """Start the :mod:`charex` GUI.
+    """Start the GUI.
 
     :param args: The arguments used when the script was invoked.
     :return: None.
@@ -544,7 +544,7 @@ def parse_fl(spa: _SubParsersAction) -> None:
 
 
 def parse_gui(spa: _SubParsersAction) -> None:
-    """Run the :mod:`charex` GUI.
+    """Run the GUI.
 
     :param spa: The subparser action used to add a new subparser to
         the main parser.
