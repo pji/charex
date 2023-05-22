@@ -192,6 +192,20 @@ def el(show_descr: bool = False) -> Generator[str, None, None]:
         yield line
 
 
+def es(base: str, scheme: str, codec: str) -> str:
+    """Escape a string using the given scheme.
+
+    :param base: The string to escape.
+    :param scheme: The key in the `schemes` :class:`dict` to use for
+        the escaping.
+    :param codec: The character set codec to use when escaping the
+        characters.
+    :return: The escaped :class:`str`.
+    :rtype: str
+    """
+    return esc.escape(base, scheme, codec)
+
+
 # Utility functions.
 def make_description_row(name: str, namewidth: int, descr: str) -> str:
     """Create a two column row with a name and description.

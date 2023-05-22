@@ -198,7 +198,7 @@ def mode_es(args: Namespace) -> None:
     :return: None.
     :rtype: NoneType
     """
-    result = esc.escape(args.base, args.scheme, 'utf8')
+    result = cmds.es(args.base, args.scheme, 'utf8')
     print(result)
     print()
 

@@ -11,6 +11,7 @@ from charex import charex as ch
 from charex import cmds
 from charex import charsets as cset
 from charex import denormal as dn
+from charex import escape as esc
 from charex import normal as nl
 from charex import util
 from charex import shell as sh
@@ -37,7 +38,7 @@ class Application:
         self.book = book
         book.grid(column=0, row=0, sticky=ALL)
         self.tabs = {}
-        names = ('cd', 'ce', 'cl', 'ct', 'dn', 'dt', 'el')
+        names = ('cd', 'ce', 'cl', 'ct', 'dn', 'dt', 'el', 'es',)
         for i, name in enumerate(names):
             frame = ttk.Frame(book, padding='3 3 12 12')
             book.add(frame, text=name)
@@ -210,6 +211,35 @@ class Application:
         el_button = self.make_button(frame, 'List Character Sets', self.el)
         self.pad_kids(frame)
 
+    def init_es(self, frame):
+        self.es_base = tk.StringVar()
+        self.es_scheme = tk.StringVar()
+        self.es_result = self.make_results(frame, row=5, colspan=4)
+
+        self.config_five_params_grid(frame)
+
+        char_entry = self.make_entry(
+            frame,
+            self.es_base,
+            colspan=5
+        )
+
+        scheme_label = ttk.Label(frame, text='Scheme:', justify=tk.RIGHT)
+        scheme_label.grid(column=0, row=2, columnspan=1, sticky=SIDES)
+        scheme_combo = ttk.Combobox(frame, textvariable=self.es_scheme)
+        scheme_combo['values'] = esc.get_schemes()
+        scheme_combo.state(['readonly'])
+        scheme_combo.grid(column=1, row=2, columnspan=4, sticky=SIDES)
+
+        es_button = self.make_button(
+            frame,
+            'Escape',
+            self.es,
+            row=4,
+            colspan=5
+        )
+        self.pad_kids(frame)
+
     # Core commands.
     def cd(self, *args):
         try:
@@ -279,6 +309,13 @@ class Application:
         self.el_result.delete('0.0', 'end')
         for line in cmds.el(True):
             self.el_result.insert('end', line + '\n\n')
+
+    def es(self, *args):
+        self.es_result.delete('0.0', 'end')
+        base = self.es_base.get()
+        scheme = self.es_scheme.get()
+        line = cmds.es(base, scheme, 'utf8')
+        self.es_result.insert('end', line)
 
     # Context sensitive hotkey bindings.
     def execute(self, *args):
