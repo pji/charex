@@ -21,7 +21,7 @@ using Python 3.11 or higher::
 
     pip install charex
 
-:mod:`charex` has four modes of operation:
+`charex` has four modes of operation:
 
 *   Direct command line invocation,
 *   An interactive shell,
@@ -42,7 +42,7 @@ To launch the interactive shell::
 
     $ charex
 
-That will bring you to the :mod:`charex` shell::
+That will bring you to the `charex` shell::
 
     Welcome to the charex shell.
     Press ? for a list of comands.
@@ -103,14 +103,14 @@ it does::
 
 GUI
 ---
-To launch the :mod:`charex` GUI::
+To launch the `charex` GUI::
 
     $ charex gui
 
 
 API
 ---
-To import :mod:`charex` into your Python script to get a summary of a
+To import `charex` into your Python script to get a summary of a
 Unicode character::
 
     >>> import charex
