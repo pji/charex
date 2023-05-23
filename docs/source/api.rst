@@ -34,5 +34,7 @@ Normalization and Denormalization
 
 .. autofunction:: charex.count_denormalizations
 .. autofunction:: charex.denormalize
+.. autofunction:: charex.gen_denormalize
+.. autofunction:: charex.gen_random_denormalize
 .. autofunction:: charex.get_forms
 .. autofunction:: charex.normalize

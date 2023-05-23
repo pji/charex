@@ -29,13 +29,30 @@ How Do I Use This?
 It's in PyPI, so you can install it with `pip`, as long as you are
 using Python 3.11 or higher::
 
-    pip install charex
+    $ pip install charex
 
-You should then be able to run it from the command line::
+:mod:`charex` has four modes of operation:
 
-    charex
+*   Direct command line invocation,
+*   An interactive shell,
+*   A graphical user interface (GUI),
+*   An application programming interface (API).
 
-That will bring you to the `charex` shell::
+
+Command Line
+------------
+To get help for direct invocation from the command line::
+
+    $ charex -h
+
+
+Interactive Shell
+-----------------
+To launch the interactive shell::
+
+    $ charex
+
+That will bring you to the :mod:`charex` shell::
 
     Welcome to the charex shell.
     Press ? for a list of comands.
@@ -92,6 +109,27 @@ it does::
       -s SEED, --seed SEED  Seed the randomized denormalization.
 
     charex>
+
+
+GUI
+---
+To launch the :mod:`charex` GUI::
+
+    $ charex gui
+
+
+API
+---
+To import :mod:`charex` into your Python script to get a summary of a
+Unicode character::
+
+    >>> import charex
+    >>>
+    >>>
+    >>> value = 'a'
+    >>> char = charex.Character(value)
+    >>> print(char.summarize())
+    a U+0061 (LATIN SMALL LETTER A)
 
 
 Indices and tables

@@ -27,6 +27,17 @@ def count_denormalizations(
         number of denormalizations of the overall base.
     :return: The number of denormalizations as an :class:`int`.
     :rtype: int
+
+    Usage
+    -----
+    To count the number of possible denormalizations for a given string
+    and form::
+
+        >>> base = '<->'
+        >>> form = 'nfkc'
+        >>> count_denormalizations(base, form)
+        8
+
     """
     chars = (Character(c) for c in base)
     counts = []
@@ -43,7 +54,7 @@ def count_denormalizations(
 def denormalize(
     base: str,
     form: str,
-    maxdepth: int | None = None,
+    maxdepth: int = 0,
     maxresults: int | None = None,
     random: bool = False,
     seed_: bytes | int | str = ''
@@ -53,9 +64,11 @@ def denormalize(
     :param base: The :class:`str` to denormalize.
     :param form: The Unicode normalization form to denormalize from.
         Valid values are: casefold, nfc, nfd, nfkc, nfkd.
-    :param maxdepth: (Optional.) How many individual characters to use
-        when denormalizing the base. This is used to limit the total
-        number of denormalizations of the overall base.
+    :param maxdepth: (Optional.) How many denormalizations per character
+        in the base string to use when denormalizing the base. This is
+        used to limit the total number of denormalizations of the overall
+        base. If `maxdepth` is zero, the number of denormalizations to
+        use per character is not limited.
     :param maxresults: (Optional.) The maximum number of results to
         return. Default behavior varies based on the `random` parameter.
         If `random` is `False`, default is to return all possible
@@ -66,6 +79,27 @@ def denormalize(
         Defaults to not seeding the generator.
     :return: The denormalizations as a :class:`tuple`.
     :rtype: tuple
+
+    Usage
+    -----
+    To denormalize a given string with the given form::
+
+        >>> base = '<>'
+        >>> form = 'nfkc'
+        >>> denormalize(base, form)
+        ('﹤﹥', '﹤＞', '＜﹥', '＜＞')
+
+    The `maxdepth` parameter can be used to limit the number of
+    denormalizations per character in the `base` string. This is
+    useful when you want just a few denormalizations of a string
+    with a very large number of denormalizations::
+
+        >>> base = 'hi'
+        >>> form = 'nfkc'
+        >>> maxdepth = 2
+        >>> denormalize(base, form, maxdepth)
+        ('ʰᵢ', 'ʰⁱ', 'ₕᵢ', 'ₕⁱ')
+
     """
     if random:
         return random_denormalize(base, form, maxresults, seed_)
@@ -107,8 +141,46 @@ def denormalize(
 def gen_denormalize(
     base: str,
     form: str,
-    maxdepth: int
+    maxdepth: int = 0
 ) -> Generator[str, None, None]:
+    """Denormalize a string, yielding the results as they are
+    generated.
+
+    :param base: The :class:`str` to denormalize.
+    :param form: The Unicode normalization form to denormalize from.
+        Valid values are: casefold, nfc, nfd, nfkc, nfkd.
+    :param maxdepth: (Optional.) How many denormalizations per character
+        in the base string to use when denormalizing the base. This is
+        used to limit the total number of denormalizations of the overall
+        base. If `maxdepth` is zero, the number of denormalizations to
+        use per character is not limited.
+    :return: A :class:`collections.abc.Generator` that yields the
+        denormalization results.
+    :rtype: collections.abc.Generator
+
+    Usage
+    -----
+    To generate denormalizations for a given string with a given form::
+
+        >>> base = '<>'
+        >>> form = 'nfkc'
+        >>> dngen = gen_denormalize(base, form)
+        >>> [result for result in dngen]
+        ['﹤﹥', '﹤＞', '＜﹥', '＜＞']
+
+    The `maxdepth` parameter can be used to limit the number of
+    denormalizations per character in the `base` string. This is
+    useful when you want just a few denormalizations of a string
+    with a very large number of denormalizations::
+
+        >>> base = 'hi'
+        >>> form = 'nfkc'
+        >>> maxdepth = 2
+        >>> dngen = gen_denormalize(base, form, maxdepth)
+        >>> [result for result in dngen]
+        ['ʰᵢ', 'ʰⁱ', 'ₕᵢ', 'ₕⁱ']
+
+    """
     c, rest = base[0], base[1:]
     char = Character(c)
     dechars = char.denormalize(form)
@@ -133,6 +205,22 @@ def gen_random_denormalize(
     maxresults: int = 1,
     seed_: bytes | int | str = ''
 ) -> Generator[str, None, None]:
+    """Randomly denormalize a string, yielding the results as they
+    are generated. This is useful when returning all results for
+    a denormalization is unreasonably large, as can easily happen
+    when denormalizing strings containing Latin letters.
+
+    :param base: The :class:`str` to denormalize.
+    :param form: The Unicode normalization for to denormalize from.
+        Valid values are: NFC, NFD, NFKC, NFKD.
+    :param maxresults: (Optional.) The maximum number of results to
+        return. The default is to return one.
+    :param seed: (Optional.) A seed value for the random number generator.
+        Defaults to not seeding the generator.
+    :return: A :class:`collections.abc.Generator` that yields the random
+        denormalization results.
+    :rtype: collections.abc.Generator
+    """
     chars = [denormalize(char, form) for char in base]
     if seed_:
         seed(seed_)
@@ -147,7 +235,9 @@ def random_denormalize(
     maxresults: int | None = None,
     seed_: bytes | int | str = ''
 ) -> tuple[str, ...]:
-    """Randomly denormalize a string.
+    """Randomly denormalize a string. This is useful when returning
+    all results for a denormalization is unreasonably large, as can
+    easily happen when denormalizing strings containing Latin letters.
 
     :param base: The :class:`str` to denormalize.
     :param form: The Unicode normalization for to denormalize from.

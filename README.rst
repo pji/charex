@@ -21,11 +21,28 @@ using Python 3.11 or higher::
 
     pip install charex
 
-You should then be able to run it from the command line::
+:mod:`charex` has four modes of operation:
 
-    charex
+*   Direct command line invocation,
+*   An interactive shell,
+*   A graphical user interface (GUI),
+*   An application programming interface (API).
 
-That will bring you to the `charex` shell::
+
+Command Line
+------------
+To get help for direct invocation from the command line::
+
+    $ charex -h
+
+
+Interactive Shell
+-----------------
+To launch the interactive shell::
+
+    $ charex
+
+That will bring you to the :mod:`charex` shell::
 
     Welcome to the charex shell.
     Press ? for a list of comands.
@@ -40,20 +57,19 @@ From here you can type `?` to see the list of available commands::
     charex> ?
     The following commands are available:
 
-    * cd: Decode the given address in all codecs.
-    * ce: Encode the given character in all codecs.
-    * cl: List registered character sets.
-    * clear: Clear the terminal.
-    * ct: Count denormalization results.
-    * dm: Build a denormalization map.
-    * dn: Perform denormalizations.
-    * dt: Display details for a code point.
-    * el: List the registered escape schemes.
-    * es: Escape a string using the given scheme.
-    * fl: List registered normalization forms.
-    * help: Display command list.
-    * nl: Perform normalizations.
-    * sh: Run in an interactive shell.
+      * cd: Decode the given address in all codecs.
+      * ce: Encode the given character in all codecs.
+      * cl: List registered character sets.
+      * clear: Clear the terminal.
+      * ct: Count denormalization results.
+      * dm: Build a denormalization map.
+      * dn: Perform denormalizations.
+      * dt: Display details for a code point.
+      * el: List the registered escape schemes.
+      * es: Escape a string using the given scheme.
+      * fl: List registered normalization forms.
+      * nl: Perform normalizations.
+      * sh: Run in an interactive shell.
 
     For help on individual commands, use "help {command}".
 
@@ -63,14 +79,13 @@ And then type `help` then a name of one of the commands to learn what
 it does::
 
     charex> help dn
-    usage: charex dn [-h] [-m MAXDEPTH] [-n NUMBER] [-r] [-s SEED]
-                     {nfc,nfd,nfkc,nfkd} base
+    usage: charex dn [-h] [-m MAXDEPTH] [-n NUMBER] [-r] [-s SEED] form base
 
     Denormalize a string.
 
     positional arguments:
-      {nfc,nfd,nfkc,nfkd}   The Unicode normalization form for the
-                            denormalization.
+      form                  The normalization form for the denormalization. Valid
+                            options are: casefold, nfc, nfd, nfkc, nfkd.
       base                  The base normalized string.
 
     options:
@@ -84,3 +99,24 @@ it does::
       -s SEED, --seed SEED  Seed the randomized denormalization.
 
     charex>
+
+
+GUI
+---
+To launch the :mod:`charex` GUI::
+
+    $ charex gui
+
+
+API
+---
+To import :mod:`charex` into your Python script to get a summary of a
+Unicode character::
+
+    >>> import charex
+    >>>
+    >>>
+    >>> value = 'a'
+    >>> char = charex.Character(value)
+    >>> print(char.summarize())
+    a U+0061 (LATIN SMALL LETTER A)
