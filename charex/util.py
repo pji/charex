@@ -169,12 +169,28 @@ def read_resource(key: str, codec: str = 'utf_8') -> tuple[str, ...]:
 def to_bytes(value: bytes | int | str, endian: str = 'big') -> bytes:
     """Transform the given value to :class:`bytes`.
 
-    :param value: The value to transform.
+    :param value: The address to transform.
     :param endian: (Optional.) An indicator for the endianness of the
         a number string. Valid values are: big, little. It defaults to
         big.
     :return: A :class:`bytes`.
     :rtype: bytes
+
+    Address Formats
+    ---------------
+    The primary purpose of this function is to standardize the ways
+    a user can input a character address across all of :mod:`charex`.
+    The understood formats for manual input are:
+
+    *   Character: A string with length equal to one.
+    *   Code Point: The prefix "U+" followed by a hexadecimal number.
+    *   Binary String: The prefix "0b" followed by a binary number.
+    *   Hex String: The prefix "0x" followed by a hexadecimal number.
+
+    The following formats are available for use through the API:
+
+    *   Bytes: A :class:`bytes`.
+    *   Integer: An :class:`int`.
     """
     if isinstance(value, str) and value.startswith('0b'):
         value = bin2bytes(value[2:], endian)

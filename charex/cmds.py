@@ -72,7 +72,7 @@ def cl(show_descr: bool = False) -> Generator[str, None, None]:
     :rtype: str
     """
     codecs = cset.get_codecs()
-    for line in write_list(codecs, cset.get_codec_description, show_descr):
+    for line in write_list(codecs, cset.get_description, show_descr):
         yield line
 
 

@@ -545,56 +545,86 @@ def get_codecs() -> tuple[str, ...]:
 
     :return: The keys of the codecs as a :class:`tuple`.
     :rtype: tuple
+
+    Usage
+    -----
+    To get a tuple containing the keys of the registered codecs::
+
+        >>> get_codecs()                        # +ELLIPSIS
+        ('ascii', 'big5', 'big5hkscs', 'cp037'... 'utf_8', 'utf_8_sig')
     """
     return tuple(codec for codec in codecs)
 
 
-def get_codec_description(codec: str) -> str:
-    """Provide the description for the given codec."""
-    info = codecs[codec]
-    return info.description
+def get_description(codeckey: str) -> str:
+    """Provide the description for the given codec.
 
+    :param codeckey: The key for the codec.
+    :return: The description of the codec as a :class:`str`.
+    :rtype: str
 
-def multiencode(
-    value: bytes | int | str,
-    codecs_: Iterator[str]
-) -> dict[str, bytes]:
-    """Provide the address for the given character for each of the
-    given character sets.
+    Usage
+    -----
+    To get the description for the given codec key::
 
-    :param value: The character to encode.
-    :param codecs_: The codecs to encode to.
-    :return: The encoded value for each character set as a :class:`dict`.
-    :rtype: dict
+        >>> get_description('ascii')
+        'RFC20 The ASCII format for Network Interchange.'
+
     """
-    value = util.to_char(value)
-    results = {}
-    for codec in codecs_:
-        try:
-            results[codec] = value.encode(codec)
-        except UnicodeEncodeError:
-            results[codec] = b''
-    return results
+    info = codecs[codeckey]
+    return info.description
 
 
 def multidecode(
     value: int | str | bytes,
-    codecs_: Iterator[str]
+    codecs_: Iterator[str] | None = None
 ) -> dict[str, str]:
-    """Provide the code point for the given address for each of the
+    """Provide the character for the given address for each of the
     given character sets.
 
-    :param value: The address to decode. This can be passed as either
-        an :class:`int`, :class:`str`, or :class:`bytes`.
+    :param value: The address to decode.
     :param codec_: The codecs to decode to.
     :return: The decoded value for each character set as a :class:`dict`.
     :rtype: dict
+
+    Address Formats
+    ---------------
+    The understood :class:`str` formats for manual input are:
+
+    *   Character: A string with length equal to one.
+    *   Code Point: The prefix "U+" followed by a hexadecimal number.
+    *   Binary String: The prefix "0b" followed by a binary number.
+    *   Hex String: The prefix "0x" followed by a hexadecimal number.
+
+    The following formats are available for use through the API:
+
+    *   Bytes: A :class:`bytes`.
+    *   Integer: An :class:`int`.
+
+    Usage
+    -----
+    To get the character for the given address for each of the registered
+    codecs::
+
+        >>> address = '0x61'
+        >>> multidecode(address)                # +ELLIPSIS
+        {'ascii': 'a', 'big5': 'a'... 'utf_8_sig': 'a'}
+
+    If you just want the UTF-8 character::
+
+        >>> value = 'a'
+        >>> codecs_ = ('utf_8',)
+        >>> multidecode(value, codecs_)
+        {'utf_8': 'a',}
+
     """
     # Coerce the given value into bytes.
     value = util.to_bytes(value)
 
     # Decode the value into the character sets.
     results = {}
+    if codecs_ is None:
+        codecs_ = (codec for codec in get_codecs())
     for codec in codecs_:
         b = value
 
@@ -610,4 +640,61 @@ def multidecode(
             results[codec] = b.decode(codec)
         except UnicodeDecodeError:
             results[codec] = ''
+    return results
+
+
+def multiencode(
+    value: bytes | int | str,
+    codecs_: Iterator[str] | None = None
+) -> dict[str, bytes]:
+    """Provide the address for the given character for each of the
+    given character sets.
+
+    :param value: The character to encode.
+    :param codecs_: The codecs to encode to.
+    :return: The encoded value for each character set as a :class:`dict`.
+    :rtype: dict
+
+    Character Formats
+    -----------------
+    The understood :class:`str` formats available for manual input are
+    (all formats are big endian unless otherwise stated):
+
+    *   Character: A string with length equal to one.
+    *   Code Point: The prefix "U+" followed by a hexadecimal number.
+    *   Binary String: The prefix "0b" followed by a binary number.
+    *   Octal String: The prefix "0o" followed by an octal number.
+    *   Decimal String: The prefix "0d" followed by a decimal number.
+    *   Hex String: The prefix "0x" followed by a hexadecimal number.
+
+    The following formats are available for use through the API:
+
+    *   Bytes: A :class:`bytes` that decodes to a valid UTF-8 character.
+    *   Integer: An :class:`int` within the range 0x00 <= x <= 0x10FFFF.
+
+    Usage
+    -----
+    To encode a one character :class:`str` with all registered codecs::
+
+        >>> value = 'a'
+        >>> multiencode(value)                  # +ELLIPSIS
+        {'ascii': b'a', 'big5': b'a'... 'utf_8_sig': b'\xef\xbb\xbfa'}
+
+    If you just want the UTF-8 address::
+
+        >>> value = 'a'
+        >>> codecs_ = ('utf_8',)
+        >>> multiencode(value, codecs_)
+        {'utf_8': b'a',}
+
+    """
+    value = util.to_char(value)
+    if codecs_ is None:
+        codecs_ = (codec for codec in get_codecs())
+    results = {}
+    for codec in codecs_:
+        try:
+            results[codec] = value.encode(codec)
+        except UnicodeEncodeError:
+            results[codec] = b''
     return results

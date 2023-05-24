@@ -120,3 +120,13 @@ Unicode character::
     >>> char = charex.Character(value)
     >>> print(char.summarize())
     a U+0061 (LATIN SMALL LETTER A)
+
+
+To-Do
+-----
+The following features are planned for the v0.1.1 release:
+
+*   Basic doctests for all public classes and functions.
+*   Registration for character set codecs.
+*   Small text transformer.
+*   Emoji combiner.
