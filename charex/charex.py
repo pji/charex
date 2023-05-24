@@ -319,6 +319,18 @@ class Character:
             string.
         :return: A :class:`str` with the escaped character.
         :rtype: str
+
+        Usage
+        -----
+        To escape the character with the given form::
+
+            >>> value = '<'
+            >>> char = Character(value)
+            >>>
+            >>> scheme = 'html'
+            >>> char.escape(scheme)
+            '&lt;'
+
         """
         scheme = scheme.casefold()
         fn = schemes[scheme]
@@ -332,10 +344,22 @@ class Character:
             string.
         :return: A :class:`str` with the encoded character.
         :rtype: str
+
+        Usage
+        -----
+        To encode the character with the given character set::
+
+            >>> value = 'å'
+            >>> char = Character(value)
+            >>>
+            >>> codec = 'utf8'
+            >>> char.encode(codec)
+            'C3 A5'
+
         """
         b = self.value.encode(codec)
         hexes = [f'{x:02x}'.upper() for x in b]
-        return ''.join(x for x in hexes)
+        return ' '.join(x for x in hexes)
 
     def is_normal(self, form: str) -> bool:
         """Is the character normalized to the given form?
@@ -344,8 +368,21 @@ class Character:
         :return: A :class:`bool` indicating whether the character is
             normalized.
         :rtype: bool
+
+        Usage
+        -----
+        To determine whether the character is already normalized for
+        the given scheme.
+
+            >>> value = 'å'
+            >>> char = Character(value)
+            >>>
+            >>> form = 'nfc'
+            >>> char.is_normal(form)
+            True
+
         """
-        return ucd.is_normalized(form, self.value)
+        return ucd.is_normalized(form.upper(), self.value)
 
     def normalize(self, form: str) -> str:
         """Normalize the character using the given form.
@@ -353,14 +390,36 @@ class Character:
         :param form: The normalization form to check against.
         :return: The normalization result as a :class:`str`.
         :rtype: str
+
+        Usage
+        -----
+        To normalize the character for the given form::
+
+            >>> value = '＜'
+            >>> char = Character(value)
+            >>>
+            >>> form = 'nfkc'
+            >>> char.normalize(form)
+            '<'
+
         """
-        return ucd.normalize(form, self.value)
+        return ucd.normalize(form.upper(), self.value)
 
     def summarize(self) -> str:
         """Return a summary of the character's information.
 
         :return: The character information as a :class:`str`.
         :rtype: str
+
+        Usage
+        -----
+        To summarize the character::
+
+            >>> value = 'å'
+            >>> char = Character(value)
+            >>>
+            >>> char.summarize()
+            'å U+00E5 (LATIN SMALL LETTER A WITH RING ABOVE)'
         """
         value = util.neutralize_control_characters(self.value)
         return f'{value} {self!r}'

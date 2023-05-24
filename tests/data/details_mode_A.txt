@@ -3,8 +3,8 @@
           Code Point: U+0041
             Category: Uppercase Letter
                UTF-8: 41
-              UTF-16: 0041
-              UTF-32: 00000041
+              UTF-16: 00 41
+              UTF-32: 00 00 00 41
            C encoded: \101
          URL encoded: %41
         HTML encoded: &#65;

@@ -91,7 +91,7 @@ def test_character_encode():
     of the encoded form of the character.
     """
     char = c.Character('å')
-    assert char.encode('utf8') == 'C3A5'
+    assert char.encode('utf8') == 'C3 A5'
 
 
 def test_character_escape_url():
