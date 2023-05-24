@@ -143,17 +143,70 @@ class Character:
     :rtype: NoneType
 
     Character Formats
-    =================
-    The value can be passed in a couple of different formats:
+    -----------------
+    The understood :class:`str` formats available for manual input are
+    (all formats are big endian unless otherwise stated):
 
-    *   *Single-Character string*: The value is a :class:`str` of
-        length one.
-    *   *Hex string*: The value is a hexadecimal number between 0x00
-        and 0x10FFFF passed as a :class:`str` prefixed with "0x".
-    *   *Address string*: The value is a hexadecimal number between
-        0x00 and 0x10FFFF passed as a :class:`str` prefixed with "U+".
+    *   Character: A string with length equal to one.
+    *   Code Point: The prefix "U+" followed by a hexadecimal number.
+    *   Binary String: The prefix "0b" followed by a binary number.
+    *   Octal String: The prefix "0o" followed by an octal number.
+    *   Decimal String: The prefix "0d" followed by a decimal number.
+    *   Hex String: The prefix "0x" followed by a hexadecimal number.
+
+    The following formats are available for use through the API:
+
+    *   Bytes: A :class:`bytes` that decodes to a valid UTF-8 character.
+    *   Integer: An :class:`int` within the range 0x00 <= x <= 0x10FFFF.
+
+    Usage
+    -----
+    To create a :class:`charex.Character` object for a single
+    character string::
+
+        >>> value = 'a'
+        >>> char = Character(value)
+        >>> char.value
+        'a'
+
+    To create a :class:`charex.Character` object for a Unicode code
+    point::
+
+        >>> value = 'U+0061'
+        >>> char = Character(value)
+        >>> char.value
+        'a'
+
+    To create a :class:`charex.Character` object for a binary string::
+
+        >>> value = '0b01100001'
+        >>> char = Character(value)
+        >>> char.value
+        'a'
+
+    To create a :class:`charex.Character` object for an octal string::
+
+        >>> value = '0o141'
+        >>> char = Character(value)
+        >>> char.value
+        'a'
+
+    To create a :class:`charex.Character` object for a decimal string::
+
+        >>> value = '0d97'
+        >>> char = Character(value)
+        >>> char.value
+        'a'
+
+    To create a :class:`charex.Character` object for a hex string::
+
+        >>> value = '0x61'
+        >>> char = Character(value)
+        >>> char.value
+        'a'
+
     """
-    def __init__(self, value: str) -> None:
+    def __init__(self, value: bytes | int | str) -> None:
         value = util.to_char(value)
         self.__value = value
         self._rev_normal_cache: dict[str, tuple[str, ...]] = {}
@@ -237,6 +290,20 @@ class Character:
         :param form: The normalization form to check against.
         :return: The denormalization results in a :class:`tuple`.
         :rtype: tuple
+
+        Usage
+        -----
+        To denormalize the character for the given form::
+
+            >>> # Create the character object.
+            >>> value = '<'
+            >>> char = Character(value)
+            >>>
+            >>> # Get the denormalizations for the character.
+            >>> form = 'nfkc'
+            >>> char.denormalize(form)
+            ('﹤', '＜')
+
         """
         source = f'rev_{form}'
         if source not in self._rev_normal_cache:

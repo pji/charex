@@ -197,6 +197,26 @@ def to_char(value: bytes | int | str) -> str:
     :param value: The value to transform.
     :return: A :class:`str` of length one.
     :rtype: str
+
+    Character Formats
+    -----------------
+    The primary purpose of this function is to standardize the ways
+    a user can input a character across all of :mod:`charex`. The
+    understood formats available for manual input are (all formats
+    are big endian unless otherwise stated):
+
+    *   Character: A string with length equal to one.
+    *   Code Point: The prefix "U+" followed by a hexadecimal number.
+    *   Binary String: The prefix "0b" followed by a binary number.
+    *   Octal String: The prefix "0o" followed by an octal number.
+    *   Decimal String: The prefix "0d" followed by a decimal number.
+    *   Hex String: The prefix "0x" followed by a hexadecimal number.
+
+    The following formats are available for use through the API:
+
+    *   Bytes: A :class:`bytes` that decodes to a valid UTF-8 character.
+    *   Integer: An :class:`int` within the range 0x00 <= x <= 0x10FFFF.
+
     """
     prefixes = {
         '0b': 2,

@@ -220,6 +220,38 @@ def gen_random_denormalize(
     :return: A :class:`collections.abc.Generator` that yields the random
         denormalization results.
     :rtype: collections.abc.Generator
+
+    Usage
+    -----
+    To generate a random denormalization of a given string with a given
+    form::
+
+        >>> # The seed parameter seeds the RNG to produce repeatable
+        >>> # results for testing. Don't use it unless you want
+        >>> # repeatable results.
+        >>> seed_ = 'spam'
+        >>>
+        >>> base = '<script>'
+        >>> form = 'nfkc'
+        >>> dngrd = gen_random_denormalize(base, form, seed_=seed_)
+        >>> [result for result in dngrd]
+        ['﹤𝓈ᶜ𝕣𝚒𝙥𝙩＞']
+
+    The `maxresults` parameter tells the generator to return the
+    given number of results::
+
+        >>> # The seed parameter seeds the RNG to produce repeatable
+        >>> # results for testing. Don't use it unless you want
+        >>> # repeatable results.
+        >>> seed_ = 'spam'
+        >>>
+        >>> base = '<script>'
+        >>> form = 'nfkc'
+        >>> maxresults = 3
+        >>> dngrd = gen_random_denormalize(base, form, maxresults, seed_=seed_)
+        >>> [result for result in dngrd]
+        ['﹤𝓈ᶜ𝕣𝚒𝙥𝙩＞', '＜𝖘ᶜ𝓇𝕚ᵖ𝓉＞', '﹤𝙨𝚌𝑟𝗂𝐩ｔ＞']
+
     """
     chars = [denormalize(char, form) for char in base]
     if seed_:
@@ -250,6 +282,36 @@ def random_denormalize(
         Defaults to not seeding the generator.
     :return: The denormalizations as a :class:`tuple`.
     :rtype: tuple
+
+    Usage
+    -----
+    To get a random denormalization of the given string using the given
+    form::
+
+        >>> # The seed parameter seeds the RNG to produce repeatable
+        >>> # results for testing. Don't use it unless you want
+        >>> # repeatable results.
+        >>> seed_ = 'spam'
+        >>>
+        >>> base = '<script>'
+        >>> form = 'nfkc'
+        >>> random_denormalize(base, form,  seed_=seed_)
+        ('﹤𝓈ᶜ𝕣𝚒𝙥𝙩＞',)
+
+    The `maxresults` parameter tells the function to return the
+    given number of results::
+
+        >>> # The seed parameter seeds the RNG to produce repeatable
+        >>> # results for testing. Don't use it unless you want
+        >>> # repeatable results.
+        >>> seed_ = 'spam'
+        >>>
+        >>> base = '<script>'
+        >>> form = 'nfkc'
+        >>> maxresults = 3
+        >>> random_denormalize(base, form,  maxresults, seed_=seed_)
+        ('﹤𝓈ᶜ𝕣𝚒𝙥𝙩＞', '＜𝖘ᶜ𝓇𝕚ᵖ𝓉＞', '﹤𝙨𝚌𝑟𝗂𝐩ｔ＞')
+
     """
     # Ensure at least one result is returned.
     if not maxresults:
