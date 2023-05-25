@@ -23,6 +23,22 @@ class reg_escape:
     """A decorator for registering escape schemes.
 
     :param key: The name the escape sequence is registered under.
+
+    Usage
+    -----
+    To register a new escape scheme::
+
+        >>> @reg_escape('double')
+        ... def double(char: str, codec: str) -> str:
+        ...     '''Double the character.'''
+        ...     return char + char
+        ...
+        >>> # Demonstrate the registration worked.
+        >>> 'double' in get_schemes()
+        True
+        >>> escape_text('spam', 'double')
+        'ssppaamm'
+
     """
     def __init__(self, key: str) -> None:
         self.key = key

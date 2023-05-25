@@ -10,6 +10,39 @@ import unicodedata as ucd
 
 
 # Constants.
+ADDRESS_FORMAT_DOC = '''
+Address Formats
+---------------
+The understood str-based formats for manual input of addresses are:
+
+*   Character: A string with length equal to one.
+*   Code Point: The prefix "U+" followed by a hexadecimal number.
+*   Binary String: The prefix "0b" followed by a binary number.
+*   Hex String: The prefix "0x" followed by a hexadecimal number.
+
+The following formats are available for use through the API:
+
+*   Bytes: A :class:`bytes`.
+*   Integer: An :class:`int`.
+'''
+CHAR_FORMAT_DOC = '''
+Character Formats
+-----------------
+The understood str-based formats available for manual input are (all
+formats are big endian unless otherwise stated):
+
+*   Character: A string with length equal to one.
+*   Code Point: The prefix "U+" followed by a hexadecimal number.
+*   Binary String: The prefix "0b" followed by a binary number.
+*   Octal String: The prefix "0o" followed by an octal number.
+*   Decimal String: The prefix "0d" followed by a decimal number.
+*   Hex String: The prefix "0x" followed by a hexadecimal number.
+
+The following formats are available for use through the API:
+
+*   Bytes: A :class:`bytes` that decodes to a valid UTF-8 character.
+*   Integer: An :class:`int` within the range 0x00 <= x <= 0x10FFFF.
+'''
 RESOURCES = {
     # Command help.
     'help_xt': 'help_xt.txt',

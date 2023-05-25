@@ -22,6 +22,7 @@ from charex import charsets as cset
 from charex import escape as esc
 from charex import gui
 from charex import normal as nl
+from charex import util
 
 
 # Running modes.
@@ -252,14 +253,14 @@ def parse_cd(spa: _SubParsersAction) -> None:
     """
     sp = spa.add_parser(
         'cd',
-        description='Decode the given address in all codecs.'
+        description='Decode the given address in all codecs.',
+        epilog=util.ADDRESS_FORMAT_DOC,
+        formatter_class=RawDescriptionHelpFormatter
     )
     sp.add_argument(
         'base',
         help=(
-            'The base integer. Prefix the integer with "0x" for hex '
-            'or "0b" for binary. No prefix or a Unicode code point '
-            'will be interpreted as the UTF-8 address of the character.'
+            'The base address. See below for details.'
         ),
         action='store',
         type=str
@@ -277,7 +278,9 @@ def parse_ce(spa: _SubParsersAction) -> None:
     """
     sp = spa.add_parser(
         'ce',
-        description='Encode the given character in all codecs.'
+        description='Encode the given character in all codecs.',
+        epilog=util.CHAR_FORMAT_DOC,
+        formatter_class=RawDescriptionHelpFormatter
     )
     sp.add_argument(
         'base',
@@ -455,11 +458,13 @@ def parse_dt(spa: _SubParsersAction) -> None:
     sp = spa.add_parser(
         'dt',
         aliases=['details',],
-        description='Display the details for the given code point.'
+        description='Display the details for the given character.',
+        epilog=util.CHAR_FORMAT_DOC,
+        formatter_class=RawDescriptionHelpFormatter
     )
     sp.add_argument(
         'codepoint',
-        help='The code point.',
+        help='The character.',
         action='store',
         type=str
     )

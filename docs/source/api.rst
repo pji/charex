@@ -27,6 +27,7 @@ Character Escaping
 
 .. autofunction:: charex.escape_text
 .. autofunction:: charex.get_schemes
+.. autoclass:: charex.reg_escape
 
 
 Normalization and Denormalization
@@ -38,3 +39,4 @@ Normalization and Denormalization
 .. autofunction:: charex.gen_random_denormalize
 .. autofunction:: charex.get_forms
 .. autofunction:: charex.normalize
+.. autoclass:: charex.reg_form

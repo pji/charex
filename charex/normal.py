@@ -25,6 +25,23 @@ class reg_form:
     """A decorator for registering normalization forms.
 
     :param key: The name the normalization form is registered under.
+
+    Usage
+    -----
+    To register a normalization form::
+
+        >>> from charex import *
+        >>>
+        >>> @reg_form('a')
+        ... def form_a(base: str) -> str:
+        ...     '''Make all strings into the letter A.'''
+        ...     return 'A'
+        ...
+        >>> # Demonstrate the registration worked.
+        >>> 'a' in get_forms()
+        True
+        >>> normalize('a', 'spam')
+        'A'
     """
     def __init__(self, key: str) -> None:
         self.key = key
@@ -121,6 +138,14 @@ def get_forms() -> tuple[str, ...]:
 
     :return: The names of the normalization forms as a :class:`tuple`.
     :rtype: tuple
+
+    Usage
+    -----
+    To get a tuple of the registered normalization forms::
+
+        >>> get_forms()
+        ('casefold', 'nfc', 'nfd', 'nfkc', 'nfkd')
+
     """
     return tuple(form for form in forms)
 
@@ -133,6 +158,16 @@ def normalize(formkey: str, base: str) -> str:
     :param base: The string to normalize.
     :return: The normalized :class:`str`.
     :rtype: str
+
+    Usage
+    -----
+    To normalize a string using the given form::
+
+        >>> value = 'SPAM'
+        >>> form = 'casefold'
+        >>> normalize(form, value)
+        'spam'
+
     """
     form = forms[formkey]
     return form(base)

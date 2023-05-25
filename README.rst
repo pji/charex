@@ -122,11 +122,23 @@ Unicode character::
     a U+0061 (LATIN SMALL LETTER A)
 
 
-To-Do
------
+What Is Left To Do?
+-------------------
 The following features are planned for the v0.1.1 release:
 
 *   Basic doctests for all public classes and functions.
 *   Registration for character set codecs.
 *   Small text transformer.
 *   Emoji combiner.
+
+
+How Do I Run the Tests?
+-----------------------
+`charex` is using the `pytest` package for unit testing. It also
+comes with a makefile that automates testing. So, to run the
+tests:
+
+*   Install `pipenv`: `pip install pipenv`
+*   Install the development dependencies: `pipenv install --dev`
+*   To run just the unittests: `make test`
+*   To run the full test suite: `make pre`
