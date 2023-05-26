@@ -8,5 +8,20 @@
         "description": "Unicode property value lookup.",
         "source": "https://www.unicode.org/Public/14.0.0/ucd/PropertyValueAliases.txt",
         "date": [2023, 5, 11]
+    },
+    "UnicodeData.txt": {
+        "description": "Core Unicode data lookup.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/UnicodeData.txt",
+        "date": [2023, 5, 11]
+    },
+    "PropertyAliases.txt": {
+        "description": "Unicode property lookup.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/PropertyAliases.txt",
+        "date": [2023, 5, 25]
+    },
+    "DerivedAge.txt": {
+        "description": "Character introduction version lookup",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/DerivedAge.txt",
+        "date": [2023, 5, 26]
     }
 }

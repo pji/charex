@@ -157,6 +157,7 @@ def dt(c: str) -> Generator[str, None, None]:
         ('Display', char.value),
         ('Name', char.name),
         ('Code Point', char.code_point),
+        ('Age', char.age),
         ('Category', char.category),
         ('UTF-8', char.encode('utf8')),
         ('UTF-16', char.encode('utf_16_be')),

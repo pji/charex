@@ -37,6 +37,14 @@ def test_character_init_with_code_point():
     assert act.value == exp_value
 
 
+def test_character_age():
+    """When called, :attr:`Character.age` returns the Unicode version
+    where the character was introduced.
+    """
+    char = c.Character('a')
+    assert char.age == "1.1"
+
+
 def test_character_category():
     """When called, :attr:`Character.category` returns the Unicode
     category for the character.

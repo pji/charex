@@ -55,6 +55,8 @@ RESOURCES = {
     'rev_nfkd': 'rev_nfkd.json',
 
     # Unicode data.
+    'age': 'DerivedAge.txt',
+    'props': 'PropertyAliases.txt',
     'propvals': 'PropertyValueAliases.txt',
     'unicodedata': 'UnicodeData.txt',
 

@@ -14,6 +14,19 @@ from charex.escape import schemes
 
 
 # Data classes.
+@dataclass(order=True)
+class DerivedAge:
+    """A record from the DerivedAge.txt file for Unicode 14.0.0.
+
+    :param start: The first code point in the range.
+    :param stop: The last code point in the range.
+    :param version: The version the range was introduced.
+    """
+    start: int
+    stop: int
+    version: str
+
+
 @dataclass
 class UnicodeDatum:
     """A record from the UnicodeData.txt file for Unicode 14.0.0.
@@ -63,74 +76,10 @@ class UnicodeDatum:
 
 
 # Caches.
+age_cache: tuple[DerivedAge, ...] = tuple()
+prop_cache: dict[str, str] = {}
 propvals_cache: dict[str, dict[str, str]] = {}
 unicodedata_cache: dict[str, UnicodeDatum] = {}
-
-
-# Utility functions.
-def expand_property_value(alias: str, proptype: str) -> str:
-    """Translate the short name of a Unicode property value into the
-    long name for that property.
-
-    :param alias: The short name to translate.
-    :param proptype: The type of property.
-    :return: The long name of the property as a :class:`str`.
-    :rtype: str
-    """
-    # Look it up in the cache, to avoid having to reload the file
-    # multiple times.
-    try:
-        by_alias = propvals_cache[proptype]
-
-    # If it's not in the cache, then we have to load the data from
-    # file.
-    except KeyError:
-        lines = util.read_resource('propvals')
-        by_alias = parse_property_values(lines, proptype)
-        propvals_cache[proptype] = by_alias
-
-    # Return the expanded alias.
-    return by_alias[alias]
-
-
-# Data parsing functions.
-def parse_property_values(
-    lines: Sequence[str],
-    proptype: str
-) -> dict[str, str]:
-    """Parse the contents of the property values file and return the
-    translation map for the given property type.
-
-    :param lines: The contents of the property values file.
-    :param proptype: The type of properties to extract from the file.
-    :return: The entries for the given property type as a :class:`dict`.
-    :rtype: dict
-    """
-    lines = [line for line in lines if line.startswith(proptype)]
-    by_alias = {}
-    for line in lines:
-        line = line.split('#', 1)[0]
-        fields = line.split(';')
-        key = fields[1].strip()
-        value = fields[2].strip()
-        value = value.replace('_', ' ')
-        by_alias[key] = value
-    return by_alias
-
-
-def parse_unicode_data(lines: Sequence[str]) -> dict[str, UnicodeDatum]:
-    """Parse the Unicode data file.
-
-    :param lines: The contents of the Unicode data file.
-    :return: The Unicode data as a :class:`dict`.
-    :rtype: dict
-    """
-    if not unicodedata_cache:
-        for line in lines:
-            fields = line.split(';')
-            datum = UnicodeDatum(*fields)
-            unicodedata_cache['U+' + datum.code_point] = datum
-    return unicodedata_cache
 
 
 # Classes.
@@ -213,6 +162,16 @@ class Character:
 
     def __repr__(self) -> str:
         return f'{self.code_point} ({self.name})'
+
+    @property
+    def age(self) -> str:
+        """The version the character was added in."""
+        ages = get_derived_age()
+        address = ord(self.__value)
+        max_ = len(ages)
+        index = max_ // 2
+        age = bintree(ages, address, index, 0, max_)
+        return age.version
 
     @property
     def category(self) -> str:
@@ -460,3 +419,199 @@ class Lookup:
         except KeyError:
             answer = tuple()
         return answer
+
+
+# Utility functions.
+def bintree(ages, address, index, min_, max_) -> DerivedAge:
+    age = ages[index]
+    if address < age.start:
+        max_ = index
+        index = (max_ - min_) // 2
+        age = bintree(ages, address, index, min_, max_)
+    elif address >= age.stop:
+        min_ = index
+        index = (max_ - min_) // 2
+        age = bintree(ages, address, index, min_, max_)
+    return age
+
+
+def expand_property(proptype: str) -> str:
+    """Translate the short name of a Unicode property into the long
+    name for that property.
+    """
+    try:
+        result = prop_cache[proptype]
+
+    except KeyError:
+        lines = util.read_resource('props')
+        by_proptype = parse_properties(lines)
+        result = by_proptype[proptype]
+
+    return result
+
+
+def expand_property_value(alias: str, proptype: str) -> str:
+    """Translate the short name of a Unicode property value into the
+    long name for that property.
+
+    :param alias: The short name to translate.
+    :param proptype: The type of property.
+    :return: The long name of the property as a :class:`str`.
+    :rtype: str
+    """
+    # Look it up in the cache, to avoid having to reload the file
+    # multiple times.
+    try:
+        by_alias = propvals_cache[proptype]
+
+    # If it's not in the cache, then we have to load the data from
+    # file.
+    except KeyError:
+        lines = util.read_resource('propvals')
+        by_alias = parse_property_values(lines, proptype)
+        propvals_cache[proptype] = by_alias
+
+    # Return the expanded alias.
+    return by_alias[alias]
+
+
+def get_category_members(category: str) -> tuple[Character, ...]:
+    """Get all characters that are members of the given category."""
+    ulen = 0x10FFFF
+    members = (
+        Character(n) for n in range(ulen)
+        if ucd.category(chr(n)) == category
+    )
+    return tuple(members)
+
+
+def get_derived_age() -> tuple[DerivedAge, ...]:
+    """Get the derived ages."""
+    global age_cache
+
+    if not age_cache:
+        lines = util.read_resource('age')
+        lines = strip_comments(lines)
+        data = parse_sdt(lines)
+
+        ages = []
+        for datum in data:
+            parts = datum[0].split('..')
+            start = int(parts[0], 16)
+            stop = start + 1
+            if len(parts) > 1:
+                stop = int(parts[1], 16) + 1
+            age = DerivedAge(start, stop, datum[1])
+            ages.append(age)
+        ages = sorted(ages)
+        age_cache = tuple(ages)
+
+    return age_cache
+
+
+def get_property_aliases() -> tuple[str, ...]:
+    """Get the valid properties."""
+    if not prop_cache:
+        lines = util.read_resource('props')
+        parse_properties(lines)
+
+    return tuple(key for key in prop_cache)
+
+
+def get_property_value_aliases(proptype: str) -> tuple[str, ...]:
+    """Get the valid property value aliases for a property."""
+    if proptype not in propvals_cache:
+        lines = util.read_resource('propvals')
+        by_alias = parse_property_values(lines, proptype)
+        if by_alias:
+            propvals_cache[proptype] = {}
+            for alias in by_alias:
+                propvals_cache[proptype][alias] = by_alias[alias]
+
+    return tuple(key for key in propvals_cache[proptype])
+
+
+# Data parsing functions.
+def parse_properties(lines: Sequence[str]) -> dict[str, str]:
+    """Parse the contents of the properties file and return the
+    translation map for the properties.
+    """
+    lines = [
+        line for line in lines
+        if line.strip() and not line.startswith('#')
+    ]
+    for line in lines:
+        fields = line.split(';')
+        key = fields[0].strip()
+        try:
+            value = fields[1].strip()
+        except IndexError as ex:
+            print(line)
+            raise ex
+        value = value.replace('_', ' ')
+        prop_cache[key] = value
+    return prop_cache
+
+
+def parse_property_values(
+    lines: Sequence[str],
+    proptype: str
+) -> dict[str, str]:
+    """Parse the contents of the property values file and return the
+    translation map for the given property type.
+
+    :param lines: The contents of the property values file.
+    :param proptype: The type of properties to extract from the file.
+    :return: The entries for the given property type as a :class:`dict`.
+    :rtype: dict
+    """
+    lines = [line for line in lines if line.startswith(proptype)]
+    by_alias = {}
+    for line in lines:
+        line = line.split('#', 1)[0]
+        fields = line.split(';')
+        key = fields[1].strip()
+        value = fields[2].strip()
+        value = value.replace('_', ' ')
+        by_alias[key] = value
+    return by_alias
+
+
+def parse_sdt(lines: tuple[str, ...]) -> tuple[tuple[str, ...], ...]:
+    """Parse semicolon delimited text."""
+    result = []
+    for line in lines:
+        parts = line.split(';')
+        fields = (part.strip() for part in parts)
+        result.append(tuple(fields))
+    return tuple(result)
+
+
+def parse_unicode_data(lines: Sequence[str]) -> dict[str, UnicodeDatum]:
+    """Parse the Unicode data file.
+
+    :param lines: The contents of the Unicode data file.
+    :return: The Unicode data as a :class:`dict`.
+    :rtype: dict
+    """
+    if not unicodedata_cache:
+        for line in lines:
+            fields = line.split(';')
+            datum = UnicodeDatum(*fields)
+            unicodedata_cache['U+' + datum.code_point] = datum
+    return unicodedata_cache
+
+
+def strip_comments(lines: Sequence[str]) -> tuple[str, ...]:
+    """Remove the comments and blank lines from a data file."""
+    lines = [line.split('#')[0] for line in lines]
+    return tuple([
+        line for line in lines
+        if line.strip() and not line.startswith('#')
+    ])
+
+
+if __name__ == '__main__':
+    ages = get_derived_age()
+    for age in ages:
+        print(age)
