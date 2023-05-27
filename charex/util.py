@@ -43,6 +43,7 @@ The following formats are available for use through the API:
 *   Bytes: A :class:`bytes` that decodes to a valid UTF-8 character.
 *   Integer: An :class:`int` within the range 0x00 <= x <= 0x10FFFF.
 '''
+LEN_UNICODE = 0x110000
 RESOURCES = {
     # Command help.
     'help_xt': 'help_xt.txt',
@@ -231,7 +232,10 @@ def to_bytes(value: bytes | int | str, endian: str = 'big') -> bytes:
         value = bin2bytes(value[2:], endian)
     elif isinstance(value, str) and value.startswith('0x'):
         value = hex2bytes(value[2:], endian)
-    elif isinstance(value, str) and value.startswith('U+'):
+    elif isinstance(value, str) and (
+        value.startswith('U+')
+        or value.startswith('u+')
+    ):
         n = int(value[2:], 16)
         char = chr(n)
         value = char.encode('utf8')
@@ -275,6 +279,7 @@ def to_char(value: bytes | int | str) -> str:
         '0o': 8,
         '0x': 16,
         'U+': 16,
+        'u+': 16,
     }
 
     if isinstance(value, bytes):

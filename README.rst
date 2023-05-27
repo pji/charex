@@ -126,15 +126,17 @@ What Is Left To Do?
 -------------------
 The following features are planned for the v0.1.1 or later releases:
 
-*   Basic doctests for all public classes and functions.
+*   (Done.) Add age to character properties.
+*   (Done.) Accept lower case u for character point prefix.
 *   Registration for character set codecs.
 *   Small text transformer.
 *   Emoji combiner.
 *   Unicode category explorer.
+*   Unicode script explorer.
 *   Tool for rebuilding data files.
 *   Support for more versions of Unicode.
 *   Web API.
-*   Accept lower case u for character point prefix.
+*   Basic doctests for all public classes and functions.
 
 
 How Do I Run the Tests?

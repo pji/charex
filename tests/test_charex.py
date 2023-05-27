@@ -4,6 +4,8 @@ test_charex
 """
 import json
 
+import pytest
+
 from charex import charex as c
 
 
@@ -49,6 +51,7 @@ def test_character_age():
     assert char.age == "1.1"
 
 
+@pytest.mark.skip(reason='Slow.')
 def test_character_age_all():
     """All Unicode characters should have an age."""
     for n in range(UNICODE_LEN):

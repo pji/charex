@@ -111,8 +111,19 @@ def test_to_bytes_unicode():
     """Given a :class:`str` containing a Unicode code point, return that
     code point as an UTF-8 encoded :class:`bytes`.
     """
-    exp = b'\xe9'
-    value = '0b11101001'
+    exp = b'\x61'
+    value = 'U+0061'
+    act = util.to_bytes(value)
+    assert act == exp
+
+
+def test_to_bytes_unicode_lowercase_u():
+    """Given a :class:`str` containing a Unicode code point, return that
+    code point as an UTF-8 encoded :class:`bytes`. The code point can
+    start with a lowercase u.
+    """
+    exp = b'\x61'
+    value = 'u+0061'
     act = util.to_bytes(value)
     assert act == exp
 
@@ -195,4 +206,14 @@ def test_to_char_unicode():
     """
     exp = 'a'
     value = 'U+0061'
+    assert util.to_char(value) == exp
+
+
+def test_to_char_unicode_lowercase_u():
+    """Given a Unicode code point string, return a one character
+    :class:`str` of the unicode code point. The code point can start
+    with a lowercase letter u.
+    """
+    exp = 'a'
+    value = 'u+0061'
     assert util.to_char(value) == exp

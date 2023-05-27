@@ -12,10 +12,6 @@ import unicodedata as ucd
 from charex import util
 
 
-# Constants.
-LEN_UNICODE = 0x10FFFF
-
-
 # Registry.
 forms = {}
 
@@ -67,7 +63,7 @@ def build_denormalization_map(norm_fn: Callable[[str], str]) -> str:
     dn_map: dict[str, set[str]] = {}
 
     # Process every Unicode character.
-    for n in range(LEN_UNICODE):
+    for n in range(util.LEN_UNICODE):
         base = chr(n)
 
         # If the character normalizes to a different character,
@@ -112,7 +108,7 @@ def find_max_decomposition() -> tuple[str, int]:
     """
     long_char = ''
     decomp_max = 0
-    for n in range(LEN_UNICODE):
+    for n in range(util.LEN_UNICODE):
         char = chr(n)
         decomp_char = form_nfd(char)
         decomp_len = len(decomp_char)

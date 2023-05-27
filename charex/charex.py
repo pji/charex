@@ -423,6 +423,19 @@ class Lookup:
 
 # Utility functions.
 def bintree(ages, address, index, min_, max_) -> DerivedAge:
+    """Find the derived age of a Unicode character using a binary
+    tree search.
+
+    :param ages: The possible ages for Unicode characters.
+    :param address: The code point of the character an an :class:`int`.
+    :param index: The current location of the search cursor.
+    :param min_: The minimum possible index within ages that hasn't been
+        excluded by the search.
+    :param max_: The maximum possible index within ages that hasn't been
+        excluded by the search.
+    :return: The age of the character as a :class:`charex.charex.DerivedAge`.
+    :rtype: charex.charex.DerivedAge
+    """
     age = ages[index]
     if address < age.start:
         max_ = index
@@ -486,16 +499,30 @@ def get_category_members(category: str) -> tuple[Character, ...]:
 
 
 def get_derived_age() -> tuple[DerivedAge, ...]:
-    """Get the derived ages."""
+    """Get the tuple of derived ages. The derived age of a character
+    is the Unicode version where the character was assigned to a code
+    point.
+
+    :return: The possible ages as a :class:`tuple`.
+    :rtype: tuple
+    """
+    # Since ages are stored as a tuple rather than a dict, we need
+    # to pull the cache into this namespace in case we need to make
+    # changes to it.
     global age_cache
 
+    # Populate the cache.
     if not age_cache:
+        # Read the source file.
         lines = util.read_resource('age')
+
+        # Get the default value for unassigned characters.
         missing_data = parse_missing(lines)
         missing = missing_data[0][-1]
+
+        # Parse the ages from the file.
         lines = strip_comments(lines)
         data = parse_sdt(lines)
-
         ages = []
         for datum in data:
             parts = datum[0].split('..')
@@ -506,7 +533,11 @@ def get_derived_age() -> tuple[DerivedAge, ...]:
             age = DerivedAge(start, stop, datum[1])
             ages.append(age)
 
+        # Sort the ages so they can be searched.
         ages = sorted(ages)
+
+        # Fill in the gaps for the unassigned characters with the
+        # default value.
         no_gaps = []
         index = 0
         while index + 1 < len(ages):
@@ -517,12 +548,12 @@ def get_derived_age() -> tuple[DerivedAge, ...]:
                 gap = DerivedAge(age.stop, next.start, missing)
                 no_gaps.append(gap)
             index += 1
-        if not no_gaps[-1].stop == 0x110000:
-            age = DerivedAge(no_gaps[-1].stop, 0x110000, missing)
+        if not no_gaps[-1].stop == util.LEN_UNICODE:
+            age = DerivedAge(no_gaps[-1].stop, util.LEN_UNICODE, missing)
             no_gaps.append(age)
-
         age_cache = tuple(no_gaps)
 
+    # Return the cached ages.
     return age_cache
 
 
@@ -550,6 +581,13 @@ def get_property_value_aliases(proptype: str) -> tuple[str, ...]:
 
 # Data parsing functions.
 def parse_missing(lines: Sequence[str]) -> tuple[tuple[str, ...], ...]:
+    """Parse the default values from a unicode data file.
+
+    :param lines: The lines from a unicode data file. The lines must
+        still contain the comments.
+    :return: The default values as a :class:`tuple`.
+    :rtype: tuple
+    """
     prefix = '# @missing: '
     lines = [line[12:] for line in lines if line.startswith(prefix)]
     lines = strip_comments(lines)
@@ -602,7 +640,12 @@ def parse_property_values(
 
 
 def parse_sdt(lines: tuple[str, ...]) -> tuple[tuple[str, ...], ...]:
-    """Parse semicolon delimited text."""
+    """Parse semicolon delimited text.
+
+    :param lines: The lines from a semicolon delimited test file.
+    :return: The lines split into data fields as a :class:`tuple`.
+    :rtype: tuple
+    """
     result = []
     for line in lines:
         parts = line.split(';')
@@ -627,7 +670,12 @@ def parse_unicode_data(lines: Sequence[str]) -> dict[str, UnicodeDatum]:
 
 
 def strip_comments(lines: Sequence[str]) -> tuple[str, ...]:
-    """Remove the comments and blank lines from a data file."""
+    """Remove the comments and blank lines from a data file.
+
+    :param lines: The lines from a Unicode data file.
+    :return: The lines with comments removed as a :class:`tuple`.
+    :rtype: tuple
+    """
     lines = [line.split('#')[0] for line in lines]
     return tuple([
         line for line in lines
@@ -636,13 +684,10 @@ def strip_comments(lines: Sequence[str]) -> tuple[str, ...]:
 
 
 if __name__ == '__main__':
-    ages = get_derived_age()
-    print(ages[-1])
-    print(0x10FFFE)
-    for num in range(0x10FFFF):
+    for num in range(util.LEN_UNICODE):
         c = chr(num)
         char = Character(c)
         try:
-            age = char.age
-        except RecursionError:
-            print(char.code_point)
+            name = char.category
+        except Exception as ex:
+            print(char.code_point, type(ex))
