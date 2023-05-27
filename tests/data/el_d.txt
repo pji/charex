@@ -39,6 +39,9 @@ json     Escape scheme for JSON encoding, based on the ECMA-404 Specification.
 jsonu    Escape scheme for JSON Unicode encoding, based on the ECMA-404
          Specification.
 
+smol     Escape scheme for smol characters, based loosely on the Unicode
+         superscript characters.
+
 sql      Escape scheme for MySQL encoding, based on the MySQL Specification.
 
 sqldq    Escape scheme for MySQL encoding, based on the MySQL Specification.

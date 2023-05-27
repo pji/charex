@@ -234,6 +234,16 @@ def test_escape_jsonu_4_byte_character():
     assert esc.escape_jsonu('\U00010000', '') == exp
 
 
+# Test escape_smol.
+def test_escape_smol():
+    """Give a character and a codec, return the superscript
+    Unicode character version of the given character. Note: the
+    codec doesn't do anything. It's just here for compatibility.
+    """
+    exp = 'ᵃ'
+    assert esc.escape_smol('a', '') == exp
+
+
 # Test escape_sql.
 def test_escape_sql():
     """Given a character and a codec, return the SQL escape

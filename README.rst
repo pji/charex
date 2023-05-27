@@ -128,8 +128,8 @@ The following features are planned for the v0.1.1 or later releases:
 
 *   (Done.) Add age to character properties.
 *   (Done.) Accept lower case u for character point prefix.
+*   (Done.) Smol text escape.
 *   Registration for character set codecs.
-*   Small text transformer.
 *   Emoji combiner.
 *   Unicode category explorer.
 *   Unicode script explorer.

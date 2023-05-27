@@ -494,6 +494,25 @@ standards/ecma-404/ECMA-404_2nd_edition_december_2017.pdf
     return unicode_utf16_escape(char)
 
 
+@reg_escape('smol')
+def escape_smol(char: str, codec: str) -> str:
+    """Escape scheme for smol characters, based loosely on the
+    Unicode superscript characters.
+
+    :param char: The character to escape.
+    :param codec: The character set to use when encoding the character.
+    :return: The escaped character as a :class:`str`.
+    :rtype: str
+    """
+    norms = 'abcdefghijklmnopqrstuvwxyz'
+    smol = 'ᵃᵇᶜᵈᵉᶠᵍʰᶦʲᵏˡᵐⁿᵒᵖᑫʳˢᵗᵘᵛʷˣʸᶻ'
+    table = {k: v for k, v in zip(norms, smol)}
+    try:
+        return lookup_escape(char, table)
+    except EscapeError:
+        return char
+
+
 @reg_escape('sql')
 def escape_sql(char: str, codec: str) -> str:
     """Escape scheme for MySQL encoding, based on the MySQL
