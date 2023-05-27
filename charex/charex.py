@@ -426,11 +426,11 @@ def bintree(ages, address, index, min_, max_) -> DerivedAge:
     age = ages[index]
     if address < age.start:
         max_ = index
-        index = (max_ - min_) // 2
+        index = min_ + (max_ - min_) // 2
         age = bintree(ages, address, index, min_, max_)
     elif address >= age.stop:
         min_ = index
-        index = (max_ - min_) // 2
+        index = min_ + (max_ - min_) // 2
         age = bintree(ages, address, index, min_, max_)
     return age
 
@@ -491,6 +491,8 @@ def get_derived_age() -> tuple[DerivedAge, ...]:
 
     if not age_cache:
         lines = util.read_resource('age')
+        missing_data = parse_missing(lines)
+        missing = missing_data[0][-1]
         lines = strip_comments(lines)
         data = parse_sdt(lines)
 
@@ -503,8 +505,23 @@ def get_derived_age() -> tuple[DerivedAge, ...]:
                 stop = int(parts[1], 16) + 1
             age = DerivedAge(start, stop, datum[1])
             ages.append(age)
+
         ages = sorted(ages)
-        age_cache = tuple(ages)
+        no_gaps = []
+        index = 0
+        while index + 1 < len(ages):
+            age = ages[index]
+            next = ages[index + 1]
+            no_gaps.append(age)
+            if age.stop != next.start:
+                gap = DerivedAge(age.stop, next.start, missing)
+                no_gaps.append(gap)
+            index += 1
+        if not no_gaps[-1].stop == 0x110000:
+            age = DerivedAge(no_gaps[-1].stop, 0x110000, missing)
+            no_gaps.append(age)
+
+        age_cache = tuple(no_gaps)
 
     return age_cache
 
@@ -532,6 +549,13 @@ def get_property_value_aliases(proptype: str) -> tuple[str, ...]:
 
 
 # Data parsing functions.
+def parse_missing(lines: Sequence[str]) -> tuple[tuple[str, ...], ...]:
+    prefix = '# @missing: '
+    lines = [line[12:] for line in lines if line.startswith(prefix)]
+    lines = strip_comments(lines)
+    return parse_sdt(lines)
+
+
 def parse_properties(lines: Sequence[str]) -> dict[str, str]:
     """Parse the contents of the properties file and return the
     translation map for the properties.
@@ -613,5 +637,12 @@ def strip_comments(lines: Sequence[str]) -> tuple[str, ...]:
 
 if __name__ == '__main__':
     ages = get_derived_age()
-    for age in ages:
-        print(age)
+    print(ages[-1])
+    print(0x10FFFE)
+    for num in range(0x10FFFF):
+        c = chr(num)
+        char = Character(c)
+        try:
+            age = char.age
+        except RecursionError:
+            print(char.code_point)

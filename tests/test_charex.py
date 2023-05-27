@@ -7,6 +7,10 @@ import json
 from charex import charex as c
 
 
+# Global constants.
+UNICODE_LEN = 0x110000
+
+
 # Test Character.
 def test_character_init():
     """Given a string containing a character, a :class:`Character`
@@ -43,6 +47,13 @@ def test_character_age():
     """
     char = c.Character('a')
     assert char.age == "1.1"
+
+
+def test_character_age_all():
+    """All Unicode characters should have an age."""
+    for n in range(UNICODE_LEN):
+        char = c.Character(n)
+        char.age
 
 
 def test_character_category():
