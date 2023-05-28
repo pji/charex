@@ -422,7 +422,13 @@ class Lookup:
 
 
 # Utility functions.
-def bintree(ages, address, index, min_, max_) -> DerivedAge:
+def bintree(
+    ages: Sequence[DerivedAge],
+    address: int,
+    index: int,
+    min_: int,
+    max_: int
+) -> DerivedAge:
     """Find the derived age of a Unicode character using a binary
     tree search.
 

@@ -2,26 +2,46 @@
     "entities.json": {
         "description": "List of HTML Entities.",
         "source": "https://html.spec.whatwg.org/entities.json",
-        "date": [2023, 5, 11]
+        "date": [
+            2023,
+            5,
+            27
+        ]
     },
     "PropertyValueAliases.txt": {
         "description": "Unicode property value lookup.",
         "source": "https://www.unicode.org/Public/14.0.0/ucd/PropertyValueAliases.txt",
-        "date": [2023, 5, 11]
+        "date": [
+            2023,
+            5,
+            27
+        ]
     },
     "UnicodeData.txt": {
         "description": "Core Unicode data lookup.",
         "source": "https://www.unicode.org/Public/14.0.0/ucd/UnicodeData.txt",
-        "date": [2023, 5, 11]
+        "date": [
+            2023,
+            5,
+            27
+        ]
     },
     "PropertyAliases.txt": {
         "description": "Unicode property lookup.",
         "source": "https://www.unicode.org/Public/14.0.0/ucd/PropertyAliases.txt",
-        "date": [2023, 5, 25]
+        "date": [
+            2023,
+            5,
+            27
+        ]
     },
     "DerivedAge.txt": {
         "description": "Character introduction version lookup",
         "source": "https://www.unicode.org/Public/14.0.0/ucd/DerivedAge.txt",
-        "date": [2023, 5, 26]
+        "date": [
+            2023,
+            5,
+            27
+        ]
     }
 }

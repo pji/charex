@@ -4,9 +4,14 @@ util
 
 Utility functions for :mod:`charex`.
 """
+from datetime import date
 from importlib.resources import files
+from json import dump, loads
 from math import log
+from pathlib import Path
 import unicodedata as ucd
+
+from requests import get
 
 
 # Constants.
@@ -43,10 +48,14 @@ The following formats are available for use through the API:
 *   Bytes: A :class:`bytes` that decodes to a valid UTF-8 character.
 *   Integer: An :class:`int` within the range 0x00 <= x <= 0x10FFFF.
 '''
+DATA_LOC = 'charex.data'
 LEN_UNICODE = 0x110000
 RESOURCES = {
     # Command help.
     'help_xt': 'help_xt.txt',
+
+    # Package data.
+    'sources': 'sources.json',
 
     # Denormalization lookups.
     'rev_casefold': 'rev_casefold.json',
@@ -187,6 +196,32 @@ def pad_byte(value: str, endian: str = 'big', base: int = 16) -> str:
     return value
 
 
+def rebuild_data() -> None:
+    """Rebuild the data files.
+
+    :return: None.
+    :rtype: NoneType
+    """
+    today = date.today()
+    lines = read_resource('sources')
+    data = loads('\n'.join(lines))
+    data_path = Path(DATA_LOC.replace('.', '/'))
+
+    for file in data:
+        url = data[file]['source']
+        resp = get(url)
+        path = data_path / file
+        with open(path, 'w') as fh:
+            fh.write(resp.text)
+
+        update = (today.year, today.month, today.day)
+        data[file]['date'] = update
+
+    path = data_path / 'sources.json'
+    with open(path, 'w') as fh:
+        dump(data, fh, indent=4)
+
+
 def read_resource(key: str, codec: str = 'utf_8') -> tuple[str, ...]:
     """Read the data from a resource file within the package.
 
@@ -194,7 +229,7 @@ def read_resource(key: str, codec: str = 'utf_8') -> tuple[str, ...]:
     :return: The contents of the file as a :class:`tuple`.
     :rtype: tuple
     """
-    pkg = files('charex.data')
+    pkg = files(DATA_LOC)
     data_file = pkg / RESOURCES[key]
     fh = data_file.open(encoding=codec)
     lines = fh.readlines()
