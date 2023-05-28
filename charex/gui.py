@@ -40,7 +40,11 @@ class Application:
         book.grid(column=0, row=0, sticky=ALL)
         self.tabs = {}
         self.wake_focus = {}
-        names = ('cd', 'ce', 'cl', 'ct', 'dn', 'dt', 'el', 'es', 'fl', 'nl')
+        names = [
+            name.split('_')[-1]
+            for name in dir(self)
+            if name.startswith('init_')
+        ]
         for i, name in enumerate(names):
             frame = ttk.Frame(book, padding='3 3 12 12')
             book.add(frame, text=name)
@@ -255,7 +259,7 @@ class Application:
         self.fl_result = self.make_results(frame)
 
         self.config_simple_grid(frame)
-        el_button = self.make_button(
+        fl_button = self.make_button(
             frame,
             'List Normalization Forms',
             self.fl
@@ -291,6 +295,17 @@ class Application:
         )
         self.pad_kids(frame)
         self.wake_focus[f'!frame{num}'] = char_entry
+
+    def init_up(self, frame, num=None):
+        self.up_result = self.make_results(frame)
+
+        self.config_simple_grid(frame)
+        up_button = self.make_button(
+            frame,
+            'List Unicode Properties',
+            self.up
+        )
+        self.pad_kids(frame)
 
     # Core commands.
     def cd(self, *args):
@@ -381,6 +396,11 @@ class Application:
 
         result = cmds.nl(form, base, True)
         self.nl_result.insert('end', result)
+
+    def up(self, *args):
+        self.up_result.delete('0.0', 'end')
+        for line in cmds.up(True):
+            self.up_result.insert('end', line + '\n\n')
 
     # Event handlers.
     def handle_notebook_tab_changed(self, event):

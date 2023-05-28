@@ -244,6 +244,18 @@ def nl(form: str, base: str, expand: bool = False) -> str:
     return out
 
 
+def up(show_long: bool = False) -> Generator[str, None, None]:
+    """List the Unicode properties.
+
+    :param show_long: (Optional.) Whether to show the long name.
+    :return: Yields each property as a :class:`str`.
+    :rtype: str
+    """
+    props = ch.get_properties()
+    for line in write_list(props, ch.expand_property, show_long):
+        yield line
+
+
 # Utility functions.
 def make_description_row(name: str, namewidth: int, descr: str) -> str:
     """Create a two column row with a name and description.

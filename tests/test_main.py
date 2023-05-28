@@ -331,6 +331,32 @@ def test_nl(capsys):
     cli_test(exp, cmd, capsys)
 
 
+# Test up mode.
+def test_up(capsys):
+    """When invoked, up mode should return the list of Unicode properties."""
+    with open('tests/data/up.txt') as fh:
+        exp = fh.read()
+    cmd = (
+        'python -m charex',
+        'up',
+    )
+    cli_test(exp, cmd, capsys)
+
+
+def test_up_description(capsys):
+    """When invoked with -d, up mode should return a list of
+    Unicode properties and their long names.
+    """
+    with open('tests/data/up_d.txt') as fh:
+        exp = fh.read()
+    cmd = (
+        'python -m charex',
+        'up',
+        '-d',
+    )
+    cli_test(exp, cmd, capsys)
+
+
 # Utility functions.
 def cli_test(exp, cmd, capsys):
     """Test command line invocation."""

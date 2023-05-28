@@ -563,7 +563,7 @@ def get_derived_age() -> tuple[DerivedAge, ...]:
     return age_cache
 
 
-def get_property_aliases() -> tuple[str, ...]:
+def get_properties() -> tuple[str, ...]:
     """Get the valid properties."""
     if not prop_cache:
         lines = util.read_resource('props')

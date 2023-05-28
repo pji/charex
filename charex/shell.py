@@ -204,6 +204,20 @@ def mode_sh(args: Namespace | None) -> None:
     Shell(completekey='tab').cmdloop()
 
 
+def mode_up(args: Namespace) -> None:
+    """List the Unicode properties.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    for line in cmds.up(args.description):
+        print(line)
+        if args.description:
+            print()
+    print()
+
+
 # Command parsing.
 def build_parser() -> ArgumentParser:
     """Build the argument parser.
@@ -239,6 +253,7 @@ def build_parser() -> ArgumentParser:
     parse_gui(spa)
     parse_nl(spa)
     parse_sh(spa)
+    parse_up(spa)
 
     return p
 
@@ -618,6 +633,27 @@ def parse_sh(spa: _SubParsersAction) -> None:
     sp.set_defaults(func=mode_sh)
 
 
+def parse_up(spa: _SubParsersAction) -> None:
+    """Add the up mode subparser.
+
+    :param spa: The subparser action used to add a new subparser to
+        the main parser.
+    :return: None.
+    :rtype: NoneType
+    """
+    sp = spa.add_parser(
+        'up',
+        aliases=['proplist', 'plist',],
+        description='List the Unicode properties.'
+    )
+    sp.add_argument(
+        '-d', '--description',
+        help='Show the long name of the properties.',
+        action='store_true'
+    )
+    sp.set_defaults(func=mode_up)
+
+
 def invoke(
     cmd: str | None = None,
     p: ArgumentParser | None = None
@@ -737,6 +773,11 @@ class Shell(Cmd):
         cmd = f'nl {arg}'
         self._run_cmd(cmd)
 
+    def do_up(self, arg):
+        """List the Unicode properties."""
+        cmd = f'up {arg}'
+        self._run_cmd(cmd)
+
     def do_xt(self, arg):
         """Exit the charex shell."""
         print('Exiting charex.')
@@ -799,6 +840,11 @@ class Shell(Cmd):
     def help_nl(self):
         """Help for the nl command."""
         cmd = f'nl -h'
+        self._run_cmd(cmd)
+
+    def help_up(self):
+        """Help for the up command."""
+        cmd = f'up -h'
         self._run_cmd(cmd)
 
     def help_xt(self):

@@ -129,13 +129,14 @@ The following features are planned for the v0.1.1 or later releases:
 *   (Done.) Add age to character properties.
 *   (Done.) Accept lower case u for character point prefix.
 *   (Done.) Smol text escape.
+*   (Done.) Tool for pulling data files.
+*   Unicode category explorer.
 *   Registration for character set codecs.
 *   Emoji combiner.
-*   Unicode category explorer.
 *   Unicode script explorer.
-*   Tool for rebuilding data files.
 *   Support for more versions of Unicode.
 *   Web API.
+*   Tool for recreating reverse normalization data.
 *   Basic doctests for all public classes and functions.
 
 
