@@ -66,6 +66,7 @@ RESOURCES = {
 
     # Unicode data.
     'age': 'DerivedAge.txt',
+    'blocks': 'Blocks.txt',
     'props': 'PropertyAliases.txt',
     'propvals': 'PropertyValueAliases.txt',
     'unicodedata': 'UnicodeData.txt',

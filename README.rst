@@ -130,19 +130,40 @@ The following features are planned for the v0.1.1 or later releases:
 *   (Done.) Accept lower case u for character point prefix.
 *   (Done.) Smol text escape.
 *   (Done.) Tool for pulling data files.
-*   Unicode category explorer.
-
-    *   (Done.) Add property list.
-    *   Add property value list.
-    *   Add list of characters with property.
-
+*   (Done.) Add property list.
+*   (Done.) Add property value list.
+*   Add list of characters with property.
 *   Registration for character set codecs.
 *   Emoji combiner.
-*   Unicode script explorer.
-*   Support for more versions of Unicode.
 *   Web API.
 *   Tool for recreating reverse normalization data.
 *   Basic doctests for all public classes and functions.
+*   Add every property to charex.Character (contra Unicode API guidelines):
+
+    *   (Done.) Name,
+    *   Name_Alias,
+    *   (Done.) Block,
+    *   (Done.) Age,
+    *   (Done.) General_Category,
+    *   Script,
+    *   Script_Extensions,
+    *   White_Space,
+    *   Alphabetic,
+    *   Hangul_Syllable_Type,
+    *   Noncharacter_Code_Point,
+    *   Default_Ignorable_Code_Point,
+    *   Deprecated,
+    *   Logical_Order_Exception,
+    *   Variation_Selector,
+    *   And more....
+    
+*   Unicode script explorer.
+*   Support for more versions of Unicode.
+
+
+The list of Unicode Properties can be found here: `Index`_
+
+.. _`Index`: https://www.unicode.org/reports/tr44/tr44-28.html#Property_Index
 
 
 How Do I Run the Tests?

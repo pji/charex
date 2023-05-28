@@ -59,6 +59,14 @@ def test_character_age_all():
         char.age
 
 
+def test_character_block():
+    """When called :attr:`Character.block` returns the block that contains
+    the character.
+    """
+    char = c.Character('a')
+    assert char.block == 'Basic Latin'
+
+
 def test_character_category():
     """When called, :attr:`Character.category` returns the Unicode
     category for the character.

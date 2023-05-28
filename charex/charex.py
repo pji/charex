@@ -15,6 +15,13 @@ from charex.escape import schemes
 
 # Data classes.
 @dataclass(order=True)
+class Block:
+    start: int
+    stop: int
+    name: str
+
+
+@dataclass(order=True)
 class DerivedAge:
     """A record from the DerivedAge.txt file for Unicode 14.0.0.
 
@@ -77,6 +84,7 @@ class UnicodeDatum:
 
 # Caches.
 age_cache: tuple[DerivedAge, ...] = tuple()
+block_cache: tuple[Block, ...] = tuple()
 prop_cache: dict[str, str] = {}
 propvals_cache: dict[str, dict[str, str]] = {}
 unicodedata_cache: dict[str, UnicodeDatum] = {}
@@ -172,6 +180,18 @@ class Character:
         index = max_ // 2
         age = bintree(ages, address, index, 0, max_)
         return age.version
+
+    @property
+    def block(self) -> str:
+        """The Unicode block for the character."""
+        blocks = get_blocks()
+        address = ord(self.__value)
+        for block in blocks:
+            if address >= block.start and address < block.stop:
+                return block.name
+        else:
+            msg = 'Character not in block.'
+            raise RuntimeError(msg)
 
     @property
     def category(self) -> str:
@@ -515,6 +535,58 @@ def expand_property_value(prop: str, alias: str) -> str:
 
     # Return the expanded alias.
     return by_alias[alias]
+
+
+def get_blocks() -> tuple[Block, ...]:
+    """Get the tuple of blocks.
+
+    :return: The blocks as a :class:`tuple`.
+    :rtype: tuple
+    """
+    global block_cache
+
+    if not block_cache:
+        lines = util.read_resource('blocks')
+
+        # Get the default value for unassigned characters.
+        missing_data = parse_missing(lines)
+        missing = missing_data[0][-1]
+
+        # Parse the ages from the file.
+        lines = strip_comments(lines)
+        data = parse_sdt(lines)
+        blocks = []
+        for datum in data:
+            parts = datum[0].split('..')
+            start = int(parts[0], 16)
+            stop = start + 1
+            if len(parts) > 1:
+                stop = int(parts[1], 16) + 1
+            block = Block(start, stop, datum[1])
+            blocks.append(block)
+
+        # Sort the ages so they can be searched.
+        blocks = sorted(blocks)
+
+        # Fill in the gaps for the unassigned characters with the
+        # default value.
+        no_gaps = []
+        index = 0
+        while index + 1 < len(blocks):
+            block = blocks[index]
+            next = blocks[index + 1]
+            no_gaps.append(block)
+            if block.stop != next.start:
+                gap = Block(block.stop, next.start, missing)
+                no_gaps.append(gap)
+            index += 1
+        if not no_gaps[-1].stop == util.LEN_UNICODE:
+            block = Block(no_gaps[-1].stop, util.LEN_UNICODE, missing)
+            no_gaps.append(block)
+        block_cache = tuple(no_gaps)
+
+    # Return the cached ages.
+    return block_cache
 
 
 def get_category_members(category: str) -> tuple[Character, ...]:
