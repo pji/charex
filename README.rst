@@ -131,6 +131,11 @@ The following features are planned for the v0.1.1 or later releases:
 *   (Done.) Smol text escape.
 *   (Done.) Tool for pulling data files.
 *   Unicode category explorer.
+
+    *   (Done.) Add property list.
+    *   Add property value list.
+    *   Add list of characters with property.
+
 *   Registration for character set codecs.
 *   Emoji combiner.
 *   Unicode script explorer.

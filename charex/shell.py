@@ -25,6 +25,24 @@ from charex import normal as nl
 from charex import util
 
 
+# Registry.
+subparsers: list[Callable[[_SubParsersAction], None]] = []
+
+
+# Registration.
+def subparser(
+    fn: Callable[[_SubParsersAction], None]
+) -> Callable[[_SubParsersAction], None]:
+    """A decorator for registering subparsers.
+
+    :param fn: The function being registered.
+    :return: The registered :class:`collections.abc.Callable`.
+    :rtype: collections.abc.Callable
+    """
+    subparsers.append(fn)
+    return fn
+
+
 # Running modes.
 def mode_cd(args: Namespace) -> None:
     """Decode the given address in all codecs.
@@ -218,6 +236,20 @@ def mode_up(args: Namespace) -> None:
     print()
 
 
+def mode_uv(args: Namespace) -> None:
+    """List the valid values for a Unicode property.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    for line in cmds.uv(args.prop, args.description):
+        print(line)
+        if args.description:
+            print()
+    print()
+
+
 # Command parsing.
 def build_parser() -> ArgumentParser:
     """Build the argument parser.
@@ -239,25 +271,13 @@ def build_parser() -> ArgumentParser:
         metavar='mode',
         required=True
     )
-    parse_cd(spa)
-    parse_ce(spa)
-    parse_cl(spa)
-    parse_clear(spa)
-    parse_ct(spa)
-    parse_dm(spa)
-    parse_dn(spa)
-    parse_dt(spa)
-    parse_el(spa)
-    parse_es(spa)
-    parse_fl(spa)
-    parse_gui(spa)
-    parse_nl(spa)
-    parse_sh(spa)
-    parse_up(spa)
+    for fn in subparsers:
+        fn(spa)
 
     return p
 
 
+@subparser
 def parse_cd(spa: _SubParsersAction) -> None:
     """Add the cd mode subparser.
 
@@ -283,6 +303,7 @@ def parse_cd(spa: _SubParsersAction) -> None:
     sp.set_defaults(func=mode_cd)
 
 
+@subparser
 def parse_ce(spa: _SubParsersAction) -> None:
     """Add the ce mode subparser.
 
@@ -306,6 +327,7 @@ def parse_ce(spa: _SubParsersAction) -> None:
     sp.set_defaults(func=mode_ce)
 
 
+@subparser
 def parse_cl(spa: _SubParsersAction) -> None:
     """Add the charsetlist mode subparser.
 
@@ -327,6 +349,7 @@ def parse_cl(spa: _SubParsersAction) -> None:
     sp.set_defaults(func=mode_cl)
 
 
+@subparser
 def parse_clear(spa: _SubParsersAction) -> None:
     """Clear the terminal.
 
@@ -343,6 +366,7 @@ def parse_clear(spa: _SubParsersAction) -> None:
     sp.set_defaults(func=mode_clear)
 
 
+@subparser
 def parse_ct(spa: _SubParsersAction) -> None:
     """Add the ct mode subparser.
 
@@ -380,6 +404,7 @@ def parse_ct(spa: _SubParsersAction) -> None:
     sp.set_defaults(func=mode_ct)
 
 
+@subparser
 def parse_dm(spa: _SubParsersAction) -> None:
     """Add the dm mode subparser.
 
@@ -407,6 +432,7 @@ def parse_dm(spa: _SubParsersAction) -> None:
     sp.set_defaults(func=mode_dm)
 
 
+@subparser
 def parse_dn(spa: _SubParsersAction) -> None:
     """Add the dn mode subparser.
 
@@ -462,6 +488,7 @@ def parse_dn(spa: _SubParsersAction) -> None:
     sp.set_defaults(func=mode_dn)
 
 
+@subparser
 def parse_dt(spa: _SubParsersAction) -> None:
     """Add the dt mode subparser.
 
@@ -486,6 +513,7 @@ def parse_dt(spa: _SubParsersAction) -> None:
     sp.set_defaults(func=mode_dt)
 
 
+@subparser
 def parse_el(spa: _SubParsersAction) -> None:
     """Add the el mode subparser.
 
@@ -507,6 +535,7 @@ def parse_el(spa: _SubParsersAction) -> None:
     sp.set_defaults(func=mode_el)
 
 
+@subparser
 def parse_es(spa: _SubParsersAction) -> None:
     """Add the escape mode subparser.
 
@@ -542,6 +571,7 @@ def parse_es(spa: _SubParsersAction) -> None:
     sp.set_defaults(func=mode_es)
 
 
+@subparser
 def parse_fl(spa: _SubParsersAction) -> None:
     """Add the fl mode subparser.
 
@@ -563,6 +593,7 @@ def parse_fl(spa: _SubParsersAction) -> None:
     sp.set_defaults(func=mode_fl)
 
 
+@subparser
 def parse_gui(spa: _SubParsersAction) -> None:
     """Run the GUI.
 
@@ -579,6 +610,7 @@ def parse_gui(spa: _SubParsersAction) -> None:
     sp.set_defaults(func=mode_gui)
 
 
+@subparser
 def parse_nl(spa: _SubParsersAction) -> None:
     """Add the nl mode subparser.
 
@@ -617,6 +649,7 @@ def parse_nl(spa: _SubParsersAction) -> None:
     sp.set_defaults(func=mode_nl)
 
 
+@subparser
 def parse_sh(spa: _SubParsersAction) -> None:
     """Add the shell mode subparser.
 
@@ -633,6 +666,7 @@ def parse_sh(spa: _SubParsersAction) -> None:
     sp.set_defaults(func=mode_sh)
 
 
+@subparser
 def parse_up(spa: _SubParsersAction) -> None:
     """Add the up mode subparser.
 
@@ -654,6 +688,34 @@ def parse_up(spa: _SubParsersAction) -> None:
     sp.set_defaults(func=mode_up)
 
 
+@subparser
+def parse_uv(spa: _SubParsersAction) -> None:
+    """Add the uv mode subparser.
+
+    :param spa: The subparser action used to add a new subparser to
+        the main parser.
+    :return: None.
+    :rtype: NoneType
+    """
+    sp = spa.add_parser(
+        'uv',
+        aliases=['propvallist', 'pvlist', 'upv',],
+        description='List the valid values of a Unicode property.'
+    )
+    sp.add_argument(
+        'prop',
+        help='The Unicode property.',
+        action='store'
+    )
+    sp.add_argument(
+        '-d', '--description',
+        help='Show the long name of the properties.',
+        action='store_true'
+    )
+    sp.set_defaults(func=mode_uv)
+
+
+# Command line invocation.
 def invoke(
     cmd: str | None = None,
     p: ArgumentParser | None = None
@@ -778,6 +840,11 @@ class Shell(Cmd):
         cmd = f'up {arg}'
         self._run_cmd(cmd)
 
+    def do_uv(self, arg):
+        """List the valid values of a Unicode property."""
+        cmd = f'uv {arg}'
+        self._run_cmd(cmd)
+
     def do_xt(self, arg):
         """Exit the charex shell."""
         print('Exiting charex.')
@@ -845,6 +912,11 @@ class Shell(Cmd):
     def help_up(self):
         """Help for the up command."""
         cmd = f'up -h'
+        self._run_cmd(cmd)
+
+    def help_uv(self):
+        """Help for the uv command."""
+        cmd = f'uv -h'
         self._run_cmd(cmd)
 
     def help_xt(self):

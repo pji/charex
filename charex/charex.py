@@ -177,7 +177,7 @@ class Character:
     def category(self) -> str:
         """The Unicode general category for the character."""
         alias = ucd.category(self.value)
-        return expand_property_value(alias, 'gc')
+        return expand_property_value('gc', alias)
 
     @property
     def code_point(self) -> str:
@@ -454,41 +454,64 @@ def bintree(
     return age
 
 
-def expand_property(proptype: str) -> str:
+def expand_property(prop: str) -> str:
     """Translate the short name of a Unicode property into the long
     name for that property.
+
+    :param prop: The short name of the property.
+    :return: The long name as a :class:`str`.
+    :rtype: str
+
+    Usage
+    -----
+    To get the long name of a Unicode property.
+
+        >>> prop = 'cf'
+        >>> expand_property(prop)
+        'Case Folding'
+
     """
     try:
-        result = prop_cache[proptype]
+        result = prop_cache[prop]
 
     except KeyError:
         lines = util.read_resource('props')
         by_proptype = parse_properties(lines)
-        result = by_proptype[proptype]
+        result = by_proptype[prop]
 
     return result
 
 
-def expand_property_value(alias: str, proptype: str) -> str:
+def expand_property_value(prop: str, alias: str) -> str:
     """Translate the short name of a Unicode property value into the
     long name for that property.
 
+    :param prop: The type of property.
     :param alias: The short name to translate.
-    :param proptype: The type of property.
     :return: The long name of the property as a :class:`str`.
     :rtype: str
+
+    Usage
+    -----
+    To get the long name for a property value::
+
+        >>> alias = 'Cc'
+        >>> prop = 'gc'
+        >>> expand_property_value(prop, alias)
+        'Control'
+
     """
     # Look it up in the cache, to avoid having to reload the file
     # multiple times.
     try:
-        by_alias = propvals_cache[proptype]
+        by_alias = propvals_cache[prop]
 
     # If it's not in the cache, then we have to load the data from
     # file.
     except KeyError:
         lines = util.read_resource('propvals')
-        by_alias = parse_property_values(lines, proptype)
-        propvals_cache[proptype] = by_alias
+        by_alias = parse_property_values(lines, prop)
+        propvals_cache[prop] = by_alias
 
     # Return the expanded alias.
     return by_alias[alias]
@@ -564,7 +587,19 @@ def get_derived_age() -> tuple[DerivedAge, ...]:
 
 
 def get_properties() -> tuple[str, ...]:
-    """Get the valid properties."""
+    """Get the valid Unicode properties.
+
+    :return: The properties as a :class:`tuple`.
+    :rtype: tuple
+
+    Usage
+    -----
+    To get the list of Unicode properties::
+
+        >>> get_properties()                    # doctest: +ELLIPSIS
+        ('cjkAccountingNumeric', 'cjkOtherNumeric',... 'XO_NFKD')
+
+    """
     if not prop_cache:
         lines = util.read_resource('props')
         parse_properties(lines)
@@ -572,17 +607,30 @@ def get_properties() -> tuple[str, ...]:
     return tuple(key for key in prop_cache)
 
 
-def get_property_value_aliases(proptype: str) -> tuple[str, ...]:
-    """Get the valid property value aliases for a property."""
-    if proptype not in propvals_cache:
-        lines = util.read_resource('propvals')
-        by_alias = parse_property_values(lines, proptype)
-        if by_alias:
-            propvals_cache[proptype] = {}
-            for alias in by_alias:
-                propvals_cache[proptype][alias] = by_alias[alias]
+def get_property_values(prop: str) -> tuple[str, ...]:
+    """Get the valid property value aliases for a property.
 
-    return tuple(key for key in propvals_cache[proptype])
+    :param prop: The short name of the property.
+    :return: The valid values for the property as a :class:`tuple`.
+    :rtype: tuple
+
+    Usage
+    -----
+    To get the valid property values::
+
+        >>> prop = 'gc'
+        >>> get_property_values(prop)           # doctest: +ELLIPSIS
+        ('C', 'Cc', 'Cf', 'Cn', 'Co', 'Cs', 'L',... 'Zs')
+
+    """
+    if prop not in propvals_cache:
+        lines = util.read_resource('propvals')
+        by_alias = parse_property_values(lines, prop)
+        propvals_cache[prop] = {}
+        for alias in by_alias:
+            propvals_cache[prop][alias] = by_alias[alias]
+
+    return tuple(key for key in propvals_cache[prop])
 
 
 # Data parsing functions.

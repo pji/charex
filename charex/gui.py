@@ -307,6 +307,24 @@ class Application:
         )
         self.pad_kids(frame)
 
+    def init_uv(self, frame, num=None):
+        self.uv_prop = tk.StringVar()
+        self.uv_result = self.make_results(frame)
+
+        self.config_simple_grid(frame)
+
+        form_combo = ttk.Combobox(frame, textvariable=self.uv_prop)
+        form_combo['values'] = ch.get_properties()
+        form_combo.state(['readonly'])
+        form_combo.grid(column=0, row=0, columnspan=2, sticky=SIDES)
+
+        uv_button = self.make_button(
+            frame,
+            'List Values of Unicode Property',
+            self.uv
+        )
+        self.pad_kids(frame)
+
     # Core commands.
     def cd(self, *args):
         try:
@@ -401,6 +419,13 @@ class Application:
         self.up_result.delete('0.0', 'end')
         for line in cmds.up(True):
             self.up_result.insert('end', line + '\n\n')
+
+    def uv(self, *args):
+        prop = self.uv_prop.get()
+
+        self.uv_result.delete('0.0', 'end')
+        for line in cmds.uv(prop, True):
+            self.uv_result.insert('end', line + '\n\n')
 
     # Event handlers.
     def handle_notebook_tab_changed(self, event):

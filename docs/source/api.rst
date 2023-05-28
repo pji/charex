@@ -40,3 +40,12 @@ Normalization and Denormalization
 .. autofunction:: charex.get_forms
 .. autofunction:: charex.normalize
 .. autoclass:: charex.reg_form
+
+
+Unicode Information
+*******************
+
+.. autofunction:: charex.get_properties
+.. autofunction:: charex.get_property_values
+.. autofunction:: charex.expand_property
+.. autofunction:: charex.expand_property_value

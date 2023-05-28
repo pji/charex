@@ -5,6 +5,7 @@ cmds
 Core logic for the different commands/modes of :mod:`charex`.
 """
 from collections.abc import Callable, Generator, Sequence
+from functools import partial
 from itertools import zip_longest
 from textwrap import wrap
 
@@ -256,6 +257,20 @@ def up(show_long: bool = False) -> Generator[str, None, None]:
         yield line
 
 
+def uv(prop: str, show_long: bool = False) -> Generator[str, None, None]:
+    """List the valid values for a Unicode property.
+
+    :param prop: The Unicode property.
+    :param show_long: (Optional.) Whether to show the long name.
+    :return: Yields each property as a :class:`str`.
+    :rtype: str
+    """
+    values = ch.get_property_values(prop)
+    expand_value = partial(ch.expand_property_value, prop)
+    for line in write_list(values, expand_value, show_long):
+        yield line
+
+
 # Utility functions.
 def make_description_row(name: str, namewidth: int, descr: str) -> str:
     """Create a two column row with a name and description.
@@ -290,6 +305,9 @@ def write_list(
     :return: Yields each codec as a :class:`str`.
     :rtype: str
     """
+    if not items:
+        items = ('No values.',)
+        show_descr = False
     width = max(len(item) for item in items)
     for item in items:
         if show_descr:
