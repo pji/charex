@@ -537,6 +537,39 @@ def expand_property_value(prop: str, alias: str) -> str:
     return by_alias[alias]
 
 
+def fill_gaps(
+    values: Sequence[tuple[int, int, str]],
+    missing: str
+) -> tuple[tuple[int, int, str], ...]:
+    """Fill gaps in the given values."""
+    values = sorted(values)
+    filled = []
+    for i in range(len(values) - 1):
+        filled.append(values[i])
+        _, stop, _ = values[i]
+        nstart, _, _ = values[i + 1]
+        if stop != nstart:
+            gap = (stop, nstart, missing)
+            filled.append(gap)
+    filled.append(values[-1])
+    if filled[-1][1] != util.LEN_UNICODE:
+        gap = (filled[-1][1], util.LEN_UNICODE, missing)
+        filled.append(gap)
+    return tuple(filled)
+
+
+def filter_by_property(
+    prop: str,
+    value: str,
+    chars: Sequence[Character] | None = None
+) -> tuple[Character, ...]:
+    """Return all the characters with the given property value."""
+    if not chars:
+        chars = [Character(n) for n in range(util.LEN_UNICODE)]
+    hits = [char for char in chars if getattr(char, prop) == value]
+    return tuple(hits)
+
+
 def get_blocks() -> tuple[Block, ...]:
     """Get the tuple of blocks.
 
@@ -546,44 +579,8 @@ def get_blocks() -> tuple[Block, ...]:
     global block_cache
 
     if not block_cache:
-        lines = util.read_resource('blocks')
-
-        # Get the default value for unassigned characters.
-        missing_data = parse_missing(lines)
-        missing = missing_data[0][-1]
-
-        # Parse the ages from the file.
-        lines = strip_comments(lines)
-        data = parse_sdt(lines)
-        blocks = []
-        for datum in data:
-            parts = datum[0].split('..')
-            start = int(parts[0], 16)
-            stop = start + 1
-            if len(parts) > 1:
-                stop = int(parts[1], 16) + 1
-            block = Block(start, stop, datum[1])
-            blocks.append(block)
-
-        # Sort the ages so they can be searched.
-        blocks = sorted(blocks)
-
-        # Fill in the gaps for the unassigned characters with the
-        # default value.
-        no_gaps = []
-        index = 0
-        while index + 1 < len(blocks):
-            block = blocks[index]
-            next = blocks[index + 1]
-            no_gaps.append(block)
-            if block.stop != next.start:
-                gap = Block(block.stop, next.start, missing)
-                no_gaps.append(gap)
-            index += 1
-        if not no_gaps[-1].stop == util.LEN_UNICODE:
-            block = Block(no_gaps[-1].stop, util.LEN_UNICODE, missing)
-            no_gaps.append(block)
-        block_cache = tuple(no_gaps)
+        results = (Block(*block) for block in parse_range_for_value('blocks'))
+        block_cache = tuple(results)
 
     # Return the cached ages.
     return block_cache
@@ -614,45 +611,8 @@ def get_derived_age() -> tuple[DerivedAge, ...]:
 
     # Populate the cache.
     if not age_cache:
-        # Read the source file.
-        lines = util.read_resource('age')
-
-        # Get the default value for unassigned characters.
-        missing_data = parse_missing(lines)
-        missing = missing_data[0][-1]
-
-        # Parse the ages from the file.
-        lines = strip_comments(lines)
-        data = parse_sdt(lines)
-        ages = []
-        for datum in data:
-            parts = datum[0].split('..')
-            start = int(parts[0], 16)
-            stop = start + 1
-            if len(parts) > 1:
-                stop = int(parts[1], 16) + 1
-            age = DerivedAge(start, stop, datum[1])
-            ages.append(age)
-
-        # Sort the ages so they can be searched.
-        ages = sorted(ages)
-
-        # Fill in the gaps for the unassigned characters with the
-        # default value.
-        no_gaps = []
-        index = 0
-        while index + 1 < len(ages):
-            age = ages[index]
-            next = ages[index + 1]
-            no_gaps.append(age)
-            if age.stop != next.start:
-                gap = DerivedAge(age.stop, next.start, missing)
-                no_gaps.append(gap)
-            index += 1
-        if not no_gaps[-1].stop == util.LEN_UNICODE:
-            age = DerivedAge(no_gaps[-1].stop, util.LEN_UNICODE, missing)
-            no_gaps.append(age)
-        age_cache = tuple(no_gaps)
+        results = (DerivedAge(*age) for age in parse_range_for_value('age'))
+        age_cache = tuple(results)
 
     # Return the cached ages.
     return age_cache
@@ -765,6 +725,29 @@ def parse_property_values(
     return by_alias
 
 
+def parse_range_for_value(source: str) -> tuple[tuple[int, int, str], ...]:
+    # Read the source file.
+    lines = util.read_resource(source)
+
+    # Get the default value for unassigned characters.
+    missing_data = parse_missing(lines)
+    missing = missing_data[0][-1]
+
+    # Parse the data from the file.
+    lines = strip_comments(lines)
+    data = parse_sdt(lines)
+    values = []
+    for datum in data:
+        parts = datum[0].split('..')
+        start = int(parts[0], 16)
+        stop = start + 1
+        if len(parts) > 1:
+            stop = int(parts[1], 16) + 1
+        value = (start, stop, datum[1])
+        values.append(value)
+    return tuple(fill_gaps(values, missing))
+
+
 def parse_sdt(lines: tuple[str, ...]) -> tuple[tuple[str, ...], ...]:
     """Parse semicolon delimited text.
 
@@ -810,10 +793,6 @@ def strip_comments(lines: Sequence[str]) -> tuple[str, ...]:
 
 
 if __name__ == '__main__':
-    for num in range(util.LEN_UNICODE):
-        c = chr(num)
-        char = Character(c)
-        try:
-            name = char.category
-        except Exception as ex:
-            print(char.code_point, type(ex))
+    hits = filter_by_property('block', 'Basic Latin')
+    for hit in hits:
+        print(hit.summarize())

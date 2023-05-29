@@ -1,7 +1,8 @@
              Display: A
-                Name: LATIN CAPITAL LETTER A
           Code Point: U+0041
+                Name: LATIN CAPITAL LETTER A
                  Age: 1.1
+               Block: Basic Latin
             Category: Uppercase Letter
                UTF-8: 41
               UTF-16: 00 41

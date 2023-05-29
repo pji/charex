@@ -156,9 +156,10 @@ def dt(c: str) -> Generator[str, None, None]:
     char = ch.Character(c)
     details = (
         ('Display', char.value),
-        ('Name', char.name),
         ('Code Point', char.code_point),
+        ('Name', char.name),
         ('Age', char.age),
+        ('Block', char.block),
         ('Category', char.category),
         ('UTF-8', char.encode('utf8')),
         ('UTF-16', char.encode('utf_16_be')),
