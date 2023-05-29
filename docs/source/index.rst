@@ -21,7 +21,7 @@ Why Did I Make This?
 I find the ambiguity of text data interesting. In memory it's all ones
 and zeros. There is nothing inherent to the data that makes `0x20` mean
 a space character, but we've mostly agreed that it does. That "mostly"
-part is what's interesting to me, and where a lot of fun problems lie.
+part is what's interesting to me, and it's where a lot of fun problems lie.
 
 
 How Do I Use This?
@@ -80,6 +80,8 @@ From here you can type `?` to see the list of available commands::
       * fl: List registered normalization forms.
       * nl: Perform normalizations.
       * sh: Run in an interactive shell.
+      * up: List the Unicode properties.
+      * uv: List the valid values for a Unicode property.
 
     For help on individual commands, use "help {command}".
 

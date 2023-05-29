@@ -169,6 +169,13 @@ class Character:
         return get_value_from_range('blocks', self.value)
 
     @property
+    def canonical_combining_class(self) -> str:
+        """The Canonical Ordering Algorithm class for the character."""
+        data = get_unicode_data()
+        datum = data[self.code_point]
+        return datum.canonical_combining_class
+
+    @property
     def category(self) -> str:
         """The Unicode general category for the character."""
         alias = ucd.category(self.value)
@@ -209,11 +216,7 @@ class Character:
 
             # Control characters.
             if cat == 'Cc':
-                if not unicodedata_cache:
-                    lines = util.read_resource('unicodedata')
-                    data = parse_unicode_data(lines)
-                else:
-                    data = unicodedata_cache
+                data = get_unicode_data()
                 point = self.code_point
                 name = f'<{data[point].unicode_1_name}>'
 
@@ -561,33 +564,6 @@ def get_category_members(category: str) -> tuple[Character, ...]:
     return tuple(members)
 
 
-def get_value_from_range(src: str, char: str) -> str:
-    """Given a data source and a character, return the value from
-    the data source of that character.
-    """
-    if src not in range_cache:
-        range_cache[src] = get_value_ranges(src)
-    vranges = range_cache[src]
-    address = ord(char)
-    max_ = len(vranges)
-    index = max_ // 2
-    vr = bintree(vranges, address, index, 0, max_)
-    return vr.value
-
-
-def get_value_ranges(src: str) -> tuple[ValueRange, ...]:
-    """Get the tuple of derived ages. The derived age of a character
-    is the Unicode version where the character was assigned to a code
-    point.
-
-    :param src: The source key for the values.
-    :return: The possible ages as a :class:`tuple`.
-    :rtype: tuple
-    """
-    results = (ValueRange(*vr) for vr in parse_range_for_value(src))
-    return tuple(results)
-
-
 def get_properties() -> tuple[str, ...]:
     """Get the valid Unicode properties.
 
@@ -633,6 +609,41 @@ def get_property_values(prop: str) -> tuple[str, ...]:
             propvals_cache[prop][alias] = by_alias[alias]
 
     return tuple(key for key in propvals_cache[prop])
+
+
+def get_unicode_data() -> dict[str, UnicodeDatum]:
+    """Get the core Unicode data."""
+    if not unicodedata_cache:
+        lines = util.read_resource('unicodedata')
+        data = parse_unicode_data(lines)
+    return unicodedata_cache
+
+
+def get_value_from_range(src: str, char: str) -> str:
+    """Given a data source and a character, return the value from
+    the data source of that character.
+    """
+    if src not in range_cache:
+        range_cache[src] = get_value_ranges(src)
+    vranges = range_cache[src]
+    address = ord(char)
+    max_ = len(vranges)
+    index = max_ // 2
+    vr = bintree(vranges, address, index, 0, max_)
+    return vr.value
+
+
+def get_value_ranges(src: str) -> tuple[ValueRange, ...]:
+    """Get the tuple of derived ages. The derived age of a character
+    is the Unicode version where the character was assigned to a code
+    point.
+
+    :param src: The source key for the values.
+    :return: The possible ages as a :class:`tuple`.
+    :rtype: tuple
+    """
+    results = (ValueRange(*vr) for vr in parse_range_for_value(src))
+    return tuple(results)
 
 
 # Data parsing functions.

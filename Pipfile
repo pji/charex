@@ -5,8 +5,6 @@ name = "pypi"
 
 [packages]
 flask = "*"
-requests = "*"
-types-requests = "*"
 
 [requires]
 python_version = "3.11"
@@ -22,5 +20,6 @@ build = "*"
 twine = "*"
 pytest = "*"
 coverage = "*"
-furo = "*"
 pytest-mock = "*"
+requests = "*"
+types-requests = "*"

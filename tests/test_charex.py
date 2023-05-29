@@ -75,6 +75,14 @@ def test_character_block_all():
         char.block
 
 
+def test_character_canonical_combining_class():
+    """When called, :attr:`Character.canonical_combining_class` returns
+    the Unicode canonical combining class for the character.
+    """
+    char = c.Character('a')
+    assert char.canonical_combining_class == '0'
+
+
 def test_character_category():
     """When called, :attr:`Character.category` returns the Unicode
     category for the character.
