@@ -4,14 +4,9 @@ util
 
 Utility functions for :mod:`charex`.
 """
-from datetime import date
 from importlib.resources import files
-from json import dump, loads
 from math import log
-from pathlib import Path
 import unicodedata as ucd
-
-from requests import get
 
 
 # Constants.
@@ -69,6 +64,7 @@ RESOURCES = {
     'blocks': 'Blocks.txt',
     'props': 'PropertyAliases.txt',
     'propvals': 'PropertyValueAliases.txt',
+    'scripts': 'Scripts.txt',
     'unicodedata': 'UnicodeData.txt',
 
     # HTML data.
@@ -195,32 +191,6 @@ def pad_byte(value: str, endian: str = 'big', base: int = 16) -> str:
             return zeros + value
         return value[:-1 * gap] + zeros + value[-1 * gap:]
     return value
-
-
-def rebuild_data() -> None:
-    """Rebuild the data files.
-
-    :return: None.
-    :rtype: NoneType
-    """
-    today = date.today()
-    lines = read_resource('sources')
-    data = loads('\n'.join(lines))
-    data_path = Path(DATA_LOC.replace('.', '/'))
-
-    for file in data:
-        url = data[file]['source']
-        resp = get(url)
-        path = data_path / file
-        with open(path, 'w') as fh:
-            fh.write(resp.text)
-
-        update = (today.year, today.month, today.day)
-        data[file]['date'] = update
-
-    path = data_path / 'sources.json'
-    with open(path, 'w') as fh:
-        dump(data, fh, indent=4)
 
 
 def read_resource(key: str, codec: str = 'utf_8') -> tuple[str, ...]:

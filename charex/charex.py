@@ -15,23 +15,11 @@ from charex.escape import schemes
 
 # Data classes.
 @dataclass(order=True)
-class Block:
+class ValueRange:
+    """The range of characters that have a property value."""
     start: int
     stop: int
-    name: str
-
-
-@dataclass(order=True)
-class DerivedAge:
-    """A record from the DerivedAge.txt file for Unicode 14.0.0.
-
-    :param start: The first code point in the range.
-    :param stop: The last code point in the range.
-    :param version: The version the range was introduced.
-    """
-    start: int
-    stop: int
-    version: str
+    value: str
 
 
 @dataclass
@@ -83,10 +71,9 @@ class UnicodeDatum:
 
 
 # Caches.
-age_cache: tuple[DerivedAge, ...] = tuple()
-block_cache: tuple[Block, ...] = tuple()
 prop_cache: dict[str, str] = {}
 propvals_cache: dict[str, dict[str, str]] = {}
+range_cache: dict[str, tuple[ValueRange, ...]] = {}
 unicodedata_cache: dict[str, UnicodeDatum] = {}
 
 
@@ -174,24 +161,12 @@ class Character:
     @property
     def age(self) -> str:
         """The version the character was added in."""
-        ages = get_derived_age()
-        address = ord(self.__value)
-        max_ = len(ages)
-        index = max_ // 2
-        age = bintree(ages, address, index, 0, max_)
-        return age.version
+        return get_value_from_range('age', self.value)
 
     @property
     def block(self) -> str:
         """The Unicode block for the character."""
-        blocks = get_blocks()
-        address = ord(self.__value)
-        for block in blocks:
-            if address >= block.start and address < block.stop:
-                return block.name
-        else:
-            msg = 'Character not in block.'
-            raise RuntimeError(msg)
+        return get_value_from_range('blocks', self.value)
 
     @property
     def category(self) -> str:
@@ -256,6 +231,11 @@ class Character:
     def numeric(self) -> float | int | None:
         """The Unicode defined numeric value for the character."""
         return ucd.numeric(self.value, None)
+
+    @property
+    def script(self) -> str:
+        """The Unicode script for the character."""
+        return get_value_from_range('scripts', self.value)
 
     @property
     def value(self) -> str:
@@ -443,35 +423,36 @@ class Lookup:
 
 # Utility functions.
 def bintree(
-    ages: Sequence[DerivedAge],
+    vranges: Sequence[ValueRange],
     address: int,
     index: int,
     min_: int,
     max_: int
-) -> DerivedAge:
-    """Find the derived age of a Unicode character using a binary
+) -> ValueRange:
+    """Find the range of a Unicode character using a binary
     tree search.
 
-    :param ages: The possible ages for Unicode characters.
+    :param vranges: The possible ranges for Unicode characters.
     :param address: The code point of the character an an :class:`int`.
     :param index: The current location of the search cursor.
     :param min_: The minimum possible index within ages that hasn't been
         excluded by the search.
     :param max_: The maximum possible index within ages that hasn't been
         excluded by the search.
-    :return: The age of the character as a :class:`charex.charex.DerivedAge`.
-    :rtype: charex.charex.DerivedAge
+    :return: The range of the character as a
+        :class:`charex.charex.ValueRange`.
+    :rtype: charex.charex.ValueRange
     """
-    age = ages[index]
-    if address < age.start:
+    vr = vranges[index]
+    if address < vr.start:
         max_ = index
         index = min_ + (max_ - min_) // 2
-        age = bintree(ages, address, index, min_, max_)
-    elif address >= age.stop:
+        vr = bintree(vranges, address, index, min_, max_)
+    elif address >= vr.stop:
         min_ = index
         index = min_ + (max_ - min_) // 2
-        age = bintree(ages, address, index, min_, max_)
-    return age
+        vr = bintree(vranges, address, index, min_, max_)
+    return vr
 
 
 def expand_property(prop: str) -> str:
@@ -570,22 +551,6 @@ def filter_by_property(
     return tuple(hits)
 
 
-def get_blocks() -> tuple[Block, ...]:
-    """Get the tuple of blocks.
-
-    :return: The blocks as a :class:`tuple`.
-    :rtype: tuple
-    """
-    global block_cache
-
-    if not block_cache:
-        results = (Block(*block) for block in parse_range_for_value('blocks'))
-        block_cache = tuple(results)
-
-    # Return the cached ages.
-    return block_cache
-
-
 def get_category_members(category: str) -> tuple[Character, ...]:
     """Get all characters that are members of the given category."""
     ulen = 0x10FFFF
@@ -596,26 +561,31 @@ def get_category_members(category: str) -> tuple[Character, ...]:
     return tuple(members)
 
 
-def get_derived_age() -> tuple[DerivedAge, ...]:
+def get_value_from_range(src: str, char: str) -> str:
+    """Given a data source and a character, return the value from
+    the data source of that character.
+    """
+    if src not in range_cache:
+        range_cache[src] = get_value_ranges(src)
+    vranges = range_cache[src]
+    address = ord(char)
+    max_ = len(vranges)
+    index = max_ // 2
+    vr = bintree(vranges, address, index, 0, max_)
+    return vr.value
+
+
+def get_value_ranges(src: str) -> tuple[ValueRange, ...]:
     """Get the tuple of derived ages. The derived age of a character
     is the Unicode version where the character was assigned to a code
     point.
 
+    :param src: The source key for the values.
     :return: The possible ages as a :class:`tuple`.
     :rtype: tuple
     """
-    # Since ages are stored as a tuple rather than a dict, we need
-    # to pull the cache into this namespace in case we need to make
-    # changes to it.
-    global age_cache
-
-    # Populate the cache.
-    if not age_cache:
-        results = (DerivedAge(*age) for age in parse_range_for_value('age'))
-        age_cache = tuple(results)
-
-    # Return the cached ages.
-    return age_cache
+    results = (ValueRange(*vr) for vr in parse_range_for_value(src))
+    return tuple(results)
 
 
 def get_properties() -> tuple[str, ...]:

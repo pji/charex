@@ -132,7 +132,7 @@ The following features are planned for the v0.1.1 or later releases:
 *   (Done.) Tool for pulling data files.
 *   (Done.) Add property list.
 *   (Done.) Add property value list.
-*   Add list of characters with property.
+*   (Started.) Add list of characters with property.
 *   Registration for character set codecs.
 *   Emoji combiner.
 *   Web API.
@@ -145,7 +145,7 @@ The following features are planned for the v0.1.1 or later releases:
     *   (Done.) Block,
     *   (Done.) Age,
     *   (Done.) General_Category,
-    *   Script,
+    *   (Done.) Script,
     *   Script_Extensions,
     *   White_Space,
     *   Alphabetic,
@@ -157,7 +157,6 @@ The following features are planned for the v0.1.1 or later releases:
     *   Variation_Selector,
     *   And more....
     
-*   Unicode script explorer.
 *   Support for more versions of Unicode.
 
 

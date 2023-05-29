@@ -5,16 +5,16 @@
         "date": [
             2023,
             5,
-            28
+            29
         ]
     },
     "DerivedAge.txt": {
-        "description": "Character introduction version lookup.",
+        "description": "A property defining when various code points were designated/assigned in successive versions of the Unicode Standard. For a detailed discussion of the Age property, see Section 5.14, Character Age.",
         "source": "https://www.unicode.org/Public/14.0.0/ucd/DerivedAge.txt",
         "date": [
             2023,
             5,
-            28
+            29
         ]
     },
     "entities.json": {
@@ -23,7 +23,7 @@
         "date": [
             2023,
             5,
-            28
+            29
         ]
     },
     "PropertyValueAliases.txt": {
@@ -32,7 +32,16 @@
         "date": [
             2023,
             5,
-            28
+            29
+        ]
+    },
+    "Scripts.txt": {
+        "description": "Script values for use in regular expressions and elsewhere. For more information, see Unicode Standard Annex #24, \"Unicode Script Property.\"",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/Scripts.txt",
+        "date": [
+            2023,
+            5,
+            29
         ]
     },
     "UnicodeData.txt": {
@@ -41,7 +50,7 @@
         "date": [
             2023,
             5,
-            28
+            29
         ]
     },
     "PropertyAliases.txt": {
@@ -50,7 +59,7 @@
         "date": [
             2023,
             5,
-            28
+            29
         ]
     }
 }

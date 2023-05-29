@@ -4,6 +4,7 @@
                  Age: 1.1
                Block: Basic Latin
             Category: Uppercase Letter
+              Script: Latin
                UTF-8: 41
               UTF-16: 00 41
               UTF-32: 00 00 00 41

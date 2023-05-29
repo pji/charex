@@ -67,6 +67,14 @@ def test_character_block():
     assert char.block == 'Basic Latin'
 
 
+@pytest.mark.skip(reason='Slow.')
+def test_character_block_all():
+    """All Unicode characters should have a block."""
+    for n in range(UNICODE_LEN):
+        char = c.Character(n)
+        char.block
+
+
 def test_character_category():
     """When called, :attr:`Character.category` returns the Unicode
     category for the character.
@@ -215,6 +223,22 @@ def test_character_denormalize():
     exp = ("\uf907", "\uf908", "\uface")
     char = c.Character('\u9f9c')
     assert char.denormalize('nfc') == exp
+
+
+def test_character_script():
+    """When called :attr:`Character.script` returns the script that
+    contains the character.
+    """
+    char = c.Character('a')
+    assert char.script == 'Latin'
+
+
+@pytest.mark.skip(reason='Slow.')
+def test_character_script_all():
+    """All Unicode characters should have a script."""
+    for n in range(UNICODE_LEN):
+        char = c.Character(n)
+        char.script
 
 
 def test_character_summarize():
