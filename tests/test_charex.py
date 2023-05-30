@@ -93,38 +93,25 @@ def test_character_core_properties():
     assert char.canonical_combining_class == '0'
     assert char.bidi_class == 'Left To Right'
     assert char.decomposition_type == ''
-
-
-def test_character_decimal():
-    """When called, :attr:`Character.decimal` gives the numeric value of
-    the character if it has one. If the character does not have a
-    numeric value, return None.
-    """
-    char = c.Character('2')
-    assert char.decimal == 2
-
-    char = c.Character('a')
+    assert char.decomposition == ''
     assert char.decimal is None
+    assert char.digit is None
+    assert char.numeric is None
+    assert char.bidi_mirrored is False
+    assert char.unicode_1_name == ''
+    assert char.iso_comment == ''
+    assert char.simple_uppercase_mapping == '0041'
+    assert char.simple_lowercase_mapping == ''
+    assert char.simple_titlecase_mapping == '0041'
 
-
-def test_character_decomposition():
-    """When called, :attr:`Character.decomposition` returns the Unicode
-    decomposition for the character.
-    """
     char = c.Character('å')
+    assert char.decomposition_type == 'canonical'
     assert char.decomposition == '0061 030A'
 
-
-def test_character_digit():
-    """When called, :attr:`Character.digit` gives the numeric value of
-    the character if it has one. If the character does not have a
-    numeric value, return None.
-    """
     char = c.Character('2')
+    assert char.decimal == 2
     assert char.digit == 2
-
-    char = c.Character('a')
-    assert char.digit is None
+    assert char.numeric == 2
 
 
 def test_character_encode():
@@ -174,18 +161,6 @@ def test_character_name_null():
     """
     char = c.Character('\u0000')
     assert char.name == '<NULL>'
-
-
-def test_character_numeric():
-    """When called, :attr:`Character.numeric` gives the numeric value of
-    the character if it has one. If the character does not have a
-    numeric value, return None.
-    """
-    char = c.Character('2')
-    assert char.numeric == 2
-
-    char = c.Character('a')
-    assert char.numeric is None
 
 
 def test_character_normalize():

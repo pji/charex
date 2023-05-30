@@ -134,6 +134,7 @@ The following features are planned for the v0.1.1 or later releases:
 *   (Done.) Tool for pulling data files.
 *   (Done.) Add property list.
 *   (Done.) Add property value list.
+*   (Done.) Added Unicode data properties.
 *   (Started.) Add list of characters with property.
 *   Registration for character set codecs.
 *   Emoji combiner.

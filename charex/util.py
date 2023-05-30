@@ -205,6 +205,7 @@ def read_resource(key: str, codec: str = 'utf_8') -> tuple[str, ...]:
     fh = data_file.open(encoding=codec)
     lines = fh.readlines()
     fh.close()
+    lines = [line.rstrip() for line in lines]
     return tuple(lines)
 
 

@@ -182,6 +182,18 @@ class Character:
         return expand_property_value('bc', alias)
 
     @property
+    def bidi_mirrored(self) -> bool:
+        """Whether the character is a "mirrored" character in
+        bidirectional text.
+        """
+        data = get_unicode_data()
+        datum = data[self.code_point]
+        alias = datum.bidi_mirrored
+        if alias == 'Y':
+            return True
+        return False
+
+    @property
     def block(self) -> str:
         """The Unicode block for the character."""
         return get_value_from_range('blocks', self.value)
@@ -232,6 +244,21 @@ class Character:
         return ucd.digit(self.value, None)
 
     @property
+    def iso_comment(self) -> str:
+        """ISO 10646 comment field. It was used for notes that appeared
+        in parentheses in the 10646 names list, or contained an asterisk
+        to mark an Annex P note.
+
+        As of Unicode 5.2.0, this field no longer contains any non-null
+        values.
+        """
+        data = get_unicode_data()
+        datum = data[self.code_point]
+        if datum.iso_comment:
+            return datum.iso_comment
+        return ''
+
+    @property
     def name(self) -> str:
         """The Unicode name for the character."""
         try:
@@ -268,6 +295,55 @@ class Character:
     def script(self) -> str:
         """The Unicode script for the character."""
         return get_value_from_range('scripts', self.value)
+
+    @property
+    def simple_uppercase_mapping(self) -> str:
+        """Simple uppercase mapping (single character result). If a
+        character is part of an alphabet with case distinctions, and
+        has a simple uppercase equivalent, then the uppercase equivalent
+        is in this field. The simple mappings have a single character
+        result, where the full mappings may have multi-character results.
+        For more information, see Case and Case Mapping.
+        """
+        data = get_unicode_data()
+        datum = data[self.code_point]
+        if datum.simple_uppercase_mapping:
+            return datum.simple_uppercase_mapping
+        return ''
+
+    @property
+    def simple_lowercase_mapping(self) -> str:
+        """Simple lowercase mapping (single character result)."""
+        data = get_unicode_data()
+        datum = data[self.code_point]
+        if datum.simple_lowercase_mapping:
+            return datum.simple_lowercase_mapping
+        return ''
+
+    @property
+    def simple_titlecase_mapping(self) -> str:
+        """Simple titlecase mapping (single character result).
+
+        Note: If this field is null, then the Simple_Titlecase_Mapping
+        is the same as the Simple_Uppercase_Mapping for this character.
+        """
+        data = get_unicode_data()
+        datum = data[self.code_point]
+        if datum.simple_titlecase_mapping:
+            return datum.simple_titlecase_mapping
+        return ''
+
+    @property
+    def unicode_1_name(self) -> str:
+        """Old name as published in Unicode 1.0 or ISO 6429 names for
+        control functions. This field is empty unless it is significantly
+        different from the current name for the character.
+        """
+        data = get_unicode_data()
+        datum = data[self.code_point]
+        if datum.unicode_1_name:
+            return datum.unicode_1_name
+        return ''
 
     @property
     def value(self) -> str:
