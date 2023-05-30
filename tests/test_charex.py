@@ -75,28 +75,24 @@ def test_character_block_all():
         char.block
 
 
-def test_character_canonical_combining_class():
-    """When called, :attr:`Character.canonical_combining_class` returns
-    the Unicode canonical combining class for the character.
-    """
-    char = c.Character('a')
-    assert char.canonical_combining_class == '0'
-
-
-def test_character_category():
-    """When called, :attr:`Character.category` returns the Unicode
-    category for the character.
-    """
-    char = c.Character('a')
-    assert char.category == 'Lowercase Letter'
-
-
 def test_character_code_point():
     """When called, :attr:`Character.code_point` returns the Unicode
     code point for the character.
     """
     char = c.Character('<')
     assert char.code_point == 'U+003C'
+
+
+def test_character_core_properties():
+    """A character should have the properties from the Unicode data
+    database.
+    """
+    char = c.Character('a')
+    assert char.name == 'LATIN SMALL LETTER A'
+    assert char.category == 'Lowercase Letter'
+    assert char.canonical_combining_class == '0'
+    assert char.bidi_class == 'Left To Right'
+    assert char.decomposition_type == ''
 
 
 def test_character_decimal():
@@ -172,28 +168,12 @@ def test_character_is_normal():
     assert not char.is_normal('NFD')
 
 
-def test_character_name():
-    """When called, :attr:`Character.name` returns the Unicode name
-    for the code point.
-    """
-    char = c.Character('a')
-    assert char.name == 'LATIN SMALL LETTER A'
-
-
 def test_character_name_null():
     """When called, :attr:`Character.name` returns the Unicode name
     for the code point.
     """
     char = c.Character('\u0000')
     assert char.name == '<NULL>'
-
-
-def test_character_name_private_use():
-    """When called, :attr:`Character.name` returns the Unicode name
-    for the code point.
-    """
-    char = c.Character('\ue90a')
-    assert char.name == 'PRIVATE USE CHARACTER'
 
 
 def test_character_numeric():

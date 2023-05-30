@@ -13,6 +13,11 @@ from charex import util
 from charex.escape import schemes
 
 
+# Exceptions.
+class UndefinedCharacterError(ValueError):
+    """The character is not defined in Unicode data."""
+
+
 # Data classes.
 @dataclass(order=True)
 class ValueRange:
@@ -155,6 +160,11 @@ class Character:
         self.__value = value
         self._rev_normal_cache: dict[str, tuple[str, ...]] = {}
 
+        # Check if the character is a defined character.
+        data = get_unicode_data()
+        if self.code_point.upper() not in data:
+            raise UndefinedCharacterError(f'{self.code_point}')
+
     def __repr__(self) -> str:
         return f'{self.code_point} ({self.name})'
 
@@ -162,6 +172,14 @@ class Character:
     def age(self) -> str:
         """The version the character was added in."""
         return get_value_from_range('age', self.value)
+
+    @property
+    def bidi_class(self) -> str:
+        """The categories required by the Unicode Bidirectional Algorithm."""
+        data = get_unicode_data()
+        datum = data[self.code_point]
+        alias = datum.bidi_class
+        return expand_property_value('bc', alias)
 
     @property
     def block(self) -> str:
@@ -186,6 +204,17 @@ class Character:
         """The address for the character in the Unicode database."""
         x = ord(self.value)
         return f'U+{x:04x}'.upper()
+
+    @property
+    def decomposition_type(self) -> str:
+        decomp = ucd.decomposition(self.value)
+        if not decomp:
+            return decomp
+        elif not decomp.startswith('<'):
+            return 'canonical'
+        else:
+            decomp_type, _ = decomp.split('>')
+            return decomp_type[1:]
 
     @property
     def decimal(self) -> int | None:
@@ -752,10 +781,21 @@ def parse_unicode_data(lines: Sequence[str]) -> dict[str, UnicodeDatum]:
     :rtype: dict
     """
     if not unicodedata_cache:
-        for line in lines:
+        for i, line in enumerate(lines):
             fields = line.split(';')
             datum = UnicodeDatum(*fields)
             unicodedata_cache['U+' + datum.code_point] = datum
+
+            if datum.name.startswith('<') and datum.name.endswith('First>'):
+                nextline = lines[i + 1]
+                next_fields = nextline.split(';')
+                start = int(datum.code_point, 16)
+                stop = int(next_fields[0], 16) + 1
+                for n in range(start, stop):
+                    gap_fields = (f'{n:04x}'.upper(), *fields[1:])
+                    datum = UnicodeDatum(*gap_fields)
+                    unicodedata_cache['U+' + datum.code_point] = datum
+
     return unicodedata_cache
 
 
@@ -774,6 +814,10 @@ def strip_comments(lines: Sequence[str]) -> tuple[str, ...]:
 
 
 if __name__ == '__main__':
-    hits = filter_by_property('block', 'Basic Latin')
-    for hit in hits:
-        print(hit.summarize())
+    for n in range(util.LEN_UNICODE):
+        try:
+            char = Character(chr(n))
+            if char.decomposition_type:
+                print(char.decomposition_type, char.decomposition)
+        except UndefinedCharacterError:
+            pass

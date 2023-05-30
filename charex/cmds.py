@@ -162,6 +162,8 @@ def dt(c: str) -> Generator[str, None, None]:
         ('Block', char.block),
         ('Category', char.category),
         ('Canonical Combining', char.canonical_combining_class),
+        ('Bidi Class', char.bidi_class),
+        ('Decomposition Type', char.decomposition_type),
         ('Script', char.script),
         ('UTF-8', char.encode('utf8')),
         ('UTF-16', char.encode('utf_16_be')),
