@@ -51,11 +51,11 @@ class reg_form:
 
 
 # Utility functions.
-def build_denormalization_map(norm_fn: Callable[[str], str]) -> str:
+def build_denormalization_map(formkey: str) -> str:
     """Create a JSON string mapping each Unicode character to the
     other Unicode characters that normalize to it.
 
-    :param norm_fn: The normalization function.
+    :param formkey: The key for the normalization function.
     :return: The denormalization map as a JSON :class:`str`.
     :rtype: str
     """
@@ -63,6 +63,7 @@ def build_denormalization_map(norm_fn: Callable[[str], str]) -> str:
     dn_map: dict[str, set[str]] = {}
 
     # Process every Unicode character.
+    norm_fn = forms[formkey]
     for n in range(util.LEN_UNICODE):
         base = chr(n)
 

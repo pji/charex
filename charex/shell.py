@@ -112,8 +112,7 @@ def mode_dm(args: Namespace) -> None:
     :return: None.
     :rtype: NoneType
     """
-    normal_fn = nl.forms[args.form]
-    results = nl.build_denormalization_map(normal_fn)
+    results = nl.build_denormalization_map(args.form)
     print(results)
     print()
 

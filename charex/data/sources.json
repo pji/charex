@@ -5,7 +5,7 @@
         "date": [
             2023,
             5,
-            29
+            31
         ]
     },
     "DerivedAge.txt": {
@@ -14,7 +14,7 @@
         "date": [
             2023,
             5,
-            29
+            31
         ]
     },
     "entities.json": {
@@ -23,34 +23,7 @@
         "date": [
             2023,
             5,
-            29
-        ]
-    },
-    "PropertyValueAliases.txt": {
-        "description": "Unicode property value lookup.",
-        "source": "https://www.unicode.org/Public/14.0.0/ucd/PropertyValueAliases.txt",
-        "date": [
-            2023,
-            5,
-            29
-        ]
-    },
-    "Scripts.txt": {
-        "description": "Script values for use in regular expressions and elsewhere. For more information, see Unicode Standard Annex #24, \"Unicode Script Property.\"",
-        "source": "https://www.unicode.org/Public/14.0.0/ucd/Scripts.txt",
-        "date": [
-            2023,
-            5,
-            29
-        ]
-    },
-    "UnicodeData.txt": {
-        "description": "Core Unicode data lookup.",
-        "source": "https://www.unicode.org/Public/14.0.0/ucd/UnicodeData.txt",
-        "date": [
-            2023,
-            5,
-            29
+            31
         ]
     },
     "PropertyAliases.txt": {
@@ -59,7 +32,88 @@
         "date": [
             2023,
             5,
-            29
+            31
+        ]
+    },
+    "PropertyValueAliases.txt": {
+        "description": "Unicode property value lookup.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/PropertyValueAliases.txt",
+        "date": [
+            2023,
+            5,
+            31
+        ]
+    },
+    "rev_casefold.json": {
+        "description": "Casefold denormalization lookup.",
+        "source": "form:casefold",
+        "date": [
+            2023,
+            5,
+            31
+        ]
+    },
+    "rev_nfc.json": {
+        "description": "NFC denormalization lookup.",
+        "source": "form:nfc",
+        "date": [
+            2023,
+            5,
+            31
+        ]
+    },
+    "rev_nfd.json": {
+        "description": "NFD denormalization lookup.",
+        "source": "form:nfd",
+        "date": [
+            2023,
+            5,
+            31
+        ]
+    },
+    "rev_nfkc.json": {
+        "description": "NFKC denormalization lookup.",
+        "source": "form:nfkc",
+        "date": [
+            2023,
+            5,
+            31
+        ]
+    },
+    "rev_nfkd.json": {
+        "description": "NFKD denormalization lookup.",
+        "source": "form:nfkd",
+        "date": [
+            2023,
+            5,
+            31
+        ]
+    },
+    "Scripts.txt": {
+        "description": "Script values for use in regular expressions and elsewhere. For more information, see Unicode Standard Annex #24, \"Unicode Script Property.\"",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/Scripts.txt",
+        "date": [
+            2023,
+            5,
+            31
+        ]
+    },
+    "ScriptExtensions.txt": {
+        "description": "Enumerated sets of Script values for use in regular expressions and elsewhere. For more information, see Unicode Standard Annex #24, \"Unicode Script Property.\"",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/ScriptExtensions.txt",
+        "date": [
+            2023,
+            5,
+            31
+        ]
+    },
+    "UnicodeData.txt": {
+        "description": "Core Unicode data lookup.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/UnicodeData.txt",
+        "date": [
+            2023,
+            5,
+            31
         ]
     }
 }

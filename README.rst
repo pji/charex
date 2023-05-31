@@ -135,11 +135,10 @@ The following features are planned for the v0.1.1 or later releases:
 *   (Done.) Add property list.
 *   (Done.) Add property value list.
 *   (Done.) Added Unicode data properties.
+*   (Done.) Tool for recreating reverse normalization data.
 *   (Started.) Add list of characters with property.
-*   Registration for character set codecs.
 *   Emoji combiner.
 *   Web API.
-*   Tool for recreating reverse normalization data.
 *   Basic doctests for all public classes and functions.
 *   Add every property to charex.Character (contra Unicode API guidelines):
 
@@ -160,6 +159,7 @@ The following features are planned for the v0.1.1 or later releases:
     *   Variation_Selector,
     *   And more....
     
+*   Registration for character set codecs.
 *   Support for more versions of Unicode.
 
 

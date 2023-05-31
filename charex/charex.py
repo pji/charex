@@ -887,13 +887,3 @@ def strip_comments(lines: Sequence[str]) -> tuple[str, ...]:
         line for line in lines
         if line.strip() and not line.startswith('#')
     ])
-
-
-if __name__ == '__main__':
-    for n in range(util.LEN_UNICODE):
-        try:
-            char = Character(chr(n))
-            if char.decomposition_type:
-                print(char.decomposition_type, char.decomposition)
-        except UndefinedCharacterError:
-            pass

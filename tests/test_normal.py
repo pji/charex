@@ -96,14 +96,14 @@ def test_normalize():
 
 # Tests for build_denormalization_map().
 def test_build_denormalization_map():
-    """When given a denormalization function,
+    """When given the key for a denormalization function,
     :func:`charex.normal.build_denormalization_map` will return a map
     of every character that normalizes into a character as a
     JSON string.
     """
     with open('charex/data/rev_nfc.json') as fh:
-        exp = fh.read()[:-2]
-    form = nl.form_nfc
+        exp = fh.read()
+    form = 'nfc'
     act = nl.build_denormalization_map(form)
     alines = act.split('\n')
     elines = exp.split('\n')
