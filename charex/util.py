@@ -65,6 +65,7 @@ RESOURCES = {
     'props': 'PropertyAliases.txt',
     'propvals': 'PropertyValueAliases.txt',
     'scripts': 'Scripts.txt',
+    'scriptext': 'ScriptExtensions.txt',
     'unicodedata': 'UnicodeData.txt',
 
     # HTML data.

@@ -196,6 +196,14 @@ def test_character_script():
     assert char.script == 'Latin'
 
 
+def test_character_script_extensions():
+    """When called :attr:`Character.script_extensions` returns scripts
+    the character is used in.
+    """
+    char = c.Character('U+1CD1')
+    assert char.script_extensions == 'Deva'
+
+
 @pytest.mark.skip(reason='Slow.')
 def test_character_script_all():
     """All Unicode characters should have a script."""

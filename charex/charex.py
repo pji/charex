@@ -4,6 +4,7 @@ charex
 
 Tools for exploring unicode characters and other character sets.
 """
+from collections import defaultdict
 from collections.abc import Sequence
 from dataclasses import dataclass
 from json import loads
@@ -79,6 +80,7 @@ class UnicodeDatum:
 prop_cache: dict[str, str] = {}
 propvals_cache: dict[str, dict[str, str]] = {}
 range_cache: dict[str, tuple[ValueRange, ...]] = {}
+script_extensions_cache: defaultdict[str, str] | None = None
 unicodedata_cache: dict[str, UnicodeDatum] = {}
 
 
@@ -295,6 +297,14 @@ class Character:
     def script(self) -> str:
         """The Unicode script for the character."""
         return get_value_from_range('scripts', self.value)
+
+    @property
+    def script_extensions(self) -> str:
+        """The Unicode script extensions for the character."""
+        value = get_script_extensions()[self.value]
+        if value == '<script>':
+            return self.script
+        return value
 
     @property
     def simple_uppercase_mapping(self) -> str:
@@ -529,6 +539,14 @@ class Lookup:
         return answer
 
 
+class MissingValue:
+    def __init__(self, value: str) -> None:
+        self.value = value
+
+    def __call__(self):
+        return self.value
+
+
 # Utility functions.
 def bintree(
     vranges: Sequence[ValueRange],
@@ -716,6 +734,13 @@ def get_property_values(prop: str) -> tuple[str, ...]:
     return tuple(key for key in propvals_cache[prop])
 
 
+def get_script_extensions() -> defaultdict[str, str]:
+    global script_extensions_cache
+    if script_extensions_cache is None:
+        script_extensions_cache = parse_script_extensions()
+    return script_extensions_cache
+
+
 def get_unicode_data() -> dict[str, UnicodeDatum]:
     """Get the core Unicode data."""
     if not unicodedata_cache:
@@ -832,6 +857,28 @@ def parse_range_for_value(source: str) -> tuple[tuple[int, int, str], ...]:
         value = (start, stop, datum[1])
         values.append(value)
     return tuple(fill_gaps(values, missing))
+
+
+def parse_script_extensions() -> defaultdict[str, str]:
+    lines = util.read_resource('scriptext')
+
+    missing_data = parse_missing(lines)
+    missing = missing_data[0][-1]
+    missingval = MissingValue(missing)
+
+    lines = strip_comments(lines)
+    data = parse_sdt(lines)
+    values: defaultdict[str, str] = defaultdict(missingval)
+    for datum in data:
+        points, value = datum
+        parts = points.split('..')
+        start = int(parts[0], 16)
+        stop = start + 1
+        if len(parts) > 1:
+            stop = int(parts[1], 16) + 1
+        for i in range(start, stop):
+            values[chr(i)] = value
+    return values
 
 
 def parse_sdt(lines: tuple[str, ...]) -> tuple[tuple[str, ...], ...]:

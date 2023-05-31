@@ -8,6 +8,7 @@
           Bidi Class: Left To Right
            Lowercase: 0061
               Script: Latin
+   Script Extensions: Latin
                UTF-8: 41
               UTF-16: 00 41
               UTF-32: 00 00 00 41

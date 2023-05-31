@@ -174,6 +174,7 @@ def dt(c: str) -> Generator[str, None, None]:
         ('Lowercase', char.simple_lowercase_mapping),
         ('Titlecase', char.simple_titlecase_mapping),
         ('Script', char.script),
+        ('Script Extensions', char.script_extensions),
         ('UTF-8', char.encode('utf8')),
         ('UTF-16', char.encode('utf_16_be')),
         ('UTF-32', char.encode('utf_32_be')),
