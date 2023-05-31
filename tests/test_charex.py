@@ -59,11 +59,20 @@ def test_character_age_all():
         char.age
 
 
+def test_character_alpha():
+    """When called :attr:`Character.alpha` returns whether the
+    character is alphabetic.
+    """
+    char = c.Character('a')
+    assert char.alpha
+
+
 def test_character_block():
     """When called :attr:`Character.block` returns the block that contains
     the character.
     """
     char = c.Character('a')
+    assert char.blk == 'Basic Latin'
     assert char.block == 'Basic Latin'
 
 
@@ -89,20 +98,33 @@ def test_character_core_properties():
     """
     char = c.Character('a')
     assert char.name == 'LATIN SMALL LETTER A'
+    assert char.na == 'LATIN SMALL LETTER A'
     assert char.category == 'Lowercase Letter'
+    assert char.gc == 'Ll'
     assert char.canonical_combining_class == '0'
+    assert char.ccc == '0'
     assert char.bidi_class == 'Left To Right'
+    assert char.bc == 'Left To Right'
     assert char.decomposition_type == ''
+    assert char.dt == ''
     assert char.decomposition == ''
+    assert char.dm == ''
     assert char.decimal is None
     assert char.digit is None
     assert char.numeric is None
+    assert char.nv is None
     assert char.bidi_mirrored is False
+    assert char.bidi_m is False
     assert char.unicode_1_name == ''
+    assert char.na1 == ''
     assert char.iso_comment == ''
+    assert char.isc == ''
     assert char.simple_uppercase_mapping == '0041'
+    assert char.suc == '0041'
     assert char.simple_lowercase_mapping == ''
+    assert char.slc == ''
     assert char.simple_titlecase_mapping == '0041'
+    assert char.stc == '0041'
 
     char = c.Character('å')
     assert char.decomposition_type == 'canonical'
@@ -141,6 +163,14 @@ def test_character_escape_html():
     # Percent encoding for URLs.
     char = c.Character('å')
     assert char.escape('html') == '&aring;'
+
+
+def test_character_hst():
+    """When called :attr:`Character.hst` returns the Hangul syllable
+    type for the character.
+    """
+    char = c.Character('U+1100')
+    assert char.hst == 'L'
 
 
 def test_character_is_normal():
@@ -194,6 +224,7 @@ def test_character_script():
     """
     char = c.Character('a')
     assert char.script == 'Latin'
+    assert char.sc == 'Latin'
 
 
 def test_character_script_extensions():
@@ -202,6 +233,7 @@ def test_character_script_extensions():
     """
     char = c.Character('U+1CD1')
     assert char.script_extensions == 'Deva'
+    assert char.scx == 'Deva'
 
 
 @pytest.mark.skip(reason='Slow.')
@@ -228,6 +260,14 @@ def test_character_summarize_control():
     exp = '\u240a U+000A (<LINE FEED (LF)>)'
     char = c.Character('\n')
     assert char.summarize() == exp
+
+
+def test_character_wpace():
+    """When called :attr:`Character.wspace` returns the script that
+    contains the character.
+    """
+    char = c.Character('a')
+    assert not char.wspace
 
 
 # Test Lookup.

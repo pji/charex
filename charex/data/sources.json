@@ -17,6 +17,15 @@
             31
         ]
     },
+    "HangulSyllableType.txt": {
+        "description": "The values L, V, T, LV, and LVT used in Chapter 3, Conformance in Unicode.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/HangulSyllableType.txt",
+        "date": [
+            2023,
+            5,
+            31
+        ]
+    },
     "entities.json": {
         "description": "List of HTML Entities.",
         "source": "https://html.spec.whatwg.org/entities.json",
@@ -29,6 +38,15 @@
     "PropertyAliases.txt": {
         "description": "Unicode property lookup.",
         "source": "https://www.unicode.org/Public/14.0.0/ucd/PropertyAliases.txt",
+        "date": [
+            2023,
+            5,
+            31
+        ]
+    },
+    "PropList.txt": {
+        "description": "Unicode binary property lookup.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/PropList.txt",
         "date": [
             2023,
             5,

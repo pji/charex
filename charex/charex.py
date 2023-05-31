@@ -77,7 +77,9 @@ class UnicodeDatum:
 
 
 # Caches.
+hst_cache: defaultdict[str, str] | None = None
 prop_cache: dict[str, str] = {}
+proplist_cache: dict[str, defaultdict[str, bool]] = {}
 propvals_cache: dict[str, dict[str, str]] = {}
 range_cache: dict[str, tuple[ValueRange, ...]] = {}
 script_extensions_cache: defaultdict[str, str] | None = None
@@ -176,7 +178,45 @@ class Character:
         return get_value_from_range('age', self.value)
 
     @property
-    def bidi_class(self) -> str:
+    def alpha(self) -> bool:
+        """Characters with the Alphabetic property. For more information,
+        see Chapter 4, Character Properties in Unicode.
+        """
+        if self.gc in ('Lt', 'Lm', 'Lo', 'Nl'):
+            return True
+        elif self.lower or self.upper or self.oalpha:
+            return True
+        return False
+
+    @property
+    def lower(self) -> bool:
+        if self.gc == 'Ll' or self.olower:
+            return True
+        return False
+
+    @property
+    def olower(self) -> bool:
+        proplist = get_proplist()
+        return proplist['Other_Lowercase'][self.value]
+
+    @property
+    def upper(self) -> bool:
+        if self.gc == 'Lu' or self.oupper:
+            return True
+        return False
+
+    @property
+    def oupper(self) -> bool:
+        proplist = get_proplist()
+        return proplist['Other_Uppercase'][self.value]
+
+    @property
+    def oalpha(self) -> bool:
+        proplist = get_proplist()
+        return proplist['Other_Alphabetic'][self.value]
+
+    @property
+    def bc(self) -> str:
         """The categories required by the Unicode Bidirectional Algorithm."""
         data = get_unicode_data()
         datum = data[self.code_point]
@@ -184,7 +224,12 @@ class Character:
         return expand_property_value('bc', alias)
 
     @property
-    def bidi_mirrored(self) -> bool:
+    def bidi_class(self) -> str:
+        """The categories required by the Unicode Bidirectional Algorithm."""
+        return self.bc
+
+    @property
+    def bidi_m(self) -> bool:
         """Whether the character is a "mirrored" character in
         bidirectional text.
         """
@@ -196,22 +241,39 @@ class Character:
         return False
 
     @property
-    def block(self) -> str:
+    def bidi_mirrored(self) -> bool:
+        """Whether the character is a "mirrored" character in
+        bidirectional text.
+        """
+        return self.bidi_m
+
+    @property
+    def blk(self) -> str:
         """The Unicode block for the character."""
         return get_value_from_range('blocks', self.value)
 
     @property
+    def block(self) -> str:
+        """The Unicode block for the character."""
+        return self.blk
+
+    @property
     def canonical_combining_class(self) -> str:
         """The Canonical Ordering Algorithm class for the character."""
-        data = get_unicode_data()
-        datum = data[self.code_point]
-        return datum.canonical_combining_class
+        return self.ccc
 
     @property
     def category(self) -> str:
         """The Unicode general category for the character."""
-        alias = ucd.category(self.value)
+        alias = self.gc
         return expand_property_value('gc', alias)
+
+    @property
+    def ccc(self) -> str:
+        """The Canonical Ordering Algorithm class for the character."""
+        data = get_unicode_data()
+        datum = data[self.code_point]
+        return datum.canonical_combining_class
 
     @property
     def code_point(self) -> str:
@@ -221,6 +283,30 @@ class Character:
 
     @property
     def decomposition_type(self) -> str:
+        return self.dt
+
+    @property
+    def decimal(self) -> int | None:
+        """The decimal value of the character."""
+        return ucd.decimal(self.value, None)
+
+    @property
+    def decomposition(self) -> str:
+        """The Unicode defined decompositions of the character."""
+        return self.dm
+
+    @property
+    def digit(self) -> int | None:
+        """The numerical value of the character as a digit."""
+        return ucd.digit(self.value, None)
+
+    @property
+    def dm(self) -> str:
+        """The Unicode defined decompositions of the character."""
+        return ucd.decomposition(self.value)
+
+    @property
+    def dt(self) -> str:
         decomp = ucd.decomposition(self.value)
         if not decomp:
             return decomp
@@ -231,22 +317,18 @@ class Character:
             return decomp_type[1:]
 
     @property
-    def decimal(self) -> int | None:
-        """The decimal value of the character."""
-        return ucd.decimal(self.value, None)
+    def gc(self) -> str:
+        """The Unicode general category for the character."""
+        return ucd.category(self.value)
 
     @property
-    def decomposition(self) -> str:
-        """The Unicode defined decompositions of the character."""
-        return ucd.decomposition(self.value)
+    def hst(self) -> str:
+        """The Hangul syllable type for the character."""
+        hst = get_hangul_syllable_type()
+        return hst[self.value]
 
     @property
-    def digit(self) -> int | None:
-        """The numerical value of the character as a digit."""
-        return ucd.digit(self.value, None)
-
-    @property
-    def iso_comment(self) -> str:
+    def isc(self) -> str:
         """ISO 10646 comment field. It was used for notes that appeared
         in parentheses in the 10646 names list, or contained an asterisk
         to mark an Annex P note.
@@ -261,7 +343,18 @@ class Character:
         return ''
 
     @property
-    def name(self) -> str:
+    def iso_comment(self) -> str:
+        """ISO 10646 comment field. It was used for notes that appeared
+        in parentheses in the 10646 names list, or contained an asterisk
+        to mark an Annex P note.
+
+        As of Unicode 5.2.0, this field no longer contains any non-null
+        values.
+        """
+        return self.isc
+
+    @property
+    def na(self) -> str:
         """The Unicode name for the character."""
         try:
             name = ucd.name(self.value)
@@ -274,9 +367,7 @@ class Character:
 
             # Control characters.
             if cat == 'Cc':
-                data = get_unicode_data()
-                point = self.code_point
-                name = f'<{data[point].unicode_1_name}>'
+                name = f'<{self.na1}>'
 
             # Private use characters.
             elif cat == 'Co':
@@ -289,17 +380,39 @@ class Character:
         return name
 
     @property
+    def na1(self) -> str:
+        """Old name as published in Unicode 1.0 or ISO 6429 names for
+        control functions. This field is empty unless it is significantly
+        different from the current name for the character.
+        """
+        data = get_unicode_data()
+        datum = data[self.code_point]
+        if datum.unicode_1_name:
+            return datum.unicode_1_name
+        return ''
+
+    @property
+    def name(self) -> str:
+        """The Unicode name for the character."""
+        return self.na
+
+    @property
     def numeric(self) -> float | int | None:
+        """The Unicode defined numeric value for the character."""
+        return self.nv
+
+    @property
+    def nv(self) -> float | int | None:
         """The Unicode defined numeric value for the character."""
         return ucd.numeric(self.value, None)
 
     @property
-    def script(self) -> str:
+    def sc(self) -> str:
         """The Unicode script for the character."""
         return get_value_from_range('scripts', self.value)
 
     @property
-    def script_extensions(self) -> str:
+    def scx(self) -> str:
         """The Unicode script extensions for the character."""
         value = get_script_extensions()[self.value]
         if value == '<script>':
@@ -307,7 +420,64 @@ class Character:
         return value
 
     @property
+    def script(self) -> str:
+        """The Unicode script for the character."""
+        return self.sc
+
+    @property
+    def script_extensions(self) -> str:
+        """The Unicode script extensions for the character."""
+        return self.scx
+
+    @property
     def simple_uppercase_mapping(self) -> str:
+        """Simple uppercase mapping (single character result). If a
+        character is part of an alphabet with case distinctions, and
+        has a simple uppercase equivalent, then the uppercase equivalent
+        is in this field. The simple mappings have a single character
+        result, where the full mappings may have multi-character results.
+        For more information, see Case and Case Mapping.
+        """
+        return self.suc
+
+    @property
+    def simple_lowercase_mapping(self) -> str:
+        """Simple lowercase mapping (single character result)."""
+        return self.slc
+
+    @property
+    def simple_titlecase_mapping(self) -> str:
+        """Simple titlecase mapping (single character result).
+
+        Note: If this field is null, then the Simple_Titlecase_Mapping
+        is the same as the Simple_Uppercase_Mapping for this character.
+        """
+        return self.stc
+
+    @property
+    def slc(self) -> str:
+        """Simple lowercase mapping (single character result)."""
+        data = get_unicode_data()
+        datum = data[self.code_point]
+        if datum.simple_lowercase_mapping:
+            return datum.simple_lowercase_mapping
+        return ''
+
+    @property
+    def stc(self) -> str:
+        """Simple titlecase mapping (single character result).
+
+        Note: If this field is null, then the Simple_Titlecase_Mapping
+        is the same as the Simple_Uppercase_Mapping for this character.
+        """
+        data = get_unicode_data()
+        datum = data[self.code_point]
+        if datum.simple_titlecase_mapping:
+            return datum.simple_titlecase_mapping
+        return ''
+
+    @property
+    def suc(self) -> str:
         """Simple uppercase mapping (single character result). If a
         character is part of an alphabet with case distinctions, and
         has a simple uppercase equivalent, then the uppercase equivalent
@@ -322,43 +492,29 @@ class Character:
         return ''
 
     @property
-    def simple_lowercase_mapping(self) -> str:
-        """Simple lowercase mapping (single character result)."""
-        data = get_unicode_data()
-        datum = data[self.code_point]
-        if datum.simple_lowercase_mapping:
-            return datum.simple_lowercase_mapping
-        return ''
-
-    @property
-    def simple_titlecase_mapping(self) -> str:
-        """Simple titlecase mapping (single character result).
-
-        Note: If this field is null, then the Simple_Titlecase_Mapping
-        is the same as the Simple_Uppercase_Mapping for this character.
-        """
-        data = get_unicode_data()
-        datum = data[self.code_point]
-        if datum.simple_titlecase_mapping:
-            return datum.simple_titlecase_mapping
-        return ''
-
-    @property
     def unicode_1_name(self) -> str:
         """Old name as published in Unicode 1.0 or ISO 6429 names for
         control functions. This field is empty unless it is significantly
         different from the current name for the character.
         """
-        data = get_unicode_data()
-        datum = data[self.code_point]
-        if datum.unicode_1_name:
-            return datum.unicode_1_name
-        return ''
+        return self.na1
 
     @property
     def value(self) -> str:
         """The code point as a string."""
         return self.__value
+
+    @property
+    def wspace(self) -> bool:
+        """Spaces, separator characters and other control characters
+        which should be treated by programming languages as "white space"
+        for the purpose of parsing elements. See also Line_Break,
+        Grapheme_Cluster_Break, Sentence_Break, and Word_Break, which
+        classify space characters and related controls somewhat
+        differently for particular text segmentation contexts.
+        """
+        proplist = get_proplist()
+        return proplist['White_Space'][self.value]
 
     def denormalize(self, form: str) -> tuple[str, ...]:
         """Return the characters that normalize to the character using
@@ -539,11 +695,19 @@ class Lookup:
         return answer
 
 
+class MissingBool:
+    def __init__(self, value: bool) -> None:
+        self.value = value
+
+    def __call__(self) -> bool:
+        return self.value
+
+
 class MissingValue:
     def __init__(self, value: str) -> None:
         self.value = value
 
-    def __call__(self):
+    def __call__(self) -> str:
         return self.value
 
 
@@ -687,6 +851,13 @@ def get_category_members(category: str) -> tuple[Character, ...]:
     return tuple(members)
 
 
+def get_hangul_syllable_type() -> defaultdict[str, str]:
+    global hst_cache
+    if hst_cache is None:
+        hst_cache = parse_single_property('hst', 'hst')
+    return hst_cache
+
+
 def get_properties() -> tuple[str, ...]:
     """Get the valid Unicode properties.
 
@@ -734,7 +905,16 @@ def get_property_values(prop: str) -> tuple[str, ...]:
     return tuple(key for key in propvals_cache[prop])
 
 
+def get_proplist() -> dict[str, defaultdict[str, bool]]:
+    if not proplist_cache:
+        proplist = parse_binary_properties('proplist')
+        for key in proplist:
+            proplist_cache[key] = proplist[key]
+    return proplist_cache
+
+
 def get_script_extensions() -> defaultdict[str, str]:
+    """Get the script extensions data."""
     global script_extensions_cache
     if script_extensions_cache is None:
         script_extensions_cache = parse_script_extensions()
@@ -777,6 +957,28 @@ def get_value_ranges(src: str) -> tuple[ValueRange, ...]:
 
 
 # Data parsing functions.
+def parse_binary_properties(source: str) -> dict[str, defaultdict[str, bool]]:
+    lines = util.read_resource(source)
+    missing = MissingBool(False)
+
+    lines = strip_comments(lines)
+    data = parse_sdt(lines)
+    result: dict[str, defaultdict[str, bool]] = {}
+    for datum in data:
+        point, key = datum
+        if key not in result:
+            result[key] = defaultdict(missing)
+        parts = point.split('..')
+        start = int(parts[0], 16)
+        stop = start + 1
+        if len(parts) > 1:
+            stop = int(parts[1], 16) + 1
+        for i in range(start, stop):
+            result[key][chr(i)] = True
+
+    return result
+
+
 def parse_missing(lines: Sequence[str]) -> tuple[tuple[str, ...], ...]:
     """Parse the default values from a unicode data file.
 
@@ -857,6 +1059,36 @@ def parse_range_for_value(source: str) -> tuple[tuple[int, int, str], ...]:
         value = (start, stop, datum[1])
         values.append(value)
     return tuple(fill_gaps(values, missing))
+
+
+def parse_single_property(source: str, prop: str) -> defaultdict[str, str]:
+    # Read the file.
+    lines = util.read_resource(source)
+
+    # Get the default value
+    missing_data = parse_missing(lines)
+    missing_str = missing_data[0][-1]
+    propvals = get_property_values(prop)
+    if missing_str not in propvals:
+        missing_str = missing_str.replace('_', ' ')
+        valprops = {expand_property_value(prop, k): k for k in propvals}
+        missing_str = valprops[missing_str]
+    missing = MissingValue(missing_str)
+
+    # Parse the data.
+    lines = strip_comments(lines)
+    data = parse_sdt(lines)
+    result = defaultdict(missing)
+    for datum in data:
+        points, value = datum
+        parts = points.split('..')
+        start = int(parts[0], 16)
+        stop = start + 1
+        if len(parts) > 1:
+            stop = int(parts[1], 16) + 1
+        for i in range(start, stop):
+            result[chr(i)] = value
+    return result
 
 
 def parse_script_extensions() -> defaultdict[str, str]:
