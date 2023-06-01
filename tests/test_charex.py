@@ -238,14 +238,22 @@ def test_character_proplist():
     PropList.txt.
     """
     char = c.Character('a')
+    assert char.ahex is True
+    assert char.dep is False
     assert char.nchar is False
     assert char.odi is False
     assert char.pcm is False
     assert char.vs is False
     assert char.wspace is False
 
+    char = c.Character('g')
+    assert char.ahex is False
+
     char = c.Character(' ')
     assert char.wspace is True
+
+    char = c.Character('U+0149')
+    assert char.dep is True
 
     char = c.Character('U+034f')
     assert char.odi is True

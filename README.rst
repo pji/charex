@@ -154,7 +154,7 @@ The following features are planned for the v0.1.1 or later releases:
     *   (Done.) Hangul_Syllable_Type,
     *   (Done.) Noncharacter_Code_Point,
     *   (Done.) Default_Ignorable_Code_Point,
-    *   Deprecated,
+    *   (Done.) Deprecated,
     *   Logical_Order_Exception,
     *   Variation_Selector,
     *   And more....

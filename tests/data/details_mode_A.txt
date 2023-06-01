@@ -11,6 +11,7 @@
    Script Extensions: Latin
         Alphabetical: True
 Hangul Syllable Type: NA
+     ASCII Hex Digit: True
                UTF-8: 41
               UTF-16: 00 41
               UTF-32: 00 00 00 41

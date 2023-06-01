@@ -173,6 +173,14 @@ class Character:
         return int(self.code_point[2:], 16)
 
     @property
+    def ahex(self) -> bool:
+        """ASCII characters commonly used for the representation of
+        hexadecimal numbers.
+        """
+        proplist = get_proplist()
+        return proplist['ASCII_Hex_Digit'][self.value]
+
+    @property
     def age(self) -> str:
         """The version the character was added in."""
         return get_value_from_range('age', self.value)
@@ -267,6 +275,15 @@ class Character:
     def decomposition(self) -> str:
         """The Unicode defined decompositions of the character."""
         return self.dm
+
+    @property
+    def dep(self) -> bool:
+        """For a machine-readable list of deprecated characters. No
+        characters will ever be removed from the standard, but the
+        usage of deprecated characters is strongly discouraged.
+        """
+        proplist = get_proplist()
+        return proplist['Deprecated'][self.value]
 
     @property
     def di(self) -> bool:
