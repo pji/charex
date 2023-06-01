@@ -193,6 +193,17 @@ def test_character_name_null():
     assert char.name == '<NULL>'
 
 
+def test_character_nchar():
+    """When called, :attr:`Character.nchar` returns whether the code
+    point is permanently reserved for internal use.
+    """
+    char = c.Character('a')
+    assert char.nchar is False
+
+    char = c.Character('U+FDD1')
+    assert char.nchar is True
+
+
 def test_character_normalize():
     """When given a normalization form, :meth:`Character.normalize` should
     return the normalized form of the character.

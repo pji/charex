@@ -164,11 +164,6 @@ class Character:
         self.__value = value
         self._rev_normal_cache: dict[str, tuple[str, ...]] = {}
 
-        # Check if the character is a defined character.
-        data = get_unicode_data()
-        if self.code_point.upper() not in data:
-            raise UndefinedCharacterError(f'{self.code_point}')
-
     def __repr__(self) -> str:
         return f'{self.code_point} ({self.name})'
 
@@ -395,6 +390,12 @@ class Character:
     def name(self) -> str:
         """The Unicode name for the character."""
         return self.na
+
+    @property
+    def nchar(self) -> bool:
+        """Code points permanently reserved for internal use."""
+        proplist = get_proplist()
+        return proplist['Noncharacter_Code_Point'][self.value]
 
     @property
     def numeric(self) -> float | int | None:

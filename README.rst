@@ -161,6 +161,9 @@ The following features are planned for the v0.1.1 or later releases:
     
 *   Registration for character set codecs.
 *   Support for more versions of Unicode.
+*   Make `Character.na` return only the defined character name.
+*   Remove long name properties.
+*   Remove hardcoded properties and names from `cmd.dt()`.
 
 
 The list of Unicode Properties can be found here: `Index`_
