@@ -179,6 +179,7 @@ def dt(c: str) -> Generator[str, None, None]:
         ('White Space', char.wspace),
         ('Alphabetical', char.alpha),
         ('Hangul Syllable Type', char.hst),
+        ('Other Ignorable', char.odi),
         ('UTF-8', char.encode('utf8')),
         ('UTF-16', char.encode('utf_16_be')),
         ('UTF-32', char.encode('utf_32_be')),

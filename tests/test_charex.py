@@ -136,6 +136,38 @@ def test_character_core_properties():
     assert char.numeric == 2
 
 
+def test_character_di():
+    """When called :attr:`Character.di` returns the default ignorable
+    code point property for the character.
+    """
+    char = c.Character('a')
+    assert char.di is False
+
+    # odi should be true
+    char = c.Character('U+034f')
+    assert char.di is True
+
+    # gc is Cf should be true
+    char = c.Character('U+00AD')
+    assert char.di is True
+
+    # vs should be true
+    char = c.Character('U+180c')
+    assert char.di is True
+
+    # between 0xfff9 and 0xfffb should be false
+    char = c.Character('U+fff9')
+    assert char.di is False
+
+    # between 0x13430 and 0x13438 should be false
+    char = c.Character('U+13432')
+    assert char.di is False
+
+    # pcm should be false
+    char = c.Character('U+0602')
+    assert char.di is False
+
+
 def test_character_encode():
     """When called with a valid character encoding,
     :meth:`Character.is_normal` returns a hexadecimal string
@@ -193,23 +225,39 @@ def test_character_name_null():
     assert char.name == '<NULL>'
 
 
-def test_character_nchar():
-    """When called, :attr:`Character.nchar` returns whether the code
-    point is permanently reserved for internal use.
-    """
-    char = c.Character('a')
-    assert char.nchar is False
-
-    char = c.Character('U+FDD1')
-    assert char.nchar is True
-
-
 def test_character_normalize():
     """When given a normalization form, :meth:`Character.normalize` should
     return the normalized form of the character.
     """
     char = c.Character('å')
     assert char.normalize('NFD') == b'a\xcc\x8a'.decode('utf8')
+
+
+def test_character_proplist():
+    """A :class:`charex.Character` should have the properties from
+    PropList.txt.
+    """
+    char = c.Character('a')
+    assert char.nchar is False
+    assert char.odi is False
+    assert char.pcm is False
+    assert char.vs is False
+    assert char.wspace is False
+
+    char = c.Character(' ')
+    assert char.wspace is True
+
+    char = c.Character('U+034f')
+    assert char.odi is True
+
+    char = c.Character('U+0601')
+    assert char.pcm is True
+
+    char = c.Character('U+180c')
+    assert char.vs is True
+
+    char = c.Character('U+FDD1')
+    assert char.nchar is True
 
 
 def test_character_repr():
@@ -271,14 +319,6 @@ def test_character_summarize_control():
     exp = '\u240a U+000A (<LINE FEED (LF)>)'
     char = c.Character('\n')
     assert char.summarize() == exp
-
-
-def test_character_wpace():
-    """When called :attr:`Character.wspace` returns the script that
-    contains the character.
-    """
-    char = c.Character('a')
-    assert not char.wspace
 
 
 # Test Lookup.

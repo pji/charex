@@ -168,6 +168,11 @@ class Character:
         return f'{self.code_point} ({self.name})'
 
     @property
+    def address(self) -> int:
+        """The code point of the character as an :class:`int`."""
+        return int(self.code_point[2:], 16)
+
+    @property
     def age(self) -> str:
         """The version the character was added in."""
         return get_value_from_range('age', self.value)
@@ -182,33 +187,6 @@ class Character:
         elif self.lower or self.upper or self.oalpha:
             return True
         return False
-
-    @property
-    def lower(self) -> bool:
-        if self.gc == 'Ll' or self.olower:
-            return True
-        return False
-
-    @property
-    def olower(self) -> bool:
-        proplist = get_proplist()
-        return proplist['Other_Lowercase'][self.value]
-
-    @property
-    def upper(self) -> bool:
-        if self.gc == 'Lu' or self.oupper:
-            return True
-        return False
-
-    @property
-    def oupper(self) -> bool:
-        proplist = get_proplist()
-        return proplist['Other_Uppercase'][self.value]
-
-    @property
-    def oalpha(self) -> bool:
-        proplist = get_proplist()
-        return proplist['Other_Alphabetic'][self.value]
 
     @property
     def bc(self) -> str:
@@ -291,6 +269,33 @@ class Character:
         return self.dm
 
     @property
+    def di(self) -> bool:
+        """For programmatic determination of default ignorable code
+        points. New characters that should be ignored in rendering
+        (unless explicitly supported) will be assigned in these ranges,
+        permitting programs to correctly handle the default rendering
+        of such characters when not otherwise supported. For more
+        information, see the FAQ Display of Unsupported Characters, and
+        Section 5.21, Ignoring Characters in Processing in Unicode.
+        """
+        result = False
+        if self.odi:
+            result = True
+        if self.gc == 'Cf':
+            result = True
+        if self.vs:
+            result = True
+        if self.wspace:
+            result = False
+        if self.address >= 0xFFF9 and self.address <= 0xFFFB:
+            result = False
+        if self.address >= 0x13430 and self.address <= 0x13438:
+            result = False
+        if self.pcm:
+            result = False
+        return result
+
+    @property
     def digit(self) -> int | None:
         """The numerical value of the character as a digit."""
         return ucd.digit(self.value, None)
@@ -347,6 +352,12 @@ class Character:
         values.
         """
         return self.isc
+
+    @property
+    def lower(self) -> bool:
+        if self.gc == 'Ll' or self.olower:
+            return True
+        return False
 
     @property
     def na(self) -> str:
@@ -406,6 +417,41 @@ class Character:
     def nv(self) -> float | int | None:
         """The Unicode defined numeric value for the character."""
         return ucd.numeric(self.value, None)
+
+    @property
+    def oalpha(self) -> bool:
+        """Used in deriving the Alphabetic property."""
+        proplist = get_proplist()
+        return proplist['Other_Alphabetic'][self.value]
+
+    @property
+    def odi(self) -> bool:
+        """Used in deriving the Default_Ignorable_Code_Point property."""
+        proplist = get_proplist()
+        return proplist['Other_Default_Ignorable_Code_Point'][self.value]
+
+    @property
+    def olower(self) -> bool:
+        """Used in deriving the Lowercase property."""
+        proplist = get_proplist()
+        return proplist['Other_Lowercase'][self.value]
+
+    @property
+    def oupper(self) -> bool:
+        """Used in deriving the Uppercase property."""
+        proplist = get_proplist()
+        return proplist['Other_Uppercase'][self.value]
+
+    @property
+    def pcm(self) -> bool:
+        """A small class of visible format controls, which precede and
+        then span a sequence of other characters, usually digits. These
+        have also been known as "subtending marks", because most of them
+        take a form which visually extends underneath the sequence of
+        following digits.
+        """
+        proplist = get_proplist()
+        return proplist['Prepended_Concatenation_Mark'][self.value]
 
     @property
     def sc(self) -> str:
@@ -501,9 +547,25 @@ class Character:
         return self.na1
 
     @property
+    def upper(self) -> bool:
+        if self.gc == 'Lu' or self.oupper:
+            return True
+        return False
+
+    @property
     def value(self) -> str:
         """The code point as a string."""
         return self.__value
+
+    @property
+    def vs(self) -> bool:
+        """Indicates characters that are Variation Selectors. For details
+        on the behavior of these characters, see Section 23.4, Variation
+        Selectors in [Unicode], and Unicode Technical Standard #37,
+        "Unicode Ideographic Variation Database" [UTS37].
+        """
+        proplist = get_proplist()
+        return proplist['Variation_Selector'][self.value]
 
     @property
     def wspace(self) -> bool:
