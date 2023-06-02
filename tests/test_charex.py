@@ -13,6 +13,25 @@ from charex import charex as c
 UNICODE_LEN = 0x110000
 
 
+# Test Char.
+def test_char_core_properties():
+    """A :class:`charex.Char` should have the properties from the
+    Unicode data database.
+    """
+    char = c.Char('a')
+    assert char.na == 'LATIN SMALL LETTER A'
+    assert char.gc == 'Ll'
+    assert char.ccc == '0'
+    assert char.bc == 'L'
+    assert char.dt == ''
+    assert char.nv == ''
+    assert char.na1 == ''
+    assert char.isc == ''
+    assert char.suc == '0041'
+    assert char.slc == ''
+    assert char.stc == '0041'
+
+
 # Test Character.
 def test_character_init():
     """Given a string containing a character, a :class:`Character`

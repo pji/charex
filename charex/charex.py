@@ -67,7 +67,7 @@ class UnicodeDatum:
     decomposition_type: str
     decimal: str
     digit: str
-    numeric: str
+    numeric_value: str
     bidi_mirrored: str
     unicode_1_name: str
     iso_comment: str
@@ -87,6 +87,40 @@ unicodedata_cache: dict[str, UnicodeDatum] = {}
 
 
 # Classes.
+class Char:
+    def __init__(self, value: bytes | int | str) -> None:
+        value = util.to_char(value)
+        self.__value = value
+        self._rev_normal_cache: dict[str, tuple[str, ...]] = {}
+
+    def __getattr__(self, name):
+        if name in self.__dict__:
+            return self.__dict__[name]
+        props = get_props_by_short()
+        data = get_unicode_data()
+        field = props[name].casefold()
+        field = field.replace(' ', '_')
+        return getattr(data[self.code_point], field)
+
+    @property
+    def code_point(self) -> str:
+        """The address for the character in the Unicode database."""
+        x = ord(self.value)
+        return f'U+{x:04x}'.upper()
+
+    @property
+    def value(self) -> str:
+        """The code point as a string."""
+        return self.__value
+
+
+def get_props_by_short() -> dict[str, str]:
+    if not prop_cache:
+        lines = util.read_resource('props')
+        parse_properties(lines)
+    return prop_cache
+
+
 class Character:
     """One or more code points representing a character.
 

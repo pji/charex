@@ -1,24 +1,22 @@
-             Display: A
-          Code Point: U+0041
-                Name: LATIN CAPITAL LETTER A
-                 Age: 1.1
-               Block: Basic Latin
-            Category: Uppercase Letter
- Canonical Combining: 0
-          Bidi Class: Left To Right
-           Lowercase: 0061
-              Script: Latin
-   Script Extensions: Latin
-        Alphabetical: True
-Hangul Syllable Type: NA
-     ASCII Hex Digit: True
-               UTF-8: 41
-              UTF-16: 00 41
-              UTF-32: 00 00 00 41
-           C encoded: \101
-         URL encoded: %41
-        HTML encoded: &#65;
-        Reverse NFKC: ᴬ U+1D2C (MODIFIER LETTER CAPITAL A)
+          A U+0041 (LATIN CAPITAL LETTER A)
+          ------------------------------------------------------------
+ Simple Lowercase Mapping: 0061
+                     Name: LATIN CAPITAL LETTER A
+        Script Extensions: Latin
+                      Age: 1.1
+                    Block: Basic Latin
+                   Script: Latin
+               Bidi Class: Left To Right
+Canonical Combining Class: 0
+         General Category: Lu
+     Hangul Syllable Type: NA
+                    UTF-8: 41
+                   UTF-16: 00 41
+                   UTF-32: 00 00 00 41
+                C encoded: \101
+              URL encoded: %41
+             HTML encoded: &#65;
+             Reverse NFKC: ᴬ U+1D2C (MODIFIER LETTER CAPITAL A)
                       Ⓐ U+24B6 (CIRCLED LATIN CAPITAL LETTER A)
                       Ａ U+FF21 (FULLWIDTH LATIN CAPITAL LETTER A)
                       𝐀 U+1D400 (MATHEMATICAL BOLD CAPITAL A)
@@ -35,7 +33,7 @@ Hangul Syllable Type: NA
                       𝘼 U+1D63C (MATHEMATICAL SANS-SERIF BOLD ITALIC CAPITAL A)
                       𝙰 U+1D670 (MATHEMATICAL MONOSPACE CAPITAL A)
                       🄰 U+1F130 (SQUARED LATIN CAPITAL LETTER A)
-        Reverse NFKD: ᴬ U+1D2C (MODIFIER LETTER CAPITAL A)
+             Reverse NFKD: ᴬ U+1D2C (MODIFIER LETTER CAPITAL A)
                       Ⓐ U+24B6 (CIRCLED LATIN CAPITAL LETTER A)
                       Ａ U+FF21 (FULLWIDTH LATIN CAPITAL LETTER A)
                       𝐀 U+1D400 (MATHEMATICAL BOLD CAPITAL A)

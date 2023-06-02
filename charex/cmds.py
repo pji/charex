@@ -154,34 +154,22 @@ def dt(c: str) -> Generator[str, None, None]:
 
     # Gather the details for display.
     char = ch.Character(c)
+
+    props = ch.get_properties()
+    width = 20
+    attrs = []
+    for prop in props:
+        try:
+            name = ch.expand_property(prop)
+            value = getattr(char, prop)
+            if len(name) > width:
+                width = len(name)
+            attrs.append((name, value))
+        except AttributeError:
+            pass
+
     details = (
-        ('Display', char.value),
-        ('Code Point', char.code_point),
-        ('Name', char.na),
-        ('Age', char.age),
-        ('Block', char.block),
-        ('Category', char.category),
-        ('Canonical Combining', char.ccc),
-        ('Bidi Class', char.bc),
-        ('Decomposition Type', char.dt),
-        ('Decomposition', char.dm),
-        ('Decimal', char.decimal),
-        ('Digit', char.digit),
-        ('Numeric', char.nv),
-        ('Bidi Mirrored', char.bidi_m),
-        ('Unicode 1 Name', char.na1),
-        ('ISO Comment', char.isc),
-        ('Uppercase', char.suc),
-        ('Lowercase', char.slc),
-        ('Titlecase', char.stc),
-        ('Script', char.sc),
-        ('Script Extensions', char.scx),
-        ('White Space', char.wspace),
-        ('Alphabetical', char.alpha),
-        ('Hangul Syllable Type', char.hst),
-        ('Ignorable', char.di),
-        ('Other Ignorable', char.odi),
-        ('ASCII Hex Digit', char.ahex),
+        *attrs,
         ('UTF-8', char.encode('utf8')),
         ('UTF-16', char.encode('utf_16_be')),
         ('UTF-32', char.encode('utf_32_be')),
@@ -196,7 +184,8 @@ def dt(c: str) -> Generator[str, None, None]:
     )
 
     # Display the details.
-    width = 20
+    yield (' ' * 10 + char.summarize())
+    yield (' ' * 10 + '-' * 60)
     for detail in details:
         label, value = detail
         if value:

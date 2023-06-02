@@ -136,6 +136,7 @@ The following features are planned for the v0.1.1 or later releases:
 *   (Done.) Add property value list.
 *   (Done.) Added Unicode data properties.
 *   (Done.) Tool for recreating reverse normalization data.
+*   (Done.) Remove hardcoded properties and names from `cmd.dt()`.
 *   (Started.) Add list of characters with property.
 *   Emoji combiner.
 *   Web API.
@@ -163,7 +164,7 @@ The following features are planned for the v0.1.1 or later releases:
 *   Support for more versions of Unicode.
 *   Make `Character.na` return only the defined character name.
 *   Remove long name properties.
-*   Remove hardcoded properties and names from `cmd.dt()`.
+*   Create `Character` properties dynamically.
 
 
 The list of Unicode Properties can be found here: `Index`_
