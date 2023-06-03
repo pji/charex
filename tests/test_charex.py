@@ -86,6 +86,7 @@ def test_rangelist_properties():
     defined range lists.
     """
     char = c.Char('a')
+    assert char.age == '1.1'
     assert char.blk == 'Basic Latin'
     assert char.sc == 'Latin'
 

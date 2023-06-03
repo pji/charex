@@ -140,13 +140,6 @@ class UnicodeDatum:
 
 
 # Caches.
-hst_cache: defaultdict[str, str] | None = None
-prop_cache: dict[str, str] = {}
-proplist_cache: dict[str, defaultdict[str, bool]] = {}
-proplong_cache: dict[str, str] = {}
-propvals_cache: dict[str, dict[str, str]] = {}
-range_cache: dict[str, tuple[ValueRange, ...]] = {}
-script_extensions_cache: defaultdict[str, str] | None = None
 unicodedata_cache: dict[str, UnicodeDatum] = {}
 
 
@@ -163,7 +156,7 @@ UnicodeDataCache = dict[str, UCD]
 # Classes.
 class Cache:
     multis = ('scx',)
-    ranges = ('blk', 'sc',)
+    ranges = ('age', 'blk', 'sc',)
     singles = ('hst',)
 
     def __init__(self) -> None:
@@ -500,7 +493,7 @@ class Character:
         hexadecimal numbers.
         """
         proplist = get_proplist()
-        return proplist['ASCII_Hex_Digit'][self.value]
+        return proplist['ahex'][self.value]
 
     @property
     def age(self) -> str:
@@ -605,7 +598,7 @@ class Character:
         usage of deprecated characters is strongly discouraged.
         """
         proplist = get_proplist()
-        return proplist['Deprecated'][self.value]
+        return proplist['dep'][self.value]
 
     @property
     def di(self) -> bool:
@@ -745,7 +738,7 @@ class Character:
     def nchar(self) -> bool:
         """Code points permanently reserved for internal use."""
         proplist = get_proplist()
-        return proplist['Noncharacter_Code_Point'][self.value]
+        return proplist['nchar'][self.value]
 
     @property
     def numeric(self) -> float | int | None:
@@ -761,25 +754,25 @@ class Character:
     def oalpha(self) -> bool:
         """Used in deriving the Alphabetic property."""
         proplist = get_proplist()
-        return proplist['Other_Alphabetic'][self.value]
+        return proplist['oalpha'][self.value]
 
     @property
     def odi(self) -> bool:
         """Used in deriving the Default_Ignorable_Code_Point property."""
         proplist = get_proplist()
-        return proplist['Other_Default_Ignorable_Code_Point'][self.value]
+        return proplist['odi'][self.value]
 
     @property
     def olower(self) -> bool:
         """Used in deriving the Lowercase property."""
         proplist = get_proplist()
-        return proplist['Other_Lowercase'][self.value]
+        return proplist['olower'][self.value]
 
     @property
     def oupper(self) -> bool:
         """Used in deriving the Uppercase property."""
         proplist = get_proplist()
-        return proplist['Other_Uppercase'][self.value]
+        return proplist['oupper'][self.value]
 
     @property
     def pcm(self) -> bool:
@@ -790,7 +783,7 @@ class Character:
         following digits.
         """
         proplist = get_proplist()
-        return proplist['Prepended_Concatenation_Mark'][self.value]
+        return proplist['pcm'][self.value]
 
     @property
     def sc(self) -> str:
@@ -800,7 +793,7 @@ class Character:
     @property
     def scx(self) -> str:
         """The Unicode script extensions for the character."""
-        value = get_script_extensions()[self.value]
+        value = ' '.join(get_script_extensions()[self.value])
         if value == '<script>':
             return self.script
         return value
@@ -904,7 +897,7 @@ class Character:
         "Unicode Ideographic Variation Database" [UTS37].
         """
         proplist = get_proplist()
-        return proplist['Variation_Selector'][self.value]
+        return proplist['vs'][self.value]
 
     @property
     def wspace(self) -> bool:
@@ -916,7 +909,7 @@ class Character:
         differently for particular text segmentation contexts.
         """
         proplist = get_proplist()
-        return proplist['White_Space'][self.value]
+        return proplist['wspace'][self.value]
 
     def denormalize(self, form: str) -> tuple[str, ...]:
         """Return the characters that normalize to the character using
@@ -1123,10 +1116,9 @@ class MissingValue:
 
 # Utility functions.
 def alias_property(longname: str, space: bool = True) -> str:
-    proplong = get_proplong()
     if space:
-        longname = longname.replace('_', ' ')
-    return proplong[longname]
+        longname = longname.replace(' ', '_')
+    return Char.cache.props[longname.casefold()].alias
 
 
 def bintree(
@@ -1179,15 +1171,9 @@ def expand_property(prop: str) -> str:
         'Case Folding'
 
     """
-    try:
-        result = prop_cache[prop]
-
-    except KeyError:
-        lines = util.read_resource('props')
-        by_proptype = parse_properties(lines)
-        result = by_proptype[prop]
-
-    return result
+    long = Char.cache.props[prop.casefold()].long
+    long = long.replace('_', ' ')
+    return long
 
 
 def expand_property_value(prop: str, alias: str) -> str:
@@ -1209,20 +1195,10 @@ def expand_property_value(prop: str, alias: str) -> str:
         'Control'
 
     """
-    # Look it up in the cache, to avoid having to reload the file
-    # multiple times.
-    try:
-        by_alias = propvals_cache[prop]
-
-    # If it's not in the cache, then we have to load the data from
-    # file.
-    except KeyError:
-        lines = util.read_resource('propvals')
-        by_alias = parse_property_values(lines, prop)
-        propvals_cache[prop] = by_alias
-
-    # Return the expanded alias.
-    return by_alias[alias]
+    prop = prop.casefold()
+    alias = alias.casefold()
+    long = Char.cache.propvals[prop][alias].long
+    return long.replace('_', ' ')
 
 
 def fill_gaps(
@@ -1269,10 +1245,7 @@ def get_category_members(category: str) -> tuple[Character, ...]:
 
 
 def get_hangul_syllable_type() -> defaultdict[str, str]:
-    global hst_cache
-    if hst_cache is None:
-        hst_cache = parse_single_property('hst', 'hst')
-    return hst_cache
+    return Char.cache.singleval['hst']
 
 
 def get_properties() -> tuple[str, ...]:
@@ -1289,11 +1262,12 @@ def get_properties() -> tuple[str, ...]:
         ('cjkAccountingNumeric', 'cjkOtherNumeric',... 'XO_NFKD')
 
     """
-    if not prop_cache:
-        lines = util.read_resource('props')
-        parse_properties(lines)
-
-    return tuple(key for key in prop_cache)
+    props = Char.cache.props
+    result = []
+    for key in props:
+        if props[key] not in result:
+            result.append(props[key])
+    return tuple(prop.alias for prop in result)
 
 
 def get_property_values(prop: str) -> tuple[str, ...]:
@@ -1312,45 +1286,21 @@ def get_property_values(prop: str) -> tuple[str, ...]:
         ('C', 'Cc', 'Cf', 'Cn', 'Co', 'Cs', 'L',... 'Zs')
 
     """
-    if prop not in propvals_cache:
-        lines = util.read_resource('propvals')
-        by_alias = parse_property_values(lines, prop)
-        propvals_cache[prop] = {}
-        for alias in by_alias:
-            propvals_cache[prop][alias] = by_alias[alias]
-
-    return tuple(key for key in propvals_cache[prop])
+    propvals = Char.cache.propvals[prop]
+    result = []
+    for key in propvals:
+        if propvals[key] not in result:
+            result.append(propvals[key])
+    return tuple(val.alias for val in result)
 
 
 def get_proplist() -> dict[str, defaultdict[str, bool]]:
-    if not proplist_cache:
-        proplist = parse_binary_properties('proplist')
-        for key in proplist:
-            proplist_cache[key] = proplist[key]
-    return proplist_cache
+    return Char.cache.proplist
 
 
-def get_proplong() -> dict[str, str]:
-    if not proplong_cache:
-        props = get_props()
-        for key in props:
-            proplong_cache[props[key]] = key
-    return proplong_cache
-
-
-def get_props() -> dict[str, str]:
-    if not prop_cache:
-        lines = util.read_resource('props')
-        parse_properties(lines)
-    return prop_cache
-
-
-def get_script_extensions() -> defaultdict[str, str]:
+def get_script_extensions() -> defaultdict[str, tuple[str, ...]]:
     """Get the script extensions data."""
-    global script_extensions_cache
-    if script_extensions_cache is None:
-        script_extensions_cache = parse_script_extensions()
-    return script_extensions_cache
+    return Char.cache.multival['scx']
 
 
 def get_unicode_data() -> dict[str, UnicodeDatum]:
@@ -1365,9 +1315,11 @@ def get_value_from_range(src: str, char: str) -> str:
     """Given a data source and a character, return the value from
     the data source of that character.
     """
-    if src not in range_cache:
-        range_cache[src] = get_value_ranges(src)
-    vranges = range_cache[src]
+    if src == 'blocks':
+        src = 'blk'
+    elif src == 'scripts':
+        src = 'sc'
+    vranges = Char.cache.rangelist[src]
     address = ord(char)
     max_ = len(vranges)
     index = max_ // 2
@@ -1423,54 +1375,6 @@ def parse_missing(lines: Sequence[str]) -> tuple[tuple[str, ...], ...]:
     lines = [line[12:] for line in lines if line.startswith(prefix)]
     lines = strip_comments(lines)
     return parse_sdt(lines)
-
-
-def parse_properties(
-    lines: Sequence[str],
-    space: bool = True
-) -> dict[str, str]:
-    """Parse the contents of the properties file and return the
-    translation map for the properties.
-    """
-    lines = [
-        line for line in lines
-        if line.strip() and not line.startswith('#')
-    ]
-    for line in lines:
-        fields = line.split(';')
-        key = fields[0].strip()
-        try:
-            value = fields[1].strip()
-        except IndexError as ex:
-            print(line)
-            raise ex
-        value = value.replace('_', ' ')
-        prop_cache[key] = value
-    return prop_cache
-
-
-def parse_property_values(
-    lines: Sequence[str],
-    proptype: str
-) -> dict[str, str]:
-    """Parse the contents of the property values file and return the
-    translation map for the given property type.
-
-    :param lines: The contents of the property values file.
-    :param proptype: The type of properties to extract from the file.
-    :return: The entries for the given property type as a :class:`dict`.
-    :rtype: dict
-    """
-    lines = [line for line in lines if line.startswith(proptype)]
-    by_alias = {}
-    for line in lines:
-        line = line.split('#', 1)[0]
-        fields = line.split(';')
-        key = fields[1].strip()
-        value = fields[2].strip()
-        value = value.replace('_', ' ')
-        by_alias[key] = value
-    return by_alias
 
 
 def parse_range_for_value(source: str) -> tuple[tuple[int, int, str], ...]:
