@@ -32,6 +32,72 @@ def test_char_core_properties():
     assert char.stc == '0041'
 
 
+def test_char_proplist_properties():
+    """A :class:`charex.Char` should have the properties from
+    PropList.txt.
+    """
+    char = c.Char('a')
+    assert char.wspace is False
+    assert char.bidi_c is False
+    assert char.join_c is False
+    assert char.dash is False
+    assert char.hyphen is False
+    assert char.qmark is False
+    assert char.term is False
+    assert char.omath is False
+    assert char.hex is True
+    assert char.ahex is True
+    assert char.oalpha is False
+    assert char.ideo is False
+    assert char.dia is False
+    assert char.ext is False
+    assert char.olower is False
+    assert char.oupper is False
+    assert char.nchar is False
+    assert char.ogr_ext is False
+    assert char.idsb is False
+    assert char.idst is False
+    assert char.radical is False
+    assert char.uideo is False
+    assert char.odi is False
+    assert char.dep is False
+    assert char.sd is False
+    assert char.loe is False
+    assert char.oids is False
+    assert char.oidc is False
+    assert char.sterm is False
+    assert char.vs is False
+    assert char.pat_ws is False
+    assert char.pat_syn is False
+    assert char.pcm is False
+    assert char.ri is False
+
+
+def test_multilist_properties():
+    """A :class:`charex.Char` should have the properties from
+    defined properties that contain multiple values.
+    """
+    char = c.Char('a')
+    assert char.scx == ('Latin',)
+
+
+def test_rangelist_properties():
+    """A :class:`charex.Char` should have the properties from
+    defined range lists.
+    """
+    char = c.Char('a')
+    assert char.blk == 'Basic Latin'
+    assert char.sc == 'Latin'
+
+
+def test_singleval_properties():
+    """A :class:`charex.Char` should have the properties from
+    the single value lists.
+    """
+    char = c.Char('a')
+    assert char.hst == 'NA'
+
+
 # Test Character.
 def test_character_init():
     """Given a string containing a character, a :class:`Character`

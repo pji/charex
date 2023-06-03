@@ -29,6 +29,69 @@ class ValueRange:
 
 
 @dataclass
+class Property:
+    alias: str
+    long: str
+    other: tuple[str, ...]
+
+
+@dataclass
+class PropertyValue:
+    property: str
+    alias: str
+    long: str
+    other: tuple[str, ...]
+
+
+@dataclass
+class UCD:
+    """A record from the UnicodeData.txt file for Unicode 14.0.0.
+
+    :param code_point: The address for the character in Unicode.
+    :param name: The name for the code point.
+    :param category: The type of code point, such as "control" or
+        "lower case letter."
+    :param canonical_combining_class: The combining class of the code point,
+        largely used for CJK languages.
+    :param bidi_class: Unknown.
+    :param decomposition_type: Whether and how the character can be
+        decomposed.
+    :param decimal: If the character is a decimal digit, this is its
+        numeric value.
+    :param digit: If the character is a digit, this is its numeric
+        value.
+    :param numeric: If the character is a number, this is its numeric
+        value.
+    :param bidi_mirrored: Unknown.
+    :param unicode_1_name: The name of the character used in Unicode
+        version 1. This is mainly needed to give names to control
+        characters.
+    :param iso_comment: Unknown.
+    :param simple_uppercase_mapping: The code point for the upper case
+        version of the code point.
+    :param simple_lowercase_mapping: The code point for the lower case
+        version of the code point.
+    :param simple titlecase_mapping: The code point for the title case
+        version of the code point.
+    """
+    address: str
+    na: str
+    gc: str
+    ccc: str
+    bc: str
+    dt: str
+    decimal: str
+    digit: str
+    nv: str
+    bidi_m: str
+    na1: str
+    isc: str
+    suc: str
+    slc: str
+    stc: str
+
+
+@dataclass
 class UnicodeDatum:
     """A record from the UnicodeData.txt file for Unicode 14.0.0.
 
@@ -80,14 +143,205 @@ class UnicodeDatum:
 hst_cache: defaultdict[str, str] | None = None
 prop_cache: dict[str, str] = {}
 proplist_cache: dict[str, defaultdict[str, bool]] = {}
+proplong_cache: dict[str, str] = {}
 propvals_cache: dict[str, dict[str, str]] = {}
 range_cache: dict[str, tuple[ValueRange, ...]] = {}
 script_extensions_cache: defaultdict[str, str] | None = None
 unicodedata_cache: dict[str, UnicodeDatum] = {}
 
 
+# Types:
+PropListCache = dict[str, defaultdict[str, bool]]
+PropsCache = dict[str, Property]
+PropValsCache = dict[str, dict[str, PropertyValue]]
+MultiValCache = dict[str, defaultdict[str, tuple[str, ...]]]
+RangeListCache = dict[str, tuple[ValueRange, ...]]
+SingleValCache = dict[str, defaultdict[str, str]]
+UnicodeDataCache = dict[str, UCD]
+
+
 # Classes.
+class Cache:
+    multis = ('scx',)
+    ranges = ('blk', 'sc',)
+    singles = ('hst',)
+
+    def __init__(self) -> None:
+        self.__multival: MultiValCache = {}
+        self.__proplist: PropListCache = {}
+        self.__props: PropsCache = {}
+        self.__propvals: PropValsCache = {}
+        self.__rangelist: RangeListCache = {}
+        self.__singleval: SingleValCache = {}
+        self.__unicodedata: UnicodeDataCache = {}
+
+    @property
+    def multival(self) -> MultiValCache:
+        if not self.__multival:
+            self.__multival = {
+                key: self.get_multiple_value_property(key)
+                for key in self.multis
+            }
+        return self.__multival
+
+    @property
+    def props(self) -> PropsCache:
+        if not self.__props:
+            self.__props = self.get_properties()
+        return self.__props
+
+    @property
+    def proplist(self) -> PropListCache:
+        if not self.__proplist:
+            proplist = parse_binary_properties('proplist')
+            for prop in proplist:
+                alias = alias_property(prop, True)
+                alias = alias.casefold()
+                self.__proplist[alias] = proplist[prop]
+        return self.__proplist
+
+    @property
+    def propvals(self) -> PropValsCache:
+        if not self.__propvals:
+            self.__propvals = self.get_property_values()
+        return self.__propvals
+
+    @property
+    def rangelist(self) -> RangeListCache:
+        if not self.__rangelist:
+            self.__rangelist = {
+                key: get_value_ranges(key)
+                for key in self.ranges
+            }
+        return self.__rangelist
+
+    @property
+    def singleval(self) -> SingleValCache:
+        if not self.__singleval:
+            self.__singleval = {
+                key: self.get_single_value_property(key)
+                for key in self.singles
+            }
+        return self.__singleval
+
+    @property
+    def unicodedata(self) -> UnicodeDataCache:
+        if not self.__unicodedata:
+            lines = util.read_resource('unicodedata')
+            data: dict[str, UCD] = {}
+            for i, line in enumerate(lines):
+                fields = line.split(';')
+                datum = UCD(*fields)
+                n = int(datum.address, 16)
+                data[chr(n)] = datum
+
+                if (
+                    datum.na.startswith('<')
+                    and datum.na.endswith('First>')
+                ):
+                    nextline = lines[i + 1]
+                    next_fields = nextline.split(';')
+                    start = int(datum.address, 16)
+                    stop = int(next_fields[0], 16) + 1
+                    for n in range(start, stop):
+                        gap_fields = (f'{n:04x}'.upper(), *fields[1:])
+                        datum = UCD(*gap_fields)
+                        n = int(datum.address, 16)
+                        data[chr(n)] = datum
+
+            self.__unicodedata = data
+        return self.__unicodedata
+
+    def alias_property(self, prop: str) -> str:
+        prop = prop.casefold()
+        return self.props[prop].alias
+
+    def alias_property_value(self, prop: str, value: str) -> str:
+        prop = prop.casefold()
+        if prop in self.propvals:
+            value = self.propvals[prop][value.casefold()].alias
+        return value
+
+    def get_multiple_value_property(
+        self,
+        source: str
+    ) -> defaultdict[str, tuple[str, ...]]:
+        missing, data = self.parse_with_missing(source)
+        mvalue = MissingTuple(tuple(missing.split()))
+        values: defaultdict[str, tuple[str, ...]] = defaultdict(mvalue)
+        for datum in data:
+            points, value = datum
+            parts = points.split('..')
+            start = int(parts[0], 16)
+            stop = start + 1
+            if len(parts) > 1:
+                stop = int(parts[1], 16) + 1
+            for i in range(start, stop):
+                values[chr(i)] = tuple(value.split())
+        return values
+
+    def get_properties(self) -> PropsCache:
+        data = self.parse('props')
+        result: PropsCache = {}
+        for datum in data:
+            alias, long, *other = datum
+            prop = Property(alias, long, tuple(other))
+            for name in datum:
+                result[name.casefold()] = prop
+        return result
+
+    def get_property_values(self) -> PropValsCache:
+        data = self.parse('propvals')
+        result: PropValsCache = {}
+        for datum in data:
+            prop, *names = datum
+            alias, long, *other = names
+            propval = PropertyValue(prop, alias, long, tuple(other))
+            prop = prop.casefold()
+            result.setdefault(prop, dict())
+            for name in names:
+                result[prop][name.casefold()] = propval
+        return result
+
+    def get_single_value_property(self, source: str) -> defaultdict[str, str]:
+        missing, data = self.parse_with_missing(source)
+        missing = self.alias_property_value(source, missing)
+        mvalue = MissingValue(missing)
+        result = defaultdict(mvalue)
+        for datum in data:
+            points, value = datum
+            parts = points.split('..')
+            start = int(parts[0], 16)
+            stop = start + 1
+            if len(parts) > 1:
+                stop = int(parts[1], 16) + 1
+            for i in range(start, stop):
+                result[chr(i)] = self.alias_property_value(source, value)
+        return result
+
+    def parse(self, source: str) -> tuple[tuple[str, ...], ...]:
+        lines = util.read_resource(source)
+        lines = strip_comments(lines)
+        data = parse_sdt(lines)
+        return data
+
+    def parse_with_missing(
+        self,
+        source: str
+    ) -> tuple[str, tuple[tuple[str, ...], ...]]:
+        lines = util.read_resource(source)
+
+        missing_data = parse_missing(lines)
+        missing = missing_data[0][-1]
+
+        lines = strip_comments(lines)
+        data = parse_sdt(lines)
+        return missing, data
+
+
 class Char:
+    cache = Cache()
+
     def __init__(self, value: bytes | int | str) -> None:
         value = util.to_char(value)
         self.__value = value
@@ -96,11 +350,39 @@ class Char:
     def __getattr__(self, name):
         if name in self.__dict__:
             return self.__dict__[name]
-        props = get_props_by_short()
-        data = get_unicode_data()
-        field = props[name].casefold()
-        field = field.replace(' ', '_')
-        return getattr(data[self.code_point], field)
+
+        name = name.casefold()
+
+        if name in UCD.__annotations__:
+            data = self.cache.unicodedata
+            return getattr(data[self.value], name)
+
+        if name in self.cache.proplist:
+            return self.cache.proplist[name][self.value]
+
+        if name in self.cache.ranges:
+            rangelist = self.cache.rangelist[name]
+            vr = bintree(
+                rangelist,
+                ord(self.value),
+                len(rangelist) // 2,
+                0,
+                len(rangelist)
+            )
+            return vr.value
+
+        if name in self.cache.multis:
+            multival = self.cache.multival[name]
+            value = multival[self.value]
+            value = self.handle_dynamic_value(name, value)
+            return value
+
+        if name in self.cache.singles:
+            singleval = self.cache.singleval[name]
+            value = singleval[self.value]
+            return value
+
+        raise AttributeError(name)
 
     @property
     def code_point(self) -> str:
@@ -113,12 +395,18 @@ class Char:
         """The code point as a string."""
         return self.__value
 
-
-def get_props_by_short() -> dict[str, str]:
-    if not prop_cache:
-        lines = util.read_resource('props')
-        parse_properties(lines)
-    return prop_cache
+    def handle_dynamic_value(
+        self,
+        prop: str,
+        values: Sequence[str]
+    ) -> tuple[str, ...]:
+        result = []
+        for value in values:
+            if value.startswith('<') and value.endswith('>'):
+                attr = self.cache.alias_property(value[1:-1])
+                value = getattr(self, attr.casefold())
+            result.append(value)
+        return tuple(result)
 
 
 class Character:
@@ -817,6 +1105,14 @@ class MissingBool:
         return self.value
 
 
+class MissingTuple:
+    def __init__(self, value: tuple[str, ...]) -> None:
+        self.value = value
+
+    def __call__(self) -> tuple[str, ...]:
+        return self.value
+
+
 class MissingValue:
     def __init__(self, value: str) -> None:
         self.value = value
@@ -826,6 +1122,13 @@ class MissingValue:
 
 
 # Utility functions.
+def alias_property(longname: str, space: bool = True) -> str:
+    proplong = get_proplong()
+    if space:
+        longname = longname.replace('_', ' ')
+    return proplong[longname]
+
+
 def bintree(
     vranges: Sequence[ValueRange],
     address: int,
@@ -1027,6 +1330,21 @@ def get_proplist() -> dict[str, defaultdict[str, bool]]:
     return proplist_cache
 
 
+def get_proplong() -> dict[str, str]:
+    if not proplong_cache:
+        props = get_props()
+        for key in props:
+            proplong_cache[props[key]] = key
+    return proplong_cache
+
+
+def get_props() -> dict[str, str]:
+    if not prop_cache:
+        lines = util.read_resource('props')
+        parse_properties(lines)
+    return prop_cache
+
+
 def get_script_extensions() -> defaultdict[str, str]:
     """Get the script extensions data."""
     global script_extensions_cache
@@ -1107,7 +1425,10 @@ def parse_missing(lines: Sequence[str]) -> tuple[tuple[str, ...], ...]:
     return parse_sdt(lines)
 
 
-def parse_properties(lines: Sequence[str]) -> dict[str, str]:
+def parse_properties(
+    lines: Sequence[str],
+    space: bool = True
+) -> dict[str, str]:
     """Parse the contents of the properties file and return the
     translation map for the properties.
     """
@@ -1280,3 +1601,10 @@ def strip_comments(lines: Sequence[str]) -> tuple[str, ...]:
         line for line in lines
         if line.strip() and not line.startswith('#')
     ])
+
+
+if __name__ == '__main__':
+    name = 'wspace'
+    cache = Cache()
+    proplist = cache.proplist
+    assert name in proplist

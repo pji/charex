@@ -62,12 +62,15 @@ RESOURCES = {
     # Unicode data.
     'age': 'DerivedAge.txt',
     'blocks': 'Blocks.txt',
+    'blk': 'Blocks.txt',
     'hst': 'HangulSyllableType.txt',
     'props': 'PropertyAliases.txt',
     'proplist': 'PropList.txt',
     'propvals': 'PropertyValueAliases.txt',
     'scripts': 'Scripts.txt',
+    'sc': 'Scripts.txt',
     'scriptext': 'ScriptExtensions.txt',
+    'scx': 'ScriptExtensions.txt',
     'unicodedata': 'UnicodeData.txt',
 
     # HTML data.
