@@ -6,10 +6,13 @@
                       Age: 1.1
                     Block: Basic Latin
                    Script: Latin
-               Bidi Class: Left To Right
+               Bidi Class: L
 Canonical Combining Class: 0
          General Category: Lu
      Hangul Syllable Type: NA
+          ASCII Hex Digit: True
+            Bidi Mirrored: N
+                Hex Digit: True
                     UTF-8: 41
                    UTF-16: 00 41
                    UTF-32: 00 00 00 41

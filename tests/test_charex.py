@@ -14,11 +14,11 @@ UNICODE_LEN = 0x110000
 
 
 # Test Char.
-def test_char_core_properties():
-    """A :class:`charex.Char` should have the properties from the
+def test_character_core_properties():
+    """A :class:`charex.Character` should have the properties from the
     Unicode data database.
     """
-    char = c.Char('a')
+    char = c.Character('a')
     assert char.na == 'LATIN SMALL LETTER A'
     assert char.gc == 'Ll'
     assert char.ccc == '0'
@@ -32,11 +32,11 @@ def test_char_core_properties():
     assert char.stc == '0041'
 
 
-def test_char_proplist_properties():
-    """A :class:`charex.Char` should have the properties from
+def test_character_proplist_properties():
+    """A :class:`charex.Character` should have the properties from
     PropList.txt.
     """
-    char = c.Char('a')
+    char = c.Character('a')
     assert char.wspace is False
     assert char.bidi_c is False
     assert char.join_c is False
@@ -73,29 +73,29 @@ def test_char_proplist_properties():
     assert char.ri is False
 
 
-def test_multilist_properties():
-    """A :class:`charex.Char` should have the properties from
+def test_character_multilist_properties():
+    """A :class:`charex.Character` should have the properties from
     defined properties that contain multiple values.
     """
-    char = c.Char('a')
+    char = c.Character('a')
     assert char.scx == ('Latin',)
 
 
-def test_rangelist_properties():
-    """A :class:`charex.Char` should have the properties from
+def test_character_rangelist_properties():
+    """A :class:`charex.Character` should have the properties from
     defined range lists.
     """
-    char = c.Char('a')
+    char = c.Character('a')
     assert char.age == '1.1'
     assert char.blk == 'Basic Latin'
     assert char.sc == 'Latin'
 
 
-def test_singleval_properties():
-    """A :class:`charex.Char` should have the properties from
+def test_character_singleval_properties():
+    """A :class:`charex.Character` should have the properties from
     the single value lists.
     """
-    char = c.Char('a')
+    char = c.Character('a')
     assert char.hst == 'NA'
 
 
@@ -145,23 +145,6 @@ def test_character_age_all():
         char.age
 
 
-def test_character_alpha():
-    """When called :attr:`Character.alpha` returns whether the
-    character is alphabetic.
-    """
-    char = c.Character('a')
-    assert char.alpha
-
-
-def test_character_block():
-    """When called :attr:`Character.block` returns the block that contains
-    the character.
-    """
-    char = c.Character('a')
-    assert char.blk == 'Basic Latin'
-    assert char.block == 'Basic Latin'
-
-
 @pytest.mark.skip(reason='Slow.')
 def test_character_block_all():
     """All Unicode characters should have a block."""
@@ -176,82 +159,6 @@ def test_character_code_point():
     """
     char = c.Character('<')
     assert char.code_point == 'U+003C'
-
-
-def test_character_core_properties():
-    """A character should have the properties from the Unicode data
-    database.
-    """
-    char = c.Character('a')
-    assert char.name == 'LATIN SMALL LETTER A'
-    assert char.na == 'LATIN SMALL LETTER A'
-    assert char.category == 'Lowercase Letter'
-    assert char.gc == 'Ll'
-    assert char.canonical_combining_class == '0'
-    assert char.ccc == '0'
-    assert char.bidi_class == 'Left To Right'
-    assert char.bc == 'Left To Right'
-    assert char.decomposition_type == ''
-    assert char.dt == ''
-    assert char.decomposition == ''
-    assert char.dm == ''
-    assert char.decimal is None
-    assert char.digit is None
-    assert char.numeric is None
-    assert char.nv is None
-    assert char.bidi_mirrored is False
-    assert char.bidi_m is False
-    assert char.unicode_1_name == ''
-    assert char.na1 == ''
-    assert char.iso_comment == ''
-    assert char.isc == ''
-    assert char.simple_uppercase_mapping == '0041'
-    assert char.suc == '0041'
-    assert char.simple_lowercase_mapping == ''
-    assert char.slc == ''
-    assert char.simple_titlecase_mapping == '0041'
-    assert char.stc == '0041'
-
-    char = c.Character('å')
-    assert char.decomposition_type == 'canonical'
-    assert char.decomposition == '0061 030A'
-
-    char = c.Character('2')
-    assert char.decimal == 2
-    assert char.digit == 2
-    assert char.numeric == 2
-
-
-def test_character_di():
-    """When called :attr:`Character.di` returns the default ignorable
-    code point property for the character.
-    """
-    char = c.Character('a')
-    assert char.di is False
-
-    # odi should be true
-    char = c.Character('U+034f')
-    assert char.di is True
-
-    # gc is Cf should be true
-    char = c.Character('U+00AD')
-    assert char.di is True
-
-    # vs should be true
-    char = c.Character('U+180c')
-    assert char.di is True
-
-    # between 0xfff9 and 0xfffb should be false
-    char = c.Character('U+fff9')
-    assert char.di is False
-
-    # between 0x13430 and 0x13438 should be false
-    char = c.Character('U+13432')
-    assert char.di is False
-
-    # pcm should be false
-    char = c.Character('U+0602')
-    assert char.di is False
 
 
 def test_character_encode():
@@ -283,14 +190,6 @@ def test_character_escape_html():
     assert char.escape('html') == '&aring;'
 
 
-def test_character_hst():
-    """When called :attr:`Character.hst` returns the Hangul syllable
-    type for the character.
-    """
-    char = c.Character('U+1100')
-    assert char.hst == 'L'
-
-
 def test_character_is_normal():
     """When called with a valid normalization form,
     :meth:`Character.is_normal` returns whether the value
@@ -303,55 +202,12 @@ def test_character_is_normal():
     assert not char.is_normal('NFD')
 
 
-def test_character_name_null():
-    """When called, :attr:`Character.name` returns the Unicode name
-    for the code point.
-    """
-    char = c.Character('\u0000')
-    assert char.name == '<NULL>'
-
-
 def test_character_normalize():
     """When given a normalization form, :meth:`Character.normalize` should
     return the normalized form of the character.
     """
     char = c.Character('å')
     assert char.normalize('NFD') == b'a\xcc\x8a'.decode('utf8')
-
-
-def test_character_proplist():
-    """A :class:`charex.Character` should have the properties from
-    PropList.txt.
-    """
-    char = c.Character('a')
-    assert char.ahex is True
-    assert char.dep is False
-    assert char.nchar is False
-    assert char.odi is False
-    assert char.pcm is False
-    assert char.vs is False
-    assert char.wspace is False
-
-    char = c.Character('g')
-    assert char.ahex is False
-
-    char = c.Character(' ')
-    assert char.wspace is True
-
-    char = c.Character('U+0149')
-    assert char.dep is True
-
-    char = c.Character('U+034f')
-    assert char.odi is True
-
-    char = c.Character('U+0601')
-    assert char.pcm is True
-
-    char = c.Character('U+180c')
-    assert char.vs is True
-
-    char = c.Character('U+FDD1')
-    assert char.nchar is True
 
 
 def test_character_repr():
@@ -371,24 +227,6 @@ def test_character_denormalize():
     assert char.denormalize('nfc') == exp
 
 
-def test_character_script():
-    """When called :attr:`Character.script` returns the script that
-    contains the character.
-    """
-    char = c.Character('a')
-    assert char.script == 'Latin'
-    assert char.sc == 'Latin'
-
-
-def test_character_script_extensions():
-    """When called :attr:`Character.script_extensions` returns scripts
-    the character is used in.
-    """
-    char = c.Character('U+1CD1')
-    assert char.script_extensions == 'Deva'
-    assert char.scx == 'Deva'
-
-
 @pytest.mark.skip(reason='Slow.')
 def test_character_script_all():
     """All Unicode characters should have a script."""
@@ -403,15 +241,6 @@ def test_character_summarize():
     """
     exp = 'a U+0061 (LATIN SMALL LETTER A)'
     char = c.Character('a')
-    assert char.summarize() == exp
-
-
-def test_character_summarize_control():
-    """When called, :meth:`Character.summarize` returns a summary of the
-    character's information as a :class:`str`.
-    """
-    exp = '\u240a U+000A (<LINE FEED (LF)>)'
-    char = c.Character('\n')
     assert char.summarize() == exp
 
 

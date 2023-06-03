@@ -40,7 +40,10 @@ def cd(address: str) -> Generator[str, None, None]:
             details = '*** multiple characters ***'
         else:
             char = ch.Character(c)
-            details = f'{char.code_point} {char.name}'
+            name = char.na
+            if name == '<control>':
+                name = f'<{char.na1}>'
+            details = f'{char.code_point} {name}'
         c = util.neutralize_control_characters(c)
         yield f'{key:>{width}}: {c} {details}'
 
@@ -162,7 +165,9 @@ def dt(c: str) -> Generator[str, None, None]:
         try:
             name = ch.expand_property(prop)
             value = getattr(char, prop)
-            if len(name) > width:
+            if isinstance(value, tuple):
+                value = ' '.join(value)
+            if value and len(name) > width:
                 width = len(name)
             attrs.append((name, value))
         except AttributeError:

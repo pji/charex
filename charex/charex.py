@@ -186,7 +186,7 @@ class Cache:
     @property
     def proplist(self) -> PropListCache:
         if not self.__proplist:
-            proplist = parse_binary_properties('proplist')
+            proplist = self.parse_binary_properties('proplist')
             for prop in proplist:
                 alias = alias_property(prop, True)
                 alias = alias.casefold()
@@ -203,7 +203,7 @@ class Cache:
     def rangelist(self) -> RangeListCache:
         if not self.__rangelist:
             self.__rangelist = {
-                key: get_value_ranges(key)
+                key: self.get_value_ranges(key)
                 for key in self.ranges
             }
         return self.__rangelist
@@ -296,6 +296,18 @@ class Cache:
                 result[prop][name.casefold()] = propval
         return result
 
+    def get_value_ranges(self, src: str) -> tuple[ValueRange, ...]:
+        """Get the tuple of derived ages. The derived age of a character
+        is the Unicode version where the character was assigned to a code
+        point.
+
+        :param src: The source key for the values.
+        :return: The possible ages as a :class:`tuple`.
+        :rtype: tuple
+        """
+        results = (ValueRange(*vr) for vr in self.parse_range_for_value(src))
+        return tuple(results)
+
     def get_single_value_property(self, source: str) -> defaultdict[str, str]:
         missing, data = self.parse_with_missing(source)
         missing = self.alias_property_value(source, missing)
@@ -314,9 +326,39 @@ class Cache:
 
     def parse(self, source: str) -> tuple[tuple[str, ...], ...]:
         lines = util.read_resource(source)
-        lines = strip_comments(lines)
-        data = parse_sdt(lines)
+        lines = self.strip_comments(lines)
+        data = self.parse_sdt(lines)
         return data
+
+    def parse_binary_properties(
+        self,
+        source: str
+    ) -> dict[str, defaultdict[str, bool]]:
+        data = self.parse(source)
+        missing = MissingBool(False)
+        result: dict[str, defaultdict[str, bool]] = {}
+        for datum in data:
+            point, key = datum
+            if key not in result:
+                result[key] = defaultdict(missing)
+            parts = point.split('..')
+            start = int(parts[0], 16)
+            stop = start + 1
+            if len(parts) > 1:
+                stop = int(parts[1], 16) + 1
+            for i in range(start, stop):
+                result[key][chr(i)] = True
+
+        return result
+
+    def parse_missing(
+        self,
+        lines: Sequence[str]
+    ) -> tuple[tuple[str, ...], ...]:
+        prefix = '# @missing: '
+        lines = [line[12:] for line in lines if line.startswith(prefix)]
+        lines = self.strip_comments(lines)
+        return self.parse_sdt(lines)
 
     def parse_with_missing(
         self,
@@ -324,15 +366,61 @@ class Cache:
     ) -> tuple[str, tuple[tuple[str, ...], ...]]:
         lines = util.read_resource(source)
 
-        missing_data = parse_missing(lines)
+        missing_data = self.parse_missing(lines)
         missing = missing_data[0][-1]
 
-        lines = strip_comments(lines)
-        data = parse_sdt(lines)
+        lines = self.strip_comments(lines)
+        data = self.parse_sdt(lines)
         return missing, data
 
+    def parse_range_for_value(
+        self,
+        source: str
+    ) -> tuple[tuple[int, int, str], ...]:
+        missing, data = self.parse_with_missing(source)
+        values = []
+        for datum in data:
+            parts = datum[0].split('..')
+            start = int(parts[0], 16)
+            stop = start + 1
+            if len(parts) > 1:
+                stop = int(parts[1], 16) + 1
+            value = (start, stop, datum[1])
+            values.append(value)
+        return tuple(fill_gaps(values, missing))
 
-class Char:
+    def parse_sdt(
+        self,
+        lines: tuple[str, ...]
+    ) -> tuple[tuple[str, ...], ...]:
+        """Parse semicolon delimited text.
+
+        :param lines: The lines from a semicolon delimited test file.
+        :return: The lines split into data fields as a :class:`tuple`.
+        :rtype: tuple
+        """
+        result = []
+        for line in lines:
+            parts = line.split(';')
+            fields = (part.strip() for part in parts)
+            result.append(tuple(fields))
+        return tuple(result)
+
+    def strip_comments(self, lines: Sequence[str]) -> tuple[str, ...]:
+        """Remove the comments and blank lines from a data file.
+
+        :param lines: The lines from a Unicode data file.
+        :return: The lines with comments removed as a :class:`tuple`.
+        :rtype: tuple
+        """
+        lines = [line.split('#')[0] for line in lines]
+        return tuple([
+            line for line in lines
+            if line.strip() and not line.startswith('#')
+        ])
+
+
+class Character:
     cache = Cache()
 
     def __init__(self, value: bytes | int | str) -> None:
@@ -367,7 +455,7 @@ class Char:
         if name in self.cache.multis:
             multival = self.cache.multival[name]
             value = multival[self.value]
-            value = self.handle_dynamic_value(name, value)
+            value = self._handle_dynamic_value(name, value)
             return value
 
         if name in self.cache.singles:
@@ -377,18 +465,14 @@ class Char:
 
         raise AttributeError(name)
 
-    @property
-    def code_point(self) -> str:
-        """The address for the character in the Unicode database."""
-        x = ord(self.value)
-        return f'U+{x:04x}'.upper()
+    def __repr__(self) -> str:
+        name = self.na
+        if name == '<control>':
+            name = f'<{self.na1}>'
+        return f'{self.code_point} ({name})'
 
-    @property
-    def value(self) -> str:
-        """The code point as a string."""
-        return self.__value
-
-    def handle_dynamic_value(
+    # Private methods.
+    def _handle_dynamic_value(
         self,
         prop: str,
         values: Sequence[str]
@@ -401,176 +485,7 @@ class Char:
             result.append(value)
         return tuple(result)
 
-
-class Character:
-    """One or more code points representing a character.
-
-    :param value: The character to gather data for. See below for the
-        formats the value can be passed in.
-    :return: None.
-    :rtype: NoneType
-
-    Character Formats
-    -----------------
-    The understood :class:`str` formats available for manual input are
-    (all formats are big endian unless otherwise stated):
-
-    *   Character: A string with length equal to one.
-    *   Code Point: The prefix "U+" followed by a hexadecimal number.
-    *   Binary String: The prefix "0b" followed by a binary number.
-    *   Octal String: The prefix "0o" followed by an octal number.
-    *   Decimal String: The prefix "0d" followed by a decimal number.
-    *   Hex String: The prefix "0x" followed by a hexadecimal number.
-
-    The following formats are available for use through the API:
-
-    *   Bytes: A :class:`bytes` that decodes to a valid UTF-8 character.
-    *   Integer: An :class:`int` within the range 0x00 <= x <= 0x10FFFF.
-
-    Usage
-    -----
-    To create a :class:`charex.Character` object for a single
-    character string::
-
-        >>> value = 'a'
-        >>> char = Character(value)
-        >>> char.value
-        'a'
-
-    To create a :class:`charex.Character` object for a Unicode code
-    point::
-
-        >>> value = 'U+0061'
-        >>> char = Character(value)
-        >>> char.value
-        'a'
-
-    To create a :class:`charex.Character` object for a binary string::
-
-        >>> value = '0b01100001'
-        >>> char = Character(value)
-        >>> char.value
-        'a'
-
-    To create a :class:`charex.Character` object for an octal string::
-
-        >>> value = '0o141'
-        >>> char = Character(value)
-        >>> char.value
-        'a'
-
-    To create a :class:`charex.Character` object for a decimal string::
-
-        >>> value = '0d97'
-        >>> char = Character(value)
-        >>> char.value
-        'a'
-
-    To create a :class:`charex.Character` object for a hex string::
-
-        >>> value = '0x61'
-        >>> char = Character(value)
-        >>> char.value
-        'a'
-
-    """
-    def __init__(self, value: bytes | int | str) -> None:
-        value = util.to_char(value)
-        self.__value = value
-        self._rev_normal_cache: dict[str, tuple[str, ...]] = {}
-
-    def __repr__(self) -> str:
-        return f'{self.code_point} ({self.name})'
-
-    @property
-    def address(self) -> int:
-        """The code point of the character as an :class:`int`."""
-        return int(self.code_point[2:], 16)
-
-    @property
-    def ahex(self) -> bool:
-        """ASCII characters commonly used for the representation of
-        hexadecimal numbers.
-        """
-        proplist = get_proplist()
-        return proplist['ahex'][self.value]
-
-    @property
-    def age(self) -> str:
-        """The version the character was added in."""
-        return get_value_from_range('age', self.value)
-
-    @property
-    def alpha(self) -> bool:
-        """Characters with the Alphabetic property. For more information,
-        see Chapter 4, Character Properties in Unicode.
-        """
-        if self.gc in ('Lt', 'Lm', 'Lo', 'Nl'):
-            return True
-        elif self.lower or self.upper or self.oalpha:
-            return True
-        return False
-
-    @property
-    def bc(self) -> str:
-        """The categories required by the Unicode Bidirectional Algorithm."""
-        data = get_unicode_data()
-        datum = data[self.code_point]
-        alias = datum.bidi_class
-        return expand_property_value('bc', alias)
-
-    @property
-    def bidi_class(self) -> str:
-        """The categories required by the Unicode Bidirectional Algorithm."""
-        return self.bc
-
-    @property
-    def bidi_m(self) -> bool:
-        """Whether the character is a "mirrored" character in
-        bidirectional text.
-        """
-        data = get_unicode_data()
-        datum = data[self.code_point]
-        alias = datum.bidi_mirrored
-        if alias == 'Y':
-            return True
-        return False
-
-    @property
-    def bidi_mirrored(self) -> bool:
-        """Whether the character is a "mirrored" character in
-        bidirectional text.
-        """
-        return self.bidi_m
-
-    @property
-    def blk(self) -> str:
-        """The Unicode block for the character."""
-        return get_value_from_range('blocks', self.value)
-
-    @property
-    def block(self) -> str:
-        """The Unicode block for the character."""
-        return self.blk
-
-    @property
-    def canonical_combining_class(self) -> str:
-        """The Canonical Ordering Algorithm class for the character."""
-        return self.ccc
-
-    @property
-    def category(self) -> str:
-        """The Unicode general category for the character."""
-        alias = self.gc
-        return expand_property_value('gc', alias)
-
-    @property
-    def ccc(self) -> str:
-        """The Canonical Ordering Algorithm class for the character."""
-        data = get_unicode_data()
-        datum = data[self.code_point]
-        return datum.canonical_combining_class
-
+    # Properties.
     @property
     def code_point(self) -> str:
         """The address for the character in the Unicode database."""
@@ -578,339 +493,11 @@ class Character:
         return f'U+{x:04x}'.upper()
 
     @property
-    def decomposition_type(self) -> str:
-        return self.dt
-
-    @property
-    def decimal(self) -> int | None:
-        """The decimal value of the character."""
-        return ucd.decimal(self.value, None)
-
-    @property
-    def decomposition(self) -> str:
-        """The Unicode defined decompositions of the character."""
-        return self.dm
-
-    @property
-    def dep(self) -> bool:
-        """For a machine-readable list of deprecated characters. No
-        characters will ever be removed from the standard, but the
-        usage of deprecated characters is strongly discouraged.
-        """
-        proplist = get_proplist()
-        return proplist['dep'][self.value]
-
-    @property
-    def di(self) -> bool:
-        """For programmatic determination of default ignorable code
-        points. New characters that should be ignored in rendering
-        (unless explicitly supported) will be assigned in these ranges,
-        permitting programs to correctly handle the default rendering
-        of such characters when not otherwise supported. For more
-        information, see the FAQ Display of Unsupported Characters, and
-        Section 5.21, Ignoring Characters in Processing in Unicode.
-        """
-        result = False
-        if self.odi:
-            result = True
-        if self.gc == 'Cf':
-            result = True
-        if self.vs:
-            result = True
-        if self.wspace:
-            result = False
-        if self.address >= 0xFFF9 and self.address <= 0xFFFB:
-            result = False
-        if self.address >= 0x13430 and self.address <= 0x13438:
-            result = False
-        if self.pcm:
-            result = False
-        return result
-
-    @property
-    def digit(self) -> int | None:
-        """The numerical value of the character as a digit."""
-        return ucd.digit(self.value, None)
-
-    @property
-    def dm(self) -> str:
-        """The Unicode defined decompositions of the character."""
-        return ucd.decomposition(self.value)
-
-    @property
-    def dt(self) -> str:
-        decomp = ucd.decomposition(self.value)
-        if not decomp:
-            return decomp
-        elif not decomp.startswith('<'):
-            return 'canonical'
-        else:
-            decomp_type, _ = decomp.split('>')
-            return decomp_type[1:]
-
-    @property
-    def gc(self) -> str:
-        """The Unicode general category for the character."""
-        return ucd.category(self.value)
-
-    @property
-    def hst(self) -> str:
-        """The Hangul syllable type for the character."""
-        hst = get_hangul_syllable_type()
-        return hst[self.value]
-
-    @property
-    def isc(self) -> str:
-        """ISO 10646 comment field. It was used for notes that appeared
-        in parentheses in the 10646 names list, or contained an asterisk
-        to mark an Annex P note.
-
-        As of Unicode 5.2.0, this field no longer contains any non-null
-        values.
-        """
-        data = get_unicode_data()
-        datum = data[self.code_point]
-        if datum.iso_comment:
-            return datum.iso_comment
-        return ''
-
-    @property
-    def iso_comment(self) -> str:
-        """ISO 10646 comment field. It was used for notes that appeared
-        in parentheses in the 10646 names list, or contained an asterisk
-        to mark an Annex P note.
-
-        As of Unicode 5.2.0, this field no longer contains any non-null
-        values.
-        """
-        return self.isc
-
-    @property
-    def lower(self) -> bool:
-        if self.gc == 'Ll' or self.olower:
-            return True
-        return False
-
-    @property
-    def na(self) -> str:
-        """The Unicode name for the character."""
-        try:
-            name = ucd.name(self.value)
-
-        # Control characters don't have assigned names in Unicode
-        # 14.0.0. So, we have to look up the Unicode 1 names for
-        # them, which are in the 14.0.0 UnicodeData.txt file.
-        except ValueError:
-            cat = ucd.category(self.value)
-
-            # Control characters.
-            if cat == 'Cc':
-                name = f'<{self.na1}>'
-
-            # Private use characters.
-            elif cat == 'Co':
-                name = 'PRIVATE USE CHARACTER'
-
-            # Fall back if there are more code points without names.
-            else:
-                name = '?? UNKNOWN ??'
-
-        return name
-
-    @property
-    def na1(self) -> str:
-        """Old name as published in Unicode 1.0 or ISO 6429 names for
-        control functions. This field is empty unless it is significantly
-        different from the current name for the character.
-        """
-        data = get_unicode_data()
-        datum = data[self.code_point]
-        if datum.unicode_1_name:
-            return datum.unicode_1_name
-        return ''
-
-    @property
-    def name(self) -> str:
-        """The Unicode name for the character."""
-        return self.na
-
-    @property
-    def nchar(self) -> bool:
-        """Code points permanently reserved for internal use."""
-        proplist = get_proplist()
-        return proplist['nchar'][self.value]
-
-    @property
-    def numeric(self) -> float | int | None:
-        """The Unicode defined numeric value for the character."""
-        return self.nv
-
-    @property
-    def nv(self) -> float | int | None:
-        """The Unicode defined numeric value for the character."""
-        return ucd.numeric(self.value, None)
-
-    @property
-    def oalpha(self) -> bool:
-        """Used in deriving the Alphabetic property."""
-        proplist = get_proplist()
-        return proplist['oalpha'][self.value]
-
-    @property
-    def odi(self) -> bool:
-        """Used in deriving the Default_Ignorable_Code_Point property."""
-        proplist = get_proplist()
-        return proplist['odi'][self.value]
-
-    @property
-    def olower(self) -> bool:
-        """Used in deriving the Lowercase property."""
-        proplist = get_proplist()
-        return proplist['olower'][self.value]
-
-    @property
-    def oupper(self) -> bool:
-        """Used in deriving the Uppercase property."""
-        proplist = get_proplist()
-        return proplist['oupper'][self.value]
-
-    @property
-    def pcm(self) -> bool:
-        """A small class of visible format controls, which precede and
-        then span a sequence of other characters, usually digits. These
-        have also been known as "subtending marks", because most of them
-        take a form which visually extends underneath the sequence of
-        following digits.
-        """
-        proplist = get_proplist()
-        return proplist['pcm'][self.value]
-
-    @property
-    def sc(self) -> str:
-        """The Unicode script for the character."""
-        return get_value_from_range('scripts', self.value)
-
-    @property
-    def scx(self) -> str:
-        """The Unicode script extensions for the character."""
-        value = ' '.join(get_script_extensions()[self.value])
-        if value == '<script>':
-            return self.script
-        return value
-
-    @property
-    def script(self) -> str:
-        """The Unicode script for the character."""
-        return self.sc
-
-    @property
-    def script_extensions(self) -> str:
-        """The Unicode script extensions for the character."""
-        return self.scx
-
-    @property
-    def simple_uppercase_mapping(self) -> str:
-        """Simple uppercase mapping (single character result). If a
-        character is part of an alphabet with case distinctions, and
-        has a simple uppercase equivalent, then the uppercase equivalent
-        is in this field. The simple mappings have a single character
-        result, where the full mappings may have multi-character results.
-        For more information, see Case and Case Mapping.
-        """
-        return self.suc
-
-    @property
-    def simple_lowercase_mapping(self) -> str:
-        """Simple lowercase mapping (single character result)."""
-        return self.slc
-
-    @property
-    def simple_titlecase_mapping(self) -> str:
-        """Simple titlecase mapping (single character result).
-
-        Note: If this field is null, then the Simple_Titlecase_Mapping
-        is the same as the Simple_Uppercase_Mapping for this character.
-        """
-        return self.stc
-
-    @property
-    def slc(self) -> str:
-        """Simple lowercase mapping (single character result)."""
-        data = get_unicode_data()
-        datum = data[self.code_point]
-        if datum.simple_lowercase_mapping:
-            return datum.simple_lowercase_mapping
-        return ''
-
-    @property
-    def stc(self) -> str:
-        """Simple titlecase mapping (single character result).
-
-        Note: If this field is null, then the Simple_Titlecase_Mapping
-        is the same as the Simple_Uppercase_Mapping for this character.
-        """
-        data = get_unicode_data()
-        datum = data[self.code_point]
-        if datum.simple_titlecase_mapping:
-            return datum.simple_titlecase_mapping
-        return ''
-
-    @property
-    def suc(self) -> str:
-        """Simple uppercase mapping (single character result). If a
-        character is part of an alphabet with case distinctions, and
-        has a simple uppercase equivalent, then the uppercase equivalent
-        is in this field. The simple mappings have a single character
-        result, where the full mappings may have multi-character results.
-        For more information, see Case and Case Mapping.
-        """
-        data = get_unicode_data()
-        datum = data[self.code_point]
-        if datum.simple_uppercase_mapping:
-            return datum.simple_uppercase_mapping
-        return ''
-
-    @property
-    def unicode_1_name(self) -> str:
-        """Old name as published in Unicode 1.0 or ISO 6429 names for
-        control functions. This field is empty unless it is significantly
-        different from the current name for the character.
-        """
-        return self.na1
-
-    @property
-    def upper(self) -> bool:
-        if self.gc == 'Lu' or self.oupper:
-            return True
-        return False
-
-    @property
     def value(self) -> str:
         """The code point as a string."""
         return self.__value
 
-    @property
-    def vs(self) -> bool:
-        """Indicates characters that are Variation Selectors. For details
-        on the behavior of these characters, see Section 23.4, Variation
-        Selectors in [Unicode], and Unicode Technical Standard #37,
-        "Unicode Ideographic Variation Database" [UTS37].
-        """
-        proplist = get_proplist()
-        return proplist['vs'][self.value]
-
-    @property
-    def wspace(self) -> bool:
-        """Spaces, separator characters and other control characters
-        which should be treated by programming languages as "white space"
-        for the purpose of parsing elements. See also Line_Break,
-        Grapheme_Cluster_Break, Sentence_Break, and Word_Break, which
-        classify space characters and related controls somewhat
-        differently for particular text segmentation contexts.
-        """
-        proplist = get_proplist()
-        return proplist['wspace'][self.value]
-
+    # Public methods.
     def denormalize(self, form: str) -> tuple[str, ...]:
         """Return the characters that normalize to the character using
         the given form.
@@ -1118,7 +705,7 @@ class MissingValue:
 def alias_property(longname: str, space: bool = True) -> str:
     if space:
         longname = longname.replace(' ', '_')
-    return Char.cache.props[longname.casefold()].alias
+    return Character.cache.props[longname.casefold()].alias
 
 
 def bintree(
@@ -1171,7 +758,7 @@ def expand_property(prop: str) -> str:
         'Case Folding'
 
     """
-    long = Char.cache.props[prop.casefold()].long
+    long = Character.cache.props[prop.casefold()].long
     long = long.replace('_', ' ')
     return long
 
@@ -1197,7 +784,7 @@ def expand_property_value(prop: str, alias: str) -> str:
     """
     prop = prop.casefold()
     alias = alias.casefold()
-    long = Char.cache.propvals[prop][alias].long
+    long = Character.cache.propvals[prop][alias].long
     return long.replace('_', ' ')
 
 
@@ -1244,10 +831,6 @@ def get_category_members(category: str) -> tuple[Character, ...]:
     return tuple(members)
 
 
-def get_hangul_syllable_type() -> defaultdict[str, str]:
-    return Char.cache.singleval['hst']
-
-
 def get_properties() -> tuple[str, ...]:
     """Get the valid Unicode properties.
 
@@ -1262,7 +845,7 @@ def get_properties() -> tuple[str, ...]:
         ('cjkAccountingNumeric', 'cjkOtherNumeric',... 'XO_NFKD')
 
     """
-    props = Char.cache.props
+    props = Character.cache.props
     result = []
     for key in props:
         if props[key] not in result:
@@ -1286,21 +869,12 @@ def get_property_values(prop: str) -> tuple[str, ...]:
         ('C', 'Cc', 'Cf', 'Cn', 'Co', 'Cs', 'L',... 'Zs')
 
     """
-    propvals = Char.cache.propvals[prop]
+    propvals = Character.cache.propvals[prop]
     result = []
     for key in propvals:
         if propvals[key] not in result:
             result.append(propvals[key])
     return tuple(val.alias for val in result)
-
-
-def get_proplist() -> dict[str, defaultdict[str, bool]]:
-    return Char.cache.proplist
-
-
-def get_script_extensions() -> defaultdict[str, tuple[str, ...]]:
-    """Get the script extensions data."""
-    return Char.cache.multival['scx']
 
 
 def get_unicode_data() -> dict[str, UnicodeDatum]:
@@ -1311,162 +885,7 @@ def get_unicode_data() -> dict[str, UnicodeDatum]:
     return unicodedata_cache
 
 
-def get_value_from_range(src: str, char: str) -> str:
-    """Given a data source and a character, return the value from
-    the data source of that character.
-    """
-    if src == 'blocks':
-        src = 'blk'
-    elif src == 'scripts':
-        src = 'sc'
-    vranges = Char.cache.rangelist[src]
-    address = ord(char)
-    max_ = len(vranges)
-    index = max_ // 2
-    vr = bintree(vranges, address, index, 0, max_)
-    return vr.value
-
-
-def get_value_ranges(src: str) -> tuple[ValueRange, ...]:
-    """Get the tuple of derived ages. The derived age of a character
-    is the Unicode version where the character was assigned to a code
-    point.
-
-    :param src: The source key for the values.
-    :return: The possible ages as a :class:`tuple`.
-    :rtype: tuple
-    """
-    results = (ValueRange(*vr) for vr in parse_range_for_value(src))
-    return tuple(results)
-
-
 # Data parsing functions.
-def parse_binary_properties(source: str) -> dict[str, defaultdict[str, bool]]:
-    lines = util.read_resource(source)
-    missing = MissingBool(False)
-
-    lines = strip_comments(lines)
-    data = parse_sdt(lines)
-    result: dict[str, defaultdict[str, bool]] = {}
-    for datum in data:
-        point, key = datum
-        if key not in result:
-            result[key] = defaultdict(missing)
-        parts = point.split('..')
-        start = int(parts[0], 16)
-        stop = start + 1
-        if len(parts) > 1:
-            stop = int(parts[1], 16) + 1
-        for i in range(start, stop):
-            result[key][chr(i)] = True
-
-    return result
-
-
-def parse_missing(lines: Sequence[str]) -> tuple[tuple[str, ...], ...]:
-    """Parse the default values from a unicode data file.
-
-    :param lines: The lines from a unicode data file. The lines must
-        still contain the comments.
-    :return: The default values as a :class:`tuple`.
-    :rtype: tuple
-    """
-    prefix = '# @missing: '
-    lines = [line[12:] for line in lines if line.startswith(prefix)]
-    lines = strip_comments(lines)
-    return parse_sdt(lines)
-
-
-def parse_range_for_value(source: str) -> tuple[tuple[int, int, str], ...]:
-    # Read the source file.
-    lines = util.read_resource(source)
-
-    # Get the default value for unassigned characters.
-    missing_data = parse_missing(lines)
-    missing = missing_data[0][-1]
-
-    # Parse the data from the file.
-    lines = strip_comments(lines)
-    data = parse_sdt(lines)
-    values = []
-    for datum in data:
-        parts = datum[0].split('..')
-        start = int(parts[0], 16)
-        stop = start + 1
-        if len(parts) > 1:
-            stop = int(parts[1], 16) + 1
-        value = (start, stop, datum[1])
-        values.append(value)
-    return tuple(fill_gaps(values, missing))
-
-
-def parse_single_property(source: str, prop: str) -> defaultdict[str, str]:
-    # Read the file.
-    lines = util.read_resource(source)
-
-    # Get the default value
-    missing_data = parse_missing(lines)
-    missing_str = missing_data[0][-1]
-    propvals = get_property_values(prop)
-    if missing_str not in propvals:
-        missing_str = missing_str.replace('_', ' ')
-        valprops = {expand_property_value(prop, k): k for k in propvals}
-        missing_str = valprops[missing_str]
-    missing = MissingValue(missing_str)
-
-    # Parse the data.
-    lines = strip_comments(lines)
-    data = parse_sdt(lines)
-    result = defaultdict(missing)
-    for datum in data:
-        points, value = datum
-        parts = points.split('..')
-        start = int(parts[0], 16)
-        stop = start + 1
-        if len(parts) > 1:
-            stop = int(parts[1], 16) + 1
-        for i in range(start, stop):
-            result[chr(i)] = value
-    return result
-
-
-def parse_script_extensions() -> defaultdict[str, str]:
-    lines = util.read_resource('scriptext')
-
-    missing_data = parse_missing(lines)
-    missing = missing_data[0][-1]
-    missingval = MissingValue(missing)
-
-    lines = strip_comments(lines)
-    data = parse_sdt(lines)
-    values: defaultdict[str, str] = defaultdict(missingval)
-    for datum in data:
-        points, value = datum
-        parts = points.split('..')
-        start = int(parts[0], 16)
-        stop = start + 1
-        if len(parts) > 1:
-            stop = int(parts[1], 16) + 1
-        for i in range(start, stop):
-            values[chr(i)] = value
-    return values
-
-
-def parse_sdt(lines: tuple[str, ...]) -> tuple[tuple[str, ...], ...]:
-    """Parse semicolon delimited text.
-
-    :param lines: The lines from a semicolon delimited test file.
-    :return: The lines split into data fields as a :class:`tuple`.
-    :rtype: tuple
-    """
-    result = []
-    for line in lines:
-        parts = line.split(';')
-        fields = (part.strip() for part in parts)
-        result.append(tuple(fields))
-    return tuple(result)
-
-
 def parse_unicode_data(lines: Sequence[str]) -> dict[str, UnicodeDatum]:
     """Parse the Unicode data file.
 
@@ -1491,20 +910,6 @@ def parse_unicode_data(lines: Sequence[str]) -> dict[str, UnicodeDatum]:
                     unicodedata_cache['U+' + datum.code_point] = datum
 
     return unicodedata_cache
-
-
-def strip_comments(lines: Sequence[str]) -> tuple[str, ...]:
-    """Remove the comments and blank lines from a data file.
-
-    :param lines: The lines from a Unicode data file.
-    :return: The lines with comments removed as a :class:`tuple`.
-    :rtype: tuple
-    """
-    lines = [line.split('#')[0] for line in lines]
-    return tuple([
-        line for line in lines
-        if line.strip() and not line.startswith('#')
-    ])
 
 
 if __name__ == '__main__':
