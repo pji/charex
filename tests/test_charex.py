@@ -97,6 +97,8 @@ def test_character_singleval_properties():
     """
     char = c.Character('a')
     assert char.hst == 'NA'
+    assert char.jg == 'No_Joining_Group'
+    assert char.jt == 'U'
 
 
 # Test Character.
@@ -242,32 +244,3 @@ def test_character_summarize():
     exp = 'a U+0061 (LATIN SMALL LETTER A)'
     char = c.Character('a')
     assert char.summarize() == exp
-
-
-# # Test Lookup.
-# def test_lookup_init_set_source():
-#     """Given a key for a data file, an instance of Lookup should be
-#     created with the data file loaded.
-#     """
-#     exp_source = 'rev_nfc'
-#     with open(f'charex/data/{exp_source}.json') as fh:
-#         data = json.load(fh)
-#         exp_data = {k: tuple(data[k]) for k in data}
-#     act = c.Lookup(exp_source)
-#     assert act.source == exp_source
-#     assert act.data == exp_data
-#
-#
-# def test_lookup_query():
-#     """Given a string, :meth:`Lookup.query` should return the value
-#     for that string from the loaded data.
-#     """
-#     exp = ("\uf907", "\uf908", "\uface")
-#     key = '\u9f9c'
-#     lkp = c.Lookup('rev_nfc')
-#     act = lkp.query(key)
-#     assert act == exp
-#
-#     # If key is not present in the data, return an empty tuple.
-#     key = 'a'
-#     assert lkp.query(key) == ()

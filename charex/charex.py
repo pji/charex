@@ -107,7 +107,7 @@ class Cache:
     forms = ('casefold', 'nfc', 'nfd', 'nfkc', 'nfkd')
     multis = ('scx',)
     ranges = ('age', 'blk', 'sc',)
-    singles = ('hst',)
+    singles = ('hst', 'jg', 'jt',)
 
     def __init__(self) -> None:
         self.__denormal: DenormalCache = {}

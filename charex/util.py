@@ -63,6 +63,8 @@ RESOURCES = {
     'age': 'DerivedAge.txt',
     'blocks': 'Blocks.txt',
     'blk': 'Blocks.txt',
+    'jg': 'DerivedJoiningGroup.txt',
+    'jt': 'DerivedJoiningType.txt',
     'hst': 'HangulSyllableType.txt',
     'props': 'PropertyAliases.txt',
     'proplist': 'PropList.txt',

@@ -4,8 +4,8 @@
         "source": "https://www.unicode.org/Public/14.0.0/ucd/Blocks.txt",
         "date": [
             2023,
-            5,
-            31
+            6,
+            4
         ]
     },
     "DerivedAge.txt": {
@@ -13,8 +13,26 @@
         "source": "https://www.unicode.org/Public/14.0.0/ucd/DerivedAge.txt",
         "date": [
             2023,
-            5,
-            31
+            6,
+            4
+        ]
+    },
+    "DerivedJoiningGroup.txt": {
+        "description": "Basic Arabic and Syriac character shaping properties, such as initial, medial and final shapes. See Section 9.2, Arabic in Unicode.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/extracted/DerivedJoiningGroup.txt",
+        "date": [
+            2023,
+            6,
+            4
+        ]
+    },
+    "DerivedJoiningType.txt": {
+        "description": "Basic Arabic and Syriac character shaping properties, such as initial, medial and final shapes. See Section 9.2, Arabic in Unicode.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/extracted/DerivedJoiningType.txt",
+        "date": [
+            2023,
+            6,
+            4
         ]
     },
     "HangulSyllableType.txt": {
@@ -22,8 +40,8 @@
         "source": "https://www.unicode.org/Public/14.0.0/ucd/HangulSyllableType.txt",
         "date": [
             2023,
-            5,
-            31
+            6,
+            4
         ]
     },
     "entities.json": {
@@ -31,8 +49,8 @@
         "source": "https://html.spec.whatwg.org/entities.json",
         "date": [
             2023,
-            5,
-            31
+            6,
+            4
         ]
     },
     "PropertyAliases.txt": {
@@ -40,8 +58,8 @@
         "source": "https://www.unicode.org/Public/14.0.0/ucd/PropertyAliases.txt",
         "date": [
             2023,
-            5,
-            31
+            6,
+            4
         ]
     },
     "PropList.txt": {
@@ -49,8 +67,8 @@
         "source": "https://www.unicode.org/Public/14.0.0/ucd/PropList.txt",
         "date": [
             2023,
-            5,
-            31
+            6,
+            4
         ]
     },
     "PropertyValueAliases.txt": {
@@ -58,8 +76,8 @@
         "source": "https://www.unicode.org/Public/14.0.0/ucd/PropertyValueAliases.txt",
         "date": [
             2023,
-            5,
-            31
+            6,
+            4
         ]
     },
     "rev_casefold.json": {
@@ -67,8 +85,8 @@
         "source": "form:casefold",
         "date": [
             2023,
-            5,
-            31
+            6,
+            4
         ]
     },
     "rev_nfc.json": {
@@ -76,8 +94,8 @@
         "source": "form:nfc",
         "date": [
             2023,
-            5,
-            31
+            6,
+            4
         ]
     },
     "rev_nfd.json": {
@@ -85,8 +103,8 @@
         "source": "form:nfd",
         "date": [
             2023,
-            5,
-            31
+            6,
+            4
         ]
     },
     "rev_nfkc.json": {
@@ -94,8 +112,8 @@
         "source": "form:nfkc",
         "date": [
             2023,
-            5,
-            31
+            6,
+            4
         ]
     },
     "rev_nfkd.json": {
@@ -103,8 +121,8 @@
         "source": "form:nfkd",
         "date": [
             2023,
-            5,
-            31
+            6,
+            4
         ]
     },
     "Scripts.txt": {
@@ -112,8 +130,8 @@
         "source": "https://www.unicode.org/Public/14.0.0/ucd/Scripts.txt",
         "date": [
             2023,
-            5,
-            31
+            6,
+            4
         ]
     },
     "ScriptExtensions.txt": {
@@ -121,8 +139,8 @@
         "source": "https://www.unicode.org/Public/14.0.0/ucd/ScriptExtensions.txt",
         "date": [
             2023,
-            5,
-            31
+            6,
+            4
         ]
     },
     "UnicodeData.txt": {
@@ -130,8 +148,8 @@
         "source": "https://www.unicode.org/Public/14.0.0/ucd/UnicodeData.txt",
         "date": [
             2023,
-            5,
-            31
+            6,
+            4
         ]
     }
 }

@@ -10,6 +10,8 @@
 Canonical Combining Class: 0
          General Category: Lu
      Hangul Syllable Type: NA
+            Joining Group: No_Joining_Group
+             Joining Type: U
           ASCII Hex Digit: True
             Bidi Mirrored: N
                 Hex Digit: True
