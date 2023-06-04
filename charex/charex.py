@@ -14,11 +14,6 @@ from charex import util
 from charex.escape import schemes
 
 
-# Exceptions.
-class UndefinedCharacterError(ValueError):
-    """The character is not defined in Unicode data."""
-
-
 # Data classes.
 @dataclass(order=True)
 class ValueRange:
@@ -91,59 +86,8 @@ class UCD:
     stc: str
 
 
-@dataclass
-class UnicodeDatum:
-    """A record from the UnicodeData.txt file for Unicode 14.0.0.
-
-    :param code_point: The address for the character in Unicode.
-    :param name: The name for the code point.
-    :param category: The type of code point, such as "control" or
-        "lower case letter."
-    :param canonical_combining_class: The combining class of the code point,
-        largely used for CJK languages.
-    :param bidi_class: Unknown.
-    :param decomposition_type: Whether and how the character can be
-        decomposed.
-    :param decimal: If the character is a decimal digit, this is its
-        numeric value.
-    :param digit: If the character is a digit, this is its numeric
-        value.
-    :param numeric: If the character is a number, this is its numeric
-        value.
-    :param bidi_mirrored: Unknown.
-    :param unicode_1_name: The name of the character used in Unicode
-        version 1. This is mainly needed to give names to control
-        characters.
-    :param iso_comment: Unknown.
-    :param simple_uppercase_mapping: The code point for the upper case
-        version of the code point.
-    :param simple_lowercase_mapping: The code point for the lower case
-        version of the code point.
-    :param simple titlecase_mapping: The code point for the title case
-        version of the code point.
-    """
-    code_point: str
-    name: str
-    general_category: str
-    canonical_combining_class: str
-    bidi_class: str
-    decomposition_type: str
-    decimal: str
-    digit: str
-    numeric_value: str
-    bidi_mirrored: str
-    unicode_1_name: str
-    iso_comment: str
-    simple_uppercase_mapping: str
-    simple_lowercase_mapping: str
-    simple_titlecase_mapping: str
-
-
-# Caches.
-unicodedata_cache: dict[str, UnicodeDatum] = {}
-
-
 # Types:
+DenormalCache = dict[str, defaultdict[str, tuple[str, ...]]]
 PropListCache = dict[str, defaultdict[str, bool]]
 PropsCache = dict[str, Property]
 PropValsCache = dict[str, dict[str, PropertyValue]]
@@ -155,11 +99,13 @@ UnicodeDataCache = dict[str, UCD]
 
 # Classes.
 class Cache:
+    forms = ('casefold', 'nfc', 'nfd', 'nfkc', 'nfkd')
     multis = ('scx',)
     ranges = ('age', 'blk', 'sc',)
     singles = ('hst',)
 
     def __init__(self) -> None:
+        self.__denormal: DenormalCache = {}
         self.__multival: MultiValCache = {}
         self.__proplist: PropListCache = {}
         self.__props: PropsCache = {}
@@ -167,6 +113,20 @@ class Cache:
         self.__rangelist: RangeListCache = {}
         self.__singleval: SingleValCache = {}
         self.__unicodedata: UnicodeDataCache = {}
+
+    @property
+    def denormal(self) -> DenormalCache:
+        if not self.__denormal:
+            for form in self.forms:
+                source = f'rev_{form}'
+                lines = util.read_resource(source)
+                json = '\n'.join(lines)
+                data = loads(json)
+                result = defaultdict(tuple)
+                for key in data:
+                    result[key] = tuple(data[key])
+                self.__denormal[form] = result
+        return self.__denormal
 
     @property
     def multival(self) -> MultiValCache:
@@ -520,11 +480,7 @@ class Character:
             ('﹤', '＜')
 
         """
-        source = f'rev_{form}'
-        if source not in self._rev_normal_cache:
-            lkp = Lookup(source)
-            self._rev_normal_cache[source] = lkp.query(self.value)
-        return self._rev_normal_cache[source]
+        return self.cache.denormal[form][self.value]
 
     def escape(self, scheme: str, codec: str = 'utf8') -> str:
         """The escaped version of the character.
@@ -638,43 +594,6 @@ class Character:
         """
         value = util.neutralize_control_characters(self.value)
         return f'{value} {self!r}'
-
-
-class Lookup:
-    """A data lookup.
-
-    :param source: The key for the data source in the RESOURCES
-        dictionary.
-    """
-    def __init__(self, source: str) -> None:
-        self.__source = source
-        lines = util.read_resource(source)
-        json = '\n'.join(lines)
-        data = loads(json)
-        self.__data = {k: tuple(data[k]) for k in data}
-
-    @property
-    def data(self) -> dict[str, tuple[str, ...]]:
-        """The data loaded from the data source."""
-        return self.__data
-
-    @property
-    def source(self) -> str:
-        """The key of the loaded data in the RESOURCES dictionary."""
-        return self.__source
-
-    def query(self, key: str) -> tuple[str, ...]:
-        """Return the value for the given string from the loaded data.
-
-        :param key: The key to lookup in the data.
-        :return: The data returned in a :class:`tuple`.
-        :rtype: tuple
-        """
-        try:
-            answer = self.data[key]
-        except KeyError:
-            answer = tuple()
-        return answer
 
 
 class MissingBool:
@@ -875,45 +794,3 @@ def get_property_values(prop: str) -> tuple[str, ...]:
         if propvals[key] not in result:
             result.append(propvals[key])
     return tuple(val.alias for val in result)
-
-
-def get_unicode_data() -> dict[str, UnicodeDatum]:
-    """Get the core Unicode data."""
-    if not unicodedata_cache:
-        lines = util.read_resource('unicodedata')
-        data = parse_unicode_data(lines)
-    return unicodedata_cache
-
-
-# Data parsing functions.
-def parse_unicode_data(lines: Sequence[str]) -> dict[str, UnicodeDatum]:
-    """Parse the Unicode data file.
-
-    :param lines: The contents of the Unicode data file.
-    :return: The Unicode data as a :class:`dict`.
-    :rtype: dict
-    """
-    if not unicodedata_cache:
-        for i, line in enumerate(lines):
-            fields = line.split(';')
-            datum = UnicodeDatum(*fields)
-            unicodedata_cache['U+' + datum.code_point] = datum
-
-            if datum.name.startswith('<') and datum.name.endswith('First>'):
-                nextline = lines[i + 1]
-                next_fields = nextline.split(';')
-                start = int(datum.code_point, 16)
-                stop = int(next_fields[0], 16) + 1
-                for n in range(start, stop):
-                    gap_fields = (f'{n:04x}'.upper(), *fields[1:])
-                    datum = UnicodeDatum(*gap_fields)
-                    unicodedata_cache['U+' + datum.code_point] = datum
-
-    return unicodedata_cache
-
-
-if __name__ == '__main__':
-    name = 'wspace'
-    cache = Cache()
-    proplist = cache.proplist
-    assert name in proplist
