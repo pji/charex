@@ -99,6 +99,11 @@ UnicodeDataCache = dict[str, UCD]
 
 # Classes.
 class Cache:
+    """Data caching mechanism for :mod:`charex`. This is used to
+    reduce the number of times data needs to be loaded from disk.
+    It shouldn't be called directly. It's intended to be used
+    through :class:`charex.Character`.
+    """
     forms = ('casefold', 'nfc', 'nfd', 'nfkc', 'nfkd')
     multis = ('scx',)
     ranges = ('age', 'blk', 'sc',)
@@ -381,6 +386,89 @@ class Cache:
 
 
 class Character:
+    """A Unicode character.
+
+    :param value: A character address string for the Unicode
+        character. See below.
+    :return: The character as a :class:`charex.Character`.
+    :rtype: charex.Character
+
+    Address Formats
+    ---------------
+    The understood str-based formats for manual input of addresses are:
+
+    *   Character: A string with length equal to one.
+    *   Code Point: The prefix "U+" followed by a hexadecimal number.
+    *   Binary String: The prefix "0b" followed by a binary number.
+    *   Hex String: The prefix "0x" followed by a hexadecimal number.
+
+    The following formats are available for use through the API:
+
+    *   Bytes: A :class:`bytes`.
+    *   Integer: An :class:`int`.
+
+    Usage
+    -----
+    To create a :class:`charex.Character` object for a single
+    character string::
+
+        >>> value = 'a'
+        >>> char = Character(value)
+        >>> char.value
+        'a'
+
+    To create a :class:`charex.Character` object for a Unicode code
+    point::
+
+        >>> value = 'U+0061'
+        >>> char = Character(value)
+        >>> char.value
+        'a'
+
+    To create a :class:`charex.Character` object for a binary string::
+
+        >>> value = '0b01100001'
+        >>> char = Character(value)
+        >>> char.value
+        'a'
+
+    To create a :class:`charex.Character` object for an octal string::
+
+        >>> value = '0o141'
+        >>> char = Character(value)
+        >>> char.value
+        'a'
+
+    To create a :class:`charex.Character` object for a decimal string::
+
+        >>> value = '0d97'
+        >>> char = Character(value)
+        >>> char.value
+        'a'
+
+    To create a :class:`charex.Character` object for a hex string::
+
+        >>> value = '0x61'
+        >>> char = Character(value)
+        >>> char.value
+        'a'
+
+    Beyond the declared properties and methods described below, most
+    Unicode properties for the character are available by calling
+    their alias as a property of :class:`charex.Character`::
+
+        >>> value = 'a'
+        >>> char = Character(value)
+        >>> char.na
+        'LATIN SMALL LETTER A'
+        >>> char.blk
+        'Basic Latin'
+        >>> char.sc
+        'Latin'
+        >>> char.suc
+        '0041'
+
+    """
     cache = Cache()
 
     def __init__(self, value: bytes | int | str) -> None:
@@ -454,7 +542,7 @@ class Character:
 
     @property
     def value(self) -> str:
-        """The code point as a string."""
+        """The Unicode character as a string."""
         return self.__value
 
     # Public methods.
