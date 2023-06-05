@@ -13,7 +13,36 @@ from charex import charex as c
 UNICODE_LEN = 0x110000
 
 
-# Test Char.
+# Test Character.
+def test_character_init():
+    """Given a string containing a character, a :class:`Character`
+    object is initialized.
+    """
+    exp_value = 'a'
+    act = c.Character(exp_value)
+    assert act.value == exp_value
+
+
+def test_character_init_with_hex():
+    """Given a string containing a hexadecimal number starting with
+    "0x", a :class:`Character` object is initialized with the character
+    at that address.
+    """
+    exp_value = 'a'
+    act = c.Character('0x0061')
+    assert act.value == exp_value
+
+
+def test_character_init_with_code_point():
+    """Given a string containing a unicode code point starting with
+    "U+", a :class:`Character` object is initialized with the character
+    at that address.
+    """
+    exp_value = 'a'
+    act = c.Character('U+0061')
+    assert act.value == exp_value
+
+
 def test_character_core_properties():
     """A :class:`charex.Character` should have the properties from the
     Unicode data database.
@@ -96,47 +125,38 @@ def test_character_singleval_properties():
     the single value lists.
     """
     char = c.Character('a')
+    assert char.bmg == '<none>'
     assert char.hst == 'NA'
     assert char.jg == 'No_Joining_Group'
     assert char.jt == 'U'
 
 
-# Test Character.
-def test_character_init():
-    """Given a string containing a character, a :class:`Character`
-    object is initialized.
-    """
-    exp_value = 'a'
-    act = c.Character(exp_value)
-    assert act.value == exp_value
-
-
-def test_character_init_with_hex():
-    """Given a string containing a hexadecimal number starting with
-    "0x", a :class:`Character` object is initialized with the character
-    at that address.
-    """
-    exp_value = 'a'
-    act = c.Character('0x0061')
-    assert act.value == exp_value
-
-
-def test_character_init_with_code_point():
-    """Given a string containing a unicode code point starting with
-    "U+", a :class:`Character` object is initialized with the character
-    at that address.
-    """
-    exp_value = 'a'
-    act = c.Character('U+0061')
-    assert act.value == exp_value
-
-
-def test_character_age():
-    """When called, :attr:`Character.age` returns the Unicode version
-    where the character was introduced.
+def test_character_derived_bpt():
+    """When called, :attr:`charex.Character.bpt` should derive and return
+    the alias for the bidi paired bracket type for the character.
     """
     char = c.Character('a')
-    assert char.age == "1.1"
+    assert char.bpt == 'n'
+
+    char = c.Character('(')
+    assert char.bpt == 'o'
+
+    char = c.Character(')')
+    assert char.bpt == 'c'
+
+
+def test_character_derived_bpb():
+    """When called, :attr:`charex.Character.bpb` should derive and return
+    the alias for the bidi paired bracket for the character.
+    """
+    char = c.Character('a')
+    assert char.bpb == '<none>'
+
+    char = c.Character('(')
+    assert char.bpb == '0029'
+
+    char = c.Character(')')
+    assert char.bpb == '0028'
 
 
 @pytest.mark.skip(reason='Slow.')
@@ -153,6 +173,14 @@ def test_character_block_all():
     for n in range(UNICODE_LEN):
         char = c.Character(n)
         char.block
+
+
+@pytest.mark.skip(reason='Slow.')
+def test_character_script_all():
+    """All Unicode characters should have a script."""
+    for n in range(UNICODE_LEN):
+        char = c.Character(n)
+        char.script
 
 
 def test_character_code_point():
@@ -227,14 +255,6 @@ def test_character_denormalize():
     exp = ("\uf907", "\uf908", "\uface")
     char = c.Character('\u9f9c')
     assert char.denormalize('nfc') == exp
-
-
-@pytest.mark.skip(reason='Slow.')
-def test_character_script_all():
-    """All Unicode characters should have a script."""
-    for n in range(UNICODE_LEN):
-        char = c.Character(n)
-        char.script
 
 
 def test_character_summarize():

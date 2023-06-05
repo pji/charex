@@ -107,7 +107,7 @@ class Cache:
     forms = ('casefold', 'nfc', 'nfd', 'nfkc', 'nfkd')
     multis = ('scx',)
     ranges = ('age', 'blk', 'sc',)
-    singles = ('hst', 'jg', 'jt',)
+    singles = ('bmg', 'hst', 'jg', 'jt',)
 
     def __init__(self) -> None:
         self.__denormal: DenormalCache = {}
@@ -532,6 +532,35 @@ class Character:
                 value = getattr(self, attr.casefold())
             result.append(value)
         return tuple(result)
+
+    # Derived properties.
+    @property
+    def bpb(self) -> str:
+        """For an opening bracket, the code point of the matching
+        closing bracket. For a closing bracket, the code point of
+        the matching opening bracket. This property is used in the
+        implementation of parenthesis matching. See Unicode Standard
+        Annex #9, "Unicode Bidirectional Algorithm" [UAX9].
+        """
+        bpb = '<none>'
+        if self.bpt != 'n':
+            bpb = self.bmg
+        return bpb
+
+    @property
+    def bpt(self) -> str:
+        """Type of a paired bracket, either opening or closing. This
+        property is used in the implementation of parenthesis matching.
+        See Unicode Standard Annex #9, "Unicode Bidirectional Algorithm"
+        [UAX9].
+        """
+        bpt = 'n'
+        if self.bc == 'ON' and self.bidi_m == 'Y':
+            if self.gc == 'Ps':
+                bpt = 'o'
+            elif self.gc == 'Pe':
+                bpt = 'c'
+        return bpt
 
     # Properties.
     @property

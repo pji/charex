@@ -1,11 +1,20 @@
 {
+    "BidiMirroring.txt": {
+        "description": "Informative mapping for substituting characters in an implementation of bidirectional mirroring. This maps a subset of characters with the Bidi_Mirrored property to other characters that normally are displayed with the corresponding mirrored glyph. When a character with the Bidi_Mirrored property has the default value for Bidi_Mirroring_Glyph, that means that no other character exists whose glyph is appropriate for character-based glyph mirroring. Implementations must then use other mechanisms to implement mirroring of those characters for the Unicode Bidirectional Algorithm. See Unicode Standard Annex #9, \"Unicode Bidirectional Algorithm\" [UAX9]. Do not confuse this property with the Bidi_Mirrored property itself.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/BidiMirroring.txt",
+        "date": [
+            2023,
+            6,
+            5
+        ]
+    },
     "Blocks.txt": {
         "description": "Blocks.txt specifies the Block property, which consists of the list of block names for ranges of code points. See D10b in Section 3.4, Characters and Encoding, of Unicode. See also the code charts in Unicode.",
         "source": "https://www.unicode.org/Public/14.0.0/ucd/Blocks.txt",
         "date": [
             2023,
             6,
-            4
+            5
         ]
     },
     "DerivedAge.txt": {
@@ -14,7 +23,7 @@
         "date": [
             2023,
             6,
-            4
+            5
         ]
     },
     "DerivedJoiningGroup.txt": {
@@ -23,7 +32,7 @@
         "date": [
             2023,
             6,
-            4
+            5
         ]
     },
     "DerivedJoiningType.txt": {
@@ -32,7 +41,7 @@
         "date": [
             2023,
             6,
-            4
+            5
         ]
     },
     "HangulSyllableType.txt": {
@@ -41,7 +50,7 @@
         "date": [
             2023,
             6,
-            4
+            5
         ]
     },
     "entities.json": {
@@ -50,7 +59,7 @@
         "date": [
             2023,
             6,
-            4
+            5
         ]
     },
     "PropertyAliases.txt": {
@@ -59,7 +68,7 @@
         "date": [
             2023,
             6,
-            4
+            5
         ]
     },
     "PropList.txt": {
@@ -68,7 +77,7 @@
         "date": [
             2023,
             6,
-            4
+            5
         ]
     },
     "PropertyValueAliases.txt": {
@@ -77,7 +86,7 @@
         "date": [
             2023,
             6,
-            4
+            5
         ]
     },
     "rev_casefold.json": {
@@ -86,7 +95,7 @@
         "date": [
             2023,
             6,
-            4
+            5
         ]
     },
     "rev_nfc.json": {
@@ -95,7 +104,7 @@
         "date": [
             2023,
             6,
-            4
+            5
         ]
     },
     "rev_nfd.json": {
@@ -104,7 +113,7 @@
         "date": [
             2023,
             6,
-            4
+            5
         ]
     },
     "rev_nfkc.json": {
@@ -113,7 +122,7 @@
         "date": [
             2023,
             6,
-            4
+            5
         ]
     },
     "rev_nfkd.json": {
@@ -122,7 +131,7 @@
         "date": [
             2023,
             6,
-            4
+            5
         ]
     },
     "Scripts.txt": {
@@ -131,7 +140,7 @@
         "date": [
             2023,
             6,
-            4
+            5
         ]
     },
     "ScriptExtensions.txt": {
@@ -140,7 +149,7 @@
         "date": [
             2023,
             6,
-            4
+            5
         ]
     },
     "UnicodeData.txt": {
@@ -149,7 +158,7 @@
         "date": [
             2023,
             6,
-            4
+            5
         ]
     }
 }

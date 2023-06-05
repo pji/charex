@@ -63,6 +63,7 @@ RESOURCES = {
     'age': 'DerivedAge.txt',
     'blocks': 'Blocks.txt',
     'blk': 'Blocks.txt',
+    'bmg': 'BidiMirroring.txt',
     'jg': 'DerivedJoiningGroup.txt',
     'jt': 'DerivedJoiningType.txt',
     'hst': 'HangulSyllableType.txt',
