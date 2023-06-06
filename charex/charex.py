@@ -156,7 +156,10 @@ class Cache:
     multis = ('scx',)
     ranges = ('age', 'blk', 'sc',)
     simples = ('ce',)
-    singles = ('bmg', 'ea', 'equideo', 'hst', 'inpc', 'jg', 'jt',)
+    singles = (
+        'bmg', 'ea', 'equideo', 'gcb', 'hst', 'inpc', 'insc', 'jg', 'jsn',
+        'jt', 'lb',
+    )
 
     def __init__(self) -> None:
         mvalue_cf = MissingCaseFold((CaseFold('<self>', 'C', '<self>'),))
@@ -291,6 +294,8 @@ class Cache:
         return self.props[prop].alias
 
     def alias_property_value(self, prop: str, value: str) -> str:
+        if not value:
+            return value
         prop = prop.casefold()
         if prop in self.propvals:
             value = self.propvals[prop][value.casefold()].alias
@@ -408,7 +413,9 @@ class Cache:
         lines = util.read_resource(source)
 
         missing_data = self.parse_missing(lines)
-        missing = missing_data[0][-1]
+        missing = ''
+        if missing_data:
+            missing = missing_data[0][-1]
 
         lines = self.strip_comments(lines)
         data = self.parse_sdt(lines)

@@ -98,9 +98,36 @@
             6
         ]
     },
-    "PropertyAliases.txt": {
-        "description": "Unicode property lookup.",
-        "source": "https://www.unicode.org/Public/14.0.0/ucd/PropertyAliases.txt",
+    "IndicSyllabicCategory.txt": {
+        "description": "A property informally defining the structural categories of syllabic components in Indic scripts. General descriptions of the property values are provided in the header section of the data file IndicSyllabicCategory.txt.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/IndicSyllabicCategory.txt",
+        "date": [
+            2023,
+            6,
+            6
+        ]
+    },
+    "Jamo.txt": {
+        "description": "The Hangul Syllable names are derived from the Jamo Short Names, as described in Chapter 3, Conformance in Unicode.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/Jamo.txt",
+        "date": [
+            2023,
+            6,
+            6
+        ]
+    },
+    "LineBreak.txt": {
+        "description": "A property for line breaking. For more information, see Unicode Standard Annex #14, \"Unicode Line Breaking Algorithm\" [UAX14].",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/LineBreak.txt",
+        "date": [
+            2023,
+            6,
+            6
+        ]
+    },
+    "GraphemeBreakProperty.txt": {
+        "description": "See Unicode Standard Annex #29, \"Unicode Text Segmentation\" [UAX29]",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/auxiliary/GraphemeBreakProperty.txt",
         "date": [
             2023,
             6,

@@ -13,11 +13,14 @@
             East Asian Width: Na
 Equivalent Unified Ideograph: <none>
             General Category: Lu
+      Grapheme Cluster Break: XX
                    Hex Digit: True
         Hangul Syllable Type: NA
    Indic Positional Category: NA
+     Indic Syllabic Category: Other
                Joining Group: No_Joining_Group
                 Joining Type: U
+                  Line Break: AL
                         Name: LATIN CAPITAL LETTER A
                       Script: Latin
          Simple Case Folding: 0061

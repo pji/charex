@@ -141,8 +141,12 @@ def test_character_singleval_properties():
     assert char.equideo == '<none>'
     assert char.hst == 'NA'
     assert char.inpc == 'NA'
+    assert char.insc == 'Other'
+    assert char.jsn == ''
     assert char.jg == 'No_Joining_Group'
     assert char.jt == 'U'
+    assert char.lb == 'AL'
+    assert char.gcb == 'XX'
 
 
 def test_character_derived_bpt():
