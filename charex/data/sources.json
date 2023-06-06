@@ -5,7 +5,7 @@
         "date": [
             2023,
             6,
-            5
+            6
         ]
     },
     "Blocks.txt": {
@@ -14,16 +14,25 @@
         "date": [
             2023,
             6,
-            5
+            6
         ]
     },
-    "DerivedAge.txt": {
-        "description": "A property defining when various code points were designated/assigned in successive versions of the Unicode Standard. For a detailed discussion of the Age property, see Section 5.14, Character Age.",
-        "source": "https://www.unicode.org/Public/14.0.0/ucd/DerivedAge.txt",
+    "CaseFolding.txt": {
+        "description": "Mapping from characters to their case-folded forms. This is an informative file containing normative derived properties. Derived from UnicodeData and SpecialCasing.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/CaseFolding.txt",
         "date": [
             2023,
             6,
-            5
+            6
+        ]
+    },
+    "CompositionExclusions.txt": {
+        "description": "A property used in normalization. See Unicode Standard Annex #15, \"Unicode Normalization Forms\" [UAX15]. Unlike other files, CompositionExclusions.txt simply lists the relevant code points.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/CompositionExclusions.txt",
+        "date": [
+            2023,
+            6,
+            6
         ]
     },
     "DerivedJoiningGroup.txt": {
@@ -32,7 +41,7 @@
         "date": [
             2023,
             6,
-            5
+            6
         ]
     },
     "DerivedJoiningType.txt": {
@@ -41,16 +50,16 @@
         "date": [
             2023,
             6,
-            5
+            6
         ]
     },
-    "HangulSyllableType.txt": {
-        "description": "The values L, V, T, LV, and LVT used in Chapter 3, Conformance in Unicode.",
-        "source": "https://www.unicode.org/Public/14.0.0/ucd/HangulSyllableType.txt",
+    "EastAsianWidth.txt": {
+        "description": "A property for determining the choice of wide versus narrow glyphs in East Asian contexts. Property values are described in Unicode Standard Annex #11, \"East Asian Width\" [UAX11].",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/EastAsianWidth.txt",
         "date": [
             2023,
             6,
-            5
+            6
         ]
     },
     "entities.json": {
@@ -59,7 +68,34 @@
         "date": [
             2023,
             6,
-            5
+            6
+        ]
+    },
+    "EquivalentUnifiedIdeograph.txt": {
+        "description": "A property which maps most CJK radicals and CJK strokes to the most reasonably equivalent CJK unified ideograph.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/EquivalentUnifiedIdeograph.txt",
+        "date": [
+            2023,
+            6,
+            6
+        ]
+    },
+    "HangulSyllableType.txt": {
+        "description": "The values L, V, T, LV, and LVT used in Chapter 3, Conformance in Unicode.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/HangulSyllableType.txt",
+        "date": [
+            2023,
+            6,
+            6
+        ]
+    },
+    "IndicPositionalCategory.txt": {
+        "description": "A property informally defining the positional categories for dependent vowels, viramas, combining marks, and other characters used in Indic scripts. General descriptions of the property values are provided in the header section of the data file IndicPositionalCategory.txt.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/IndicPositionalCategory.txt",
+        "date": [
+            2023,
+            6,
+            6
         ]
     },
     "PropertyAliases.txt": {
@@ -68,7 +104,7 @@
         "date": [
             2023,
             6,
-            5
+            6
         ]
     },
     "PropList.txt": {
@@ -77,7 +113,7 @@
         "date": [
             2023,
             6,
-            5
+            6
         ]
     },
     "PropertyValueAliases.txt": {
@@ -86,7 +122,7 @@
         "date": [
             2023,
             6,
-            5
+            6
         ]
     },
     "rev_casefold.json": {
@@ -95,7 +131,7 @@
         "date": [
             2023,
             6,
-            5
+            6
         ]
     },
     "rev_nfc.json": {
@@ -104,7 +140,7 @@
         "date": [
             2023,
             6,
-            5
+            6
         ]
     },
     "rev_nfd.json": {
@@ -113,7 +149,7 @@
         "date": [
             2023,
             6,
-            5
+            6
         ]
     },
     "rev_nfkc.json": {
@@ -122,7 +158,7 @@
         "date": [
             2023,
             6,
-            5
+            6
         ]
     },
     "rev_nfkd.json": {
@@ -131,7 +167,7 @@
         "date": [
             2023,
             6,
-            5
+            6
         ]
     },
     "Scripts.txt": {
@@ -140,7 +176,7 @@
         "date": [
             2023,
             6,
-            5
+            6
         ]
     },
     "ScriptExtensions.txt": {
@@ -149,7 +185,7 @@
         "date": [
             2023,
             6,
-            5
+            6
         ]
     },
     "UnicodeData.txt": {
@@ -158,7 +194,7 @@
         "date": [
             2023,
             6,
-            5
+            6
         ]
     }
 }

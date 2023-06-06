@@ -15,12 +15,17 @@ from charex.escape import schemes
 
 
 # Data classes.
-@dataclass(order=True)
-class ValueRange:
-    """The range of characters that have a property value."""
-    start: int
-    stop: int
-    value: str
+@dataclass
+class CaseFold:
+    """A record in CaseFolding.txt.
+
+    :param code: The address of the character.
+    :param status: The type of casefold being defined.
+    :param mapping: The casefolded character(s).
+    """
+    code: str
+    status: str
+    mapping: str
 
 
 @dataclass
@@ -86,15 +91,58 @@ class UCD:
     stc: str
 
 
+@dataclass(order=True)
+class ValueRange:
+    """The range of characters that have a property value."""
+    start: int
+    stop: int
+    value: str
+
+
 # Types:
+CaseFoldCache = defaultdict[str, tuple[CaseFold, ...]]
 DenormalCache = dict[str, defaultdict[str, tuple[str, ...]]]
 PropListCache = dict[str, defaultdict[str, bool]]
 PropsCache = dict[str, Property]
 PropValsCache = dict[str, dict[str, PropertyValue]]
 MultiValCache = dict[str, defaultdict[str, tuple[str, ...]]]
 RangeListCache = dict[str, tuple[ValueRange, ...]]
+SimpleListCache = dict[str, tuple[str, ...]]
 SingleValCache = dict[str, defaultdict[str, str]]
 UnicodeDataCache = dict[str, UCD]
+
+
+# Default values for defaultdicts.
+class MissingBool:
+    def __init__(self, value: bool) -> None:
+        self.value = value
+
+    def __call__(self) -> bool:
+        return self.value
+
+
+class MissingCaseFold:
+    def __init__(self, value: tuple[CaseFold, ...]) -> None:
+        self.value = value
+
+    def __call__(self) -> tuple[CaseFold, ...]:
+        return self.value
+
+
+class MissingTuple:
+    def __init__(self, value: tuple[str, ...]) -> None:
+        self.value = value
+
+    def __call__(self) -> tuple[str, ...]:
+        return self.value
+
+
+class MissingValue:
+    def __init__(self, value: str) -> None:
+        self.value = value
+
+    def __call__(self) -> str:
+        return self.value
 
 
 # Classes.
@@ -107,17 +155,36 @@ class Cache:
     forms = ('casefold', 'nfc', 'nfd', 'nfkc', 'nfkd')
     multis = ('scx',)
     ranges = ('age', 'blk', 'sc',)
-    singles = ('bmg', 'hst', 'jg', 'jt',)
+    simples = ('ce',)
+    singles = ('bmg', 'ea', 'equideo', 'hst', 'inpc', 'jg', 'jt',)
 
     def __init__(self) -> None:
+        mvalue_cf = MissingCaseFold((CaseFold('<self>', 'C', '<self>'),))
+        self.__casefold: CaseFoldCache = defaultdict(mvalue_cf)
         self.__denormal: DenormalCache = {}
         self.__multival: MultiValCache = {}
         self.__proplist: PropListCache = {}
         self.__props: PropsCache = {}
         self.__propvals: PropValsCache = {}
         self.__rangelist: RangeListCache = {}
+        self.__simplelist: SimpleListCache = {}
         self.__singleval: SingleValCache = {}
         self.__unicodedata: UnicodeDataCache = {}
+
+    @property
+    def casefold(self) -> CaseFoldCache:
+        if not self.__casefold:
+            data = self.parse('cf')
+            casefold: dict[str, list[CaseFold]] = {}
+            for item in data:
+                code, status, mapping, _ = item
+                n = int(code, 16)
+                c = chr(n)
+                casefold.setdefault(c, list())
+                casefold[c].append(CaseFold(code, status, mapping))
+            for c in casefold:
+                self.__casefold[c] = tuple(casefold[c])
+        return self.__casefold
 
     @property
     def denormal(self) -> DenormalCache:
@@ -172,6 +239,15 @@ class Cache:
                 for key in self.ranges
             }
         return self.__rangelist
+
+    @property
+    def simplelist(self) -> SimpleListCache:
+        if not self.__simplelist:
+            for source in self.simples:
+                data = self.parse(source)
+                values = tuple(item[0] for item in data)
+                self.__simplelist[source] = values
+        return self.__simplelist
 
     @property
     def singleval(self) -> SingleValCache:
@@ -477,9 +553,6 @@ class Character:
         self._rev_normal_cache: dict[str, tuple[str, ...]] = {}
 
     def __getattr__(self, name):
-        if name in self.__dict__:
-            return self.__dict__[name]
-
         name = name.casefold()
 
         if name in UCD.__annotations__:
@@ -510,6 +583,11 @@ class Character:
             singleval = self.cache.singleval[name]
             value = singleval[self.value]
             return value
+
+        if name in self.cache.simples:
+            simplelist = self.cache.simplelist[name]
+            address = self.code_point[2:]
+            return address in simplelist
 
         raise AttributeError(name)
 
@@ -561,6 +639,37 @@ class Character:
             elif self.gc == 'Pe':
                 bpt = 'c'
         return bpt
+
+    @property
+    def cf(self) -> str:
+        """Mapping from characters to their case-folded forms. This is
+        an informative file containing normative derived properties.
+        Derived from UnicodeData and SpecialCasing.
+        """
+        data = self.cache.casefold
+        options = {cf.status: cf for cf in data[self.value]}
+        if 'F' in options:
+            value = options['F'].mapping
+        elif 'C' in options and options['C'].mapping == '<self>':
+            value = f'{self.code_point[2:]}'
+        else:
+            value = options['C'].mapping
+        return value
+
+    @property
+    def scf(self) -> str:
+        """Mapping from characters to their case-folded forms. This is
+        an informative file containing normative derived properties.
+        Derived from UnicodeData and SpecialCasing.
+        """
+        data = self.cache.casefold
+        options = {cf.status: cf for cf in data[self.value]}
+        if 'S' in options:
+            return options['S'].mapping
+        elif 'C' in options and options['C'].mapping == '<self>':
+            return f'{self.code_point[2:]}'
+        else:
+            return options['C'].mapping
 
     # Properties.
     @property
@@ -713,30 +822,6 @@ class Character:
         return f'{value} {self!r}'
 
 
-class MissingBool:
-    def __init__(self, value: bool) -> None:
-        self.value = value
-
-    def __call__(self) -> bool:
-        return self.value
-
-
-class MissingTuple:
-    def __init__(self, value: tuple[str, ...]) -> None:
-        self.value = value
-
-    def __call__(self) -> tuple[str, ...]:
-        return self.value
-
-
-class MissingValue:
-    def __init__(self, value: str) -> None:
-        self.value = value
-
-    def __call__(self) -> str:
-        return self.value
-
-
 # Utility functions.
 def alias_property(longname: str, space: bool = True) -> str:
     if space:
@@ -878,7 +963,7 @@ def get_properties() -> tuple[str, ...]:
     To get the list of Unicode properties::
 
         >>> get_properties()                    # doctest: +ELLIPSIS
-        ('cjkAccountingNumeric', 'cjkOtherNumeric',... 'XO_NFKD')
+        ('age', 'ahex',... 'xo_nfkd')
 
     """
     props = Character.cache.props
@@ -886,7 +971,9 @@ def get_properties() -> tuple[str, ...]:
     for key in props:
         if props[key] not in result:
             result.append(props[key])
-    return tuple(prop.alias for prop in result)
+    aliases = tuple(prop.alias for prop in result)
+    saliases = sorted(alias.casefold() for alias in aliases)
+    return tuple(saliases)
 
 
 def get_property_values(prop: str) -> tuple[str, ...]:
@@ -911,3 +998,7 @@ def get_property_values(prop: str) -> tuple[str, ...]:
         if propvals[key] not in result:
             result.append(propvals[key])
     return tuple(val.alias for val in result)
+
+
+if __name__ == '__main__':
+    print('cf' in Character.__dict__)

@@ -5,6 +5,7 @@ rebuild_data
 Rebuild the data files used by :mod:`charex`. This is a maintenance
 script not intended for use beyond maintaining the package.
 """
+from blessed import Terminal
 from datetime import date
 from json import dump, load
 from pathlib import Path
@@ -72,10 +73,13 @@ for file in data:
         success = build_map(key, path)
 
     # Update the date in sources data.
+    term = Terminal()
+    color = term.red
     if success:
         update = (today.year, today.month, today.day)
         data[file]['date'] = update
-    print(success)
+        color = term.green
+    print(color + f'{success}' + term.normal)
 
 # Update the sources data.
 path = data_path / 'sources.json'

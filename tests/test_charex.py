@@ -120,13 +120,27 @@ def test_character_rangelist_properties():
     assert char.sc == 'Latin'
 
 
+def test_character_simplelist_properties():
+    """A :class:`charex.Character` should have the properties from
+    the simple lists.
+    """
+    char = c.Character('a')
+    assert char.ce is False
+
+    char = c.Character('U+0958')
+    assert char.ce is True
+
+
 def test_character_singleval_properties():
     """A :class:`charex.Character` should have the properties from
     the single value lists.
     """
     char = c.Character('a')
     assert char.bmg == '<none>'
+    assert char.ea == 'Na'
+    assert char.equideo == '<none>'
     assert char.hst == 'NA'
+    assert char.inpc == 'NA'
     assert char.jg == 'No_Joining_Group'
     assert char.jt == 'U'
 
@@ -157,6 +171,28 @@ def test_character_derived_bpb():
 
     char = c.Character(')')
     assert char.bpb == '0028'
+
+
+def test_character_cf():
+    """When called, :attr:`charex.Character.cf` should return the
+    `Case_Folding` attribute for the character.
+    """
+    char = c.Character('a')
+    assert char.cf == '0061'
+
+    char = c.Character('U+1E9E')
+    assert char.cf == '0073 0073'
+
+
+def test_character_scf():
+    """When called, :attr:`charex.Character.scf` should return the
+    `Simple_Case_Folding` attribute for the character.
+    """
+    char = c.Character('a')
+    assert char.scf == '0061'
+
+    char = c.Character('U+1E9E')
+    assert char.scf == '00DF'
 
 
 @pytest.mark.skip(reason='Slow.')

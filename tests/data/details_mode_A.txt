@@ -1,30 +1,35 @@
           A U+0041 (LATIN CAPITAL LETTER A)
           ------------------------------------------------------------
- Simple Lowercase Mapping: 0061
-     Bidi Mirroring Glyph: <none>
-      Bidi Paired Bracket: <none>
-                     Name: LATIN CAPITAL LETTER A
-        Script Extensions: Latin
-                      Age: 1.1
-                    Block: Basic Latin
-                   Script: Latin
-               Bidi Class: L
- Bidi Paired Bracket Type: n
-Canonical Combining Class: 0
-         General Category: Lu
-     Hangul Syllable Type: NA
-            Joining Group: No_Joining_Group
-             Joining Type: U
-          ASCII Hex Digit: True
-            Bidi Mirrored: N
-                Hex Digit: True
-                    UTF-8: 41
-                   UTF-16: 00 41
-                   UTF-32: 00 00 00 41
-                C encoded: \101
-              URL encoded: %41
-             HTML encoded: &#65;
-             Reverse NFKC: ᴬ U+1D2C (MODIFIER LETTER CAPITAL A)
+                         Age: 1.1
+             ASCII Hex Digit: True
+                  Bidi Class: L
+               Bidi Mirrored: N
+                       Block: Basic Latin
+        Bidi Mirroring Glyph: <none>
+         Bidi Paired Bracket: <none>
+    Bidi Paired Bracket Type: n
+   Canonical Combining Class: 0
+                Case Folding: 0061
+            East Asian Width: Na
+Equivalent Unified Ideograph: <none>
+            General Category: Lu
+                   Hex Digit: True
+        Hangul Syllable Type: NA
+   Indic Positional Category: NA
+               Joining Group: No_Joining_Group
+                Joining Type: U
+                        Name: LATIN CAPITAL LETTER A
+                      Script: Latin
+         Simple Case Folding: 0061
+           Script Extensions: Latin
+    Simple Lowercase Mapping: 0061
+                       UTF-8: 41
+                      UTF-16: 00 41
+                      UTF-32: 00 00 00 41
+                   C encoded: \101
+                 URL encoded: %41
+                HTML encoded: &#65;
+                Reverse NFKC: ᴬ U+1D2C (MODIFIER LETTER CAPITAL A)
                       Ⓐ U+24B6 (CIRCLED LATIN CAPITAL LETTER A)
                       Ａ U+FF21 (FULLWIDTH LATIN CAPITAL LETTER A)
                       𝐀 U+1D400 (MATHEMATICAL BOLD CAPITAL A)
@@ -41,7 +46,7 @@ Canonical Combining Class: 0
                       𝘼 U+1D63C (MATHEMATICAL SANS-SERIF BOLD ITALIC CAPITAL A)
                       𝙰 U+1D670 (MATHEMATICAL MONOSPACE CAPITAL A)
                       🄰 U+1F130 (SQUARED LATIN CAPITAL LETTER A)
-             Reverse NFKD: ᴬ U+1D2C (MODIFIER LETTER CAPITAL A)
+                Reverse NFKD: ᴬ U+1D2C (MODIFIER LETTER CAPITAL A)
                       Ⓐ U+24B6 (CIRCLED LATIN CAPITAL LETTER A)
                       Ａ U+FF21 (FULLWIDTH LATIN CAPITAL LETTER A)
                       𝐀 U+1D400 (MATHEMATICAL BOLD CAPITAL A)
