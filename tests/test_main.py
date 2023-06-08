@@ -348,7 +348,29 @@ def test_pf(capsys):
         'python -m charex',
         'pf',
         'emod',
-        'true',
+        'Y',
+    )
+    cli_test(exp, cmd, capsys)
+
+
+def test_pf(capsys):
+    """When invoked, pf mode should return the list characters with the
+    given property value.
+    """
+    exp = (
+        '🏻 U+1F3FB (EMOJI MODIFIER FITZPATRICK TYPE-1-2)\n'
+        '🏼 U+1F3FC (EMOJI MODIFIER FITZPATRICK TYPE-3)\n'
+        '🏽 U+1F3FD (EMOJI MODIFIER FITZPATRICK TYPE-4)\n'
+        '🏾 U+1F3FE (EMOJI MODIFIER FITZPATRICK TYPE-5)\n'
+        '🏿 U+1F3FF (EMOJI MODIFIER FITZPATRICK TYPE-6)\n'
+        '\n'
+    )
+    cmd = (
+        'python -m charex',
+        'pf',
+        'emod',
+        'y',
+        '-i'
     )
     cli_test(exp, cmd, capsys)
 

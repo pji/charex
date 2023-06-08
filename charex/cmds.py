@@ -139,6 +139,8 @@ def dt(c: str) -> Generator[str, None, None]:
     :return: Yields the result for each codec as a :class:`str`.
     :rtype: str
     """
+    width = 35
+
     def rev_normalize(char: ch.Character, form: str) -> str:
         points = char.denormalize(form)
         values = []
@@ -153,15 +155,14 @@ def dt(c: str) -> Generator[str, None, None]:
                     values.append('  ' + char.summarize())
         if not values:
             return ''
-        return ('\n' + ' ' * 22).join(v for v in values)
+        result = ('\n' + ' ' * 23).join(v for v in values)
+        return '\n' + ' ' * 23 + result + '\n'
 
-    # Gather the details for display.
-    char = ch.Character(c)
-
-    props = ch.get_properties()
-    width = 20
-    attrs = []
-    for prop in props:
+    def make_prop_line(
+        prop: str,
+        char: ch.Character
+    ) -> tuple[str, str]:
+        nonlocal width
         try:
             name = ch.expand_property(prop)
             value = getattr(char, prop)
@@ -169,32 +170,66 @@ def dt(c: str) -> Generator[str, None, None]:
                 value = ' '.join(value)
             if value and len(name) > width:
                 width = len(name)
-            attrs.append((name, value))
+            result = (name, value)
         except AttributeError:
-            pass
+            result = ('', '')
+        return result
 
-    details = (
-        *attrs,
-        ('UTF-8', char.encode('utf8')),
-        ('UTF-16', char.encode('utf_16_be')),
-        ('UTF-32', char.encode('utf_32_be')),
-        ('C encoded', char.escape('c')),
-        ('URL encoded', char.escape('url')),
-        ('HTML encoded', char.escape('html')),
-        ('Reverse Cfold', rev_normalize(char, 'casefold')),
-        ('Reverse NFC', rev_normalize(char, 'nfc')),
-        ('Reverse NFD', rev_normalize(char, 'nfd')),
-        ('Reverse NFKC', rev_normalize(char, 'nfkc')),
-        ('Reverse NFKD', rev_normalize(char, 'nfkd')),
-    )
+    # Gather the details for display.
+    char = ch.Character(c)
+    details = {
+        '': (make_prop_line(key, char) for key in ch.UCD.__annotations__ if (
+            key != 'address'
+            and key != 'decimal'
+            and key != 'digit'
+        )),
+        'proplist': (
+            make_prop_line(key, char) for key in char.cache.proplist
+        ),
+        'ranges': (make_prop_line(key, char) for key in char.cache.ranges),
+        'multis': (make_prop_line(key, char) for key in char.cache.multis),
+        'singles': (make_prop_line(key, char) for key in char.cache.singles),
+        'simples': (make_prop_line(key, char) for key in char.cache.simples),
+        'normal simple': (
+            make_prop_line(key, char) for key in char.cache.normalsimplelist
+        ),
+        'normal single': (
+            make_prop_line(key, char) for key in char.cache.normalsingleval
+        ),
+        'emoji': (make_prop_line(key, char) for key in char.cache.emoji),
+        'encoding': (val for val in (
+            ('UTF-8', char.encode('utf8')),
+            ('UTF-16', char.encode('utf_16_be')),
+            ('UTF-32', char.encode('utf_32_be')),
+            ('C encoded', char.escape('c')),
+            ('URL encoded', char.escape('url')),
+            ('HTML encoded', char.escape('html')),
+        )),
+        'denormal': (val for val in (
+            ('Reverse Cfold', rev_normalize(char, 'casefold')),
+            ('Reverse NFC', rev_normalize(char, 'nfc')),
+            ('Reverse NFD', rev_normalize(char, 'nfd')),
+            ('Reverse NFKC', rev_normalize(char, 'nfkc')),
+            ('Reverse NFKD', rev_normalize(char, 'nfkd')),
+        )),
+    }
 
     # Display the details.
     yield (' ' * 10 + char.summarize())
     yield (' ' * 10 + '-' * 60)
     for detail in details:
-        label, value = detail
-        if value:
-            yield f'{label:>{width}}: {value}'
+        if detail:
+            yield f'{"---":>{width}}  {detail.title()}'
+        for line in details[detail]:
+            try:
+                label, value = line
+            except ValueError:
+                raise ValueError(f'{line}')
+            except KeyError:
+                raise KeyError(f'{detail}')
+            if value:
+                yield f'{label:>{width}}: {value}'
+        yield ''
 
 
 def el(show_descr: bool = False) -> Generator[str, None, None]:
@@ -260,7 +295,11 @@ def nl(form: str, base: str, expand: bool = False) -> str:
     return out
 
 
-def pf(prop: str, value: str | bool) -> Generator[str, None, None]:
+def pf(
+    prop: str,
+    value: str,
+    insensitive: bool = True
+) -> Generator[str, None, None]:
     """List the characters with the given property.
 
     :param prop: The property for the filter.
@@ -268,11 +307,7 @@ def pf(prop: str, value: str | bool) -> Generator[str, None, None]:
     :return: Yields each property as a :class:`str`.
     :rtype: str
     """
-    if value == 'true' or value == 'Y':
-        value = True
-    elif value == 'false' or value == 'N':
-        value = False
-    for char in ch.filter_by_property(prop, value):
+    for char in ch.filter_by_property(prop, value, insensitive=insensitive):
         yield char.summarize()
 
 
@@ -350,5 +385,5 @@ def write_list(
 
 
 if __name__ == '__main__':
-    for s in pf('emod', True):
+    for s in pf('emod', 'Y'):
         print(s)

@@ -142,7 +142,9 @@ The following features are planned for the v0.1.1 or later releases:
     charex.Character (contra Unicode API guidelines).
 *   (Done.) Add every Emoji property to charex.Character.
 *   (Done.) Add list of characters with property.
-*   Solve Y/N vs. True/False property value question.
+*   (Done.) Organize properties in dt mode.
+*   (Done.) Solve Y/N vs. True/False property value question.
+*   Move all Y/N properties to simple lists.
 *   Allow contains and grep filtering of property values.
 *   Emoji combiner.
 *   Web API.

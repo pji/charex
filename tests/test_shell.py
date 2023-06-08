@@ -259,7 +259,28 @@ def test_pf(capsys):
     cmd = (
         'pf '
         'emod '
-        'true'
+        'Y'
+    )
+    shell_test(exp, cmd, capsys)
+
+
+def test_pf_insensitive(capsys):
+    """When invoked, pf mode should return the list characters with the
+    given property value.
+    """
+    exp = (
+        '🏻 U+1F3FB (EMOJI MODIFIER FITZPATRICK TYPE-1-2)\n'
+        '🏼 U+1F3FC (EMOJI MODIFIER FITZPATRICK TYPE-3)\n'
+        '🏽 U+1F3FD (EMOJI MODIFIER FITZPATRICK TYPE-4)\n'
+        '🏾 U+1F3FE (EMOJI MODIFIER FITZPATRICK TYPE-5)\n'
+        '🏿 U+1F3FF (EMOJI MODIFIER FITZPATRICK TYPE-6)\n'
+        '\n'
+    )
+    cmd = (
+        'pf '
+        'emod '
+        'y '
+        '-i'
     )
     shell_test(exp, cmd, capsys)
 

@@ -76,26 +76,26 @@ def test_character_derived_normalization_properties():
     assert char.nfkc_cf == '0061'
 
     # Simple list properties.
-    assert char.comp_ex is False
-    assert char.xo_nfd is False
-    assert char.xo_nfc is False
-    assert char.xo_nfkd is False
-    assert char.xo_nfkc is False
-    assert char.cwkcf is False
+    assert char.comp_ex == 'N'
+    assert char.xo_nfd == 'N'
+    assert char.xo_nfc == 'N'
+    assert char.xo_nfkd == 'N'
+    assert char.xo_nfkc == 'N'
+    assert char.cwkcf == 'N'
 
     char = c.Character('U+037a')
     assert char.fc_nfkc == '0020 03B9'
 
     char = c.Character('U+095a')
-    assert char.comp_ex is True
+    assert char.comp_ex == 'Y'
 
     # Singleton decomposition.
     char = c.Character('U+0374')
-    assert char.comp_ex is True
+    assert char.comp_ex == 'Y'
 
     # Non-starter decomposition.
     char = c.Character('U+0344')
-    assert char.comp_ex is True
+    assert char.comp_ex == 'Y'
 
 
 def test_character_emoji_properties():
@@ -103,12 +103,12 @@ def test_character_emoji_properties():
     emoji-data.txt.
     """
     char = c.Character('U+1F600')
-    assert char.emoji is True
-    assert char.epres is True
-    assert char.emod is False
-    assert char.ebase is False
-    assert char.ecomp is False
-    assert char.extpict is True
+    assert char.emoji == 'Y'
+    assert char.epres == 'Y'
+    assert char.emod == 'N'
+    assert char.ebase == 'N'
+    assert char.ecomp == 'N'
+    assert char.extpict == 'Y'
 
 
 def test_character_proplist_properties():
@@ -116,61 +116,61 @@ def test_character_proplist_properties():
     PropList.txt.
     """
     char = c.Character('a')
-    assert char.wspace is False
-    assert char.bidi_c is False
-    assert char.join_c is False
-    assert char.dash is False
-    assert char.hyphen is False
-    assert char.qmark is False
-    assert char.term is False
-    assert char.omath is False
-    assert char.hex is True
-    assert char.ahex is True
-    assert char.oalpha is False
-    assert char.ideo is False
-    assert char.dia is False
-    assert char.ext is False
-    assert char.olower is False
-    assert char.oupper is False
-    assert char.nchar is False
-    assert char.ogr_ext is False
-    assert char.idsb is False
-    assert char.idst is False
-    assert char.radical is False
-    assert char.uideo is False
-    assert char.odi is False
-    assert char.dep is False
-    assert char.sd is False
-    assert char.loe is False
-    assert char.oids is False
-    assert char.oidc is False
-    assert char.sterm is False
-    assert char.vs is False
-    assert char.pat_ws is False
-    assert char.pat_syn is False
-    assert char.pcm is False
-    assert char.ri is False
+    assert char.wspace == 'N'
+    assert char.bidi_c == 'N'
+    assert char.join_c == 'N'
+    assert char.dash == 'N'
+    assert char.hyphen == 'N'
+    assert char.qmark == 'N'
+    assert char.term == 'N'
+    assert char.omath == 'N'
+    assert char.hex is 'Y'
+    assert char.ahex is 'Y'
+    assert char.oalpha == 'N'
+    assert char.ideo == 'N'
+    assert char.dia == 'N'
+    assert char.ext == 'N'
+    assert char.olower == 'N'
+    assert char.oupper == 'N'
+    assert char.nchar == 'N'
+    assert char.ogr_ext == 'N'
+    assert char.idsb == 'N'
+    assert char.idst == 'N'
+    assert char.radical == 'N'
+    assert char.uideo == 'N'
+    assert char.odi == 'N'
+    assert char.dep == 'N'
+    assert char.sd == 'N'
+    assert char.loe == 'N'
+    assert char.oids == 'N'
+    assert char.oidc == 'N'
+    assert char.sterm == 'N'
+    assert char.vs == 'N'
+    assert char.pat_ws == 'N'
+    assert char.pat_syn == 'N'
+    assert char.pcm == 'N'
+    assert char.ri == 'N'
 
     # DerivedCoreProperties.
-    assert char.lower is True
-    assert char.upper is False
-    assert char.cased is True
-    assert char.ci is False
-    assert char.cwl is False
-    assert char.cwt is True
-    assert char.cwu is True
-    assert char.cwcf is False
-    assert char.cwcm is True
-    assert char.alpha is True
-    assert char.di is False
-    assert char.gr_base is True
-    assert char.gr_ext is False
-    assert char.gr_link is False
-    assert char.math is False
-    assert char.ids is True
-    assert char.idc is True
-    assert char.xids is True
-    assert char.xidc is True
+    assert char.lower == 'Y'
+    assert char.upper == 'N'
+    assert char.cased == 'Y'
+    assert char.ci == 'N'
+    assert char.cwl == 'N'
+    assert char.cwt == 'Y'
+    assert char.cwu == 'Y'
+    assert char.cwcf == 'N'
+    assert char.cwcm == 'Y'
+    assert char.alpha == 'Y'
+    assert char.di == 'N'
+    assert char.gr_base == 'Y'
+    assert char.gr_ext == 'N'
+    assert char.gr_link == 'N'
+    assert char.math == 'N'
+    assert char.ids == 'Y'
+    assert char.idc == 'Y'
+    assert char.xids == 'Y'
+    assert char.xidc == 'Y'
 
 
 def test_character_multilist_properties():
@@ -196,10 +196,10 @@ def test_character_simplelist_properties():
     the simple lists.
     """
     char = c.Character('a')
-    assert char.ce is False
+    assert char.ce == 'N'
 
     char = c.Character('U+0958')
-    assert char.ce is True
+    assert char.ce == 'Y'
 
 
 def test_character_singleval_properties():

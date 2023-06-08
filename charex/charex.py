@@ -214,7 +214,7 @@ class Cache:
         self.__namealias: NameAliasCache = defaultdict(tuple)
         self.__normalsimplelist: SimpleListCache = {}
         self.__normalsingleval: SingleValCache = {}
-        self.__proplist: PropListCache = {}
+        self.__proplist: SingleValCache = {}
         self.__props: PropsCache = {}
         self.__propvals: PropValsCache = {}
         self.__rangelist: RangeListCache = {}
@@ -301,7 +301,7 @@ class Cache:
         return self.__props
 
     @property
-    def proplist(self) -> PropListCache:
+    def proplist(self) -> SingleValCache:
         if not self.__proplist:
             proplist = self.parse_binary_properties('proplist')
             for prop in proplist:
@@ -539,10 +539,10 @@ class Cache:
     def parse_binary_properties(
         self,
         source: str
-    ) -> dict[str, defaultdict[str, bool]]:
+    ) -> SingleValCache:
         data = self.parse(source)
-        missing = MissingBool(False)
-        result: dict[str, defaultdict[str, bool]] = {}
+        missing = MissingValue('N')
+        result: SingleValCache = {}
         for datum in data:
             try:
                 point, key = datum
@@ -556,7 +556,7 @@ class Cache:
             if len(parts) > 1:
                 stop = int(parts[1], 16) + 1
             for i in range(start, stop):
-                result[key][chr(i)] = True
+                result[key][chr(i)] = 'Y'
 
         return result
 
@@ -768,8 +768,15 @@ class Character:
         name = name.casefold()
 
         if name in UCD.__annotations__:
-            data = self.cache.unicodedata
-            return getattr(data[self.value], name)
+            try:
+                data = self.cache.unicodedata
+                return getattr(data[self.value], name)
+
+            # There are a few undefined characters in the Unicode
+            # data file. The code points still exist, but they
+            # don't have properties.
+            except KeyError:
+                return ''
 
         if name in self.cache.proplist:
             return self.cache.proplist[name][self.value]
@@ -799,12 +806,16 @@ class Character:
         if name in self.cache.simples:
             simplelist = self.cache.simplelist[name]
             address = self.code_point[2:]
-            return address in simplelist
+            if address in simplelist:
+                return 'Y'
+            return 'N'
 
         if name in self.cache.normalsimplelist:
             simplelist = self.cache.normalsimplelist[name]
             address = self.code_point[2:].casefold()
-            return address in simplelist
+            if address in simplelist:
+                return 'Y'
+            return 'N'
 
         if name in self.cache.normalsingleval:
             singleval = self.cache.normalsingleval[name]
@@ -816,7 +827,9 @@ class Character:
         if name in self.cache.emoji:
             emoji = self.cache.emoji[name]
             address = self.code_point[2:].casefold()
-            return address in emoji
+            if address in emoji:
+                return 'Y'
+            return 'N'
 
         raise AttributeError(name)
 
@@ -1010,9 +1023,15 @@ class Character:
             '&lt;'
 
         """
-        scheme = scheme.casefold()
-        fn = schemes[scheme]
-        return fn(self.value, codec)
+        try:
+            scheme = scheme.casefold()
+            fn = schemes[scheme]
+            return fn(self.value, codec)
+
+        # UTF-16 surrogates will error when anything tries to
+        # encode them as UTF-8.
+        except UnicodeEncodeError:
+            return ''
 
     def encode(self, codec: str) -> str:
         """The hexadecimal value for the character in the given
@@ -1035,9 +1054,15 @@ class Character:
             'C3 A5'
 
         """
-        b = self.value.encode(codec)
-        hexes = [f'{x:02x}'.upper() for x in b]
-        return ' '.join(x for x in hexes)
+        try:
+            b = self.value.encode(codec)
+            hexes = [f'{x:02x}'.upper() for x in b]
+            return ' '.join(x for x in hexes)
+
+        # UTF-16 surrogates will error when anything tries to
+        # encode them as UTF-8.
+        except UnicodeEncodeError:
+            return ''
 
     def is_normal(self, form: str) -> bool:
         """Is the character normalized to the given form?
@@ -1213,15 +1238,35 @@ def fill_gaps(
 
 def filter_by_property(
     prop: str,
-    value: str | bool,
-    chars: Sequence[Character] | None = None
+    value: str,
+    chars: Sequence[Character] | None = None,
+    insensitive: bool = False
 ) -> Generator[Character, None, None]:
-    """Return all the characters with the given property value."""
+    """Return all the characters with the given property value.
+
+    :param prop: The property to filter on.
+    :param value: The pattern to filter on.
+    :param chars: (Optional.) The characters to filter. Defaults
+        to filtering all Unicode characters.
+    :param insensitive: (Optional.) Whether the matching should
+        be case insensitive. Defaults to false.
+    :return: the filtered characters as a
+        :class:`collections.abc.Generator`.
+    :rtype: collections.abc.Generator
+    """
     if not chars:
         chars = [Character(n) for n in range(util.LEN_UNICODE)]
-    for char in chars:
-        if getattr(char, prop) == value:
-            yield char
+
+    if not insensitive:
+        for char in chars:
+            if getattr(char, prop) == value:
+                yield char
+
+    else:
+        value = value.casefold()
+        for char in chars:
+            if getattr(char, prop).casefold() == value:
+                yield char
 
 
 def get_category_members(category: str) -> tuple[Character, ...]:
@@ -1280,3 +1325,10 @@ def get_property_values(prop: str) -> tuple[str, ...]:
         if propvals[key] not in result:
             result.append(propvals[key])
     return tuple(val.alias for val in result)
+
+
+if __name__ == '__main__':
+    for item in filter_by_property('emod', 'y', insensitive=True):
+        text = item.summarize()
+        btext = text.encode('utf_8', errors='replace')
+        print(btext.decode('utf_8'))

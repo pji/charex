@@ -1,92 +1,162 @@
           A U+0041 (LATIN CAPITAL LETTER A)
           ------------------------------------------------------------
-                         Age: 1.1
-             ASCII Hex Digit: True
-                  Alphabetic: True
-                  Bidi Class: L
-               Bidi Mirrored: N
-                       Block: Basic Latin
-        Bidi Mirroring Glyph: <none>
-         Bidi Paired Bracket: <none>
-    Bidi Paired Bracket Type: n
-                       Cased: True
-   Canonical Combining Class: 0
-                Case Folding: 0061
-     Changes When Casefolded: True
-     Changes When Casemapped: True
-Changes When NFKC Casefolded: True
-     Changes When Lowercased: True
-            East Asian Width: Na
-Equivalent Unified Ideograph: <none>
-            General Category: Lu
-      Grapheme Cluster Break: XX
-               Grapheme Base: True
-                   Hex Digit: True
-        Hangul Syllable Type: NA
-                 ID Continue: True
-                    ID Start: True
-   Indic Positional Category: NA
-     Indic Syllabic Category: Other
-               Joining Group: No_Joining_Group
-                Joining Type: U
-                  Line Break: AL
-           Lowercase Mapping: 0061
-                        Name: LATIN CAPITAL LETTER A
-             NFC Quick Check: Y
-             NFD Quick Check: Y
-               NFKC Casefold: 0061
-            NFKC Quick Check: Y
-            NFKD Quick Check: Y
-              Sentence Break: UP
-                      Script: Latin
-         Simple Case Folding: 0061
-           Script Extensions: Latin
-    Simple Lowercase Mapping: 0061
-           Titlecase Mapping: 0041
-           Uppercase Mapping: 0041
-                   Uppercase: True
-        Vertical Orientation: R
-                  Word Break: LE
-                XID Continue: True
-                   XID Start: True
-                       UTF-8: 41
-                      UTF-16: 00 41
-                      UTF-32: 00 00 00 41
-                   C encoded: \101
-                 URL encoded: %41
-                HTML encoded: &#65;
-                Reverse NFKC: ᴬ U+1D2C (MODIFIER LETTER CAPITAL A)
-                      Ⓐ U+24B6 (CIRCLED LATIN CAPITAL LETTER A)
-                      Ａ U+FF21 (FULLWIDTH LATIN CAPITAL LETTER A)
-                      𝐀 U+1D400 (MATHEMATICAL BOLD CAPITAL A)
-                      𝐴 U+1D434 (MATHEMATICAL ITALIC CAPITAL A)
-                      𝑨 U+1D468 (MATHEMATICAL BOLD ITALIC CAPITAL A)
-                      𝒜 U+1D49C (MATHEMATICAL SCRIPT CAPITAL A)
-                      𝓐 U+1D4D0 (MATHEMATICAL BOLD SCRIPT CAPITAL A)
-                      𝔄 U+1D504 (MATHEMATICAL FRAKTUR CAPITAL A)
-                      𝔸 U+1D538 (MATHEMATICAL DOUBLE-STRUCK CAPITAL A)
-                      𝕬 U+1D56C (MATHEMATICAL BOLD FRAKTUR CAPITAL A)
-                      𝖠 U+1D5A0 (MATHEMATICAL SANS-SERIF CAPITAL A)
-                      𝗔 U+1D5D4 (MATHEMATICAL SANS-SERIF BOLD CAPITAL A)
-                      𝘈 U+1D608 (MATHEMATICAL SANS-SERIF ITALIC CAPITAL A)
-                      𝘼 U+1D63C (MATHEMATICAL SANS-SERIF BOLD ITALIC CAPITAL A)
-                      𝙰 U+1D670 (MATHEMATICAL MONOSPACE CAPITAL A)
-                      🄰 U+1F130 (SQUARED LATIN CAPITAL LETTER A)
-                Reverse NFKD: ᴬ U+1D2C (MODIFIER LETTER CAPITAL A)
-                      Ⓐ U+24B6 (CIRCLED LATIN CAPITAL LETTER A)
-                      Ａ U+FF21 (FULLWIDTH LATIN CAPITAL LETTER A)
-                      𝐀 U+1D400 (MATHEMATICAL BOLD CAPITAL A)
-                      𝐴 U+1D434 (MATHEMATICAL ITALIC CAPITAL A)
-                      𝑨 U+1D468 (MATHEMATICAL BOLD ITALIC CAPITAL A)
-                      𝒜 U+1D49C (MATHEMATICAL SCRIPT CAPITAL A)
-                      𝓐 U+1D4D0 (MATHEMATICAL BOLD SCRIPT CAPITAL A)
-                      𝔄 U+1D504 (MATHEMATICAL FRAKTUR CAPITAL A)
-                      𝔸 U+1D538 (MATHEMATICAL DOUBLE-STRUCK CAPITAL A)
-                      𝕬 U+1D56C (MATHEMATICAL BOLD FRAKTUR CAPITAL A)
-                      𝖠 U+1D5A0 (MATHEMATICAL SANS-SERIF CAPITAL A)
-                      𝗔 U+1D5D4 (MATHEMATICAL SANS-SERIF BOLD CAPITAL A)
-                      𝘈 U+1D608 (MATHEMATICAL SANS-SERIF ITALIC CAPITAL A)
-                      𝘼 U+1D63C (MATHEMATICAL SANS-SERIF BOLD ITALIC CAPITAL A)
-                      𝙰 U+1D670 (MATHEMATICAL MONOSPACE CAPITAL A)
-                      🄰 U+1F130 (SQUARED LATIN CAPITAL LETTER A)
+                               Name: LATIN CAPITAL LETTER A
+                   General Category: Lu
+          Canonical Combining Class: 0
+                         Bidi Class: L
+                      Bidi Mirrored: N
+           Simple Lowercase Mapping: 0061
+
+                                ---  Proplist
+                        White Space: N
+                       Bidi Control: N
+                       Join Control: N
+                               Dash: N
+                             Hyphen: N
+                     Quotation Mark: N
+               Terminal Punctuation: N
+                         Other Math: N
+                          Hex Digit: Y
+                    ASCII Hex Digit: Y
+                   Other Alphabetic: N
+                        Ideographic: N
+                          Diacritic: N
+                           Extender: N
+                    Other Lowercase: N
+                    Other Uppercase: N
+            Noncharacter Code Point: N
+              Other Grapheme Extend: N
+                IDS Binary Operator: N
+               IDS Trinary Operator: N
+                            Radical: N
+                  Unified Ideograph: N
+ Other Default Ignorable Code Point: N
+                         Deprecated: N
+                        Soft Dotted: N
+            Logical Order Exception: N
+                     Other ID Start: N
+                  Other ID Continue: N
+                  Sentence Terminal: N
+                 Variation Selector: N
+                Pattern White Space: N
+                     Pattern Syntax: N
+       Prepended Concatenation Mark: N
+                 Regional Indicator: N
+                               Math: N
+                         Alphabetic: Y
+                          Lowercase: N
+                          Uppercase: Y
+                              Cased: Y
+                     Case Ignorable: N
+            Changes When Lowercased: Y
+            Changes When Uppercased: N
+            Changes When Titlecased: N
+            Changes When Casefolded: Y
+            Changes When Casemapped: Y
+                           ID Start: Y
+                        ID Continue: Y
+                          XID Start: Y
+                       XID Continue: Y
+       Default Ignorable Code Point: N
+                    Grapheme Extend: N
+                      Grapheme Base: Y
+                      Grapheme Link: N
+
+                                ---  Ranges
+                                Age: 1.1
+                              Block: Basic Latin
+                             Script: Latin
+
+                                ---  Multis
+                  Script Extensions: Latin
+
+                                ---  Singles
+               Bidi Mirroring Glyph: <none>
+                   East Asian Width: Na
+       Equivalent Unified Ideograph: <none>
+             Grapheme Cluster Break: XX
+               Hangul Syllable Type: NA
+          Indic Positional Category: NA
+            Indic Syllabic Category: Other
+                      Joining Group: No_Joining_Group
+                       Joining Type: U
+                         Line Break: AL
+                     Sentence Break: UP
+               Vertical Orientation: R
+                         Word Break: LE
+
+                                ---  Simples
+              Composition Exclusion: N
+
+                                ---  Normal Simple
+         Full Composition Exclusion: N
+                     Expands On NFD: N
+                     Expands On NFC: N
+                    Expands On NFKD: N
+                    Expands On NFKC: N
+       Changes When NFKC Casefolded: Y
+
+                                ---  Normal Single
+                    NFD Quick Check: Y
+                    NFC Quick Check: Y
+                   NFKD Quick Check: Y
+                   NFKC Quick Check: Y
+                      NFKC Casefold: 0061
+
+                                ---  Emoji
+                              Emoji: N
+                 Emoji Presentation: N
+                     Emoji Modifier: N
+                Emoji Modifier Base: N
+                    Emoji Component: N
+              Extended Pictographic: N
+
+                                ---  Encoding
+                              UTF-8: 41
+                             UTF-16: 00 41
+                             UTF-32: 00 00 00 41
+                          C encoded: \101
+                        URL encoded: %41
+                       HTML encoded: &#65;
+
+                                ---  Denormal
+                       Reverse NFKC: 
+                       ᴬ U+1D2C (MODIFIER LETTER CAPITAL A)
+                       Ⓐ U+24B6 (CIRCLED LATIN CAPITAL LETTER A)
+                       Ａ U+FF21 (FULLWIDTH LATIN CAPITAL LETTER A)
+                       𝐀 U+1D400 (MATHEMATICAL BOLD CAPITAL A)
+                       𝐴 U+1D434 (MATHEMATICAL ITALIC CAPITAL A)
+                       𝑨 U+1D468 (MATHEMATICAL BOLD ITALIC CAPITAL A)
+                       𝒜 U+1D49C (MATHEMATICAL SCRIPT CAPITAL A)
+                       𝓐 U+1D4D0 (MATHEMATICAL BOLD SCRIPT CAPITAL A)
+                       𝔄 U+1D504 (MATHEMATICAL FRAKTUR CAPITAL A)
+                       𝔸 U+1D538 (MATHEMATICAL DOUBLE-STRUCK CAPITAL A)
+                       𝕬 U+1D56C (MATHEMATICAL BOLD FRAKTUR CAPITAL A)
+                       𝖠 U+1D5A0 (MATHEMATICAL SANS-SERIF CAPITAL A)
+                       𝗔 U+1D5D4 (MATHEMATICAL SANS-SERIF BOLD CAPITAL A)
+                       𝘈 U+1D608 (MATHEMATICAL SANS-SERIF ITALIC CAPITAL A)
+                       𝘼 U+1D63C (MATHEMATICAL SANS-SERIF BOLD ITALIC CAPITAL A)
+                       𝙰 U+1D670 (MATHEMATICAL MONOSPACE CAPITAL A)
+                       🄰 U+1F130 (SQUARED LATIN CAPITAL LETTER A)
+
+                       Reverse NFKD: 
+                       ᴬ U+1D2C (MODIFIER LETTER CAPITAL A)
+                       Ⓐ U+24B6 (CIRCLED LATIN CAPITAL LETTER A)
+                       Ａ U+FF21 (FULLWIDTH LATIN CAPITAL LETTER A)
+                       𝐀 U+1D400 (MATHEMATICAL BOLD CAPITAL A)
+                       𝐴 U+1D434 (MATHEMATICAL ITALIC CAPITAL A)
+                       𝑨 U+1D468 (MATHEMATICAL BOLD ITALIC CAPITAL A)
+                       𝒜 U+1D49C (MATHEMATICAL SCRIPT CAPITAL A)
+                       𝓐 U+1D4D0 (MATHEMATICAL BOLD SCRIPT CAPITAL A)
+                       𝔄 U+1D504 (MATHEMATICAL FRAKTUR CAPITAL A)
+                       𝔸 U+1D538 (MATHEMATICAL DOUBLE-STRUCK CAPITAL A)
+                       𝕬 U+1D56C (MATHEMATICAL BOLD FRAKTUR CAPITAL A)
+                       𝖠 U+1D5A0 (MATHEMATICAL SANS-SERIF CAPITAL A)
+                       𝗔 U+1D5D4 (MATHEMATICAL SANS-SERIF BOLD CAPITAL A)
+                       𝘈 U+1D608 (MATHEMATICAL SANS-SERIF ITALIC CAPITAL A)
+                       𝘼 U+1D63C (MATHEMATICAL SANS-SERIF BOLD ITALIC CAPITAL A)
+                       𝙰 U+1D670 (MATHEMATICAL MONOSPACE CAPITAL A)
+                       🄰 U+1F130 (SQUARED LATIN CAPITAL LETTER A)
+
+
 

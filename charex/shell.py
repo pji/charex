@@ -143,7 +143,8 @@ def mode_dt(args: Namespace) -> None:
     :rtype: NoneType
     """
     for line in cmds.dt(args.codepoint):
-        print(line)
+        bline = line.encode('utf_8', errors='replace')
+        print(bline.decode('utf_8'))
     print()
 
 
@@ -218,8 +219,13 @@ def mode_pf(args: Namespace) -> None:
     :return: None.
     :rtype: NoneType
     """
-    for line in cmds.pf(args.prop, args.value):
-        print(line)
+    for line in cmds.pf(
+        args.prop,
+        args.value,
+        insensitive=args.insensitive
+    ):
+        bline = line.encode('utf_8', errors='replace')
+        print(bline.decode('utf_8'))
     print()
 
 
@@ -683,6 +689,11 @@ def parse_pf(spa: _SubParsersAction) -> None:
         'value',
         help='The value to filter with.',
         action='store'
+    )
+    sp.add_argument(
+        '--insensitive', '-i',
+        help='The matching is case insensitive.',
+        action='store_true',
     )
     sp.set_defaults(func=mode_pf)
 
