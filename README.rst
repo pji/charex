@@ -137,32 +137,17 @@ The following features are planned for the v0.1.1 or later releases:
 *   (Done.) Added Unicode data properties.
 *   (Done.) Tool for recreating reverse normalization data.
 *   (Done.) Remove hardcoded properties and names from `cmd.dt()`.
+*   (Done.) Make `Character.na` return only the defined character name.
+*   (Done.) Add every non-Unihan, non-Emoji property to
+    charex.Character (contra Unicode API guidelines).
+*   (Done.) Add every Emoji property to charex.Character.
 *   (Started.) Add list of characters with property.
 *   Emoji combiner.
 *   Web API.
 *   Basic doctests for all public classes and functions.
-*   Add every property to charex.Character (contra Unicode API guidelines):
-
-    *   (Done.) Name,
-    *   Name_Alias,
-    *   (Done.) Block,
-    *   (Done.) Age,
-    *   (Done.) General_Category,
-    *   (Done.) Script,
-    *   (Done.) Script_Extensions,
-    *   (Done.) White_Space,
-    *   (Done.) Alphabetic,
-    *   (Done.) Hangul_Syllable_Type,
-    *   (Done.) Noncharacter_Code_Point,
-    *   (Done.) Default_Ignorable_Code_Point,
-    *   (Done.) Deprecated,
-    *   Logical_Order_Exception,
-    *   Variation_Selector,
-    *   And more....
-    
+*   Add every Unihan property to charex.Character.
 *   Registration for character set codecs.
 *   Support for more versions of Unicode.
-*   Make `Character.na` return only the defined character name.
 *   Remove long name properties.
 *   Create `Character` properties dynamically.
 

@@ -211,6 +211,18 @@ def mode_nl(args: Namespace) -> None:
     print()
 
 
+def mode_pf(args: Namespace) -> None:
+    """List characters with a given property value.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    for line in cmds.pf(args.prop, args.value):
+        print(line)
+    print()
+
+
 def mode_sh(args: Namespace | None) -> None:
     """Run in an interactive shell.
 
@@ -646,6 +658,33 @@ def parse_nl(spa: _SubParsersAction) -> None:
         action='store_true'
     )
     sp.set_defaults(func=mode_nl)
+
+
+@subparser
+def parse_pf(spa: _SubParsersAction) -> None:
+    """Add the pf mode subparser.
+
+    :param spa: The subparser action used to add a new subparser to
+        the main parser.
+    :return: None.
+    :rtype: NoneType
+    """
+    sp = spa.add_parser(
+        'pf',
+        aliases=['propfilter', 'pfilt',],
+        description='List characters with a given property value.'
+    )
+    sp.add_argument(
+        'prop',
+        help='The property for the filter.',
+        action='store'
+    )
+    sp.add_argument(
+        'value',
+        help='The value to filter with.',
+        action='store'
+    )
+    sp.set_defaults(func=mode_pf)
 
 
 @subparser

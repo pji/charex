@@ -260,6 +260,22 @@ def nl(form: str, base: str, expand: bool = False) -> str:
     return out
 
 
+def pf(prop: str, value: str | bool) -> Generator[str, None, None]:
+    """List the characters with the given property.
+
+    :param prop: The property for the filter.
+    :param value: The value to filter on.
+    :return: Yields each property as a :class:`str`.
+    :rtype: str
+    """
+    if value == 'true':
+        value = True
+    elif value == 'false':
+        value = False
+    for char in ch.filter_by_property(prop, value):
+        yield char.summarize()
+
+
 def up(show_long: bool = False) -> Generator[str, None, None]:
     """List the Unicode properties.
 
@@ -331,3 +347,8 @@ def write_list(
             yield row
         else:
             yield item
+
+
+if __name__ == '__main__':
+    for s in pf('emod', True):
+        print(s)

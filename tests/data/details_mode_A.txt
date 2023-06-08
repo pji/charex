@@ -2,30 +2,53 @@
           ------------------------------------------------------------
                          Age: 1.1
              ASCII Hex Digit: True
+                  Alphabetic: True
                   Bidi Class: L
                Bidi Mirrored: N
                        Block: Basic Latin
         Bidi Mirroring Glyph: <none>
          Bidi Paired Bracket: <none>
     Bidi Paired Bracket Type: n
+                       Cased: True
    Canonical Combining Class: 0
                 Case Folding: 0061
+     Changes When Casefolded: True
+     Changes When Casemapped: True
+Changes When NFKC Casefolded: True
+     Changes When Lowercased: True
             East Asian Width: Na
 Equivalent Unified Ideograph: <none>
             General Category: Lu
       Grapheme Cluster Break: XX
+               Grapheme Base: True
                    Hex Digit: True
         Hangul Syllable Type: NA
+                 ID Continue: True
+                    ID Start: True
    Indic Positional Category: NA
      Indic Syllabic Category: Other
                Joining Group: No_Joining_Group
                 Joining Type: U
                   Line Break: AL
+           Lowercase Mapping: 0061
                         Name: LATIN CAPITAL LETTER A
+             NFC Quick Check: Y
+             NFD Quick Check: Y
+               NFKC Casefold: 0061
+            NFKC Quick Check: Y
+            NFKD Quick Check: Y
+              Sentence Break: UP
                       Script: Latin
          Simple Case Folding: 0061
            Script Extensions: Latin
     Simple Lowercase Mapping: 0061
+           Titlecase Mapping: 0041
+           Uppercase Mapping: 0041
+                   Uppercase: True
+        Vertical Orientation: R
+                  Word Break: LE
+                XID Continue: True
+                   XID Start: True
                        UTF-8: 41
                       UTF-16: 00 41
                       UTF-32: 00 00 00 41

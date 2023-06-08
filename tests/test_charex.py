@@ -61,6 +61,56 @@ def test_character_core_properties():
     assert char.stc == '0041'
 
 
+def test_character_derived_normalization_properties():
+    """A :class:`charex.Character` should have the properties from
+    DerivedNormalizationProperties.txt.
+    """
+    char = c.Character('a')
+
+    # Single value properties.
+    assert char.fc_nfkc == ''
+    assert char.nfd_qc == 'Y'
+    assert char.nfc_qc == 'Y'
+    assert char.nfkd_qc == 'Y'
+    assert char.nfkc_qc == 'Y'
+    assert char.nfkc_cf == '0061'
+
+    # Simple list properties.
+    assert char.comp_ex is False
+    assert char.xo_nfd is False
+    assert char.xo_nfc is False
+    assert char.xo_nfkd is False
+    assert char.xo_nfkc is False
+    assert char.cwkcf is False
+
+    char = c.Character('U+037a')
+    assert char.fc_nfkc == '0020 03B9'
+
+    char = c.Character('U+095a')
+    assert char.comp_ex is True
+
+    # Singleton decomposition.
+    char = c.Character('U+0374')
+    assert char.comp_ex is True
+
+    # Non-starter decomposition.
+    char = c.Character('U+0344')
+    assert char.comp_ex is True
+
+
+def test_character_emoji_properties():
+    """A :class:`charex.Character` should have the properties from
+    emoji-data.txt.
+    """
+    char = c.Character('U+1F600')
+    assert char.emoji is True
+    assert char.epres is True
+    assert char.emod is False
+    assert char.ebase is False
+    assert char.ecomp is False
+    assert char.extpict is True
+
+
 def test_character_proplist_properties():
     """A :class:`charex.Character` should have the properties from
     PropList.txt.
@@ -100,6 +150,27 @@ def test_character_proplist_properties():
     assert char.pat_syn is False
     assert char.pcm is False
     assert char.ri is False
+
+    # DerivedCoreProperties.
+    assert char.lower is True
+    assert char.upper is False
+    assert char.cased is True
+    assert char.ci is False
+    assert char.cwl is False
+    assert char.cwt is True
+    assert char.cwu is True
+    assert char.cwcf is False
+    assert char.cwcm is True
+    assert char.alpha is True
+    assert char.di is False
+    assert char.gr_base is True
+    assert char.gr_ext is False
+    assert char.gr_link is False
+    assert char.math is False
+    assert char.ids is True
+    assert char.idc is True
+    assert char.xids is True
+    assert char.xidc is True
 
 
 def test_character_multilist_properties():
@@ -147,6 +218,24 @@ def test_character_singleval_properties():
     assert char.jt == 'U'
     assert char.lb == 'AL'
     assert char.gcb == 'XX'
+    assert char.sb == 'LO'
+    assert char.vo == 'R'
+    assert char.wb == 'LE'
+
+
+def test_character_speccase():
+    """A :class:`charex.Character` should have the properties from the
+    SpecialCasing.txt file.
+    """
+    char = c.Character('a')
+    assert char.lc == '0061'
+    assert char.tc == '0041'
+    assert char.uc == '0041'
+
+    char = c.Character('U+FB00')
+    assert char.lc == 'FB00'
+    assert char.tc == '0046 0066'
+    assert char.uc == '0046 0046'
 
 
 def test_character_derived_bpt():

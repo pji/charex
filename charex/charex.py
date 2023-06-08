@@ -5,7 +5,7 @@ charex
 Tools for exploring unicode characters and other character sets.
 """
 from collections import defaultdict
-from collections.abc import Sequence
+from collections.abc import Generator, Sequence
 from dataclasses import dataclass
 from json import loads
 import unicodedata as ucd
@@ -29,6 +29,22 @@ class CaseFold:
 
 
 @dataclass
+class NameAlias:
+    """A record in NameAliases.txt.
+
+    :param code: The address of the character.
+    :param alias: The name alias for the character.
+    :param type_: The type of name alias.
+    """
+    code: str
+    alias: str
+    type_: str
+
+    def __str__(self) -> str:
+        return f'<{self.type_}>{self.alias}'
+
+
+@dataclass
 class Property:
     alias: str
     long: str
@@ -41,6 +57,15 @@ class PropertyValue:
     alias: str
     long: str
     other: tuple[str, ...]
+
+
+@dataclass
+class SpecialCase:
+    code: str
+    lower: str
+    title: str
+    upper: str
+    condition_list: str
 
 
 @dataclass
@@ -106,9 +131,12 @@ PropListCache = dict[str, defaultdict[str, bool]]
 PropsCache = dict[str, Property]
 PropValsCache = dict[str, dict[str, PropertyValue]]
 MultiValCache = dict[str, defaultdict[str, tuple[str, ...]]]
+NameAliasCache = defaultdict[str, tuple[NameAlias, ...]]
 RangeListCache = dict[str, tuple[ValueRange, ...]]
+Records = tuple[tuple[str, ...], ...]
 SimpleListCache = dict[str, tuple[str, ...]]
 SingleValCache = dict[str, defaultdict[str, str]]
+SpecCaseCache = defaultdict[str, tuple[SpecialCase, ...]]
 UnicodeDataCache = dict[str, UCD]
 
 
@@ -126,6 +154,14 @@ class MissingCaseFold:
         self.value = value
 
     def __call__(self) -> tuple[CaseFold, ...]:
+        return self.value
+
+
+class MissingSpecialCase:
+    def __init__(self, value: tuple[SpecialCase, ...]) -> None:
+        self.value = value
+
+    def __call__(self) -> tuple[SpecialCase, ...]:
         return self.value
 
 
@@ -158,20 +194,33 @@ class Cache:
     simples = ('ce',)
     singles = (
         'bmg', 'ea', 'equideo', 'gcb', 'hst', 'inpc', 'insc', 'jg', 'jsn',
-        'jt', 'lb',
+        'jt', 'lb', 'sb', 'vo', 'wb',
     )
+    scases = ('lc', 'tc', 'uc',)
 
     def __init__(self) -> None:
         mvalue_cf = MissingCaseFold((CaseFold('<self>', 'C', '<self>'),))
+        mvalue_sc = MissingSpecialCase((SpecialCase(
+            '<self>',
+            '<slc>',
+            '<stc>',
+            '<suc>',
+            ''
+        ),))
         self.__casefold: CaseFoldCache = defaultdict(mvalue_cf)
         self.__denormal: DenormalCache = {}
+        self.__emoji: SimpleListCache = {}
         self.__multival: MultiValCache = {}
+        self.__namealias: NameAliasCache = defaultdict(tuple)
+        self.__normalsimplelist: SimpleListCache = {}
+        self.__normalsingleval: SingleValCache = {}
         self.__proplist: PropListCache = {}
         self.__props: PropsCache = {}
         self.__propvals: PropValsCache = {}
         self.__rangelist: RangeListCache = {}
         self.__simplelist: SimpleListCache = {}
         self.__singleval: SingleValCache = {}
+        self.__speccase: SpecCaseCache = defaultdict(mvalue_sc)
         self.__unicodedata: UnicodeDataCache = {}
 
     @property
@@ -204,6 +253,12 @@ class Cache:
         return self.__denormal
 
     @property
+    def emoji(self) -> SimpleListCache:
+        if not self.__emoji:
+            self.__emoji = self.get_emoji()
+        return self.__emoji
+
+    @property
     def multival(self) -> MultiValCache:
         if not self.__multival:
             self.__multival = {
@@ -211,6 +266,33 @@ class Cache:
                 for key in self.multis
             }
         return self.__multival
+
+    @property
+    def namealias(self) -> NameAliasCache:
+        if not self.__namealias:
+            data = self.parse('name_alias')
+            namealias: dict[str, list[NameAlias]] = {}
+            for item in data:
+                code, alias, type_ = item
+                n = int(code, 16)
+                c = chr(n)
+                namealias.setdefault(c, list())
+                namealias[c].append(NameAlias(code, alias, type_))
+            for c in namealias:
+                self.__namealias[c] = tuple(namealias[c])
+        return self.__namealias
+
+    @property
+    def normalsimplelist(self) -> SimpleListCache:
+        if not self.__normalsimplelist:
+            self.__normalsimplelist = self.get_normalprops()[0]
+        return self.__normalsimplelist
+
+    @property
+    def normalsingleval(self) -> SingleValCache:
+        if not self.__normalsingleval:
+            self.__normalsingleval = self.get_normalprops()[1]
+        return self.__normalsingleval
 
     @property
     def props(self) -> PropsCache:
@@ -226,6 +308,13 @@ class Cache:
                 alias = alias_property(prop, True)
                 alias = alias.casefold()
                 self.__proplist[alias] = proplist[prop]
+
+            dproplist = self.parse_binary_properties('dproplist')
+            for prop in dproplist:
+                alias = alias_property(prop, True)
+                alias = alias.casefold()
+                self.__proplist[alias] = dproplist[prop]
+
         return self.__proplist
 
     @property
@@ -248,7 +337,7 @@ class Cache:
         if not self.__simplelist:
             for source in self.simples:
                 data = self.parse(source)
-                values = tuple(item[0] for item in data)
+                values = self.parse_simple_ranges(data)
                 self.__simplelist[source] = values
         return self.__simplelist
 
@@ -260,6 +349,22 @@ class Cache:
                 for key in self.singles
             }
         return self.__singleval
+
+    @property
+    def speccase(self) -> SpecCaseCache:
+        if not self.__speccase:
+            data = self.parse('speccase')
+            result: dict[str, list[SpecialCase]] = {}
+            for item in data:
+                code, lc, tc, uc, conds, *_ = item
+                n = int(code, 16)
+                c = chr(n)
+                sc = SpecialCase(code, lc, tc, uc, conds)
+                result.setdefault(c, list())
+                result[c].append(sc)
+            for c in result:
+                self.__speccase[c] = tuple(result[c])
+        return self.__speccase
 
     @property
     def unicodedata(self) -> UnicodeDataCache:
@@ -301,6 +406,32 @@ class Cache:
             value = self.propvals[prop][value.casefold()].alias
         return value
 
+    def get_emoji(self) -> SimpleListCache:
+        lines = util.read_resource('emoji')
+        docs: list[list[str]] = []
+        doc: list[str] = list()
+        for line in lines:
+            if line.startswith('# ====='):
+                docs.append(doc)
+                doc = list()
+            doc.append(line)
+        else:
+            docs.append(doc)
+
+        simples: SimpleListCache = {}
+        for doc in docs:
+            lines = self.strip_comments(doc)
+            if not lines:
+                continue
+            data = self.parse_sdt(lines)
+
+            prop = data[0][1].casefold()
+            prop = self.alias_property(prop)
+
+            result = self.parse_simple_ranges(data)
+            simples[prop.casefold()] = tuple(result)
+        return simples
+
     def get_multiple_value_property(
         self,
         source: str
@@ -318,6 +449,45 @@ class Cache:
             for i in range(start, stop):
                 values[chr(i)] = tuple(value.split())
         return values
+
+    def get_normalprops(self) -> tuple[SimpleListCache, SingleValCache]:
+        lines = util.read_resource('dnormprops')
+        docs: list[list[str]] = []
+        buffer: list[str] = []
+        for line in lines:
+            if 'property:' in line.casefold():
+                docs.append(buffer)
+                buffer = list()
+            buffer.append(line)
+        else:
+            docs.append(buffer)
+
+        simples: SimpleListCache = {}
+        singles: SingleValCache = {}
+        for doc in docs:
+            mline = self.parse_missing(doc)
+            lines = self.strip_comments(doc)
+            if not lines:
+                continue
+
+            data = self.parse_sdt(lines)
+            prop = data[0][1].casefold()
+            prop = self.alias_property(prop)
+
+            mvalue = ''
+            if mline:
+                mvalue = mline[0][-1]
+                mvalue = self.alias_property_value(prop, mvalue)
+
+            if len(data[0]) == 3:
+                data = tuple((item[0], item[2]) for item in data)
+                singles[prop.casefold()] = self.parse_single(
+                    data, mvalue, prop
+                )
+            else:
+                result = self.parse_simple_ranges(data)
+                simples[prop.casefold()] = tuple(result)
+        return simples, singles
 
     def get_properties(self) -> PropsCache:
         data = self.parse('props')
@@ -358,17 +528,7 @@ class Cache:
         missing, data = self.parse_with_missing(source)
         missing = self.alias_property_value(source, missing)
         mvalue = MissingValue(missing)
-        result = defaultdict(mvalue)
-        for datum in data:
-            points, value = datum
-            parts = points.split('..')
-            start = int(parts[0], 16)
-            stop = start + 1
-            if len(parts) > 1:
-                stop = int(parts[1], 16) + 1
-            for i in range(start, stop):
-                result[chr(i)] = self.alias_property_value(source, value)
-        return result
+        return self.parse_single(data, missing, source)
 
     def parse(self, source: str) -> tuple[tuple[str, ...], ...]:
         lines = util.read_resource(source)
@@ -384,7 +544,10 @@ class Cache:
         missing = MissingBool(False)
         result: dict[str, defaultdict[str, bool]] = {}
         for datum in data:
-            point, key = datum
+            try:
+                point, key = datum
+            except ValueError:
+                raise ValueError(datum)
             if key not in result:
                 result[key] = defaultdict(missing)
             parts = point.split('..')
@@ -397,6 +560,14 @@ class Cache:
 
         return result
 
+    def parse_docs(self, source: str) -> tuple[tuple[str, ...], ...]:
+        lines = util.read_resource(source)
+        text = '\n'.join(lines)
+        docs = text.split(
+            '# ================================================'
+        )
+        return tuple(tuple(doc.split('\n')) for doc in docs)
+
     def parse_missing(
         self,
         lines: Sequence[str]
@@ -406,20 +577,20 @@ class Cache:
         lines = self.strip_comments(lines)
         return self.parse_sdt(lines)
 
-    def parse_with_missing(
+    def parse_simple_ranges(
         self,
-        source: str
-    ) -> tuple[str, tuple[tuple[str, ...], ...]]:
-        lines = util.read_resource(source)
-
-        missing_data = self.parse_missing(lines)
-        missing = ''
-        if missing_data:
-            missing = missing_data[0][-1]
-
-        lines = self.strip_comments(lines)
-        data = self.parse_sdt(lines)
-        return missing, data
+        data: tuple[tuple[str, ...], ...]
+    ) -> tuple[str, ...]:
+        result = list()
+        for points, *_ in data:
+            parts = points.split('..')
+            start = int(parts[0], 16)
+            stop = start + 1
+            if len(parts) > 1:
+                stop = int(parts[1], 16) + 1
+            for i in range(start, stop):
+                result.append(f'{i:04x}'.casefold())
+        return tuple(result)
 
     def parse_range_for_value(
         self,
@@ -453,6 +624,40 @@ class Cache:
             fields = (part.strip() for part in parts)
             result.append(tuple(fields))
         return tuple(result)
+
+    def parse_single(
+        self,
+        data: Records,
+        missing: str,
+        source: str
+    ) -> defaultdict[str, str]:
+        mvalue = MissingValue(missing)
+        result = defaultdict(mvalue)
+        for datum in data:
+            points, value = datum
+            parts = points.split('..')
+            start = int(parts[0], 16)
+            stop = start + 1
+            if len(parts) > 1:
+                stop = int(parts[1], 16) + 1
+            for i in range(start, stop):
+                result[chr(i)] = self.alias_property_value(source, value)
+        return result
+
+    def parse_with_missing(
+        self,
+        source: str
+    ) -> tuple[str, tuple[tuple[str, ...], ...]]:
+        lines = util.read_resource(source)
+
+        missing_data = self.parse_missing(lines)
+        missing = ''
+        if missing_data:
+            missing = missing_data[0][-1]
+
+        lines = self.strip_comments(lines)
+        data = self.parse_sdt(lines)
+        return missing, data
 
     def strip_comments(self, lines: Sequence[str]) -> tuple[str, ...]:
         """Remove the comments and blank lines from a data file.
@@ -596,6 +801,23 @@ class Character:
             address = self.code_point[2:]
             return address in simplelist
 
+        if name in self.cache.normalsimplelist:
+            simplelist = self.cache.normalsimplelist[name]
+            address = self.code_point[2:].casefold()
+            return address in simplelist
+
+        if name in self.cache.normalsingleval:
+            singleval = self.cache.normalsingleval[name]
+            value = singleval[self.value]
+            if value == '<code point>':
+                value = self.code_point[2:]
+            return value
+
+        if name in self.cache.emoji:
+            emoji = self.cache.emoji[name]
+            address = self.code_point[2:].casefold()
+            return address in emoji
+
         raise AttributeError(name)
 
     def __repr__(self) -> str:
@@ -664,6 +886,22 @@ class Character:
         return value
 
     @property
+    def lc(self) -> str:
+        cases = self.cache.speccase[self.value]
+        values = []
+        for case_ in cases:
+            code = case_.lower
+            if code.startswith('<') and code.endswith('>'):
+                code = getattr(self, code[1:-1])
+                if not code:
+                    code = self.code_point[2:]
+            cond = case_.condition_list
+            if cond:
+                cond = f'({cond})'
+            values.append(f'{cond}{code}')
+        return ';'.join(values)
+
+    @property
     def scf(self) -> str:
         """Mapping from characters to their case-folded forms. This is
         an informative file containing normative derived properties.
@@ -678,7 +916,43 @@ class Character:
         else:
             return options['C'].mapping
 
+    @property
+    def tc(self) -> str:
+        cases = self.cache.speccase[self.value]
+        values = []
+        for case_ in cases:
+            code = case_.title
+            if code.startswith('<') and code.endswith('>'):
+                code = getattr(self, code[1:-1])
+                if not code:
+                    code = self.code_point[2:]
+            cond = case_.condition_list
+            if cond:
+                cond = f'({cond})'
+            values.append(f'{cond}{code}')
+        return ';'.join(values)
+
+    @property
+    def uc(self) -> str:
+        cases = self.cache.speccase[self.value]
+        values = []
+        for case_ in cases:
+            code = case_.upper
+            if code.startswith('<') and code.endswith('>'):
+                code = getattr(self, code[1:-1])
+                if not code:
+                    code = self.code_point[2:]
+            cond = case_.condition_list
+            if cond:
+                cond = f'({cond})'
+            values.append(f'{cond}{code}')
+        return ';'.join(values)
+
     # Properties.
+    @property
+    def name_alias(self) -> str:
+        return ' '.join(f'{a}' for a in self.cache.namealias[self.value])
+
     @property
     def code_point(self) -> str:
         """The address for the character in the Unicode database."""
@@ -939,14 +1213,15 @@ def fill_gaps(
 
 def filter_by_property(
     prop: str,
-    value: str,
+    value: str | bool,
     chars: Sequence[Character] | None = None
-) -> tuple[Character, ...]:
+) -> Generator[Character, None, None]:
     """Return all the characters with the given property value."""
     if not chars:
         chars = [Character(n) for n in range(util.LEN_UNICODE)]
-    hits = [char for char in chars if getattr(char, prop) == value]
-    return tuple(hits)
+    for char in chars:
+        if getattr(char, prop) == value:
+            yield char
 
 
 def get_category_members(category: str) -> tuple[Character, ...]:
@@ -1005,7 +1280,3 @@ def get_property_values(prop: str) -> tuple[str, ...]:
         if propvals[key] not in result:
             result.append(propvals[key])
     return tuple(val.alias for val in result)
-
-
-if __name__ == '__main__':
-    print('cf' in Character.__dict__)

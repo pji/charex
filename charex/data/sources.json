@@ -5,7 +5,7 @@
         "date": [
             2023,
             6,
-            6
+            7
         ]
     },
     "Blocks.txt": {
@@ -14,7 +14,7 @@
         "date": [
             2023,
             6,
-            6
+            7
         ]
     },
     "CaseFolding.txt": {
@@ -23,7 +23,7 @@
         "date": [
             2023,
             6,
-            6
+            7
         ]
     },
     "CompositionExclusions.txt": {
@@ -32,7 +32,16 @@
         "date": [
             2023,
             6,
-            6
+            7
+        ]
+    },
+    "DerivedCoreProperties.txt": {
+        "description": "Derived Core Properties.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/DerivedCoreProperties.txt",
+        "date": [
+            2023,
+            6,
+            7
         ]
     },
     "DerivedJoiningGroup.txt": {
@@ -41,7 +50,7 @@
         "date": [
             2023,
             6,
-            6
+            7
         ]
     },
     "DerivedJoiningType.txt": {
@@ -50,16 +59,25 @@
         "date": [
             2023,
             6,
-            6
+            7
         ]
     },
-    "EastAsianWidth.txt": {
-        "description": "A property for determining the choice of wide versus narrow glyphs in East Asian contexts. Property values are described in Unicode Standard Annex #11, \"East Asian Width\" [UAX11].",
-        "source": "https://www.unicode.org/Public/14.0.0/ucd/EastAsianWidth.txt",
+    "DerivedNormalizationProps.txt": {
+        "description": "Derived normalization properties.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/DerivedNormalizationProps.txt",
         "date": [
             2023,
             6,
-            6
+            7
+        ]
+    },
+    "emoji-data.txt": {
+        "description": "Core emoji data.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/emoji/emoji-data.txt",
+        "date": [
+            2023,
+            6,
+            7
         ]
     },
     "entities.json": {
@@ -68,7 +86,7 @@
         "date": [
             2023,
             6,
-            6
+            7
         ]
     },
     "EquivalentUnifiedIdeograph.txt": {
@@ -77,52 +95,7 @@
         "date": [
             2023,
             6,
-            6
-        ]
-    },
-    "HangulSyllableType.txt": {
-        "description": "The values L, V, T, LV, and LVT used in Chapter 3, Conformance in Unicode.",
-        "source": "https://www.unicode.org/Public/14.0.0/ucd/HangulSyllableType.txt",
-        "date": [
-            2023,
-            6,
-            6
-        ]
-    },
-    "IndicPositionalCategory.txt": {
-        "description": "A property informally defining the positional categories for dependent vowels, viramas, combining marks, and other characters used in Indic scripts. General descriptions of the property values are provided in the header section of the data file IndicPositionalCategory.txt.",
-        "source": "https://www.unicode.org/Public/14.0.0/ucd/IndicPositionalCategory.txt",
-        "date": [
-            2023,
-            6,
-            6
-        ]
-    },
-    "IndicSyllabicCategory.txt": {
-        "description": "A property informally defining the structural categories of syllabic components in Indic scripts. General descriptions of the property values are provided in the header section of the data file IndicSyllabicCategory.txt.",
-        "source": "https://www.unicode.org/Public/14.0.0/ucd/IndicSyllabicCategory.txt",
-        "date": [
-            2023,
-            6,
-            6
-        ]
-    },
-    "Jamo.txt": {
-        "description": "The Hangul Syllable names are derived from the Jamo Short Names, as described in Chapter 3, Conformance in Unicode.",
-        "source": "https://www.unicode.org/Public/14.0.0/ucd/Jamo.txt",
-        "date": [
-            2023,
-            6,
-            6
-        ]
-    },
-    "LineBreak.txt": {
-        "description": "A property for line breaking. For more information, see Unicode Standard Annex #14, \"Unicode Line Breaking Algorithm\" [UAX14].",
-        "source": "https://www.unicode.org/Public/14.0.0/ucd/LineBreak.txt",
-        "date": [
-            2023,
-            6,
-            6
+            7
         ]
     },
     "GraphemeBreakProperty.txt": {
@@ -131,7 +104,61 @@
         "date": [
             2023,
             6,
-            6
+            7
+        ]
+    },
+    "HangulSyllableType.txt": {
+        "description": "The values L, V, T, LV, and LVT used in Chapter 3, Conformance in Unicode.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/HangulSyllableType.txt",
+        "date": [
+            2023,
+            6,
+            7
+        ]
+    },
+    "IndicPositionalCategory.txt": {
+        "description": "A property informally defining the positional categories for dependent vowels, viramas, combining marks, and other characters used in Indic scripts. General descriptions of the property values are provided in the header section of the data file IndicPositionalCategory.txt.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/IndicPositionalCategory.txt",
+        "date": [
+            2023,
+            6,
+            7
+        ]
+    },
+    "IndicSyllabicCategory.txt": {
+        "description": "A property informally defining the structural categories of syllabic components in Indic scripts. General descriptions of the property values are provided in the header section of the data file IndicSyllabicCategory.txt.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/IndicSyllabicCategory.txt",
+        "date": [
+            2023,
+            6,
+            7
+        ]
+    },
+    "Jamo.txt": {
+        "description": "The Hangul Syllable names are derived from the Jamo Short Names, as described in Chapter 3, Conformance in Unicode.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/Jamo.txt",
+        "date": [
+            2023,
+            6,
+            7
+        ]
+    },
+    "LineBreak.txt": {
+        "description": "A property for line breaking. For more information, see Unicode Standard Annex #14, \"Unicode Line Breaking Algorithm\" [UAX14].",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/LineBreak.txt",
+        "date": [
+            2023,
+            6,
+            7
+        ]
+    },
+    "NameAliases.txt": {
+        "description": "Normative formal aliases for characters with erroneous names, for control characters and some format characters, and for character abbreviations, as described in Chapter 4, Character Properties in [Unicode]. Aliases tagged with the type \"correction\", as well as a selection of aliases of other types, are published in the Unicode Standard code charts.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/NameAliases.txt",
+        "date": [
+            2023,
+            6,
+            7
         ]
     },
     "PropList.txt": {
@@ -140,7 +167,7 @@
         "date": [
             2023,
             6,
-            6
+            7
         ]
     },
     "PropertyValueAliases.txt": {
@@ -149,7 +176,7 @@
         "date": [
             2023,
             6,
-            6
+            7
         ]
     },
     "rev_casefold.json": {
@@ -158,7 +185,7 @@
         "date": [
             2023,
             6,
-            6
+            7
         ]
     },
     "rev_nfc.json": {
@@ -167,7 +194,7 @@
         "date": [
             2023,
             6,
-            6
+            7
         ]
     },
     "rev_nfd.json": {
@@ -176,7 +203,7 @@
         "date": [
             2023,
             6,
-            6
+            7
         ]
     },
     "rev_nfkc.json": {
@@ -185,7 +212,7 @@
         "date": [
             2023,
             6,
-            6
+            7
         ]
     },
     "rev_nfkd.json": {
@@ -194,7 +221,7 @@
         "date": [
             2023,
             6,
-            6
+            7
         ]
     },
     "Scripts.txt": {
@@ -203,7 +230,7 @@
         "date": [
             2023,
             6,
-            6
+            7
         ]
     },
     "ScriptExtensions.txt": {
@@ -212,7 +239,25 @@
         "date": [
             2023,
             6,
-            6
+            7
+        ]
+    },
+    "SentenceBreakProperty.txt": {
+        "description": "See Unicode Standard Annex #29, \"Unicode Text Segmentation\" [UAX29]",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/auxiliary/SentenceBreakProperty.txt",
+        "date": [
+            2023,
+            6,
+            7
+        ]
+    },
+    "SpecialCasing.txt": {
+        "description": "Data for producing (in combination with the simple case mappings from UnicodeData.txt) the full case mappings.",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/SpecialCasing.txt",
+        "date": [
+            2023,
+            6,
+            7
         ]
     },
     "UnicodeData.txt": {
@@ -221,7 +266,25 @@
         "date": [
             2023,
             6,
-            6
+            7
+        ]
+    },
+    "VerticalOrientation.txt": {
+        "description": "A property used to establish a default for the correct orientation of characters when used in vertical text layout, as described in Unicode Standard Annex #50, \"Unicode Vertical Text Layout\" [UAX50].",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/VerticalOrientation.txt",
+        "date": [
+            2023,
+            6,
+            7
+        ]
+    },
+    "WordBreakProperty.txt": {
+        "description": "See Unicode Standard Annex #29, \"Unicode Text Segmentation\" [UAX29]",
+        "source": "https://www.unicode.org/Public/14.0.0/ucd/auxiliary/WordBreakProperty.txt",
+        "date": [
+            2023,
+            6,
+            7
         ]
     }
 }
