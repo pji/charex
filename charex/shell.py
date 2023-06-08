@@ -873,6 +873,11 @@ class Shell(Cmd):
         cmd = f'nl {arg}'
         self._run_cmd(cmd)
 
+    def do_pf(self, arg):
+        """List characters with a given property value."""
+        cmd = f'pf {arg}'
+        self._run_cmd(cmd)
+
     def do_up(self, arg):
         """List the Unicode properties."""
         cmd = f'up {arg}'
@@ -945,6 +950,11 @@ class Shell(Cmd):
     def help_nl(self):
         """Help for the nl command."""
         cmd = f'nl -h'
+        self._run_cmd(cmd)
+
+    def help_pf(self):
+        """Help for the pf command."""
+        cmd = f'pf -h'
         self._run_cmd(cmd)
 
     def help_up(self):
