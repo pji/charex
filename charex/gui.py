@@ -296,6 +296,35 @@ class Application:
         self.pad_kids(frame)
         self.wake_focus[f'!frame{num}'] = char_entry
 
+    def init_pf(self, frame, num=None):
+        self.pf_prop = tk.StringVar()
+        self.pf_value = tk.StringVar()
+        self.pf_result = self.make_results(frame, row=5, colspan=4)
+
+        self.config_five_params_grid(frame)
+
+        form_label = ttk.Label(frame, text='Property:', justify=tk.RIGHT)
+        form_label.grid(column=0, row=0, columnspan=1, sticky=SIDES)
+        self.pfprop_combo = ttk.Combobox(frame, textvariable=self.pf_prop)
+        self.pfprop_combo['values'] = ch.get_properties()
+        self.pfprop_combo.state(['readonly'])
+        self.pfprop_combo.bind('<<ComboboxSelected>>', self.handle_pf_pfprop)
+        self.pfprop_combo.grid(column=1, row=0, columnspan=4, sticky=SIDES)
+
+        val_label = ttk.Label(frame, text='Value:', justify=tk.RIGHT)
+        val_label.grid(column=0, row=1, columnspan=1, sticky=SIDES)
+        self.pfval_combo = ttk.Combobox(frame, textvariable=self.pf_value)
+        self.pfval_combo.grid(column=1, row=1, columnspan=4, sticky=SIDES)
+
+        pf_button = self.make_button(
+            frame,
+            'Filter by the Property Value',
+            self.pf,
+            row=4,
+            colspan=5
+        )
+        self.pad_kids(frame)
+
     def init_up(self, frame, num=None):
         self.up_result = self.make_results(frame)
 
@@ -415,6 +444,14 @@ class Application:
         result = cmds.nl(form, base, True)
         self.nl_result.insert('end', result)
 
+    def pf(self, *args):
+        self.pf_result.delete('0.0', 'end')
+        prop = self.pf_prop.get()
+        value = self.pf_value.get()
+
+        for line in cmds.pf(prop, value):
+            self.pf_result.insert('end', line + '\n')
+
     def up(self, *args):
         self.up_result.delete('0.0', 'end')
         for line in cmds.up(True):
@@ -441,6 +478,10 @@ class Application:
         tab = self.book.index(tab_id)
         cmd = self.tabs[tab]
         cmd()
+
+    def handle_pf_pfprop(self, event):
+        prop = self.pf_prop.get()
+        self.pfval_combo['values'] = ch.get_property_values(prop)
 
     # Grid configuration.
     def config_simple_grid(self, frame):

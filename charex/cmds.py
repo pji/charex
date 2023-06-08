@@ -268,9 +268,9 @@ def pf(prop: str, value: str | bool) -> Generator[str, None, None]:
     :return: Yields each property as a :class:`str`.
     :rtype: str
     """
-    if value == 'true':
+    if value == 'true' or value == 'Y':
         value = True
-    elif value == 'false':
+    elif value == 'false' or value == 'N':
         value = False
     for char in ch.filter_by_property(prop, value):
         yield char.summarize()

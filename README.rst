@@ -141,7 +141,9 @@ The following features are planned for the v0.1.1 or later releases:
 *   (Done.) Add every non-Unihan, non-Emoji property to
     charex.Character (contra Unicode API guidelines).
 *   (Done.) Add every Emoji property to charex.Character.
-*   (Started.) Add list of characters with property.
+*   (Done.) Add list of characters with property.
+*   Solve Y/N vs. True/False property value question.
+*   Allow contains and grep filtering of property values.
 *   Emoji combiner.
 *   Web API.
 *   Basic doctests for all public classes and functions.
