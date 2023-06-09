@@ -12,6 +12,7 @@ General Character Information
 
 .. autoclass:: charex.Character
     :members:
+.. autofunction:: charex.filter_by_property
 
 
 Character Set Information

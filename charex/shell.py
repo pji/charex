@@ -222,7 +222,8 @@ def mode_pf(args: Namespace) -> None:
     for line in cmds.pf(
         args.prop,
         args.value,
-        insensitive=args.insensitive
+        insensitive=args.insensitive,
+        regex=args.regex
     ):
         bline = line.encode('utf_8', errors='replace')
         print(bline.decode('utf_8'))
@@ -693,6 +694,11 @@ def parse_pf(spa: _SubParsersAction) -> None:
     sp.add_argument(
         '--insensitive', '-i',
         help='The matching is case insensitive.',
+        action='store_true',
+    )
+    sp.add_argument(
+        '--regex', '-g',
+        help='The value is used as a regular expression when matching.',
         action='store_true',
     )
     sp.set_defaults(func=mode_pf)

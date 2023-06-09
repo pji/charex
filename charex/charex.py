@@ -8,6 +8,7 @@ from collections import defaultdict
 from collections.abc import Generator, Sequence
 from dataclasses import dataclass
 from json import loads
+import re
 import unicodedata as ucd
 
 from charex import util
@@ -1240,7 +1241,8 @@ def filter_by_property(
     prop: str,
     value: str,
     chars: Sequence[Character] | None = None,
-    insensitive: bool = False
+    insensitive: bool = False,
+    regex: bool = False
 ) -> Generator[Character, None, None]:
     """Return all the characters with the given property value.
 
@@ -1250,22 +1252,134 @@ def filter_by_property(
         to filtering all Unicode characters.
     :param insensitive: (Optional.) Whether the matching should
         be case insensitive. Defaults to false.
+    :param regex: (Optional.) Whether the value should be used as a
+        regular expression for the matching. Defaults to false.
     :return: the filtered characters as a
         :class:`collections.abc.Generator`.
     :rtype: collections.abc.Generator
+
+    Usage
+    -----
+    To get a generator that produces the Emoji modifiers::
+
+        >>> prop = 'emod'
+        >>> value = 'Y'
+        >>> gen = filter_by_property(prop, value)
+        >>> for char in gen:
+        ...     print(char.summarize())
+        ...
+        🏻 U+1F3FB (EMOJI MODIFIER FITZPATRICK TYPE-1-2)
+        🏼 U+1F3FC (EMOJI MODIFIER FITZPATRICK TYPE-3)
+        🏽 U+1F3FD (EMOJI MODIFIER FITZPATRICK TYPE-4)
+        🏾 U+1F3FE (EMOJI MODIFIER FITZPATRICK TYPE-5)
+        🏿 U+1F3FF (EMOJI MODIFIER FITZPATRICK TYPE-6)
+
+    You can limit the number of characters being searched with the
+    `chars` parameter::
+
+        >>> prop = 'gc'
+        >>> value = 'Cc'
+        >>> chars = [Character(chr(n)) for n in range(128)]
+        >>> gen = filter_by_property(prop, value, chars)
+        >>> for char in gen:
+        ...     print(char.summarize())
+        ...
+        ␀ U+0000 (<NULL>)
+        ␁ U+0001 (<START OF HEADING>)
+        ␂ U+0002 (<START OF TEXT>)
+        ␃ U+0003 (<END OF TEXT>)
+        ␄ U+0004 (<END OF TRANSMISSION>)
+        ␅ U+0005 (<ENQUIRY>)
+        ␆ U+0006 (<ACKNOWLEDGE>)
+        ␇ U+0007 (<BELL>)
+        ␈ U+0008 (<BACKSPACE>)
+        ␉ U+0009 (<CHARACTER TABULATION>)
+        ␊ U+000A (<LINE FEED (LF)>)
+        ␋ U+000B (<LINE TABULATION>)
+        ␌ U+000C (<FORM FEED (FF)>)
+        ␍ U+000D (<CARRIAGE RETURN (CR)>)
+        ␎ U+000E (<SHIFT OUT>)
+        ␏ U+000F (<SHIFT IN>)
+        ␐ U+0010 (<DATA LINK ESCAPE>)
+        ␑ U+0011 (<DEVICE CONTROL ONE>)
+        ␒ U+0012 (<DEVICE CONTROL TWO>)
+        ␓ U+0013 (<DEVICE CONTROL THREE>)
+        ␔ U+0014 (<DEVICE CONTROL FOUR>)
+        ␕ U+0015 (<NEGATIVE ACKNOWLEDGE>)
+        ␖ U+0016 (<SYNCHRONOUS IDLE>)
+        ␗ U+0017 (<END OF TRANSMISSION BLOCK>)
+        ␘ U+0018 (<CANCEL>)
+        ␙ U+0019 (<END OF MEDIUM>)
+        ␚ U+001A (<SUBSTITUTE>)
+        ␛ U+001B (<ESCAPE>)
+        ␜ U+001C (<INFORMATION SEPARATOR FOUR>)
+        ␝ U+001D (<INFORMATION SEPARATOR THREE>)
+        ␞ U+001E (<INFORMATION SEPARATOR TWO>)
+        ␟ U+001F (<INFORMATION SEPARATOR ONE>)
+        ⑿ U+007F (<DELETE>)
+
+    You can set the `insensitive` parameter to do case insensitive
+    matching::
+
+        >>> prop = 'emod'
+        >>> value = 'y'
+        >>> insensitive = True
+        >>> gen = filter_by_property(prop, value, insensitive=insensitive)
+        >>> for char in gen:
+        ...     print(char.summarize())
+        ...
+        🏻 U+1F3FB (EMOJI MODIFIER FITZPATRICK TYPE-1-2)
+        🏼 U+1F3FC (EMOJI MODIFIER FITZPATRICK TYPE-3)
+        🏽 U+1F3FD (EMOJI MODIFIER FITZPATRICK TYPE-4)
+        🏾 U+1F3FE (EMOJI MODIFIER FITZPATRICK TYPE-5)
+        🏿 U+1F3FF (EMOJI MODIFIER FITZPATRICK TYPE-6)
+
+    If you set the `regex` parameter, you can search using regular
+    expressions::
+
+        >>> prop = 'na'
+        >>> value = '.*EYE$'
+        >>> regex = True
+        >>> gen = filter_by_property(prop, value, regex=regex)
+        >>> for char in gen:
+        ...     print(char.summarize())
+        ...
+        ◉ U+25C9 (FISHEYE)
+        ◎ U+25CE (BULLSEYE)
+        ⺫ U+2EAB (CJK RADICAL EYE)
+        ⽬ U+2F6C (KANGXI RADICAL EYE)
+        👁 U+1F441 (EYE)
+        😜 U+1F61C (FACE WITH STUCK-OUT TONGUE AND WINKING EYE)
+        🤪 U+1F92A (GRINNING FACE WITH ONE LARGE AND ONE SMALL EYE)
+        🫣 U+1FAE3 (FACE WITH PEEKING EYE)
+
+    .. _warning:
+        If you don't limit the characters you are doing the filter on,
+        this will be a single-threaded regular expression comparison
+        on 1,114,111 characters. In other words, it's not the speediest
+        thing in the world.
     """
     if not chars:
         chars = [Character(n) for n in range(util.LEN_UNICODE)]
 
-    if not insensitive:
+    if regex:
+        flags = 0
+        if insensitive:
+            flags = re.IGNORECASE
+        pattern = re.compile(value, flags=flags)
         for char in chars:
-            if getattr(char, prop) == value:
+            if pattern.match(getattr(char, prop)):
                 yield char
 
-    else:
+    elif insensitive:
         value = value.casefold()
         for char in chars:
             if getattr(char, prop).casefold() == value:
+                yield char
+
+    else:
+        for char in chars:
+            if getattr(char, prop) == value:
                 yield char
 
 
@@ -1328,7 +1442,7 @@ def get_property_values(prop: str) -> tuple[str, ...]:
 
 
 if __name__ == '__main__':
-    for item in filter_by_property('emod', 'y', insensitive=True):
+    for item in filter_by_property('na', '.*FROWN.*', regex=True):
         text = item.summarize()
         btext = text.encode('utf_8', errors='replace')
         print(btext.decode('utf_8'))

@@ -5,8 +5,8 @@ __init__
 Initialization for the :mod:`charex` package.
 """
 from charex.charex import (
-    Character, get_properties, get_property_values, expand_property,
-    expand_property_value
+    Character, filter_by_property, get_properties, get_property_values,
+    expand_property, expand_property_value
 )
 from charex.charsets import get_codecs, get_description
 from charex.charsets import multidecode, multiencode

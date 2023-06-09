@@ -126,9 +126,18 @@ Unicode character::
 
 What Is Left To Do?
 -------------------
-The following features are planned for the v0.1.1 or later releases:
+The following features are planned for the v0.2.1 or later releases:
 
-*   (Done.) Add age to character properties.
+*   Move all Y/N properties to simple lists.
+*   Emoji combiner.
+*   Web API.
+*   Basic doctests for all public classes and functions.
+*   Add every Unihan property to charex.Character.
+*   Registration for character set codecs.
+*   Support for more versions of Unicode.
+
+The following features and changes were completed for v0.2.0:
+
 *   (Done.) Accept lower case u for character point prefix.
 *   (Done.) Smol text escape.
 *   (Done.) Tool for pulling data files.
@@ -144,17 +153,9 @@ The following features are planned for the v0.1.1 or later releases:
 *   (Done.) Add list of characters with property.
 *   (Done.) Organize properties in dt mode.
 *   (Done.) Solve Y/N vs. True/False property value question.
-*   Move all Y/N properties to simple lists.
-*   Allow contains and grep filtering of property values.
-*   Emoji combiner.
-*   Web API.
-*   Basic doctests for all public classes and functions.
-*   Add every Unihan property to charex.Character.
-*   Registration for character set codecs.
-*   Support for more versions of Unicode.
-*   Remove long name properties.
-*   Create `Character` properties dynamically.
-
+*   (Done.) Allow insensitive and grep filtering of property values.
+*   (Done.) Create `Character` properties dynamically.
+*   (Done.) Remove long name properties.
 
 The list of Unicode Properties can be found here: `Index`_
 

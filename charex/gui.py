@@ -299,6 +299,8 @@ class Application:
     def init_pf(self, frame, num=None):
         self.pf_prop = tk.StringVar()
         self.pf_value = tk.StringVar()
+        self.pf_insensitive = tk.BooleanVar(value=False)
+        self.pf_regex = tk.BooleanVar(value=False)
         self.pf_result = self.make_results(frame, row=5, colspan=4)
 
         self.config_five_params_grid(frame)
@@ -315,6 +317,28 @@ class Application:
         val_label.grid(column=0, row=1, columnspan=1, sticky=SIDES)
         self.pfval_combo = ttk.Combobox(frame, textvariable=self.pf_value)
         self.pfval_combo.grid(column=1, row=1, columnspan=4, sticky=SIDES)
+
+        insensitive_label = ttk.Label(
+            frame, text='Ignore Case:', justify=tk.RIGHT
+        )
+        insensitive_label.grid(column=0, row=3, columnspan=1, sticky=SIDES)
+        insensitive_check = ttk.Checkbutton(
+            frame,
+            variable=self.pf_insensitive,
+            onvalue='True',
+            offvalue='False'
+        )
+        insensitive_check.grid(column=1, row=3, columnspan=1, sticky=SIDES)
+
+        regex_label = ttk.Label(frame, text='Regex:', justify=tk.RIGHT)
+        regex_label.grid(column=2, row=3, columnspan=1, sticky=SIDES)
+        regex_check = ttk.Checkbutton(
+            frame,
+            variable=self.pf_regex,
+            onvalue='True',
+            offvalue='False'
+        )
+        regex_check.grid(column=3, row=3, columnspan=1, sticky=SIDES)
 
         pf_button = self.make_button(
             frame,
@@ -448,8 +472,10 @@ class Application:
         self.pf_result.delete('0.0', 'end')
         prop = self.pf_prop.get()
         value = self.pf_value.get()
+        insensitive = self.pf_insensitive.get()
+        regex = self.pf_regex.get()
 
-        for line in cmds.pf(prop, value):
+        for line in cmds.pf(prop, value, insensitive, regex):
             self.pf_result.insert('end', line + '\n')
 
     def up(self, *args):

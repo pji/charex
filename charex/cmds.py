@@ -298,16 +298,24 @@ def nl(form: str, base: str, expand: bool = False) -> str:
 def pf(
     prop: str,
     value: str,
-    insensitive: bool = True
+    insensitive: bool = True,
+    regex: bool = False
 ) -> Generator[str, None, None]:
     """List the characters with the given property.
 
     :param prop: The property for the filter.
     :param value: The value to filter on.
+    :param regex: (Optional.) Whether the value should be used as a
+        regular expression for the matching. Defaults to false.
     :return: Yields each property as a :class:`str`.
     :rtype: str
     """
-    for char in ch.filter_by_property(prop, value, insensitive=insensitive):
+    for char in ch.filter_by_property(
+        prop,
+        value,
+        insensitive=insensitive,
+        regex=regex
+    ):
         yield char.summarize()
 
 

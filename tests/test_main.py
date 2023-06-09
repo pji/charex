@@ -353,7 +353,7 @@ def test_pf(capsys):
     cli_test(exp, cmd, capsys)
 
 
-def test_pf(capsys):
+def test_pf_insensitive(capsys):
     """When invoked, pf mode should return the list characters with the
     given property value.
     """
@@ -371,6 +371,57 @@ def test_pf(capsys):
         'emod',
         'y',
         '-i'
+    )
+    cli_test(exp, cmd, capsys)
+
+
+def test_pf_regex(capsys):
+    """When invoked, pf mode should return the list characters with the
+    given property value.
+    """
+    exp = (
+        '⌢ U+2322 (FROWN)\n'
+        '☹ U+2639 (WHITE FROWNING FACE)\n'
+        '\U0001da41 U+1DA41 (SIGNWRITING MOUTH FROWN)\n'
+        '\U0001da42 U+1DA42 (SIGNWRITING MOUTH FROWN WRINKLED)\n'
+        '\U0001da43 U+1DA43 (SIGNWRITING MOUTH FROWN OPEN)\n'
+        '😦 U+1F626 (FROWNING FACE WITH OPEN MOUTH)\n'
+        '🙁 U+1F641 (SLIGHTLY FROWNING FACE)\n'
+        '🙍 U+1F64D (PERSON FROWNING)\n'
+        '\n'
+    )
+    cmd = (
+        'python -m charex',
+        'pf',
+        'na',
+        '.*FROWN.*',
+        '-g'
+    )
+    cli_test(exp, cmd, capsys)
+
+
+def test_pf_insensitive_regex(capsys):
+    """When invoked, pf mode should return the list characters with the
+    given property value.
+    """
+    exp = (
+        '⌢ U+2322 (FROWN)\n'
+        '☹ U+2639 (WHITE FROWNING FACE)\n'
+        '\U0001da41 U+1DA41 (SIGNWRITING MOUTH FROWN)\n'
+        '\U0001da42 U+1DA42 (SIGNWRITING MOUTH FROWN WRINKLED)\n'
+        '\U0001da43 U+1DA43 (SIGNWRITING MOUTH FROWN OPEN)\n'
+        '😦 U+1F626 (FROWNING FACE WITH OPEN MOUTH)\n'
+        '🙁 U+1F641 (SLIGHTLY FROWNING FACE)\n'
+        '🙍 U+1F64D (PERSON FROWNING)\n'
+        '\n'
+    )
+    cmd = (
+        'python -m charex',
+        'pf',
+        'na',
+        '.*frown.*',
+        '-i',
+        '-g'
     )
     cli_test(exp, cmd, capsys)
 
