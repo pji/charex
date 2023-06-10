@@ -111,9 +111,11 @@
                     Emoji Component: N
               Extended Pictographic: N
 
-                                ---  Irgsources
+                                ---  Cjk Dictionary Indices
 
-                                ---  Numeric Values
+                                ---  Cjk Irgsources
+
+                                ---  Cjk Numeric Values
 
                                 ---  Encoding
                               UTF-8: 41

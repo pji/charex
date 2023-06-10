@@ -189,6 +189,12 @@ class Cache:
     It shouldn't be called directly. It's intended to be used
     through :class:`charex.Character`.
     """
+    dindices_props = (
+        'khanyu', 'kirghanyudazidian', 'kirgkangxi', 'ksbgy', 'knelson',
+        'kcowles', 'kmatthews', 'kgsr', 'kkangxi', 'kfennindex',
+        'kkarlgren', 'kmeyerwempe', 'klau', 'kcheungbauerindex',
+        'kmorohashi', 'kdaejaweon', 'kirgdaejaweon', 'kirgdaikanwaziten',
+    )
     forms = ('casefold', 'nfc', 'nfd', 'nfkc', 'nfkd')
     irgsources_props = (
         'cjkirg_gsource', 'cjkirg_jsource', 'cjkirg_tsource',
@@ -220,6 +226,7 @@ class Cache:
         ),))
         self.__casefold: CaseFoldCache = defaultdict(mvalue_cf)
         self.__denormal: DenormalCache = {}
+        self.__dindices: SingleValCache = {}
         self.__emoji: SimpleListCache = {}
         self.__irgsources: SingleValCache = {}
         self.__multival: MultiValCache = {}
@@ -264,6 +271,14 @@ class Cache:
                     result[key] = tuple(data[key])
                 self.__denormal[form] = result
         return self.__denormal
+
+    @property
+    def dindices(self) -> SingleValCache:
+        if not self.__dindices:
+            result = self.get_unihan('dindices')
+            for key in result:
+                self.__dindices[key] = result[key]
+        return self.__dindices
 
     @property
     def emoji(self) -> SimpleListCache:
@@ -880,15 +895,14 @@ class Character:
                 return 'Y'
             return 'N'
 
-        if name in self.cache.irgsources_props:
-            irgsources = self.cache.irgsources[name]
-            address = self.code_point[2:].casefold()
-            return irgsources[address]
-
-        if name in self.cache.numvalues_props:
-            numvalues = self.cache.numvalues[name]
-            address = self.code_point[2:].casefold()
-            return numvalues[address]
+        cjk_props = (
+            'irgsources', 'numvalues', 'dindices',
+        )
+        for prop in cjk_props:
+            if name in getattr(self.cache, f'{prop}_props'):
+                data = getattr(self.cache, prop)[name]
+                address = self.code_point[2:].casefold()
+                return data[address]
 
         raise AttributeError(name)
 
@@ -1505,10 +1519,10 @@ def get_property_values(prop: str) -> tuple[str, ...]:
 
 if __name__ == '__main__':
     cache = Cache()
-    # text = ', '.join(f'\'{prop}\'' for prop in cache.numvalues)
+    # text = ', '.join(f'\'{prop}\'' for prop in cache.dindices)
     # print(f'(\n    {text},\n)')
 
-    # for prop in cache.numvalues:
-    #     print(f'assert char.{prop} == \'\'')
+    for prop in cache.dindices:
+        print(f'assert char.{prop} == \'\'')
 
-    print(cache.numvalues['cjkprimarynumeric']['4E07'])
+    # print(cache.numvalues['cjkprimarynumeric']['4E07'])

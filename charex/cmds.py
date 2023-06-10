@@ -200,10 +200,13 @@ def dt(c: str) -> Generator[str, None, None]:
             make_prop_line(key, char) for key in char.cache.normalsingleval
         ),
         'emoji': (make_prop_line(key, char) for key in char.cache.emoji),
-        'irgsources': (
+        'cjk dictionary indices': (
+            make_prop_line(key, char) for key in char.cache.dindices
+        ),
+        'cjk irgsources': (
             make_prop_line(key, char) for key in char.cache.irgsources
         ),
-        'numeric values': (
+        'cjk numeric values': (
             make_prop_line(key, char) for key in char.cache.numvalues
         ),
         'encoding': (val for val in (

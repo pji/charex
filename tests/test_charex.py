@@ -61,45 +61,6 @@ def test_character_core_properties():
     assert char.stc == '0041'
 
 
-def test_character_irgsource_properties():
-    """A :class:`charex.Character` should have the properties from the
-    Unicode data database.
-    """
-    char = c.Character('a')
-    assert char.cjkirg_gsource == ''
-    assert char.cjkirg_jsource == ''
-    assert char.cjkirg_tsource == ''
-    assert char.cjkrsunicode == ''
-    assert char.ktotalstrokes == ''
-    assert char.cjkirg_ksource == ''
-    assert char.cjkirg_kpsource == ''
-    assert char.cjkirg_vsource == ''
-    assert char.cjkirg_hsource == ''
-    assert char.cjkirg_usource == ''
-    assert char.cjkiicore == ''
-    assert char.cjkirg_msource == ''
-    assert char.cjkirg_uksource == ''
-    assert char.cjkcompatibilityvariant == ''
-    assert char.cjkirg_ssource == ''
-
-    char = c.Character('U+31026')
-    assert char.cjkirg_gsource == 'GHZR-74462.01'
-    assert char.cjkirg_jsource == ''
-    assert char.cjkirg_tsource == ''
-    assert char.cjkrsunicode == '170.9'
-    assert char.ktotalstrokes == '12'
-    assert char.cjkirg_ksource == ''
-    assert char.cjkirg_kpsource == ''
-    assert char.cjkirg_vsource == ''
-    assert char.cjkirg_hsource == ''
-    assert char.cjkirg_usource == ''
-    assert char.cjkiicore == ''
-    assert char.cjkirg_msource == ''
-    assert char.cjkirg_uksource == ''
-    assert char.cjkcompatibilityvariant == ''
-    assert char.cjkirg_ssource == ''
-
-
 def test_character_derived_normalization_properties():
     """A :class:`charex.Character` should have the properties from
     DerivedNormalizationProperties.txt.
@@ -137,6 +98,51 @@ def test_character_derived_normalization_properties():
     assert char.comp_ex == 'Y'
 
 
+def test_character_dindices_properties():
+    """A :class:`charex.Character` should have the properties from the
+    Unihan Dictionary Indices database.
+    """
+    char = c.Character('a')
+    assert char.khanyu == ''
+    assert char.kirghanyudazidian == ''
+    assert char.kirgkangxi == ''
+    assert char.ksbgy == ''
+    assert char.knelson == ''
+    assert char.kcowles == ''
+    assert char.kmatthews == ''
+    assert char.kgsr == ''
+    assert char.kkangxi == ''
+    assert char.kfennindex == ''
+    assert char.kkarlgren == ''
+    assert char.kmeyerwempe == ''
+    assert char.klau == ''
+    assert char.kcheungbauerindex == ''
+    assert char.kmorohashi == ''
+    assert char.kdaejaweon == ''
+    assert char.kirgdaejaweon == ''
+    assert char.kirgdaikanwaziten == ''
+
+    char = c.Character('U+3402')
+    assert char.khanyu == ''
+    assert char.kirghanyudazidian == ''
+    assert char.kirgkangxi == '0078.101'
+    assert char.ksbgy == ''
+    assert char.knelson == '0265'
+    assert char.kcowles == ''
+    assert char.kmatthews == ''
+    assert char.kgsr == ''
+    assert char.kkangxi == ''
+    assert char.kfennindex == ''
+    assert char.kkarlgren == ''
+    assert char.kmeyerwempe == ''
+    assert char.klau == ''
+    assert char.kcheungbauerindex == ''
+    assert char.kmorohashi == ''
+    assert char.kdaejaweon == ''
+    assert char.kirgdaejaweon == ''
+    assert char.kirgdaikanwaziten == ''
+
+
 def test_character_emoji_properties():
     """A :class:`charex.Character` should have the properties from
     emoji-data.txt.
@@ -148,6 +154,45 @@ def test_character_emoji_properties():
     assert char.ebase == 'N'
     assert char.ecomp == 'N'
     assert char.extpict == 'Y'
+
+
+def test_character_irgsource_properties():
+    """A :class:`charex.Character` should have the properties from the
+    Unicode data database.
+    """
+    char = c.Character('a')
+    assert char.cjkirg_gsource == ''
+    assert char.cjkirg_jsource == ''
+    assert char.cjkirg_tsource == ''
+    assert char.cjkrsunicode == ''
+    assert char.ktotalstrokes == ''
+    assert char.cjkirg_ksource == ''
+    assert char.cjkirg_kpsource == ''
+    assert char.cjkirg_vsource == ''
+    assert char.cjkirg_hsource == ''
+    assert char.cjkirg_usource == ''
+    assert char.cjkiicore == ''
+    assert char.cjkirg_msource == ''
+    assert char.cjkirg_uksource == ''
+    assert char.cjkcompatibilityvariant == ''
+    assert char.cjkirg_ssource == ''
+
+    char = c.Character('U+31026')
+    assert char.cjkirg_gsource == 'GHZR-74462.01'
+    assert char.cjkirg_jsource == ''
+    assert char.cjkirg_tsource == ''
+    assert char.cjkrsunicode == '170.9'
+    assert char.ktotalstrokes == '12'
+    assert char.cjkirg_ksource == ''
+    assert char.cjkirg_kpsource == ''
+    assert char.cjkirg_vsource == ''
+    assert char.cjkirg_hsource == ''
+    assert char.cjkirg_usource == ''
+    assert char.cjkiicore == ''
+    assert char.cjkirg_msource == ''
+    assert char.cjkirg_uksource == ''
+    assert char.cjkcompatibilityvariant == ''
+    assert char.cjkirg_ssource == ''
 
 
 def test_character_proplist_properties():
