@@ -203,6 +203,9 @@ def dt(c: str) -> Generator[str, None, None]:
         'irgsources': (
             make_prop_line(key, char) for key in char.cache.irgsources
         ),
+        'numeric values': (
+            make_prop_line(key, char) for key in char.cache.numvalues
+        ),
         'encoding': (val for val in (
             ('UTF-8', char.encode('utf8')),
             ('UTF-16', char.encode('utf_16_be')),

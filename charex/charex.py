@@ -198,6 +198,9 @@ class Cache:
         'cjkirg_uksource', 'cjkcompatibilityvariant', 'cjkirg_ssource',
     )
     multis = ('scx',)
+    numvalues_props = (
+        'cjkothernumeric', 'cjkprimarynumeric', 'cjkaccountingnumeric',
+    )
     ranges = ('age', 'blk', 'sc',)
     simples = ('ce',)
     singles = (
@@ -223,6 +226,7 @@ class Cache:
         self.__namealias: NameAliasCache = defaultdict(tuple)
         self.__normalsimplelist: SimpleListCache = {}
         self.__normalsingleval: SingleValCache = {}
+        self.__numvalues: SingleValCache = {}
         self.__proplist: SingleValCache = {}
         self.__props: PropsCache = {}
         self.__propvals: PropValsCache = {}
@@ -270,27 +274,9 @@ class Cache:
     @property
     def irgsources(self) -> SingleValCache:
         if not self.__irgsources:
-            lines = util.read_resource('irgsources')
-            lines = self.strip_comments(lines)
-            data = []
-            for line in lines:
-                code, prop, value = line.split('\t')
-                data.append((code[2:], prop, value))
-            mv = MissingValue('')
-
-            result: SingleValCache = {}
-            for item in data:
-                code, prop, value = item
-                try:
-                    alias = self.alias_property(prop).casefold()
-                except KeyError:
-                    alias = prop.casefold()
-                result.setdefault(alias, defaultdict(mv))
-                result[alias][code] = value
-
+            result = self.get_unihan('irgsources')
             for key in result:
                 self.__irgsources[key] = result[key]
-
         return self.__irgsources
 
     @property
@@ -328,6 +314,14 @@ class Cache:
         if not self.__normalsingleval:
             self.__normalsingleval = self.get_normalprops()[1]
         return self.__normalsingleval
+
+    @property
+    def numvalues(self) -> SingleValCache:
+        if not self.__numvalues:
+            result = self.get_unihan('numvalues')
+            for key in result:
+                self.__numvalues[key] = result[key]
+        return self.__numvalues
 
     @property
     def props(self) -> PropsCache:
@@ -564,6 +558,26 @@ class Cache:
         missing = self.alias_property_value(source, missing)
         mvalue = MissingValue(missing)
         return self.parse_single(data, missing, source)
+
+    def get_unihan(self, source: str) -> SingleValCache:
+        lines = util.read_resource(source)
+        lines = self.strip_comments(lines)
+        data = []
+        for line in lines:
+            code, prop, value = line.split('\t')
+            data.append((code[2:].casefold(), prop, value))
+        mv = MissingValue('')
+
+        result: SingleValCache = {}
+        for item in data:
+            code, prop, value = item
+            try:
+                alias = self.alias_property(prop).casefold()
+            except KeyError:
+                alias = prop.casefold()
+            result.setdefault(alias, defaultdict(mv))
+            result[alias][code] = value
+        return result
 
     def parse(self, source: str) -> tuple[tuple[str, ...], ...]:
         lines = util.read_resource(source)
@@ -870,6 +884,11 @@ class Character:
             irgsources = self.cache.irgsources[name]
             address = self.code_point[2:].casefold()
             return irgsources[address]
+
+        if name in self.cache.numvalues_props:
+            numvalues = self.cache.numvalues[name]
+            address = self.code_point[2:].casefold()
+            return numvalues[address]
 
         raise AttributeError(name)
 
@@ -1486,8 +1505,10 @@ def get_property_values(prop: str) -> tuple[str, ...]:
 
 if __name__ == '__main__':
     cache = Cache()
-    # text = ', '.join(f'\'{prop}\'' for prop in cache.irgsources)
+    # text = ', '.join(f'\'{prop}\'' for prop in cache.numvalues)
     # print(f'(\n    {text},\n)')
 
-    for prop in cache.irgsources:
-        print(f'assert char.{prop} == \'\'')
+    # for prop in cache.numvalues:
+    #     print(f'assert char.{prop} == \'\'')
+
+    print(cache.numvalues['cjkprimarynumeric']['4E07'])

@@ -97,7 +97,7 @@ RESOURCES = {
 
     # Unihan data.
     'irgsources': 'Unihan.zip',
-    'kiicore': 'Unihan.zip',
+    'numvalues': 'Unihan.zip',
 
     # HTML data.
     'entities': 'entities.json',
@@ -108,7 +108,7 @@ RESOURCES = {
 }
 UNIHAN = {
     'irgsources': 'Unihan_IRGSources.txt',
-    'kiicore': 'Unihan_IRGSources.txt',
+    'numvalues': 'Unihan_NumericValues.txt',
 }
 
 

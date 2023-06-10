@@ -220,6 +220,21 @@ def test_character_multilist_properties():
     assert char.scx == ('Latin',)
 
 
+def test_character_numvalues_properties():
+    """A :class:`charex.Character` should have the properties from the
+    Unihan Numeric Values database.
+    """
+    char = c.Character('a')
+    assert char.cjkothernumeric == ''
+    assert char.cjkprimarynumeric == ''
+    assert char.cjkaccountingnumeric == ''
+
+    char = c.Character('U+4E07')
+    assert char.cjkothernumeric == ''
+    assert char.cjkprimarynumeric == '10000'
+    assert char.cjkaccountingnumeric == ''
+
+
 def test_character_rangelist_properties():
     """A :class:`charex.Character` should have the properties from
     defined range lists.
