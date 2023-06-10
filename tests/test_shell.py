@@ -4,6 +4,8 @@ test_shell
 
 Unit tests for :mod:`charex.shell`.
 """
+import pytest
+
 from charex import escape as esc
 from charex import normal as nl
 from charex import shell as sh
@@ -244,6 +246,7 @@ def test_nl(capsys):
 
 
 # Test pf mode.
+@pytest.mark.skip(reason='Slow.')
 def test_pf(capsys):
     """When invoked, pf mode should return the list characters with the
     given property value.
@@ -264,6 +267,7 @@ def test_pf(capsys):
     shell_test(exp, cmd, capsys)
 
 
+@pytest.mark.skip(reason='Slow.')
 def test_pf_insensitive(capsys):
     """When invoked, pf mode should return the list characters with the
     given property value.

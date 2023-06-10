@@ -165,14 +165,17 @@ def dt(c: str) -> Generator[str, None, None]:
         nonlocal width
         try:
             name = ch.expand_property(prop)
+        except KeyError:
+            name = prop
+        try:
             value = getattr(char, prop)
-            if isinstance(value, tuple):
-                value = ' '.join(value)
-            if value and len(name) > width:
-                width = len(name)
-            result = (name, value)
         except AttributeError:
-            result = ('', '')
+            value = ''
+        if isinstance(value, tuple):
+            value = ' '.join(value)
+        if value and len(name) > width:
+            width = len(name)
+        result = (name, value)
         return result
 
     # Gather the details for display.
@@ -197,6 +200,9 @@ def dt(c: str) -> Generator[str, None, None]:
             make_prop_line(key, char) for key in char.cache.normalsingleval
         ),
         'emoji': (make_prop_line(key, char) for key in char.cache.emoji),
+        'irgsources': (
+            make_prop_line(key, char) for key in char.cache.irgsources
+        ),
         'encoding': (val for val in (
             ('UTF-8', char.encode('utf8')),
             ('UTF-16', char.encode('utf_16_be')),

@@ -128,38 +128,22 @@ What Is Left To Do?
 -------------------
 The following features are planned for the v0.2.1 or later releases:
 
+*   (Started.) Add every Unihan property to charex.Character.
+*   Fix names for CJK Ideographs.
 *   Move all Y/N properties to simple lists.
-*   Emoji combiner.
-*   Web API.
-*   Basic doctests for all public classes and functions.
-*   Add every Unihan property to charex.Character.
-*   Registration for character set codecs.
 *   Support for more versions of Unicode.
+*   Emoji combiner.
+*   Move the resource file registry to `sources.json`.
+*   Basic doctests for all public classes and functions.
+*   Web API.
+*   Registration for character set codecs.
 
-The following features and changes were completed for v0.2.0:
+The list of Unicode properties can be found here: `Index`_
 
-*   (Done.) Accept lower case u for character point prefix.
-*   (Done.) Smol text escape.
-*   (Done.) Tool for pulling data files.
-*   (Done.) Add property list.
-*   (Done.) Add property value list.
-*   (Done.) Added Unicode data properties.
-*   (Done.) Tool for recreating reverse normalization data.
-*   (Done.) Remove hardcoded properties and names from `cmd.dt()`.
-*   (Done.) Make `Character.na` return only the defined character name.
-*   (Done.) Add every non-Unihan, non-Emoji property to
-    charex.Character (contra Unicode API guidelines).
-*   (Done.) Add every Emoji property to charex.Character.
-*   (Done.) Add list of characters with property.
-*   (Done.) Organize properties in dt mode.
-*   (Done.) Solve Y/N vs. True/False property value question.
-*   (Done.) Allow insensitive and grep filtering of property values.
-*   (Done.) Create `Character` properties dynamically.
-*   (Done.) Remove long name properties.
-
-The list of Unicode Properties can be found here: `Index`_
+The list of Unihan properties is here: `tr38`_
 
 .. _`Index`: https://www.unicode.org/reports/tr44/tr44-28.html#Property_Index
+.. _`tr38`: https://www.unicode.org/reports/tr38/tr38-31.html
 
 
 How Do I Run the Tests?

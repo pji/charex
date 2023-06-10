@@ -111,6 +111,8 @@
                     Emoji Component: N
               Extended Pictographic: N
 
+                                ---  Irgsources
+
                                 ---  Encoding
                               UTF-8: 41
                              UTF-16: 00 41

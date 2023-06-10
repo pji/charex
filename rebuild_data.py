@@ -23,8 +23,12 @@ def pull_data(url: str, path: Path) -> bool:
     try:
         resp = get(url)
         if resp.status_code == 200 and resp.text:
-            with open(path, 'w') as fh:
-                fh.write(resp.text)
+            if url.endswith('.zip'):
+                with open(path, 'wb') as fh:
+                    fh.write(resp.content)
+            else:
+                with open(path, 'w') as fh:
+                    fh.write(resp.text)
             result = True
     except Exception as ex:
         print(f'{type(ex)}({ex})...', end='')
@@ -66,8 +70,12 @@ for file in data:
     # Update the file.
     src = data[file]['source']
     path = data_path / file
+
+    # Download hosted data.
     if src.startswith('http'):
         success = pull_data(src, path)
+
+    # Generate denormalization data.
     elif src.startswith('form'):
         key = src.split(':')[1]
         success = build_map(key, path)

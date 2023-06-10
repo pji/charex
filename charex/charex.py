@@ -190,6 +190,13 @@ class Cache:
     through :class:`charex.Character`.
     """
     forms = ('casefold', 'nfc', 'nfd', 'nfkc', 'nfkd')
+    irgsources_props = (
+        'cjkirg_gsource', 'cjkirg_jsource', 'cjkirg_tsource',
+        'cjkrsunicode', 'ktotalstrokes', 'cjkirg_ksource',
+        'cjkirg_kpsource', 'cjkirg_vsource', 'cjkirg_hsource',
+        'cjkirg_usource', 'cjkiicore', 'cjkirg_msource',
+        'cjkirg_uksource', 'cjkcompatibilityvariant', 'cjkirg_ssource',
+    )
     multis = ('scx',)
     ranges = ('age', 'blk', 'sc',)
     simples = ('ce',)
@@ -211,6 +218,7 @@ class Cache:
         self.__casefold: CaseFoldCache = defaultdict(mvalue_cf)
         self.__denormal: DenormalCache = {}
         self.__emoji: SimpleListCache = {}
+        self.__irgsources: SingleValCache = {}
         self.__multival: MultiValCache = {}
         self.__namealias: NameAliasCache = defaultdict(tuple)
         self.__normalsimplelist: SimpleListCache = {}
@@ -258,6 +266,32 @@ class Cache:
         if not self.__emoji:
             self.__emoji = self.get_emoji()
         return self.__emoji
+
+    @property
+    def irgsources(self) -> SingleValCache:
+        if not self.__irgsources:
+            lines = util.read_resource('irgsources')
+            lines = self.strip_comments(lines)
+            data = []
+            for line in lines:
+                code, prop, value = line.split('\t')
+                data.append((code[2:], prop, value))
+            mv = MissingValue('')
+
+            result: SingleValCache = {}
+            for item in data:
+                code, prop, value = item
+                try:
+                    alias = self.alias_property(prop).casefold()
+                except KeyError:
+                    alias = prop.casefold()
+                result.setdefault(alias, defaultdict(mv))
+                result[alias][code] = value
+
+            for key in result:
+                self.__irgsources[key] = result[key]
+
+        return self.__irgsources
 
     @property
     def multival(self) -> MultiValCache:
@@ -832,6 +866,11 @@ class Character:
                 return 'Y'
             return 'N'
 
+        if name in self.cache.irgsources_props:
+            irgsources = self.cache.irgsources[name]
+            address = self.code_point[2:].casefold()
+            return irgsources[address]
+
         raise AttributeError(name)
 
     def __repr__(self) -> str:
@@ -1359,9 +1398,11 @@ def filter_by_property(
         on 1,114,111 characters. In other words, it's not the speediest
         thing in the world.
     """
+    # Default to searching the full set of Unicode code points.
     if not chars:
         chars = [Character(n) for n in range(util.LEN_UNICODE)]
 
+    # Regular expression matching.
     if regex:
         flags = 0
         if insensitive:
@@ -1371,12 +1412,14 @@ def filter_by_property(
             if pattern.match(getattr(char, prop)):
                 yield char
 
+    # Case-insensitive string matching.
     elif insensitive:
         value = value.casefold()
         for char in chars:
             if getattr(char, prop).casefold() == value:
                 yield char
 
+    # String matching.
     else:
         for char in chars:
             if getattr(char, prop) == value:
@@ -1442,7 +1485,9 @@ def get_property_values(prop: str) -> tuple[str, ...]:
 
 
 if __name__ == '__main__':
-    for item in filter_by_property('na', '.*FROWN.*', regex=True):
-        text = item.summarize()
-        btext = text.encode('utf_8', errors='replace')
-        print(btext.decode('utf_8'))
+    cache = Cache()
+    # text = ', '.join(f'\'{prop}\'' for prop in cache.irgsources)
+    # print(f'(\n    {text},\n)')
+
+    for prop in cache.irgsources:
+        print(f'assert char.{prop} == \'\'')

@@ -4,9 +4,10 @@ util
 
 Utility functions for :mod:`charex`.
 """
-from importlib.resources import files
+from importlib.resources import as_file, files
 from math import log
 import unicodedata as ucd
+from zipfile import ZipFile
 
 
 # Constants.
@@ -94,12 +95,20 @@ RESOURCES = {
     'vo': 'VerticalOrientation.txt',
     'wb': 'WordBreakProperty.txt',
 
+    # Unihan data.
+    'irgsources': 'Unihan.zip',
+    'kiicore': 'Unihan.zip',
+
     # HTML data.
     'entities': 'entities.json',
 
     # HTML examples.
     'result': 'result.html',
     'quote': 'quote.html',
+}
+UNIHAN = {
+    'irgsources': 'Unihan_IRGSources.txt',
+    'kiicore': 'Unihan_IRGSources.txt',
 }
 
 
@@ -228,10 +237,22 @@ def read_resource(key: str, codec: str = 'utf_8') -> tuple[str, ...]:
     :rtype: tuple
     """
     pkg = files(DATA_LOC)
-    data_file = pkg / RESOURCES[key]
-    fh = data_file.open(encoding=codec)
-    lines = fh.readlines()
-    fh.close()
+    filename = RESOURCES[key]
+    data_file = pkg / filename
+
+    if filename.endswith('.zip'):
+        uhfile = UNIHAN[key]
+        with as_file(data_file) as path:
+            with ZipFile(path) as zh:
+                with zh.open(uhfile) as zch:
+                    blines = zch.readlines()
+        lines = [bline.decode(codec) for bline in blines]
+
+    else:
+        fh = data_file.open(encoding=codec)
+        lines = fh.readlines()
+        fh.close()
+
     lines = [line.rstrip() for line in lines]
     return tuple(lines)
 

@@ -61,6 +61,45 @@ def test_character_core_properties():
     assert char.stc == '0041'
 
 
+def test_character_irgsource_properties():
+    """A :class:`charex.Character` should have the properties from the
+    Unicode data database.
+    """
+    char = c.Character('a')
+    assert char.cjkirg_gsource == ''
+    assert char.cjkirg_jsource == ''
+    assert char.cjkirg_tsource == ''
+    assert char.cjkrsunicode == ''
+    assert char.ktotalstrokes == ''
+    assert char.cjkirg_ksource == ''
+    assert char.cjkirg_kpsource == ''
+    assert char.cjkirg_vsource == ''
+    assert char.cjkirg_hsource == ''
+    assert char.cjkirg_usource == ''
+    assert char.cjkiicore == ''
+    assert char.cjkirg_msource == ''
+    assert char.cjkirg_uksource == ''
+    assert char.cjkcompatibilityvariant == ''
+    assert char.cjkirg_ssource == ''
+
+    char = c.Character('U+31026')
+    assert char.cjkirg_gsource == 'GHZR-74462.01'
+    assert char.cjkirg_jsource == ''
+    assert char.cjkirg_tsource == ''
+    assert char.cjkrsunicode == '170.9'
+    assert char.ktotalstrokes == '12'
+    assert char.cjkirg_ksource == ''
+    assert char.cjkirg_kpsource == ''
+    assert char.cjkirg_vsource == ''
+    assert char.cjkirg_hsource == ''
+    assert char.cjkirg_usource == ''
+    assert char.cjkiicore == ''
+    assert char.cjkirg_msource == ''
+    assert char.cjkirg_uksource == ''
+    assert char.cjkcompatibilityvariant == ''
+    assert char.cjkirg_ssource == ''
+
+
 def test_character_derived_normalization_properties():
     """A :class:`charex.Character` should have the properties from
     DerivedNormalizationProperties.txt.
