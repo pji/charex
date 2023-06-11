@@ -99,6 +99,7 @@ RESOURCES = {
     'dictlike': 'Unihan.zip',
     'dindices': 'Unihan.zip',
     'irgsources': 'Unihan.zip',
+    'mappings': 'Unihan.zip',
     'numvalues': 'Unihan.zip',
 
     # HTML data.
@@ -112,6 +113,7 @@ UNIHAN = {
     'dictlike': 'Unihan_DictionaryLikeData.txt',
     'dindices': 'Unihan_DictionaryIndices.txt',
     'irgsources': 'Unihan_IRGSources.txt',
+    'mappings': 'Unihan_OtherMappings.txt',
     'numvalues': 'Unihan_NumericValues.txt',
 }
 

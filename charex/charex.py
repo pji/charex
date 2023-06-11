@@ -208,6 +208,14 @@ class Cache:
         'cjkirg_usource', 'cjkiicore', 'cjkirg_msource',
         'cjkirg_uksource', 'cjkcompatibilityvariant', 'cjkirg_ssource',
     )
+    mappings_props = (
+        'kjis0213', 'kkps1', 'khkscs', 'ktgh', 'kkoreanname', 'keacc',
+        'ktaiwantelegraph', 'kja', 'kkps0', 'kbigfive', 'kcccii',
+        'kcns1986', 'kcns1992', 'kgb0', 'kgb1', 'kjis0', 'kjoyokanji',
+        'kksc0', 'kkoreaneducationhanja', 'kmainlandtelegraph', 'kxerox',
+        'kgb5', 'kjis1', 'kpseudogb1', 'kgb3', 'kgb8', 'kjinmeiyokanji',
+        'kksc1', 'kibmjapan', 'kgb7',
+    )
     multis = ('scx',)
     numvalues_props = (
         'cjkothernumeric', 'cjkprimarynumeric', 'cjkaccountingnumeric',
@@ -235,6 +243,7 @@ class Cache:
         self.__dindices: SingleValCache = {}
         self.__emoji: SimpleListCache = {}
         self.__irgsources: SingleValCache = {}
+        self.__mapping: SingleValCache = {}
         self.__multival: MultiValCache = {}
         self.__namealias: NameAliasCache = defaultdict(tuple)
         self.__normalsimplelist: SimpleListCache = {}
@@ -307,6 +316,14 @@ class Cache:
             for key in result:
                 self.__irgsources[key] = result[key]
         return self.__irgsources
+
+    @property
+    def mappings(self) -> SingleValCache:
+        if not self.__mapping:
+            result = self.get_unihan('mappings')
+            for key in result:
+                self.__mapping[key] = result[key]
+        return self.__mapping
 
     @property
     def multival(self) -> MultiValCache:
@@ -910,7 +927,7 @@ class Character:
             return 'N'
 
         cjk_props = (
-            'irgsources', 'numvalues', 'dindices', 'dictlike',
+            'irgsources', 'numvalues', 'dindices', 'dictlike', 'mappings',
         )
         for prop in cjk_props:
             if name in getattr(self.cache, f'{prop}_props'):
@@ -1533,10 +1550,10 @@ def get_property_values(prop: str) -> tuple[str, ...]:
 
 if __name__ == '__main__':
     cache = Cache()
-    # text = ', '.join(f'\'{prop}\'' for prop in cache.dictlike)
+    # text = ', '.join(f'\'{prop}\'' for prop in cache.mappings)
     # print(f'(\n    {text},\n)')
 
-    for prop in cache.dictlike:
+    for prop in cache.mappings:
         print(f'assert char.{prop} == \'\'')
 
     # print(cache.numvalues['cjkprimarynumeric']['4E07'])

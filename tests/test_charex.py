@@ -276,6 +276,43 @@ def test_character_proplist_properties():
     assert char.xidc == 'Y'
 
 
+def test_character_mappings_properties():
+    """A :class:`charex.Character` should have the properties from the
+    Unihan Other Mappings database.
+    """
+    char = c.Character('a')
+    assert char.kjis0213 == ''
+    assert char.kkps1 == ''
+    assert char.khkscs == ''
+    assert char.ktgh == ''
+    assert char.kkoreanname == ''
+    assert char.keacc == ''
+    assert char.ktaiwantelegraph == ''
+    assert char.kja == ''
+    assert char.kkps0 == ''
+    assert char.kbigfive == ''
+    assert char.kcccii == ''
+    assert char.kcns1986 == ''
+    assert char.kcns1992 == ''
+    assert char.kgb0 == ''
+    assert char.kgb1 == ''
+    assert char.kjis0 == ''
+    assert char.kjoyokanji == ''
+    assert char.kksc0 == ''
+    assert char.kkoreaneducationhanja == ''
+    assert char.kmainlandtelegraph == ''
+    assert char.kxerox == ''
+    assert char.kgb5 == ''
+    assert char.kjis1 == ''
+    assert char.kpseudogb1 == ''
+    assert char.kgb3 == ''
+    assert char.kgb8 == ''
+    assert char.kjinmeiyokanji == ''
+    assert char.kksc1 == ''
+    assert char.kibmjapan == ''
+    assert char.kgb7 == ''
+
+
 def test_character_multilist_properties():
     """A :class:`charex.Character` should have the properties from
     defined properties that contain multiple values.
