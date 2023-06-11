@@ -190,24 +190,24 @@ class Cache:
     It shouldn't be called directly. It's intended to be used
     through :class:`charex.Character`.
     """
-    prefix_ranges = (
-        ValueRange(0x3400, 0x4dc0, 'CJK UNIFIED IDEOGRAPH-'),
-        ValueRange(0x4e00, 0x9ffd, 'CJK UNIFIED IDEOGRAPH-'),
-        ValueRange(0xac00, 0xd7a3, 'HANGUL SYLLABLE '),
-        ValueRange(0xf900, 0xfa6e, 'CJK UNIFIED IDEOGRAPH-'),
-        ValueRange(0xfa70, 0xfada, 'CJK UNIFIED IDEOGRAPH-'),
-        ValueRange(0x17000, 0x187f8, 'TANGUT IDEOGRAPH-'),
-        ValueRange(0x18d00, 0x18d09, 'TANGUT IDEOGRAPH-'),
-        ValueRange(0x18b00, 0x18cd6, 'KHITAN SMALL SCRIPT CHARACTER-'),
-        ValueRange(0x1b170, 0x1b2fc, 'NUSHU CHARACTER-'),
-        ValueRange(0x20000, 0x2a6de, 'CJK UNIFIED IDEOGRAPH-'),
-        ValueRange(0x2a700, 0x2b735, 'CJK UNIFIED IDEOGRAPH-'),
-        ValueRange(0x2b740, 0x2b81e, 'CJK UNIFIED IDEOGRAPH-'),
-        ValueRange(0x2b820, 0x2cea2, 'CJK UNIFIED IDEOGRAPH-'),
-        ValueRange(0x2ceb0, 0x2ebe1, 'CJK UNIFIED IDEOGRAPH-'),
-        ValueRange(0x2f800, 0x2fa1e, 'CJK UNIFIED IDEOGRAPH-'),
-        ValueRange(0x30000, 0x3134b, 'CJK UNIFIED IDEOGRAPH-'),
-    )
+    prefixes = defaultdict(str, {
+        0x3400: 'CJK UNIFIED IDEOGRAPH-',
+        0x4e00: 'CJK UNIFIED IDEOGRAPH-',
+        0xac00: 'HANGUL SYLLABLE ',
+        0xf900: 'CJK UNIFIED IDEOGRAPH-',
+        0xfa70: 'CJK UNIFIED IDEOGRAPH-',
+        0x17000: 'TANGUT IDEOGRAPH-',
+        0x18d00: 'TANGUT IDEOGRAPH-',
+        0x18b00: 'KHITAN SMALL SCRIPT CHARACTER-',
+        0x1b170: 'NUSHU CHARACTER-',
+        0x20000: 'CJK UNIFIED IDEOGRAPH-',
+        0x2a700: 'CJK UNIFIED IDEOGRAPH-',
+        0x2b740: 'CJK UNIFIED IDEOGRAPH-',
+        0x2b820: 'CJK UNIFIED IDEOGRAPH-',
+        0x2ceb0: 'CJK UNIFIED IDEOGRAPH-',
+        0x2f800: 'CJK UNIFIED IDEOGRAPH-',
+        0x30000: 'CJK UNIFIED IDEOGRAPH-',
+    })
     sources = {
         'dictlike': (
             'kcangjie', 'kcihait', 'kstrange', 'kphonetic', 'kfenn',
@@ -467,7 +467,7 @@ class Cache:
     def unicodedata(self) -> UnicodeDataCache:
         if not self.__unicodedata:
             lines = util.read_resource('unicodedata')
-            data: dict[str, UCD] = {}
+            data: UnicodeDataCache = {}
             for i, line in enumerate(lines):
                 fields = line.split(';')
                 datum = UCD(*fields)
@@ -482,28 +482,7 @@ class Cache:
                     next_fields = nextline.split(';')
                     start = int(datum.address, 16)
                     stop = int(next_fields[0], 16) + 1
-
-                    prefixes = {r.start: r.value for r in self.prefix_ranges}
-                    if start in prefixes:
-                        prefix = prefixes[start]
-                    else:
-                        prefix = ''
-
-                    for n in range(start, stop):
-                        code = f'{n:04x}'.upper()
-                        name = prefix
-                        if name.startswith('HANGUL'):
-                            parts = self.decomp_hangul(n)
-                            jamo = ''.join(
-                                self.singleval['jsn'][chr(part)]
-                                for part in parts
-                            )
-                            name += jamo
-                        elif name:
-                            name += code
-                        datum = UCD(code, name, *fields[2:])
-                        n = int(datum.address, 16)
-                        data[chr(n)] = datum
+                    data.update(self.fill_ucd_range(start, stop, fields))
 
             self.__unicodedata = data
         return self.__unicodedata
@@ -533,30 +512,41 @@ class Cache:
         SCOUNT = LCOUNT * NCOUNT
 
         sindex = s - SBASE
-#         address = f'{s:04x}'
-#         hst = self.singleval['hst'][address]
-#
-#         if hst == 'LV':
-#             lindex = sindex // NCOUNT
-#             vindex = (sindex % NCOUNT) // TCOUNT
-#
-#             lpart = LBASE + lindex
-#             vpart = VBASE + vindex
-#
-#             return lpart, vpart
-#
-#         elif hst == 'LVT':
         lindex = sindex // NCOUNT
         vindex = (sindex % NCOUNT) // TCOUNT
         tindex = sindex % TCOUNT
 
-        lpart = LBASE + lindex
-        vpart = VBASE + vindex
-        tpart = TBASE + tindex
+        return (
+            LBASE + lindex,
+            VBASE + vindex,
+            TBASE + tindex,
+        )
 
-        return lpart, vpart, tpart
+    def fill_ucd_range(
+        self,
+        start: int,
+        stop: int,
+        fields: Sequence[str],
+    ) -> UnicodeDataCache:
+        prefix = self.prefixes[start]
 
-        raise ValueError(f'U+{s:04x} has invalid hst.')
+        data = {}
+        for n in range(start, stop):
+            code = f'{n:04x}'.upper()
+            name = prefix
+            if name.startswith('HANGUL'):
+                name += self.get_jamo_name(n)
+            elif name:
+                name += code
+            datum = UCD(code, name, *fields[2:])
+            n = int(datum.address, 16)
+            data[chr(n)] = datum
+        return data
+
+    def get_jamo_name(self, s: int) -> str:
+        parts = self.decomp_hangul(s)
+        jamo = [self.singleval['jsn'][chr(part)] for part in parts]
+        return ''.join(jamo)
 
     def get_emoji(self) -> SimpleListCache:
         lines = util.read_resource('emoji')
