@@ -96,6 +96,7 @@ RESOURCES = {
     'wb': 'WordBreakProperty.txt',
 
     # Unihan data.
+    'dictlike': 'Unihan.zip',
     'dindices': 'Unihan.zip',
     'irgsources': 'Unihan.zip',
     'numvalues': 'Unihan.zip',
@@ -108,6 +109,7 @@ RESOURCES = {
     'quote': 'quote.html',
 }
 UNIHAN = {
+    'dictlike': 'Unihan_DictionaryLikeData.txt',
     'dindices': 'Unihan_DictionaryIndices.txt',
     'irgsources': 'Unihan_IRGSources.txt',
     'numvalues': 'Unihan_NumericValues.txt',

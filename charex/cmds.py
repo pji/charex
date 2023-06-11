@@ -203,6 +203,9 @@ def dt(c: str) -> Generator[str, None, None]:
         'cjk dictionary indices': (
             make_prop_line(key, char) for key in char.cache.dindices
         ),
+        'cjk dictionary-like': (
+            make_prop_line(key, char) for key in char.cache.dictlike
+        ),
         'cjk irgsources': (
             make_prop_line(key, char) for key in char.cache.irgsources
         ),

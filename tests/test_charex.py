@@ -98,6 +98,25 @@ def test_character_derived_normalization_properties():
     assert char.comp_ex == 'Y'
 
 
+def test_character_dictlike_properties():
+    """A :class:`charex.Character` should have the properties from the
+    Unihan Dictionary-Like Data database.
+    """
+    char = c.Character('a')
+    assert char.kcangjie == ''
+    assert char.kcihait == ''
+    assert char.kstrange == ''
+    assert char.kphonetic == ''
+    assert char.kfenn == ''
+    assert char.kunihancore2020 == ''
+    assert char.kcheungbauer == ''
+    assert char.kfourcornercode == ''
+    assert char.kfrequency == ''
+    assert char.kgradelevel == ''
+    assert char.khdzradbreak == ''
+    assert char.khkglyph == ''
+
+
 def test_character_dindices_properties():
     """A :class:`charex.Character` should have the properties from the
     Unihan Dictionary Indices database.

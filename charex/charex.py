@@ -189,6 +189,11 @@ class Cache:
     It shouldn't be called directly. It's intended to be used
     through :class:`charex.Character`.
     """
+    dictlike_props = (
+        'kcangjie', 'kcihait', 'kstrange', 'kphonetic', 'kfenn',
+        'kunihancore2020', 'kcheungbauer', 'kfourcornercode',
+        'kfrequency', 'kgradelevel', 'khdzradbreak', 'khkglyph',
+    )
     dindices_props = (
         'khanyu', 'kirghanyudazidian', 'kirgkangxi', 'ksbgy', 'knelson',
         'kcowles', 'kmatthews', 'kgsr', 'kkangxi', 'kfennindex',
@@ -225,6 +230,7 @@ class Cache:
             ''
         ),))
         self.__casefold: CaseFoldCache = defaultdict(mvalue_cf)
+        self.__dictlike: SingleValCache = {}
         self.__denormal: DenormalCache = {}
         self.__dindices: SingleValCache = {}
         self.__emoji: SimpleListCache = {}
@@ -257,6 +263,14 @@ class Cache:
             for c in casefold:
                 self.__casefold[c] = tuple(casefold[c])
         return self.__casefold
+
+    @property
+    def dictlike(self) -> SingleValCache:
+        if not self.__dictlike:
+            result = self.get_unihan('dictlike')
+            for key in result:
+                self.__dictlike[key] = result[key]
+        return self.__dictlike
 
     @property
     def denormal(self) -> DenormalCache:
@@ -896,7 +910,7 @@ class Character:
             return 'N'
 
         cjk_props = (
-            'irgsources', 'numvalues', 'dindices',
+            'irgsources', 'numvalues', 'dindices', 'dictlike',
         )
         for prop in cjk_props:
             if name in getattr(self.cache, f'{prop}_props'):
@@ -1519,10 +1533,10 @@ def get_property_values(prop: str) -> tuple[str, ...]:
 
 if __name__ == '__main__':
     cache = Cache()
-    # text = ', '.join(f'\'{prop}\'' for prop in cache.dindices)
+    # text = ', '.join(f'\'{prop}\'' for prop in cache.dictlike)
     # print(f'(\n    {text},\n)')
 
-    for prop in cache.dindices:
+    for prop in cache.dictlike:
         print(f'assert char.{prop} == \'\'')
 
     # print(cache.numvalues['cjkprimarynumeric']['4E07'])
