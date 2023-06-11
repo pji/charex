@@ -101,6 +101,7 @@ RESOURCES = {
     'irgsources': 'Unihan.zip',
     'mappings': 'Unihan.zip',
     'numvalues': 'Unihan.zip',
+    'radstroke': 'Unihan.zip',
 
     # HTML data.
     'entities': 'entities.json',
@@ -115,6 +116,7 @@ UNIHAN = {
     'irgsources': 'Unihan_IRGSources.txt',
     'mappings': 'Unihan_OtherMappings.txt',
     'numvalues': 'Unihan_NumericValues.txt',
+    'radstroke': 'Unihan_RadicalStrokeCounts.txt',
 }
 
 

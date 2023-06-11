@@ -212,6 +212,9 @@ def dt(c: str) -> Generator[str, None, None]:
         'cjk numeric values': (
             make_prop_line(key, char) for key in char.cache.numvalues
         ),
+        'cjk other mappings': (
+            make_prop_line(key, char) for key in char.cache.mappings
+        ),
         'encoding': (val for val in (
             ('UTF-8', char.encode('utf8')),
             ('UTF-16', char.encode('utf_16_be')),

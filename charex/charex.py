@@ -139,6 +139,7 @@ SimpleListCache = dict[str, tuple[str, ...]]
 SingleValCache = dict[str, defaultdict[str, str]]
 SpecCaseCache = defaultdict[str, tuple[SpecialCase, ...]]
 UnicodeDataCache = dict[str, UCD]
+UnihanCache = dict[str, SingleValCache]
 
 
 # Default values for defaultdicts.
@@ -189,37 +190,39 @@ class Cache:
     It shouldn't be called directly. It's intended to be used
     through :class:`charex.Character`.
     """
-    dictlike_props = (
-        'kcangjie', 'kcihait', 'kstrange', 'kphonetic', 'kfenn',
-        'kunihancore2020', 'kcheungbauer', 'kfourcornercode',
-        'kfrequency', 'kgradelevel', 'khdzradbreak', 'khkglyph',
-    )
-    dindices_props = (
-        'khanyu', 'kirghanyudazidian', 'kirgkangxi', 'ksbgy', 'knelson',
-        'kcowles', 'kmatthews', 'kgsr', 'kkangxi', 'kfennindex',
-        'kkarlgren', 'kmeyerwempe', 'klau', 'kcheungbauerindex',
-        'kmorohashi', 'kdaejaweon', 'kirgdaejaweon', 'kirgdaikanwaziten',
-    )
+    sources = {
+        'dictlike': (
+            'kcangjie', 'kcihait', 'kstrange', 'kphonetic', 'kfenn',
+            'kunihancore2020', 'kcheungbauer', 'kfourcornercode',
+            'kfrequency', 'kgradelevel', 'khdzradbreak', 'khkglyph',
+        ),
+        'dindices': (
+            'khanyu', 'kirghanyudazidian', 'kirgkangxi', 'ksbgy', 'knelson',
+            'kcowles', 'kmatthews', 'kgsr', 'kkangxi', 'kfennindex',
+            'kkarlgren', 'kmeyerwempe', 'klau', 'kcheungbauerindex',
+            'kmorohashi', 'kdaejaweon', 'kirgdaejaweon', 'kirgdaikanwaziten',
+        ),
+        'irgsources': (
+            'cjkirg_gsource', 'cjkirg_jsource', 'cjkirg_tsource',
+            'cjkrsunicode', 'ktotalstrokes', 'cjkirg_ksource',
+            'cjkirg_kpsource', 'cjkirg_vsource', 'cjkirg_hsource',
+            'cjkirg_usource', 'cjkiicore', 'cjkirg_msource',
+            'cjkirg_uksource', 'cjkcompatibilityvariant', 'cjkirg_ssource',
+        ),
+        'mappings': (
+            'kjis0213', 'kkps1', 'khkscs', 'ktgh', 'kkoreanname', 'keacc',
+            'ktaiwantelegraph', 'kja', 'kkps0', 'kbigfive', 'kcccii',
+            'kcns1986', 'kcns1992', 'kgb0', 'kgb1', 'kjis0', 'kjoyokanji',
+            'kksc0', 'kkoreaneducationhanja', 'kmainlandtelegraph', 'kxerox',
+            'kgb5', 'kjis1', 'kpseudogb1', 'kgb3', 'kgb8', 'kjinmeiyokanji',
+            'kksc1', 'kibmjapan', 'kgb7',
+        ),
+        'numvalues': (
+            'cjkothernumeric', 'cjkprimarynumeric', 'cjkaccountingnumeric',
+        ),
+    }
     forms = ('casefold', 'nfc', 'nfd', 'nfkc', 'nfkd')
-    irgsources_props = (
-        'cjkirg_gsource', 'cjkirg_jsource', 'cjkirg_tsource',
-        'cjkrsunicode', 'ktotalstrokes', 'cjkirg_ksource',
-        'cjkirg_kpsource', 'cjkirg_vsource', 'cjkirg_hsource',
-        'cjkirg_usource', 'cjkiicore', 'cjkirg_msource',
-        'cjkirg_uksource', 'cjkcompatibilityvariant', 'cjkirg_ssource',
-    )
-    mappings_props = (
-        'kjis0213', 'kkps1', 'khkscs', 'ktgh', 'kkoreanname', 'keacc',
-        'ktaiwantelegraph', 'kja', 'kkps0', 'kbigfive', 'kcccii',
-        'kcns1986', 'kcns1992', 'kgb0', 'kgb1', 'kjis0', 'kjoyokanji',
-        'kksc0', 'kkoreaneducationhanja', 'kmainlandtelegraph', 'kxerox',
-        'kgb5', 'kjis1', 'kpseudogb1', 'kgb3', 'kgb8', 'kjinmeiyokanji',
-        'kksc1', 'kibmjapan', 'kgb7',
-    )
     multis = ('scx',)
-    numvalues_props = (
-        'cjkothernumeric', 'cjkprimarynumeric', 'cjkaccountingnumeric',
-    )
     ranges = ('age', 'blk', 'sc',)
     simples = ('ce',)
     singles = (
@@ -257,6 +260,25 @@ class Cache:
         self.__singleval: SingleValCache = {}
         self.__speccase: SpecCaseCache = defaultdict(mvalue_sc)
         self.__unicodedata: UnicodeDataCache = {}
+        self.__unihan: UnihanCache = {
+            'dindices': {},
+            'dictlike': {},
+            'irgsources': {},
+            'numvalues': {},
+            'mappings': {},
+        }
+
+    def __getattr__(self, name):
+        # The Unihan database.
+        if name in self.__unihan:
+            if not self.__unihan[name]:
+                data = self.get_unihan(name)
+                for key in data:
+                    self.__unihan[name][key] = data[key]
+            return self.__unihan[name]
+
+        # The attribute isn't found.
+        raise AttributeError(name)
 
     @property
     def casefold(self) -> CaseFoldCache:
@@ -274,14 +296,6 @@ class Cache:
         return self.__casefold
 
     @property
-    def dictlike(self) -> SingleValCache:
-        if not self.__dictlike:
-            result = self.get_unihan('dictlike')
-            for key in result:
-                self.__dictlike[key] = result[key]
-        return self.__dictlike
-
-    @property
     def denormal(self) -> DenormalCache:
         if not self.__denormal:
             for form in self.forms:
@@ -296,34 +310,10 @@ class Cache:
         return self.__denormal
 
     @property
-    def dindices(self) -> SingleValCache:
-        if not self.__dindices:
-            result = self.get_unihan('dindices')
-            for key in result:
-                self.__dindices[key] = result[key]
-        return self.__dindices
-
-    @property
     def emoji(self) -> SimpleListCache:
         if not self.__emoji:
             self.__emoji = self.get_emoji()
         return self.__emoji
-
-    @property
-    def irgsources(self) -> SingleValCache:
-        if not self.__irgsources:
-            result = self.get_unihan('irgsources')
-            for key in result:
-                self.__irgsources[key] = result[key]
-        return self.__irgsources
-
-    @property
-    def mappings(self) -> SingleValCache:
-        if not self.__mapping:
-            result = self.get_unihan('mappings')
-            for key in result:
-                self.__mapping[key] = result[key]
-        return self.__mapping
 
     @property
     def multival(self) -> MultiValCache:
@@ -926,12 +916,9 @@ class Character:
                 return 'Y'
             return 'N'
 
-        cjk_props = (
-            'irgsources', 'numvalues', 'dindices', 'dictlike', 'mappings',
-        )
-        for prop in cjk_props:
-            if name in getattr(self.cache, f'{prop}_props'):
-                data = getattr(self.cache, prop)[name]
+        for source in self.cache.sources:
+            if name in self.cache.sources[source]:
+                data = getattr(self.cache, source)[name]
                 address = self.code_point[2:].casefold()
                 return data[address]
 
@@ -1550,10 +1537,10 @@ def get_property_values(prop: str) -> tuple[str, ...]:
 
 if __name__ == '__main__':
     cache = Cache()
-    # text = ', '.join(f'\'{prop}\'' for prop in cache.mappings)
-    # print(f'(\n    {text},\n)')
+    text = ', '.join(f'\'{prop}\'' for prop in cache.radstroke)
+    print(f'(\n    {text},\n)')
 
-    for prop in cache.mappings:
-        print(f'assert char.{prop} == \'\'')
+    # for prop in cache.mappings:
+    #     print(f'assert char.{prop} == \'\'')
 
     # print(cache.numvalues['cjkprimarynumeric']['4E07'])
