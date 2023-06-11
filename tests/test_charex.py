@@ -589,6 +589,22 @@ def test_character_is_normal():
     assert not char.is_normal('NFD')
 
 
+def test_character_na():
+    """When called, :attr:`Character.na` should return the correct name
+    for the character.
+    """
+    char = c.Character('a')
+    assert char.na == 'LATIN SMALL LETTER A'
+
+    # Rule NR2.
+    char = c.Character('U+20002')
+    assert char.na == 'CJK UNIFIED IDEOGRAPH-20002'
+
+    # Rule NR1.
+    char = c.Character('U+D4DB')
+    assert char.na == 'HANGUL SYLLABLE PWILH'
+
+
 def test_character_normalize():
     """When given a normalization form, :meth:`Character.normalize` should
     return the normalized form of the character.

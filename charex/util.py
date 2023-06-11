@@ -76,6 +76,7 @@ RESOURCES = {
     'hst': 'HangulSyllableType.txt',
     'inpc': 'IndicPositionalCategory.txt',
     'insc': 'IndicSyllabicCategory.txt',
+    'jamo': 'Jamo.txt',
     'jg': 'DerivedJoiningGroup.txt',
     'jsn': 'Jamo.txt',
     'jt': 'DerivedJoiningType.txt',

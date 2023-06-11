@@ -190,6 +190,24 @@ class Cache:
     It shouldn't be called directly. It's intended to be used
     through :class:`charex.Character`.
     """
+    prefix_ranges = (
+        ValueRange(0x3400, 0x4dc0, 'CJK UNIFIED IDEOGRAPH-'),
+        ValueRange(0x4e00, 0x9ffd, 'CJK UNIFIED IDEOGRAPH-'),
+        ValueRange(0xac00, 0xd7a3, 'HANGUL SYLLABLE '),
+        ValueRange(0xf900, 0xfa6e, 'CJK UNIFIED IDEOGRAPH-'),
+        ValueRange(0xfa70, 0xfada, 'CJK UNIFIED IDEOGRAPH-'),
+        ValueRange(0x17000, 0x187f8, 'TANGUT IDEOGRAPH-'),
+        ValueRange(0x18d00, 0x18d09, 'TANGUT IDEOGRAPH-'),
+        ValueRange(0x18b00, 0x18cd6, 'KHITAN SMALL SCRIPT CHARACTER-'),
+        ValueRange(0x1b170, 0x1b2fc, 'NUSHU CHARACTER-'),
+        ValueRange(0x20000, 0x2a6de, 'CJK UNIFIED IDEOGRAPH-'),
+        ValueRange(0x2a700, 0x2b735, 'CJK UNIFIED IDEOGRAPH-'),
+        ValueRange(0x2b740, 0x2b81e, 'CJK UNIFIED IDEOGRAPH-'),
+        ValueRange(0x2b820, 0x2cea2, 'CJK UNIFIED IDEOGRAPH-'),
+        ValueRange(0x2ceb0, 0x2ebe1, 'CJK UNIFIED IDEOGRAPH-'),
+        ValueRange(0x2f800, 0x2fa1e, 'CJK UNIFIED IDEOGRAPH-'),
+        ValueRange(0x30000, 0x3134b, 'CJK UNIFIED IDEOGRAPH-'),
+    )
     sources = {
         'dictlike': (
             'kcangjie', 'kcihait', 'kstrange', 'kphonetic', 'kfenn',
@@ -464,9 +482,26 @@ class Cache:
                     next_fields = nextline.split(';')
                     start = int(datum.address, 16)
                     stop = int(next_fields[0], 16) + 1
+
+                    prefixes = {r.start: r.value for r in self.prefix_ranges}
+                    if start in prefixes:
+                        prefix = prefixes[start]
+                    else:
+                        prefix = ''
+
                     for n in range(start, stop):
-                        gap_fields = (f'{n:04x}'.upper(), *fields[1:])
-                        datum = UCD(*gap_fields)
+                        code = f'{n:04x}'.upper()
+                        name = prefix
+                        if name.startswith('HANGUL'):
+                            parts = self.decomp_hangul(n)
+                            jamo = ''.join(
+                                self.singleval['jsn'][chr(part)]
+                                for part in parts
+                            )
+                            name += jamo
+                        elif name:
+                            name += code
+                        datum = UCD(code, name, *fields[2:])
                         n = int(datum.address, 16)
                         data[chr(n)] = datum
 
@@ -484,6 +519,44 @@ class Cache:
         if prop in self.propvals:
             value = self.propvals[prop][value.casefold()].alias
         return value
+
+    def decomp_hangul(self, s: int) -> tuple[int, ...]:
+        """See Unicode 3.12."""
+        SBASE = 0xac00
+        LBASE = 0x1100
+        VBASE = 0x1161
+        TBASE = 0x11a7
+        LCOUNT = 19
+        VCOUNT = 21
+        TCOUNT = 28
+        NCOUNT = VCOUNT * TCOUNT
+        SCOUNT = LCOUNT * NCOUNT
+
+        sindex = s - SBASE
+#         address = f'{s:04x}'
+#         hst = self.singleval['hst'][address]
+#
+#         if hst == 'LV':
+#             lindex = sindex // NCOUNT
+#             vindex = (sindex % NCOUNT) // TCOUNT
+#
+#             lpart = LBASE + lindex
+#             vpart = VBASE + vindex
+#
+#             return lpart, vpart
+#
+#         elif hst == 'LVT':
+        lindex = sindex // NCOUNT
+        vindex = (sindex % NCOUNT) // TCOUNT
+        tindex = sindex % TCOUNT
+
+        lpart = LBASE + lindex
+        vpart = VBASE + vindex
+        tpart = TBASE + tindex
+
+        return lpart, vpart, tpart
+
+        raise ValueError(f'U+{s:04x} has invalid hst.')
 
     def get_emoji(self) -> SimpleListCache:
         lines = util.read_resource('emoji')
@@ -1547,14 +1620,3 @@ def get_property_values(prop: str) -> tuple[str, ...]:
         if propvals[key] not in result:
             result.append(propvals[key])
     return tuple(val.alias for val in result)
-
-
-if __name__ == '__main__':
-    cache = Cache()
-    # text = ', '.join(f'\'{prop}\'' for prop in cache.variants)
-    # print(f'(\n    {text},\n)')
-
-    for prop in cache.variants:
-        print(f'assert char.{prop} == \'\'')
-
-    # print(cache.numvalues['cjkprimarynumeric']['4E07'])

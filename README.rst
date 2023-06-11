@@ -129,7 +129,7 @@ What Is Left To Do?
 The following features are planned for the v0.2.1 or later releases:
 
 *   (Done.) Add every Unihan property to charex.Character.
-*   Fix names for CJK Ideographs.
+*   (Done.) Fix names for CJK Ideographs.
 *   Move all Y/N properties to simple lists.
 *   Support for more versions of Unicode.
 *   Emoji combiner.
