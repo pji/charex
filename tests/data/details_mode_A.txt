@@ -121,6 +121,12 @@
 
                                 ---  Cjk Other Mappings
 
+                                ---  Cjk Radical Stroke Count
+
+                                ---  Cjk Readings
+
+                                ---  Cjk Variants
+
                                 ---  Encoding
                               UTF-8: 41
                              UTF-16: 00 41

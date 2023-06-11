@@ -220,6 +220,17 @@ class Cache:
         'numvalues': (
             'cjkothernumeric', 'cjkprimarynumeric', 'cjkaccountingnumeric',
         ),
+        'radstroke': ('krsadobe_japan1_6', 'krskangxi',),
+        'readings': (
+            'kcantonese', 'kdefinition', 'kmandarin', 'khanyupinyin',
+            'ktghz2013', 'kxhc1983', 'kvietnamese', 'khangul', 'ktang',
+            'kjapanesekun', 'kjapaneseon', 'khanyupinlu', 'kkorean',
+        ),
+        'variants': (
+            'ksemanticvariant', 'kspoofingvariant', 'ktraditionalvariant',
+            'ksimplifiedvariant', 'kspecializedsemanticvariant',
+            'kzvariant',
+        ),
     }
     forms = ('casefold', 'nfc', 'nfd', 'nfkc', 'nfkd')
     multis = ('scx',)
@@ -266,6 +277,9 @@ class Cache:
             'irgsources': {},
             'numvalues': {},
             'mappings': {},
+            'radstroke': {},
+            'readings': {},
+            'variants': {},
         }
 
     def __getattr__(self, name):
@@ -1537,10 +1551,10 @@ def get_property_values(prop: str) -> tuple[str, ...]:
 
 if __name__ == '__main__':
     cache = Cache()
-    text = ', '.join(f'\'{prop}\'' for prop in cache.radstroke)
-    print(f'(\n    {text},\n)')
+    # text = ', '.join(f'\'{prop}\'' for prop in cache.variants)
+    # print(f'(\n    {text},\n)')
 
-    # for prop in cache.mappings:
-    #     print(f'assert char.{prop} == \'\'')
+    for prop in cache.variants:
+        print(f'assert char.{prop} == \'\'')
 
     # print(cache.numvalues['cjkprimarynumeric']['4E07'])

@@ -336,6 +336,58 @@ def test_character_numvalues_properties():
     assert char.cjkaccountingnumeric == ''
 
 
+def test_character_radstroke_properties():
+    """A :class:`charex.Character` should have the properties from the
+    Unihan Radical Stroke Counts database.
+    """
+    char = c.Character('a')
+    assert char.krsadobe_japan1_6 == ''
+    assert char.krskangxi == ''
+
+    char = c.Character('U+3427')
+    assert char.krsadobe_japan1_6 == 'C+13910+3.1.3 C+13910+6.1.3'
+    assert char.krskangxi == ''
+
+    char = c.Character('U+3687')
+    assert char.krsadobe_japan1_6 == ''
+    assert char.krskangxi == '35.6'
+
+
+def test_character_readings_properties():
+    """A :class:`charex.Character` should have the properties from the
+    Unihan Readings database.
+    """
+    char = c.Character('a')
+    assert char.kcantonese == ''
+    assert char.kdefinition == ''
+    assert char.kmandarin == ''
+    assert char.khanyupinyin == ''
+    assert char.ktghz2013 == ''
+    assert char.kxhc1983 == ''
+    assert char.kvietnamese == ''
+    assert char.khangul == ''
+    assert char.ktang == ''
+    assert char.kjapanesekun == ''
+    assert char.kjapaneseon == ''
+    assert char.khanyupinlu == ''
+    assert char.kkorean == ''
+
+    char = c.Character('U+3404')
+    assert char.kcantonese == 'kwaa1'
+    assert char.kdefinition == ''
+    assert char.kmandarin == 'kuà'
+    assert char.khanyupinyin == ''
+    assert char.ktghz2013 == ''
+    assert char.kxhc1983 == ''
+    assert char.kvietnamese == ''
+    assert char.khangul == ''
+    assert char.ktang == ''
+    assert char.kjapanesekun == ''
+    assert char.kjapaneseon == ''
+    assert char.khanyupinlu == ''
+    assert char.kkorean == ''
+
+
 def test_character_rangelist_properties():
     """A :class:`charex.Character` should have the properties from
     defined range lists.
@@ -376,6 +428,27 @@ def test_character_singleval_properties():
     assert char.sb == 'LO'
     assert char.vo == 'R'
     assert char.wb == 'LE'
+
+
+def test_character_variants_properties():
+    """A :class:`charex.Character` should have the properties from the
+    Unihan Variants database.
+    """
+    char = c.Character('a')
+    assert char.ksemanticvariant == ''
+    assert char.kspoofingvariant == ''
+    assert char.ktraditionalvariant == ''
+    assert char.ksimplifiedvariant == ''
+    assert char.kspecializedsemanticvariant == ''
+    assert char.kzvariant == ''
+
+    char = c.Character('U+3431')
+    assert char.ksemanticvariant == 'U+9B12<kMatthews'
+    assert char.kspoofingvariant == ''
+    assert char.ktraditionalvariant == ''
+    assert char.ksimplifiedvariant == ''
+    assert char.kspecializedsemanticvariant == ''
+    assert char.kzvariant == ''
 
 
 def test_character_speccase():

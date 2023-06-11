@@ -215,6 +215,15 @@ def dt(c: str) -> Generator[str, None, None]:
         'cjk other mappings': (
             make_prop_line(key, char) for key in char.cache.mappings
         ),
+        'cjk radical stroke count': (
+            make_prop_line(key, char) for key in char.cache.radstroke
+        ),
+        'cjk readings': (
+            make_prop_line(key, char) for key in char.cache.readings
+        ),
+        'cjk variants': (
+            make_prop_line(key, char) for key in char.cache.variants
+        ),
         'encoding': (val for val in (
             ('UTF-8', char.encode('utf8')),
             ('UTF-16', char.encode('utf_16_be')),
