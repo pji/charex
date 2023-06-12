@@ -128,7 +128,6 @@ class ValueRange:
 # Types:
 CaseFoldCache = defaultdict[str, tuple[CaseFold, ...]]
 DenormalCache = dict[str, defaultdict[str, tuple[str, ...]]]
-PropListCache = dict[str, defaultdict[str, bool]]
 PropsCache = dict[str, Property]
 PropValsCache = dict[str, dict[str, PropertyValue]]
 MultiValCache = dict[str, defaultdict[str, tuple[str, ...]]]
@@ -143,14 +142,6 @@ UnihanCache = dict[str, SingleValCache]
 
 
 # Default values for defaultdicts.
-class MissingBool:
-    def __init__(self, value: bool) -> None:
-        self.value = value
-
-    def __call__(self) -> bool:
-        return self.value
-
-
 class MissingCaseFold:
     def __init__(self, value: tuple[CaseFold, ...]) -> None:
         self.value = value
@@ -270,12 +261,8 @@ class Cache:
             ''
         ),))
         self.__casefold: CaseFoldCache = defaultdict(mvalue_cf)
-        self.__dictlike: SingleValCache = {}
         self.__denormal: DenormalCache = {}
-        self.__dindices: SingleValCache = {}
         self.__emoji: SimpleListCache = {}
-        self.__irgsources: SingleValCache = {}
-        self.__mapping: SingleValCache = {}
         self.__multival: MultiValCache = {}
         self.__namealias: NameAliasCache = defaultdict(tuple)
         self.__normalsimplelist: SimpleListCache = {}
