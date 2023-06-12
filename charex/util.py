@@ -61,7 +61,6 @@ RESOURCES = {
     'rev_nfkd': 'rev_nfkd.json',
 
     # Unicode data.
-    'age': 'DerivedAge.txt',
     'blocks': 'Blocks.txt',
     'blk': 'Blocks.txt',
     'bmg': 'BidiMirroring.txt',
@@ -96,6 +95,9 @@ RESOURCES = {
     'vo': 'VerticalOrientation.txt',
     'wb': 'WordBreakProperty.txt',
 
+    # UCD data.
+    'age': 'UCD.zip',
+
     # Unihan data.
     'dictlike': 'Unihan.zip',
     'dindices': 'Unihan.zip',
@@ -112,6 +114,9 @@ RESOURCES = {
     # HTML examples.
     'result': 'result.html',
     'quote': 'quote.html',
+}
+UCD = {
+    'age': 'DerivedAge.txt',
 }
 UNIHAN = {
     'dictlike': 'Unihan_DictionaryLikeData.txt',
@@ -254,10 +259,13 @@ def read_resource(key: str, codec: str = 'utf_8') -> tuple[str, ...]:
     data_file = pkg / filename
 
     if filename.endswith('.zip'):
-        uhfile = UNIHAN[key]
+        if key in UNIHAN:
+            file = UNIHAN[key]
+        elif key in UCD:
+            file = UCD[key]
         with as_file(data_file) as path:
             with ZipFile(path) as zh:
-                with zh.open(uhfile) as zch:
+                with zh.open(file) as zch:
                     blines = zch.readlines()
         lines = [bline.decode(codec) for bline in blines]
 
