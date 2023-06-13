@@ -1597,3 +1597,80 @@ def get_property_values(prop: str) -> tuple[str, ...]:
         if propvals[key] not in result:
             result.append(propvals[key])
     return tuple(val.alias for val in result)
+
+
+if __name__ == '__main__':
+    from json import dump
+
+    cache = Cache()
+    props = {}
+    for prop in UCD.__annotations__:
+        if prop == 'address':
+            continue
+        file = 'UCD.zip'
+        path = 'UnicodeData.txt'
+        kind = 'unicode_data'
+        delim = ';'
+        props[prop] = (file, path, kind, delim)
+    for prop in cache.proplist:
+        file = 'UCD.zip'
+        path = util.UCD['proplist']
+        kind = 'simple_list'
+        delim = ';'
+        props[prop] = (file, path, kind, delim)
+    for prop in cache.ranges:
+        file = 'UCD.zip'
+        path = util.UCD[prop]
+        kind = 'value_range'
+        delim = ';'
+        props[prop] = (file, path, kind, delim)
+    for prop in cache.multis:
+        file = 'UCD.zip'
+        path = util.UCD[prop]
+        kind = 'miltivalue'
+        delim = ';'
+        props[prop] = (file, path, kind, delim)
+    for prop in cache.singles:
+        file = 'UCD.zip'
+        path = util.UCD[prop]
+        kind = 'single_value'
+        delim = ';'
+        props[prop] = (file, path, kind, delim)
+    for prop in cache.simples:
+        file = 'UCD.zip'
+        path = util.UCD[prop]
+        kind = 'simple_list'
+        delim = ';'
+        props[prop] = (file, path, kind, delim)
+    for prop in cache.normalsimplelist:
+        file = 'UCD.zip'
+        path = util.UCD['dnormprops']
+        kind = 'dnp_simple_list'
+        delim = ';'
+        props[prop] = (file, path, kind, delim)
+    for prop in cache.normalsingleval:
+        file = 'UCD.zip'
+        path = util.UCD['dnormprops']
+        kind = 'dnp_single_value'
+        delim = ';'
+        props[prop] = (file, path, kind, delim)
+    for prop in cache.emoji:
+        file = 'UCD.zip'
+        path = util.UCD['emoji']
+        kind = 'simple_list'
+        delim = ';'
+        props[prop] = (file, path, kind, delim)
+    for source in cache.sources:
+        for prop in cache.sources[source]:
+            file = util.RESOURCES[source]
+            path = util.UNIHAN[source]
+            kind = 'single_value'
+            delim = '\t'
+            props[prop] = (file, path, kind, delim)
+    kinds = {props[prop][2] for prop in props}
+
+    for kind in kinds:
+        print(kind)
+
+    with open('charex/data/props.json', 'w') as fh:
+        dump(props, fh, indent=4)

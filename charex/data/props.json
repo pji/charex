@@ -1,0 +1,1220 @@
+{
+    "na": [
+        "UCD.zip",
+        "UnicodeData.txt",
+        "unicode_data",
+        ";"
+    ],
+    "gc": [
+        "UCD.zip",
+        "UnicodeData.txt",
+        "unicode_data",
+        ";"
+    ],
+    "ccc": [
+        "UCD.zip",
+        "UnicodeData.txt",
+        "unicode_data",
+        ";"
+    ],
+    "bc": [
+        "UCD.zip",
+        "UnicodeData.txt",
+        "unicode_data",
+        ";"
+    ],
+    "dt": [
+        "UCD.zip",
+        "UnicodeData.txt",
+        "unicode_data",
+        ";"
+    ],
+    "decimal": [
+        "UCD.zip",
+        "UnicodeData.txt",
+        "unicode_data",
+        ";"
+    ],
+    "digit": [
+        "UCD.zip",
+        "UnicodeData.txt",
+        "unicode_data",
+        ";"
+    ],
+    "nv": [
+        "UCD.zip",
+        "UnicodeData.txt",
+        "unicode_data",
+        ";"
+    ],
+    "bidi_m": [
+        "UCD.zip",
+        "UnicodeData.txt",
+        "unicode_data",
+        ";"
+    ],
+    "na1": [
+        "UCD.zip",
+        "UnicodeData.txt",
+        "unicode_data",
+        ";"
+    ],
+    "isc": [
+        "UCD.zip",
+        "UnicodeData.txt",
+        "unicode_data",
+        ";"
+    ],
+    "suc": [
+        "UCD.zip",
+        "UnicodeData.txt",
+        "unicode_data",
+        ";"
+    ],
+    "slc": [
+        "UCD.zip",
+        "UnicodeData.txt",
+        "unicode_data",
+        ";"
+    ],
+    "stc": [
+        "UCD.zip",
+        "UnicodeData.txt",
+        "unicode_data",
+        ";"
+    ],
+    "wspace": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "bidi_c": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "join_c": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "dash": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "hyphen": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "qmark": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "term": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "omath": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "hex": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "ahex": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "oalpha": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "ideo": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "dia": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "ext": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "olower": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "oupper": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "nchar": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "ogr_ext": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "idsb": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "idst": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "radical": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "uideo": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "odi": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "dep": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "sd": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "loe": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "oids": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "oidc": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "sterm": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "vs": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "pat_ws": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "pat_syn": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "pcm": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "ri": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "math": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "alpha": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "lower": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "upper": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "cased": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "ci": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "cwl": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "cwu": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "cwt": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "cwcf": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "cwcm": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "ids": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "idc": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "xids": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "xidc": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "di": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "gr_ext": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "gr_base": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "gr_link": [
+        "UCD.zip",
+        "PropList.txt",
+        "simple_list",
+        ";"
+    ],
+    "age": [
+        "UCD.zip",
+        "DerivedAge.txt",
+        "value_range",
+        ";"
+    ],
+    "blk": [
+        "UCD.zip",
+        "Blocks.txt",
+        "value_range",
+        ";"
+    ],
+    "sc": [
+        "UCD.zip",
+        "Scripts.txt",
+        "value_range",
+        ";"
+    ],
+    "scx": [
+        "UCD.zip",
+        "ScriptExtensions.txt",
+        "miltivalue",
+        ";"
+    ],
+    "bmg": [
+        "UCD.zip",
+        "BidiMirroring.txt",
+        "single_value",
+        ";"
+    ],
+    "ea": [
+        "UCD.zip",
+        "EastAsianWidth.txt",
+        "single_value",
+        ";"
+    ],
+    "equideo": [
+        "UCD.zip",
+        "EquivalentUnifiedIdeograph.txt",
+        "single_value",
+        ";"
+    ],
+    "gcb": [
+        "UCD.zip",
+        "auxiliary/GraphemeBreakProperty.txt",
+        "single_value",
+        ";"
+    ],
+    "hst": [
+        "UCD.zip",
+        "HangulSyllableType.txt",
+        "single_value",
+        ";"
+    ],
+    "inpc": [
+        "UCD.zip",
+        "IndicPositionalCategory.txt",
+        "single_value",
+        ";"
+    ],
+    "insc": [
+        "UCD.zip",
+        "IndicSyllabicCategory.txt",
+        "single_value",
+        ";"
+    ],
+    "jg": [
+        "UCD.zip",
+        "extracted/DerivedJoiningGroup.txt",
+        "single_value",
+        ";"
+    ],
+    "jsn": [
+        "UCD.zip",
+        "Jamo.txt",
+        "single_value",
+        ";"
+    ],
+    "jt": [
+        "UCD.zip",
+        "extracted/DerivedJoiningType.txt",
+        "single_value",
+        ";"
+    ],
+    "lb": [
+        "UCD.zip",
+        "LineBreak.txt",
+        "single_value",
+        ";"
+    ],
+    "sb": [
+        "UCD.zip",
+        "auxiliary/SentenceBreakProperty.txt",
+        "single_value",
+        ";"
+    ],
+    "vo": [
+        "UCD.zip",
+        "VerticalOrientation.txt",
+        "single_value",
+        ";"
+    ],
+    "wb": [
+        "UCD.zip",
+        "auxiliary/WordBreakProperty.txt",
+        "single_value",
+        ";"
+    ],
+    "ce": [
+        "UCD.zip",
+        "CompositionExclusions.txt",
+        "simple_list",
+        ";"
+    ],
+    "comp_ex": [
+        "UCD.zip",
+        "DerivedNormalizationProps.txt",
+        "dnp_simple_list",
+        ";"
+    ],
+    "xo_nfd": [
+        "UCD.zip",
+        "DerivedNormalizationProps.txt",
+        "dnp_simple_list",
+        ";"
+    ],
+    "xo_nfc": [
+        "UCD.zip",
+        "DerivedNormalizationProps.txt",
+        "dnp_simple_list",
+        ";"
+    ],
+    "xo_nfkd": [
+        "UCD.zip",
+        "DerivedNormalizationProps.txt",
+        "dnp_simple_list",
+        ";"
+    ],
+    "xo_nfkc": [
+        "UCD.zip",
+        "DerivedNormalizationProps.txt",
+        "dnp_simple_list",
+        ";"
+    ],
+    "cwkcf": [
+        "UCD.zip",
+        "DerivedNormalizationProps.txt",
+        "dnp_simple_list",
+        ";"
+    ],
+    "fc_nfkc": [
+        "UCD.zip",
+        "DerivedNormalizationProps.txt",
+        "dnp_single_value",
+        ";"
+    ],
+    "nfd_qc": [
+        "UCD.zip",
+        "DerivedNormalizationProps.txt",
+        "dnp_single_value",
+        ";"
+    ],
+    "nfc_qc": [
+        "UCD.zip",
+        "DerivedNormalizationProps.txt",
+        "dnp_single_value",
+        ";"
+    ],
+    "nfkd_qc": [
+        "UCD.zip",
+        "DerivedNormalizationProps.txt",
+        "dnp_single_value",
+        ";"
+    ],
+    "nfkc_qc": [
+        "UCD.zip",
+        "DerivedNormalizationProps.txt",
+        "dnp_single_value",
+        ";"
+    ],
+    "nfkc_cf": [
+        "UCD.zip",
+        "DerivedNormalizationProps.txt",
+        "dnp_single_value",
+        ";"
+    ],
+    "emoji": [
+        "UCD.zip",
+        "emoji/emoji-data.txt",
+        "simple_list",
+        ";"
+    ],
+    "epres": [
+        "UCD.zip",
+        "emoji/emoji-data.txt",
+        "simple_list",
+        ";"
+    ],
+    "emod": [
+        "UCD.zip",
+        "emoji/emoji-data.txt",
+        "simple_list",
+        ";"
+    ],
+    "ebase": [
+        "UCD.zip",
+        "emoji/emoji-data.txt",
+        "simple_list",
+        ";"
+    ],
+    "ecomp": [
+        "UCD.zip",
+        "emoji/emoji-data.txt",
+        "simple_list",
+        ";"
+    ],
+    "extpict": [
+        "UCD.zip",
+        "emoji/emoji-data.txt",
+        "simple_list",
+        ";"
+    ],
+    "kcangjie": [
+        "Unihan.zip",
+        "Unihan_DictionaryLikeData.txt",
+        "single_value",
+        "\t"
+    ],
+    "kcihait": [
+        "Unihan.zip",
+        "Unihan_DictionaryLikeData.txt",
+        "single_value",
+        "\t"
+    ],
+    "kstrange": [
+        "Unihan.zip",
+        "Unihan_DictionaryLikeData.txt",
+        "single_value",
+        "\t"
+    ],
+    "kphonetic": [
+        "Unihan.zip",
+        "Unihan_DictionaryLikeData.txt",
+        "single_value",
+        "\t"
+    ],
+    "kfenn": [
+        "Unihan.zip",
+        "Unihan_DictionaryLikeData.txt",
+        "single_value",
+        "\t"
+    ],
+    "kunihancore2020": [
+        "Unihan.zip",
+        "Unihan_DictionaryLikeData.txt",
+        "single_value",
+        "\t"
+    ],
+    "kcheungbauer": [
+        "Unihan.zip",
+        "Unihan_DictionaryLikeData.txt",
+        "single_value",
+        "\t"
+    ],
+    "kfourcornercode": [
+        "Unihan.zip",
+        "Unihan_DictionaryLikeData.txt",
+        "single_value",
+        "\t"
+    ],
+    "kfrequency": [
+        "Unihan.zip",
+        "Unihan_DictionaryLikeData.txt",
+        "single_value",
+        "\t"
+    ],
+    "kgradelevel": [
+        "Unihan.zip",
+        "Unihan_DictionaryLikeData.txt",
+        "single_value",
+        "\t"
+    ],
+    "khdzradbreak": [
+        "Unihan.zip",
+        "Unihan_DictionaryLikeData.txt",
+        "single_value",
+        "\t"
+    ],
+    "khkglyph": [
+        "Unihan.zip",
+        "Unihan_DictionaryLikeData.txt",
+        "single_value",
+        "\t"
+    ],
+    "khanyu": [
+        "Unihan.zip",
+        "Unihan_DictionaryIndices.txt",
+        "single_value",
+        "\t"
+    ],
+    "kirghanyudazidian": [
+        "Unihan.zip",
+        "Unihan_DictionaryIndices.txt",
+        "single_value",
+        "\t"
+    ],
+    "kirgkangxi": [
+        "Unihan.zip",
+        "Unihan_DictionaryIndices.txt",
+        "single_value",
+        "\t"
+    ],
+    "ksbgy": [
+        "Unihan.zip",
+        "Unihan_DictionaryIndices.txt",
+        "single_value",
+        "\t"
+    ],
+    "knelson": [
+        "Unihan.zip",
+        "Unihan_DictionaryIndices.txt",
+        "single_value",
+        "\t"
+    ],
+    "kcowles": [
+        "Unihan.zip",
+        "Unihan_DictionaryIndices.txt",
+        "single_value",
+        "\t"
+    ],
+    "kmatthews": [
+        "Unihan.zip",
+        "Unihan_DictionaryIndices.txt",
+        "single_value",
+        "\t"
+    ],
+    "kgsr": [
+        "Unihan.zip",
+        "Unihan_DictionaryIndices.txt",
+        "single_value",
+        "\t"
+    ],
+    "kkangxi": [
+        "Unihan.zip",
+        "Unihan_DictionaryIndices.txt",
+        "single_value",
+        "\t"
+    ],
+    "kfennindex": [
+        "Unihan.zip",
+        "Unihan_DictionaryIndices.txt",
+        "single_value",
+        "\t"
+    ],
+    "kkarlgren": [
+        "Unihan.zip",
+        "Unihan_DictionaryIndices.txt",
+        "single_value",
+        "\t"
+    ],
+    "kmeyerwempe": [
+        "Unihan.zip",
+        "Unihan_DictionaryIndices.txt",
+        "single_value",
+        "\t"
+    ],
+    "klau": [
+        "Unihan.zip",
+        "Unihan_DictionaryIndices.txt",
+        "single_value",
+        "\t"
+    ],
+    "kcheungbauerindex": [
+        "Unihan.zip",
+        "Unihan_DictionaryIndices.txt",
+        "single_value",
+        "\t"
+    ],
+    "kmorohashi": [
+        "Unihan.zip",
+        "Unihan_DictionaryIndices.txt",
+        "single_value",
+        "\t"
+    ],
+    "kdaejaweon": [
+        "Unihan.zip",
+        "Unihan_DictionaryIndices.txt",
+        "single_value",
+        "\t"
+    ],
+    "kirgdaejaweon": [
+        "Unihan.zip",
+        "Unihan_DictionaryIndices.txt",
+        "single_value",
+        "\t"
+    ],
+    "kirgdaikanwaziten": [
+        "Unihan.zip",
+        "Unihan_DictionaryIndices.txt",
+        "single_value",
+        "\t"
+    ],
+    "cjkirg_gsource": [
+        "Unihan.zip",
+        "Unihan_IRGSources.txt",
+        "single_value",
+        "\t"
+    ],
+    "cjkirg_jsource": [
+        "Unihan.zip",
+        "Unihan_IRGSources.txt",
+        "single_value",
+        "\t"
+    ],
+    "cjkirg_tsource": [
+        "Unihan.zip",
+        "Unihan_IRGSources.txt",
+        "single_value",
+        "\t"
+    ],
+    "cjkrsunicode": [
+        "Unihan.zip",
+        "Unihan_IRGSources.txt",
+        "single_value",
+        "\t"
+    ],
+    "ktotalstrokes": [
+        "Unihan.zip",
+        "Unihan_IRGSources.txt",
+        "single_value",
+        "\t"
+    ],
+    "cjkirg_ksource": [
+        "Unihan.zip",
+        "Unihan_IRGSources.txt",
+        "single_value",
+        "\t"
+    ],
+    "cjkirg_kpsource": [
+        "Unihan.zip",
+        "Unihan_IRGSources.txt",
+        "single_value",
+        "\t"
+    ],
+    "cjkirg_vsource": [
+        "Unihan.zip",
+        "Unihan_IRGSources.txt",
+        "single_value",
+        "\t"
+    ],
+    "cjkirg_hsource": [
+        "Unihan.zip",
+        "Unihan_IRGSources.txt",
+        "single_value",
+        "\t"
+    ],
+    "cjkirg_usource": [
+        "Unihan.zip",
+        "Unihan_IRGSources.txt",
+        "single_value",
+        "\t"
+    ],
+    "cjkiicore": [
+        "Unihan.zip",
+        "Unihan_IRGSources.txt",
+        "single_value",
+        "\t"
+    ],
+    "cjkirg_msource": [
+        "Unihan.zip",
+        "Unihan_IRGSources.txt",
+        "single_value",
+        "\t"
+    ],
+    "cjkirg_uksource": [
+        "Unihan.zip",
+        "Unihan_IRGSources.txt",
+        "single_value",
+        "\t"
+    ],
+    "cjkcompatibilityvariant": [
+        "Unihan.zip",
+        "Unihan_IRGSources.txt",
+        "single_value",
+        "\t"
+    ],
+    "cjkirg_ssource": [
+        "Unihan.zip",
+        "Unihan_IRGSources.txt",
+        "single_value",
+        "\t"
+    ],
+    "kjis0213": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kkps1": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "khkscs": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "ktgh": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kkoreanname": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "keacc": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "ktaiwantelegraph": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kja": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kkps0": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kbigfive": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kcccii": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kcns1986": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kcns1992": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kgb0": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kgb1": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kjis0": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kjoyokanji": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kksc0": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kkoreaneducationhanja": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kmainlandtelegraph": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kxerox": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kgb5": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kjis1": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kpseudogb1": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kgb3": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kgb8": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kjinmeiyokanji": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kksc1": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kibmjapan": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kgb7": [
+        "Unihan.zip",
+        "Unihan_OtherMappings.txt",
+        "single_value",
+        "\t"
+    ],
+    "cjkothernumeric": [
+        "Unihan.zip",
+        "Unihan_NumericValues.txt",
+        "single_value",
+        "\t"
+    ],
+    "cjkprimarynumeric": [
+        "Unihan.zip",
+        "Unihan_NumericValues.txt",
+        "single_value",
+        "\t"
+    ],
+    "cjkaccountingnumeric": [
+        "Unihan.zip",
+        "Unihan_NumericValues.txt",
+        "single_value",
+        "\t"
+    ],
+    "krsadobe_japan1_6": [
+        "Unihan.zip",
+        "Unihan_RadicalStrokeCounts.txt",
+        "single_value",
+        "\t"
+    ],
+    "krskangxi": [
+        "Unihan.zip",
+        "Unihan_RadicalStrokeCounts.txt",
+        "single_value",
+        "\t"
+    ],
+    "kcantonese": [
+        "Unihan.zip",
+        "Unihan_Readings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kdefinition": [
+        "Unihan.zip",
+        "Unihan_Readings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kmandarin": [
+        "Unihan.zip",
+        "Unihan_Readings.txt",
+        "single_value",
+        "\t"
+    ],
+    "khanyupinyin": [
+        "Unihan.zip",
+        "Unihan_Readings.txt",
+        "single_value",
+        "\t"
+    ],
+    "ktghz2013": [
+        "Unihan.zip",
+        "Unihan_Readings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kxhc1983": [
+        "Unihan.zip",
+        "Unihan_Readings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kvietnamese": [
+        "Unihan.zip",
+        "Unihan_Readings.txt",
+        "single_value",
+        "\t"
+    ],
+    "khangul": [
+        "Unihan.zip",
+        "Unihan_Readings.txt",
+        "single_value",
+        "\t"
+    ],
+    "ktang": [
+        "Unihan.zip",
+        "Unihan_Readings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kjapanesekun": [
+        "Unihan.zip",
+        "Unihan_Readings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kjapaneseon": [
+        "Unihan.zip",
+        "Unihan_Readings.txt",
+        "single_value",
+        "\t"
+    ],
+    "khanyupinlu": [
+        "Unihan.zip",
+        "Unihan_Readings.txt",
+        "single_value",
+        "\t"
+    ],
+    "kkorean": [
+        "Unihan.zip",
+        "Unihan_Readings.txt",
+        "single_value",
+        "\t"
+    ],
+    "ksemanticvariant": [
+        "Unihan.zip",
+        "Unihan_Variants.txt",
+        "single_value",
+        "\t"
+    ],
+    "kspoofingvariant": [
+        "Unihan.zip",
+        "Unihan_Variants.txt",
+        "single_value",
+        "\t"
+    ],
+    "ktraditionalvariant": [
+        "Unihan.zip",
+        "Unihan_Variants.txt",
+        "single_value",
+        "\t"
+    ],
+    "ksimplifiedvariant": [
+        "Unihan.zip",
+        "Unihan_Variants.txt",
+        "single_value",
+        "\t"
+    ],
+    "kspecializedsemanticvariant": [
+        "Unihan.zip",
+        "Unihan_Variants.txt",
+        "single_value",
+        "\t"
+    ],
+    "kzvariant": [
+        "Unihan.zip",
+        "Unihan_Variants.txt",
+        "single_value",
+        "\t"
+    ]
+}
