@@ -1,0 +1,14 @@
+{
+    "propaliases": [
+        "UCD.zip",
+        "PropertyAliases.txt",
+        "single_value",
+        ";"
+    ],
+    "valuealiases": [
+        "UCD.zip",
+        "PropertyValueAliases.txt",
+        "single_value",
+        ";"
+    ]
+}
