@@ -63,3 +63,54 @@ List of Codecs
 Python doesn't have an easy way to get all the codecs. There are ways
 to do it, but they run into problems. May be best to hardcode this
 list in.
+
+
+Database and Caching
+--------------------
+The problems I'm trying to solve:
+
+*   Reloading data from file for each property look up is slow.
+*   Data is stored in different formats in different files.
+*   The values stored in the files sometimes needs processing to
+    get the actual value.
+*   That processing sometimes requires data from other files.
+*   Eventually, I'd like to be able to switch between versions.
+
+To this point, I've been trying to hide the file from :mod:`charex`
+as much as possible. Maybe that's the wrong direction. Maybe the
+data should be stored by file. That way, I don't have to come up
+with an elaborate scheme for how to store the data. I just need to
+map the properties to the relavant file information.
+
+OK, so, a query for the 'jsn' property of the character U+1100
+has to contain the following information:
+
+*   The zip archive,
+*   The file,
+*   The property (because some files contain multiple properties),
+*   The code point.
+
+However, the property determines the archive and file, so the user
+should never need to know those parts of the query. I think the design
+here needs four layers:
+
+*   File reader: reads the raw data from file,
+*   File processor: adjusts the raw data as needed to get real values,
+*   File cache: stores the real values in memory after loading,
+*   Property map: gets value for the property for the code point.
+
+How do I handle the difference in the return types between Jamo.txt
+and UnicodeData.txt? I guess that's up to the property map. It will
+just need to know how to return the data from the relevant file for
+each property. That means, I'm going to need two hard coded data
+structures:
+
+*   property -> file
+*   file -> archive
+
+Not everything that is needed from the files is a property. The list
+of property value aliases, for example, is necessary for translating
+between the aliases and long names for the property values, but they
+aren't a property themselves. They are searchable by property alias
+and property value long name. So, the property map is more of a data
+map rather than a specific property map.

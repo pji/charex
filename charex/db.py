@@ -108,7 +108,7 @@ class DefaultStr:
     """A default string value callable."""
     def __init__(self, value: str = '') -> None:
         self.value = value
-    
+
     def __call__(self) -> str:
         return self.value
 
@@ -136,10 +136,22 @@ class Cache:
         self.__file_props: FileProps = {}
         self.__metas: PropSources = {}
         self.__sources: PropSources = {}
-        
+
         # Unicode property data.
         self.__propvalaliases: PropValAliases = {}
-    
+        self.__single_value: SingleValue = {}
+
+    def __getattr__(self, name: str):
+        if name in self.sources:
+            src = self.sources[name]
+            data = getattr(self, src.kind)
+            if name not in data:
+                getter = kinds[src.kind]
+                data[name] = getter(src)
+            return data[name]
+
+        raise AttributeError(name)
+
     @property
     def file_props(self) -> FileProps:
         if not self.__file_props:
@@ -151,7 +163,11 @@ class Cache:
         if not self.__metas:
             self.__metas = load_meta_file()
         return self.__metas
-    
+
+    @property
+    def single_value(self) -> SingleValue:
+        return self.__single_value
+
     @property
     def sources(self) -> PropSources:
         if not self.__sources:
@@ -166,12 +182,12 @@ class Cache:
             for key in data:
                 self.__propvalaliases[key] = data[key]
         return self.__propvalaliases
-    
+
 
 class Database:
     """The data loaded from Unicode data files."""
     cache = Cache()
-    
+
     def __getattr__(self, name: str):
         return getattr(self.cache, name)
 
@@ -192,14 +208,14 @@ def get_property_aliases(src: PropSource) -> PropValAliases:
 def get_single_values(src:PropSource) -> SingleValue:
     """Get the data from a data file with single value properties."""
     records, missing = get_source(src)
-    prop = db.file_props[src.path][0]    
+    prop = db.file_props[src.path][0]
 
     mval = ''
     if missing:
         long = missing[0][-1]
         mval = alias_value(prop, long)
     ds = DefaultStr(mval)
-    
+
     values = defaultdict(ds)
     for rec in records:
         codes, long = rec
@@ -219,9 +235,9 @@ def get_unicode_data(src: PropSource) -> UnicodeData:
         for n in range(start, stop):
             code = f'{n:04x}'
             name = prefix
-#             if name.startswith('HANGUL'):
-#                 name += get_jamo_name(n)
-            if name:
+            if name.startswith('HANGUL'):
+                name += build_jamo_name(n)
+            elif name:
                 name += code
             yield UCD(code, name, *fields[2:])
 
@@ -258,7 +274,8 @@ def build_jamo_name(code: str | int) -> str:
     if isinstance(code, str):
         code = int(code, 16)
     parts = decompose_hangul(code)
-    
+    db = Database()
+    return ''.join(db.jsn[part] for part in parts)
 
 
 def decompose_hangul(s: int) -> tuple[int, ...]:
@@ -381,10 +398,16 @@ def read_resource(src: PropSource, codec: str = 'utf8') -> Lines:
     return tuple(line.rstrip() for line in lines)
 
 
+# Registries.
+kinds = {
+    'single_value': get_single_values,
+}
+
+
 if __name__ == '__main__':
     db = Database()
-    src = db.sources['jsn']
-    data = get_single_values(src)
+    # src = db.sources['jsn']
+    # data = get_single_values(src)
     # data = db.file_props
     # data = get_property_aliases(db.meta['valuealiases'])
     # lines = read_resource(sources['blk'])
@@ -392,7 +415,7 @@ if __name__ == '__main__':
     # records = split_fields(lines, sources['age'])
     # vrange = parse_range(records[-1][0])
     # missing = parse_missing(lines)
-    # data = get_unicode_data(sources['na'])
+    data = get_unicode_data(db.sources['na'])
     # data = get_single_values(sources['jsn'])
     # data = aliases
     for item in data:
