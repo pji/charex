@@ -1,0 +1,200 @@
+{
+    "PropertyAliases.txt": [
+        "PropertyAliases.txt",
+        "UCD.zip",
+        "single_value",
+        ";"
+    ],
+    "PropertyValueAliases.txt": [
+        "PropertyValueAliases.txt",
+        "UCD.zip",
+        "single_value",
+        ";"
+    ],
+    "UnicodeData.txt": [
+        "UnicodeData.txt",
+        "UCD.zip",
+        "unicode_data",
+        ";"
+    ],
+    "PropList.txt": [
+        "PropList.txt",
+        "UCD.zip",
+        "simple_list",
+        ";"
+    ],
+    "DerivedAge.txt": [
+        "DerivedAge.txt",
+        "UCD.zip",
+        "value_range",
+        ";"
+    ],
+    "Blocks.txt": [
+        "Blocks.txt",
+        "UCD.zip",
+        "value_range",
+        ";"
+    ],
+    "Scripts.txt": [
+        "Scripts.txt",
+        "UCD.zip",
+        "value_range",
+        ";"
+    ],
+    "ScriptExtensions.txt": [
+        "ScriptExtensions.txt",
+        "UCD.zip",
+        "miltivalue",
+        ";"
+    ],
+    "BidiMirroring.txt": [
+        "BidiMirroring.txt",
+        "UCD.zip",
+        "single_value",
+        ";"
+    ],
+    "EastAsianWidth.txt": [
+        "EastAsianWidth.txt",
+        "UCD.zip",
+        "single_value",
+        ";"
+    ],
+    "EquivalentUnifiedIdeograph.txt": [
+        "EquivalentUnifiedIdeograph.txt",
+        "UCD.zip",
+        "single_value",
+        ";"
+    ],
+    "auxiliary/GraphemeBreakProperty.txt": [
+        "auxiliary/GraphemeBreakProperty.txt",
+        "UCD.zip",
+        "single_value",
+        ";"
+    ],
+    "HangulSyllableType.txt": [
+        "HangulSyllableType.txt",
+        "UCD.zip",
+        "single_value",
+        ";"
+    ],
+    "IndicPositionalCategory.txt": [
+        "IndicPositionalCategory.txt",
+        "UCD.zip",
+        "single_value",
+        ";"
+    ],
+    "IndicSyllabicCategory.txt": [
+        "IndicSyllabicCategory.txt",
+        "UCD.zip",
+        "single_value",
+        ";"
+    ],
+    "extracted/DerivedJoiningGroup.txt": [
+        "extracted/DerivedJoiningGroup.txt",
+        "UCD.zip",
+        "single_value",
+        ";"
+    ],
+    "Jamo.txt": [
+        "Jamo.txt",
+        "UCD.zip",
+        "single_value",
+        ";"
+    ],
+    "extracted/DerivedJoiningType.txt": [
+        "extracted/DerivedJoiningType.txt",
+        "UCD.zip",
+        "single_value",
+        ";"
+    ],
+    "LineBreak.txt": [
+        "LineBreak.txt",
+        "UCD.zip",
+        "single_value",
+        ";"
+    ],
+    "auxiliary/SentenceBreakProperty.txt": [
+        "auxiliary/SentenceBreakProperty.txt",
+        "UCD.zip",
+        "single_value",
+        ";"
+    ],
+    "VerticalOrientation.txt": [
+        "VerticalOrientation.txt",
+        "UCD.zip",
+        "single_value",
+        ";"
+    ],
+    "auxiliary/WordBreakProperty.txt": [
+        "auxiliary/WordBreakProperty.txt",
+        "UCD.zip",
+        "single_value",
+        ";"
+    ],
+    "CompositionExclusions.txt": [
+        "CompositionExclusions.txt",
+        "UCD.zip",
+        "simple_list",
+        ";"
+    ],
+    "DerivedNormalizationProps.txt": [
+        "DerivedNormalizationProps.txt",
+        "UCD.zip",
+        "dnp_single_value",
+        ";"
+    ],
+    "emoji/emoji-data.txt": [
+        "emoji/emoji-data.txt",
+        "UCD.zip",
+        "simple_list",
+        ";"
+    ],
+    "Unihan_DictionaryLikeData.txt": [
+        "Unihan_DictionaryLikeData.txt",
+        "Unihan.zip",
+        "single_value",
+        "\t"
+    ],
+    "Unihan_DictionaryIndices.txt": [
+        "Unihan_DictionaryIndices.txt",
+        "Unihan.zip",
+        "single_value",
+        "\t"
+    ],
+    "Unihan_IRGSources.txt": [
+        "Unihan_IRGSources.txt",
+        "Unihan.zip",
+        "single_value",
+        "\t"
+    ],
+    "Unihan_OtherMappings.txt": [
+        "Unihan_OtherMappings.txt",
+        "Unihan.zip",
+        "single_value",
+        "\t"
+    ],
+    "Unihan_NumericValues.txt": [
+        "Unihan_NumericValues.txt",
+        "Unihan.zip",
+        "single_value",
+        "\t"
+    ],
+    "Unihan_RadicalStrokeCounts.txt": [
+        "Unihan_RadicalStrokeCounts.txt",
+        "Unihan.zip",
+        "single_value",
+        "\t"
+    ],
+    "Unihan_Readings.txt": [
+        "Unihan_Readings.txt",
+        "Unihan.zip",
+        "single_value",
+        "\t"
+    ],
+    "Unihan_Variants.txt": [
+        "Unihan_Variants.txt",
+        "Unihan.zip",
+        "single_value",
+        "\t"
+    ]
+}

@@ -1672,5 +1672,12 @@ if __name__ == '__main__':
     for kind in kinds:
         print(kind)
 
-    with open('charex/data/props.json', 'w') as fh:
-        dump(props, fh, indent=4)
+    # with open('charex/data/props.json', 'w') as fh:
+    #     dump(props, fh, indent=4)
+
+    path_map = {}
+    for prop in props:
+        file, path, kind, delim = props[prop]
+        path_map[path] = [path, file, kind, delim]
+    with open('charex/data/path_map.json', 'w') as fh:
+        dump(path_map, fh, indent=4)
