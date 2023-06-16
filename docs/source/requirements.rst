@@ -114,3 +114,34 @@ between the aliases and long names for the property values, but they
 aren't a property themselves. They are searchable by property alias
 and property value long name. So, the property map is more of a data
 map rather than a specific property map.
+
+
+FileCache and Typing
+~~~~~~~~~~~~~~~~~~~~
+Things I don't want to do:
+
+*   Load all data files when starting the script,
+*   Load all single_value type files the first time a single_value
+    property is needed.
+*   Have to type check the data after it leaves the FileCache.
+*   Define properties for each file.
+
+That said, using :attr:`FileCache.__getattr__` seems like the best
+approach. The only problem is that the current keys of the `path_map`
+contain characters that won't work in identifiers (forward slash and
+period). I'll need to have an algorithm to change those. It's not
+idea, but I think it's probably the best approach.
+
+The algorithm will:
+
+*   Case fold,
+*   Drop everything before the last forward slash,
+*   Drop everything after the first period.
+
+I can probably just regenerate `path_map.json` with that, rather than
+having to do it at run time.
+
+It doesn't seem to like to use :func:`getattr` from within
+:attr:`__getattr__`, which means :attr:`__getattr__` is going to
+get big. That's unfortunate, but it might be less unfortunate than
+what I'm currently doing in :mod:`charex.charex`.

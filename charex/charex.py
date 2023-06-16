@@ -1678,6 +1678,9 @@ if __name__ == '__main__':
     path_map = {}
     for prop in props:
         file, path, kind, delim = props[prop]
-        path_map[path] = [path, file, kind, delim]
+        key = path.casefold()
+        key = key.split('/')[-1]
+        key = key.split('.')[0]
+        path_map[key] = [path, file, kind, delim]
     with open('charex/data/path_map.json', 'w') as fh:
         dump(path_map, fh, indent=4)
