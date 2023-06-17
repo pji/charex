@@ -11,10 +11,13 @@ from importlib.resources import as_file, files
 from json import load
 from zipfile import ZipFile
 
+from charex import util
+
 
 # Database configuration.
 PKG_DATA = files('charex.data')
 FILE_PATH_MAP = 'path_map.json'
+PATH_PROPERTY_ALIASES = 'propertyaliases'
 PATH_VALUE_ALIASES = 'propertyvaluealiases'
 UCD_RANGES = defaultdict(str, {
     0x3400: 'CJK UNIFIED IDEOGRAPH-',
@@ -43,6 +46,13 @@ class PathInfo:
     archive: str
     kind: str
     delim: str
+
+
+@dataclass(repr=True, eq=True)
+class PropertyAlias:
+    alias: str
+    name: str
+    other: tuple[str, ...]
 
 
 @dataclass(repr=True, eq=True)
@@ -101,11 +111,17 @@ class ValueAlias:
     other: tuple[str, ...]
 
 
-@dataclass(repr=True, eq=True, order=True)
+@dataclass(eq=True, order=True)
 class ValueRange:
     start: int
     stop: int
     value: str
+
+    def __repr__(self):
+        cls = self.__class__.__name__
+        start = f'0x{self.start:04x}'
+        stop = f'0x{self.stop:04x}'
+        return f'{cls}({start}, {stop}, {self.value!r})'
 
 
 # Common data types.
@@ -115,38 +131,63 @@ Record = tuple[str, ...]
 Records = tuple[Record, ...]
 
 # File data structure types.
+PropertyAliases = dict[str, PropertyAlias]
 SingleValue = defaultdict[str, str]
 SingleValues = dict[str, SingleValue]
+SimpleList = set[str]
+SimpleLists = dict[str, SimpleList]
 UnicodeData = dict[str, UCD]
 ValueAliases = dict[str, dict[str, ValueAlias]]
 ValueRanges = tuple[ValueRange, ...]
 
 
+# Default value handler for defaultdicts.
+class Default:
+    """Set the default value for a defaultdict."""
+    def __init__(self, value: str) -> None:
+        self.value = value
+
+    def __call__(self) -> str:
+        return self.value
+
+
 # Load data file by kind.
-def load_value_range(info: PathInfo) -> ValueRanges:
-    """Load a data file that contains a list of Unicode ranges."""
-    lines = load_from_archive(info)
-    lines = strip_comments(lines)
-    records = split_fields(lines, info.delim, False)
-    data = []
+def load_prop_list(info: PathInfo) -> SimpleLists:
+    """Load a data file with simple list for multiple properties."""
+    records, _ = parse(info, True)
+    data: SimpleLists = {}
     for rec in records:
-        range_, value = rec
-        start_code, stop_code = range_.split('..')
-        start = int(start_code, 16)
-        stop = int(stop_code, 16) + 1
-        vr = ValueRange(start, stop, value)
-        data.append(vr)
-    return tuple(data)
+        code, long = rec
+        prop = alias_property(long)
+        prop = prop.casefold()
+        data.setdefault(prop, set())
+        data[prop].add(code)
+    return data
+
+
+def load_property_alias(info: PathInfo) -> PropertyAliases:
+    """Load a data file that contains property aliases."""
+    records, _ = parse(info)
+    data: PropertyAliases = {}
+    for rec in records:
+        alias, name, *other = rec
+        key = name.casefold()
+        data[key] = PropertyAlias(alias, name, tuple(other))
+    return data
+
+
+def load_simple_list(info: PathInfo) -> SimpleList:
+    """Load a simple list of values from Unicode data."""
+    records, _ = parse(info)
+    return {rec[0].casefold() for rec in records}
 
 
 def load_single_value(info: PathInfo) -> SingleValue:
     """Load a data file that contains a simple mapping of code point
     to value.
     """
-    lines = load_from_archive(info)
-    lines = strip_comments(lines)
-    records = split_fields(lines, info.delim)
-    data = defaultdict(str)
+    records, missing = parse(info)
+    data = defaultdict(Default(missing))
     for rec in records:
         code, value = rec
         code = code.casefold()
@@ -201,6 +242,24 @@ def load_value_aliases(info: PathInfo) -> ValueAliases:
     return data
 
 
+def load_value_range(info: PathInfo) -> ValueRanges:
+    """Load a data file that contains a list of Unicode ranges."""
+    records, missing = parse(info)
+    data = []
+    last_stop = 0x0000
+    for rec in records:
+        range_, value = rec
+        start, stop = [int(n, 16) for n in range_.split('..')]
+        stop += 1
+        if last_stop != start:
+            data.append(ValueRange(last_stop, start, missing))
+        data.append(ValueRange(start, stop, value))
+        last_stop = stop
+    if last_stop != util.LEN_UNICODE:
+        data.append(ValueRange(last_stop, util.LEN_UNICODE, missing))
+    return tuple(data)
+
+
 # Basic file reading.
 def load_path_map() -> PathMap:
     """Load the map of Unicode data files to the archive they are
@@ -225,6 +284,17 @@ def load_from_archive(info: PathInfo, codec: str = 'utf8') -> Content:
 
 
 # Data cross-referencing utilities.
+def alias_property(long: str) -> str:
+    """Return the alias for a property."""
+    alias = long
+    try:
+        pa = cache.property_alias[long.casefold()]
+        alias = pa.alias
+    except KeyError:
+        pass
+    return alias
+
+
 def alias_value(prop: str, long: str) -> str:
     """Return the alias for a property value."""
     alias = long
@@ -247,6 +317,33 @@ def build_hangul_name(code: str) -> str:
 
 
 # Basic file processing utilities.
+def parse(info: PathInfo, split=False) -> tuple[Records, str]:
+    """Perform basic parsing on a Unicode data file."""
+    lines = load_from_archive(info)
+
+    missing = ''
+    missing_vrs = parse_missing(lines)
+    if missing_vrs:
+        missing = missing_vrs[0].value
+
+    lines = strip_comments(lines)
+    records = split_fields(lines, info.delim, split)
+    return records, missing
+
+
+def parse_missing(lines: Content) -> ValueRanges:
+    """Parse Unicode missing values from data files."""
+    data = []
+    lines = [line[12:] for line in lines if line.startswith('# @missing: ')]
+    records = split_fields(lines, ';', False)
+    for rec in records:
+        range_, value = rec
+        start, stop = [int(n, 16) for n in range_.split('..')]
+        stop += 1
+        data.append(ValueRange(start, stop, value))
+    return tuple(data)
+
+
 def split_fields(
     lines: Content,
     delim: str,
@@ -314,11 +411,25 @@ def decompose_hangul(s: int) -> tuple[int, int, int]:
     )
 
 
+# Miscellaneous functions for manual testing of loaded data.
+def find_gap_in_value_ranges(vrs: ValueRanges) -> int | None:
+    """Find the index of the first gap in the value ranges."""
+    last_stop = 0x0000
+    for i, vr in enumerate(vrs):
+        if vr.start != last_stop:
+            return i
+        last_stop = vr.stop
+    if last_stop != util.LEN_UNICODE:
+        return i + 1
+    return None
+
+
 # File data cache.
 class FileCache:
     __path_map = load_path_map()
 
     def __init__(self) -> None:
+        self.__property_alias: PropertyAliases = dict()
         self.__single_value: SingleValues = dict()
         self.__value_aliases: ValueAliases = dict()
 
@@ -339,6 +450,14 @@ class FileCache:
         return self.__path_map
 
     @property
+    def property_alias(self) -> PropertyAliases:
+        if not self.__property_alias:
+            info = self.path_map[PATH_PROPERTY_ALIASES]
+            data = load_property_alias(info)
+            self.__property_alias.update(data)
+        return self.__property_alias
+
+    @property
     def value_aliases(self) -> ValueAliases:
         if not self.__value_aliases:
             info = self.path_map[PATH_VALUE_ALIASES]
@@ -351,6 +470,7 @@ cache = FileCache()
 
 
 if __name__ == '__main__':
-    # data = cache.jamo
     pi = PathInfo('Blocks.txt', 'UCD.zip', 'value_range', ';')
-    data = load_value_range(pi)
+    vrs = load_value_range(pi)
+    gap = find_gap_in_value_ranges(vrs)
+    print(gap)

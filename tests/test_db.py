@@ -4,13 +4,23 @@ test_db
 
 Unit tests for :mod:`charex.db`.
 """
+import pytest
+
 from charex import db
 
 
-# Test alias_value.
+# Test alias_property.
+def test_alias_property():
+    """Given the long name for a property, return the alias of that
+    property if it exists. If it doesn't exist, return the long name.
+    """
+    assert db.alias_property('General_Category') == 'gc'
+    assert db.alias_property('spam') == 'spam'
+
+
 def test_alias_value():
     """Given a property alias and the long name for a value of that
-    property, return the alias of that property if it exists. If
+    property, return the alias of that value if it exists. If
     it doesn't exist, return the long name.
     """
     assert db.alias_value('gc', 'Letter') == 'L'
@@ -50,18 +60,50 @@ def test_load_path_map():
     assert pi.archive == exp
 
 
-# Test load_value_range.
-def test_value_range():
+# Test load_prop_list.
+def test_load_prop_list():
     """When given the information for a path as a :class:`charex.db.PathInfo`
-    object, :func:`charex.db.load_value_range` should return the data
-    contained within the path as a :class:`tuple`.
+    object, :func:`charex.db.load_prop_list` should return the data
+    contained within the path as a :class:`dict`.
     """
-    pi = db.PathInfo('Blocks.txt', 'UCD.zip', 'value_range', ';')
-    data = db.load_value_range(pi)
-    assert data[0] == db.ValueRange(0x0000, 0x0080, 'Basic Latin')
-    assert data[-1] == db.ValueRange(
-        0x100000, 0x110000, 'Supplementary Private Use Area-B'
+    pi = db.PathInfo(
+        'PropList.txt', 'UCD.zip', 'prop_list', ';'
     )
+    data = db.load_prop_list(pi)
+    assert '0000' not in data['wspace']
+    assert '0009' in data['wspace']
+    assert '1f1ff' in data['ri']
+    assert '10ffff' not in data['ri']
+
+
+# Test load_property_alias.
+def test_load_property_alias():
+    """When given the information for a path as a :class:`charex.db.PathInfo`
+    object, :func:`charex.db.load_property_alias` should return the data
+    contained within the path as a :class:`set`.
+    """
+    pi = db.PathInfo(
+        'PropertyAliases.txt', 'UCD.zip', 'property_alias', ';'
+    )
+    data = db.load_property_alias(pi)
+    assert data['kaccountingnumeric'].alias == 'cjkAccountingNumeric'
+    assert data['expands_on_nfkd'].alias == 'XO_NFKD'
+
+
+# Test load_simple_list.
+def test_load_simple_list():
+    """When given the information for a path as a :class:`charex.db.PathInfo`
+    object, :func:`charex.db.load_simple_list` should return the data
+    contained within the path as a :class:`set`.
+    """
+    pi = db.PathInfo(
+        'CompositionExclusions.txt', 'UCD.zip', 'single_value', ';'
+    )
+    data = db.load_simple_list(pi)
+    assert '0000' not in data
+    assert '0958' in data
+    assert '1d1c0' in data
+    assert '10FFFF' not in data
 
 
 # Test load_single_value.
@@ -101,3 +143,18 @@ def test_load_value_aliases():
     data = db.load_value_aliases(pi)
     assert data['ahex']['no'].alias == 'N'
     assert data['xids']['no'].alias == 'N'
+
+
+# Test load_value_range.
+def test_value_range():
+    """When given the information for a path as a :class:`charex.db.PathInfo`
+    object, :func:`charex.db.load_value_range` should return the data
+    contained within the path as a :class:`tuple`.
+    """
+    pi = db.PathInfo('Blocks.txt', 'UCD.zip', 'value_range', ';')
+    data = db.load_value_range(pi)
+    assert data[0] == db.ValueRange(0x0000, 0x0080, 'Basic Latin')
+    assert data[-1] == db.ValueRange(
+        0x100000, 0x110000, 'Supplementary Private Use Area-B'
+    )
+    assert data[106] == db.ValueRange(0x2fe0, 0x2ff0, 'No_Block')
