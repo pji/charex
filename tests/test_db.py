@@ -36,6 +36,22 @@ def test_build_hangul_name():
     assert db.build_hangul_name('d4db') == 'PWILH'
 
 
+# Test load_derived_normal.
+def test_load_derived_normal():
+    """When given the information for a path as a :class:`charex.db.PathInfo`
+    object, :func:`charex.db.load_derived_normal` should return the data
+    contained within the path as a :class:`tuple`.
+    """
+    pi = db.PathInfo(
+        'DerivedNormalizationProps.txt', 'UCD.zip', 'derived_normal', ';'
+    )
+    single, simple = db.load_derived_normal(pi)
+    assert single['fc_nfkc']['037a'] == '0020 03B9'
+    assert single['nfkc_cf']['e0fff'] == ''
+    assert '0340' in simple['comp_ex']
+    assert 'e0fff' in simple['cwkcf']
+
+
 # Test load_from_archive.
 def test_load_from_archive():
     """When given the information for a path as a :class:`charex.db.PathInfo`

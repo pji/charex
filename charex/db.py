@@ -152,6 +152,48 @@ class Default:
 
 
 # Load data file by kind.
+def load_derived_normal(info: PathInfo) -> tuple[SingleValues, SimpleLists]:
+    """Load a data file with derived normalization properties."""
+    docs: list[list[str]] = []
+    doc: list[str] = []
+    lines = load_from_archive(info)
+    for line in lines:
+        if 'Property:' in line:
+            docs.append(doc)
+            doc = list()
+        doc.append(line)
+    else:
+        docs.append(doc)
+
+    singles: SingleValues = {}
+    simples: SimpleLists = {}
+    for doc in docs:
+        records, missing = parse(doc, True)
+        missing = missing.split(';')[-1]
+        if not records:
+            continue
+
+        prop = records[0][1]
+        prop = alias_property(prop).casefold()
+        num_fields = len(records[0])
+        if num_fields == 2:
+            simples.setdefault(prop, set())
+            for rec in records:
+                code, _ = rec
+                simples[prop].add(code)
+
+        elif num_fields == 3:
+            singles.setdefault(prop, defaultdict(Default(missing)))
+            for rec in records:
+                code, _, value = rec
+                singles[prop][code.casefold()] = value
+
+        else:
+            raise ValueError(f'{prop} has {num_fields} fields.')
+
+    return singles, simples
+
+
 def load_prop_list(info: PathInfo) -> SimpleLists:
     """Load a data file with simple list for multiple properties."""
     records, _ = parse(info, True)
@@ -317,9 +359,14 @@ def build_hangul_name(code: str) -> str:
 
 
 # Basic file processing utilities.
-def parse(info: PathInfo, split=False) -> tuple[Records, str]:
+def parse(file: PathInfo | Content, split=False) -> tuple[Records, str]:
     """Perform basic parsing on a Unicode data file."""
-    lines = load_from_archive(info)
+    if isinstance(file, PathInfo):
+        lines = load_from_archive(file)
+        delim = file.delim
+    else:
+        lines = file
+        delim = ';'
 
     missing = ''
     missing_vrs = parse_missing(lines)
@@ -327,7 +374,7 @@ def parse(info: PathInfo, split=False) -> tuple[Records, str]:
         missing = missing_vrs[0].value
 
     lines = strip_comments(lines)
-    records = split_fields(lines, info.delim, split)
+    records = split_fields(lines, delim, split)
     return records, missing
 
 
@@ -337,9 +384,10 @@ def parse_missing(lines: Content) -> ValueRanges:
     lines = [line[12:] for line in lines if line.startswith('# @missing: ')]
     records = split_fields(lines, ';', False)
     for rec in records:
-        range_, value = rec
+        range_, value, *other = rec
         start, stop = [int(n, 16) for n in range_.split('..')]
         stop += 1
+        value = ';'.join((value, *other))
         data.append(ValueRange(start, stop, value))
     return tuple(data)
 
@@ -470,7 +518,9 @@ cache = FileCache()
 
 
 if __name__ == '__main__':
-    pi = PathInfo('Blocks.txt', 'UCD.zip', 'value_range', ';')
-    vrs = load_value_range(pi)
-    gap = find_gap_in_value_ranges(vrs)
-    print(gap)
+    pi = PathInfo(
+        'DerivedNormalizationProps.txt', 'UCD.zip', 'derived_normal', ';'
+    )
+    singles, simples = load_derived_normal(pi)
+    for key in singles:
+        print(key)

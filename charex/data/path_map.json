@@ -44,7 +44,7 @@
     "scriptextensions": [
         "ScriptExtensions.txt",
         "UCD.zip",
-        "miltivalue",
+        "single_value",
         ";"
     ],
     "bidimirroring": [
@@ -140,7 +140,7 @@
     "derivednormalizationprops": [
         "DerivedNormalizationProps.txt",
         "UCD.zip",
-        "dnp_single_value",
+        "derived_normal",
         ";"
     ],
     "emoji-data": [
