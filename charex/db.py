@@ -481,9 +481,12 @@ class FileCache:
             dict(), dict(),
         )
         self.__property_alias: PropertyAliases = dict()
+        self.__prop_list: SimpleLists = dict()
+        self.__simple_list: SimpleLists = dict()
         self.__single_value: SingleValues = dict()
         self.__unicode_data: UnicodeData = dict()
         self.__value_aliases: ValueAliases = dict()
+        self.__value_range: dict[str, ValueRanges] = dict()
 
     def __getattr__(self, name:str):
         try:
@@ -491,16 +494,32 @@ class FileCache:
         except KeyError:
             raise AttributeError(name)
 
-        if pi.kind == 'single_value':
+        if pi.kind == 'unicode_data':
+            if not self.__unicode_data:
+                unicode_data = load_unicode_data(pi)
+                self.__unicode_data.update(unicode_data)
+            return self.__unicode_data
+
+        elif pi.kind == 'prop_list':
+            if not self.__prop_list:
+                prop_list = load_prop_list(pi)
+                self.__prop_list.update(prop_list)
+            return self.__prop_list
+
+        elif pi.kind == 'simple_list':
+            if name not in self.__simple_list:
+                self.__simple_list[name] = load_simple_list(pi)
+            return self.__simple_list[name]
+
+        elif pi.kind == 'single_value':
             if name not in self.__single_value:
                 self.__single_value[name] = load_single_value(pi)
             return self.__single_value[name]
 
-        elif pi.kind == 'unicode_data':
-            if not self.__unicode_data:
-                data = load_unicode_data(pi)
-                self.__unicode_data.update(data)
-            return self.__unicode_data
+        elif pi.kind == 'value_range':
+            if name not in self.__value_range:
+                self.__value_range[name] = load_value_range(pi)
+            return self.__value_range[name]
 
         elif pi.kind == 'derived_normal':
             if not any(self.__derived_normal):
@@ -534,9 +553,5 @@ cache = FileCache()
 
 
 if __name__ == '__main__':
-    pi = PathInfo(
-        'DerivedNormalizationProps.txt', 'UCD.zip', 'derived_normal', ';'
-    )
-    singles, simples = load_derived_normal(pi)
-    for key in singles:
-        print(key)
+    for item in cache.blocks:
+        print(item)

@@ -41,8 +41,11 @@ def test_cache():
     """When called, an attribute of :class:`FileCache` should return
     the data for the file tied to that attribute.
     """
-    assert db.cache.jamo['1100'] == 'G'
+    assert db.cache.blocks[0].start == 0x0000
+    assert '0958' in db.cache.compositionexclusions
     assert '0340' in db.cache.derivednormalizationprops[1]['comp_ex']
+    assert db.cache.jamo['1100'] == 'G'
+    assert '0009' in db.cache.proplist['wspace']
     assert db.cache.unicodedata['0020'].na == 'SPACE'
 
 
@@ -123,7 +126,7 @@ def test_load_simple_list():
     contained within the path as a :class:`set`.
     """
     pi = db.PathInfo(
-        'CompositionExclusions.txt', 'UCD.zip', 'single_value', ';'
+        'CompositionExclusions.txt', 'UCD.zip', 'simple_list', ';'
     )
     data = db.load_simple_list(pi)
     assert '0000' not in data
