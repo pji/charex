@@ -36,6 +36,16 @@ def test_build_hangul_name():
     assert db.build_hangul_name('d4db') == 'PWILH'
 
 
+# Test cache.
+def test_cache():
+    """When called, an attribute of :class:`FileCache` should return
+    the data for the file tied to that attribute.
+    """
+    assert db.cache.jamo['1100'] == 'G'
+    assert '0340' in db.cache.derivednormalizationprops[1]['comp_ex']
+    assert db.cache.unicodedata['0020'].na == 'SPACE'
+
+
 # Test load_derived_normal.
 def test_load_derived_normal():
     """When given the information for a path as a :class:`charex.db.PathInfo`

@@ -477,8 +477,12 @@ class FileCache:
     __path_map = load_path_map()
 
     def __init__(self) -> None:
+        self.__derived_normal: tuple[SingleValues, SimpleLists] = (
+            dict(), dict(),
+        )
         self.__property_alias: PropertyAliases = dict()
         self.__single_value: SingleValues = dict()
+        self.__unicode_data: UnicodeData = dict()
         self.__value_aliases: ValueAliases = dict()
 
     def __getattr__(self, name:str):
@@ -489,9 +493,21 @@ class FileCache:
 
         if pi.kind == 'single_value':
             if name not in self.__single_value:
-                pi = self.path_map[name]
                 self.__single_value[name] = load_single_value(pi)
             return self.__single_value[name]
+
+        elif pi.kind == 'unicode_data':
+            if not self.__unicode_data:
+                data = load_unicode_data(pi)
+                self.__unicode_data.update(data)
+            return self.__unicode_data
+
+        elif pi.kind == 'derived_normal':
+            if not any(self.__derived_normal):
+                single, simple = load_derived_normal(pi)
+                self.__derived_normal[0].update(single)
+                self.__derived_normal[1].update(simple)
+            return self.__derived_normal
 
     @property
     def path_map(self) -> PathMap:
