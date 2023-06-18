@@ -38,7 +38,7 @@
     "scripts": [
         "Scripts.txt",
         "UCD.zip",
-        "value_range",
+        "single_value",
         ";"
     ],
     "scriptextensions": [

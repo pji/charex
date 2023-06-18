@@ -49,6 +49,18 @@ def test_cache():
     assert db.cache.unicodedata['0020'].na == 'SPACE'
 
 
+# Test get_value_for_code.
+def test_get_value_for_code():
+    """Given a property and a code point,
+    :func:`charex.db.get_value_for_code` should
+    return the value for that property for the
+    code point.
+    """
+    code = '0020'
+    assert db.get_value_for_code('na', code) == 'SPACE'
+    assert db.get_value_for_code('scx', code) == 'Zyyy'
+
+
 # Test load_derived_normal.
 def test_load_derived_normal():
     """When given the information for a path as a :class:`charex.db.PathInfo`

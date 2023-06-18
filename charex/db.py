@@ -4,6 +4,7 @@ db
 
 Tools for reading the Unicode database and related information.
 """
+from bisect import bisect
 from collections import defaultdict
 from collections.abc import Generator, Sequence
 from dataclasses import dataclass
@@ -17,6 +18,7 @@ from charex import util
 # Database configuration.
 PKG_DATA = files('charex.data')
 FILE_PATH_MAP = 'path_map.json'
+FILE_PROP_MAP = 'prop_map.json'
 PATH_PROPERTY_ALIASES = 'propertyaliases'
 PATH_VALUE_ALIASES = 'propertyvaluealiases'
 UCD_RANGES = defaultdict(str, {
@@ -127,6 +129,7 @@ class ValueRange:
 # Common data types.
 Content = Sequence[str]
 PathMap = dict[str, PathInfo]
+PropMap = dict[str, str]
 Record = tuple[str, ...]
 Records = tuple[Record, ...]
 
@@ -149,6 +152,54 @@ class Default:
 
     def __call__(self) -> str:
         return self.value
+
+
+# Query data.
+def get_value_for_code(prop: str, code: str) -> str:
+    """Retrieve the value of a property for a character."""
+    alias = alias_property(prop).casefold()
+    key = cache.prop_map[alias]
+    kind = cache.path_map[key].kind
+
+    by_kind = {
+        'single_value': get_single_value_by_code,
+        'unicode_data': get_unicode_data_by_code,
+        'value_range': get_value_range_by_code,
+    }
+    value = by_kind[kind](prop, code, key)
+    return alias_value(prop, value)
+
+
+def get_single_value_by_code(prop: str, code: str, key: str) -> str:
+    """Get the value of a property stored in a `single_value` file
+    for the given code point.
+    """
+    single_value = getattr(cache, key)
+    value = single_value[code]
+
+    if value == '<script>':
+        value = get_value_for_code('sc', code)
+
+    return value
+
+
+def get_unicode_data_by_code(prop: str, code: str, key: str) -> str:
+    """Get the value of a property stored in a `unicode_data` file
+    for the given code point.
+    """
+    unicode_data = getattr(cache, key)
+    ucd = unicode_data[code]
+    return getattr(ucd, prop)
+
+
+def get_value_range_by_code(prop: str, code: str, key: str) -> str:
+    """Get the value of a property stored in a `value_range` file
+    for the given code point.
+    """
+    vrs = getattr(cache, key)
+    n = int(code, 16)
+    index = bisect(tuple(vr.start for vr in vrs), n)
+    return vrs[n].value
 
 
 # Load data file by kind.
@@ -314,6 +365,17 @@ def load_path_map() -> PathMap:
     return {key: PathInfo(*json[key]) for key in json}
 
 
+def load_prop_map() -> PropMap:
+    """Load the map of Unicode properties to the key for the archive they
+    are stored in.
+    """
+    path = PKG_DATA / FILE_PROP_MAP
+    fh = path.open()
+    map = load(fh)
+    fh.close()
+    return map
+
+
 def load_from_archive(info: PathInfo, codec: str = 'utf8') -> Content:
     """Read data from a zip archive."""
     path = PKG_DATA / info.archive
@@ -475,6 +537,7 @@ def find_gap_in_value_ranges(vrs: ValueRanges) -> int | None:
 # File data cache.
 class FileCache:
     __path_map = load_path_map()
+    __prop_map = load_prop_map()
 
     def __init__(self) -> None:
         self.__derived_normal: tuple[SingleValues, SimpleLists] = (
@@ -533,6 +596,10 @@ class FileCache:
         return self.__path_map
 
     @property
+    def prop_map(self) -> PropMap:
+        return self.__prop_map
+
+    @property
     def property_alias(self) -> PropertyAliases:
         if not self.__property_alias:
             info = self.path_map[PATH_PROPERTY_ALIASES]
@@ -553,5 +620,5 @@ cache = FileCache()
 
 
 if __name__ == '__main__':
-    for item in cache.blocks:
-        print(item)
+    value = get_value_for_code('scx', '0020')
+    print(value)
