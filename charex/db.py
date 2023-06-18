@@ -162,12 +162,34 @@ def get_value_for_code(prop: str, code: str) -> str:
     kind = cache.path_map[key].kind
 
     by_kind = {
+        'prop_list': get_prop_list,
+        'simple_list': get_simple_list_by_code,
         'single_value': get_single_value_by_code,
         'unicode_data': get_unicode_data_by_code,
         'value_range': get_value_range_by_code,
     }
     value = by_kind[kind](prop, code, key)
     return alias_value(prop, value)
+
+
+def get_prop_list(prop: str, code: str, key: str) -> str:
+    """Get the value of a property stored in a `prop_list` file
+    for the given code point.
+    """
+    simple_list = getattr(cache, key)
+    if code in simple_list[prop]:
+        return 'Y'
+    return 'N'
+
+
+def get_simple_list_by_code(prop: str, code: str, key: str) -> str:
+    """Get the value of a property stored in a `simple_list` file
+    for the given code point.
+    """
+    simple_list = getattr(cache, key)
+    if code in simple_list:
+        return 'Y'
+    return 'N'
 
 
 def get_single_value_by_code(prop: str, code: str, key: str) -> str:
@@ -198,8 +220,9 @@ def get_value_range_by_code(prop: str, code: str, key: str) -> str:
     """
     vrs = getattr(cache, key)
     n = int(code, 16)
-    index = bisect(tuple(vr.start for vr in vrs), n)
-    return vrs[n].value
+    starts = tuple(vr.start for vr in vrs)
+    index = bisect(starts, n)
+    return vrs[index - 1].value
 
 
 # Load data file by kind.
@@ -254,7 +277,7 @@ def load_prop_list(info: PathInfo) -> SimpleLists:
         prop = alias_property(long)
         prop = prop.casefold()
         data.setdefault(prop, set())
-        data[prop].add(code)
+        data[prop].add(code.casefold())
     return data
 
 
@@ -279,7 +302,7 @@ def load_single_value(info: PathInfo) -> SingleValue:
     """Load a data file that contains a simple mapping of code point
     to value.
     """
-    records, missing = parse(info)
+    records, missing = parse(info, True)
     data = defaultdict(Default(missing))
     for rec in records:
         code, value = rec
@@ -564,7 +587,7 @@ class FileCache:
             return self.__unicode_data
 
         elif pi.kind == 'prop_list':
-            if not self.__prop_list:
+            if name not in self.__prop_list:
                 prop_list = load_prop_list(pi)
                 self.__prop_list.update(prop_list)
             return self.__prop_list
@@ -620,5 +643,6 @@ cache = FileCache()
 
 
 if __name__ == '__main__':
-    value = get_value_for_code('scx', '0020')
+    value = get_value_for_code('emoji', '1f600')
     print(value)
+

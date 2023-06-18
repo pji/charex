@@ -59,6 +59,16 @@ def test_get_value_for_code():
     code = '0020'
     assert db.get_value_for_code('na', code) == 'SPACE'
     assert db.get_value_for_code('scx', code) == 'Zyyy'
+    assert db.get_value_for_code('age', code) == '1.1'
+    assert db.get_value_for_code('blk', code) == 'Basic Latin'
+    assert db.get_value_for_code('emoji', code) == 'N'
+    assert db.get_value_for_code('ce', code) == 'N'
+
+    code = '1f600'
+    assert db.get_value_for_code('emoji', code) == 'Y'
+
+    code = '0958'
+    assert db.get_value_for_code('ce', code) == 'Y'
 
 
 # Test load_derived_normal.

@@ -26,7 +26,7 @@
     "derivedage": [
         "DerivedAge.txt",
         "UCD.zip",
-        "value_range",
+        "single_value",
         ";"
     ],
     "blocks": [
@@ -146,7 +146,7 @@
     "emoji-data": [
         "emoji/emoji-data.txt",
         "UCD.zip",
-        "simple_list",
+        "prop_list",
         ";"
     ],
     "unihan_dictionarylikedata": [
