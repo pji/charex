@@ -162,6 +162,7 @@ def get_value_for_code(prop: str, code: str) -> str:
     kind = cache.path_map[key].kind
 
     by_kind = {
+        'derived_normal': get_derived_normal,
         'prop_list': get_prop_list,
         'simple_list': get_simple_list_by_code,
         'single_value': get_single_value_by_code,
@@ -170,6 +171,18 @@ def get_value_for_code(prop: str, code: str) -> str:
     }
     value = by_kind[kind](prop, code, key)
     return alias_value(prop, value)
+
+
+def get_derived_normal(prop: str, code: str, key: str) -> str:
+    """Get the value of a property stored in a `derived_normal` file
+    for the given code point.
+    """
+    single, simple = getattr(cache, key)
+    if prop in single:
+        return single[prop][code]
+    if code in simple[prop]:
+        return 'Y'
+    return 'N'
 
 
 def get_prop_list(prop: str, code: str, key: str) -> str:
