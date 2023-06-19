@@ -23,6 +23,12 @@
         "prop_list",
         ";"
     ],
+    "derivedcoreproperties": [
+        "DerivedCoreProperties.txt",
+        "UCD.zip",
+        "prop_list",
+        ";"
+    ],
     "derivedage": [
         "DerivedAge.txt",
         "UCD.zip",

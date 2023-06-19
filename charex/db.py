@@ -653,9 +653,3 @@ class FileCache:
 
 
 cache = FileCache()
-
-
-if __name__ == '__main__':
-    value = get_value_for_code('emoji', '1f600')
-    print(value)
-
