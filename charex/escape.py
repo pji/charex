@@ -7,6 +7,7 @@ Character escape schemes.
 from collections.abc import Callable
 from json import loads
 
+from charex.db import cache
 from charex import util
 
 
@@ -59,15 +60,11 @@ class EscapeError(ValueError):
 # Utility functions.
 def get_named_entity(char: str) -> str:
     """Get a named entity from the HTML entity data."""
-    lines = util.read_resource('entities')
-    json = ''.join(lines)
-    data = loads(json)
-    by_char = {data[key]['characters']: key for key in data}
-    try:
-        cached_entities[char] = by_char[char]
-    except KeyError:
-        cached_entities[char] = escape_htmldec(char, '')
-    return cached_entities[char]
+    n = ord(char)
+    code = f'{n:04x}'.casefold()
+    if code in cache.entity_map:
+        return cache.entity_map[code][-1].name
+    return escape_htmldec(char, '')
 
 
 def get_description(schemekey: str) -> str:

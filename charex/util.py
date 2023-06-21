@@ -53,109 +53,9 @@ RESOURCES = {
     # Package data.
     'sources': 'sources.json',
 
-    # Denormalization lookups.
-    'rev_casefold': 'rev_casefold.json',
-    'rev_nfc': 'rev_nfc.json',
-    'rev_nfkc': 'rev_nfkc.json',
-    'rev_nfd': 'rev_nfd.json',
-    'rev_nfkd': 'rev_nfkd.json',
-
-    # UCD data.
-    'age': 'UCD.zip',
-    'blk': 'UCD.zip',
-    'bmg': 'UCD.zip',
-    'ce': 'UCD.zip',
-    'cf': 'UCD.zip',
-    'dnormprops': 'UCD.zip',
-    'dproplist': 'UCD.zip',
-    'ea': 'UCD.zip',
-    'emoji': 'UCD.zip',
-    'equideo': 'UCD.zip',
-    'gcb': 'UCD.zip',
-    'hst': 'UCD.zip',
-    'inpc': 'UCD.zip',
-    'insc': 'UCD.zip',
-    'jamo': 'UCD.zip',
-    'jg': 'UCD.zip',
-    'jsn': 'UCD.zip',
-    'jt': 'UCD.zip',
-    'lb': 'UCD.zip',
-    'name_alias': 'UCD.zip',
-    'props': 'UCD.zip',
-    'proplist': 'UCD.zip',
-    'propvals': 'UCD.zip',
-    'sb': 'UCD.zip',
-    'scripts': 'UCD.zip',
-    'sc': 'UCD.zip',
-    'scf': 'UCD.zip',
-    'scriptext': 'UCD.zip',
-    'scx': 'UCD.zip',
-    'speccase': 'UCD.zip',
-    'unicodedata': 'UCD.zip',
-    'vo': 'UCD.zip',
-    'wb': 'UCD.zip',
-
-    # Unihan data.
-    'dictlike': 'Unihan.zip',
-    'dindices': 'Unihan.zip',
-    'irgsources': 'Unihan.zip',
-    'mappings': 'Unihan.zip',
-    'numvalues': 'Unihan.zip',
-    'radstroke': 'Unihan.zip',
-    'readings': 'Unihan.zip',
-    'variants': 'Unihan.zip',
-
-    # HTML data.
-    'entities': 'entities.json',
-
     # HTML examples.
     'result': 'result.html',
     'quote': 'quote.html',
-}
-UCD = {
-    'age': 'DerivedAge.txt',
-    'blk': 'Blocks.txt',
-    'bmg': 'BidiMirroring.txt',
-    'ce': 'CompositionExclusions.txt',
-    'cf': 'CaseFolding.txt',
-    'dnormprops': 'DerivedNormalizationProps.txt',
-    'dproplist': 'DerivedCoreProperties.txt',
-    'ea': 'EastAsianWidth.txt',
-    'emoji': 'emoji/emoji-data.txt',
-    'equideo': 'EquivalentUnifiedIdeograph.txt',
-    'gcb': 'auxiliary/GraphemeBreakProperty.txt',
-    'hst': 'HangulSyllableType.txt',
-    'inpc': 'IndicPositionalCategory.txt',
-    'insc': 'IndicSyllabicCategory.txt',
-    'jamo': 'Jamo.txt',
-    'jg': 'extracted/DerivedJoiningGroup.txt',
-    'jsn': 'Jamo.txt',
-    'jt': 'extracted/DerivedJoiningType.txt',
-    'lb': 'LineBreak.txt',
-    'name_alias': 'NameAliases.txt',
-    'props': 'PropertyAliases.txt',
-    'proplist': 'PropList.txt',
-    'propvals': 'PropertyValueAliases.txt',
-    'sb': 'auxiliary/SentenceBreakProperty.txt',
-    'scripts': 'Scripts.txt',
-    'sc': 'Scripts.txt',
-    'scf': 'CaseFolding.txt',
-    'scriptext': 'ScriptExtensions.txt',
-    'scx': 'ScriptExtensions.txt',
-    'speccase': 'SpecialCasing.txt',
-    'unicodedata': 'UnicodeData.txt',
-    'vo': 'VerticalOrientation.txt',
-    'wb': 'auxiliary/WordBreakProperty.txt',
-}
-UNIHAN = {
-    'dictlike': 'Unihan_DictionaryLikeData.txt',
-    'dindices': 'Unihan_DictionaryIndices.txt',
-    'irgsources': 'Unihan_IRGSources.txt',
-    'mappings': 'Unihan_OtherMappings.txt',
-    'numvalues': 'Unihan_NumericValues.txt',
-    'radstroke': 'Unihan_RadicalStrokeCounts.txt',
-    'readings': 'Unihan_Readings.txt',
-    'variants': 'Unihan_Variants.txt',
 }
 
 
@@ -287,21 +187,9 @@ def read_resource(key: str, codec: str = 'utf_8') -> tuple[str, ...]:
     filename = RESOURCES[key]
     data_file = pkg / filename
 
-    if filename.endswith('.zip'):
-        if key in UNIHAN:
-            file = UNIHAN[key]
-        elif key in UCD:
-            file = UCD[key]
-        with as_file(data_file) as path:
-            with ZipFile(path) as zh:
-                with zh.open(file) as zch:
-                    blines = zch.readlines()
-        lines = [bline.decode(codec) for bline in blines]
-
-    else:
-        fh = data_file.open(encoding=codec)
-        lines = fh.readlines()
-        fh.close()
+    fh = data_file.open(encoding=codec)
+    lines = fh.readlines()
+    fh.close()
 
     lines = [line.rstrip() for line in lines]
     return tuple(lines)

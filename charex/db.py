@@ -9,7 +9,7 @@ from collections import defaultdict
 from collections.abc import Generator, Sequence
 from dataclasses import dataclass
 from importlib.resources import as_file, files
-from json import load
+from json import load, loads
 from zipfile import ZipFile
 
 from charex import util
@@ -43,6 +43,21 @@ UCD_RANGES = defaultdict(str, {
 
 # Data record structures.
 @dataclass(repr=True, eq=True)
+class Casefold:
+    c: str = '<code>'
+    f: str = '<code>'
+    s: str = '<code>'
+    t: str = '<code>'
+
+
+@dataclass(repr=True, eq=True)
+class Entity:
+    name: str
+    codepoints: tuple[str, ...]
+    characters: str
+
+
+@dataclass(repr=True, eq=True)
 class PathInfo:
     path: str
     archive: str
@@ -55,6 +70,15 @@ class PropertyAlias:
     alias: str
     name: str
     other: tuple[str, ...]
+
+
+@dataclass(repr=True, eq=True)
+class SpecialCase:
+    code: str = ''
+    lc: str = ''
+    tc: str = ''
+    uc: str = ''
+    condition_list: str = ''
 
 
 @dataclass(repr=True, eq=True)
@@ -134,14 +158,23 @@ Record = tuple[str, ...]
 Records = tuple[Record, ...]
 
 # File data structure types.
+Casefolds = defaultdict[str, Casefold]
+Casefoldings = dict[str, Casefolds]
+DenormalMap = defaultdict[str, tuple[str, ...]]
+DenormalMaps = dict[str, DenormalMap]
+EntityMap = dict[str, tuple[Entity, ...]]
 PropertyAliases = dict[str, PropertyAlias]
 SingleValue = defaultdict[str, str]
 SingleValues = dict[str, SingleValue]
 SimpleList = set[str]
 SimpleLists = dict[str, SimpleList]
+SpecialCasing = defaultdict[str, SpecialCase]
+SpecialCasings = dict[str, SpecialCasing]
 UnicodeData = dict[str, UCD]
 ValueAliases = dict[str, dict[str, ValueAlias]]
 ValueRanges = tuple[ValueRange, ...]
+DerivedNormal = tuple[SingleValues, SimpleLists]
+DerivedNormals = dict[str, DerivedNormal]
 
 
 # Default value handler for defaultdicts.
@@ -155,6 +188,16 @@ class Default:
 
 
 # Query data.
+def get_denormal_map_for_code(prop: str, code: str) -> Record:
+    """Get the value of a property stored in a `denormal_map` file
+    for the given code point.
+    """
+    alias = alias_property(prop).casefold()
+    key = cache.prop_map[alias]
+    dmap = getattr(cache, key)
+    return dmap[code]
+
+
 def get_value_for_code(prop: str, code: str) -> str:
     """Retrieve the value of a property for a character."""
     alias = alias_property(prop).casefold()
@@ -162,25 +205,56 @@ def get_value_for_code(prop: str, code: str) -> str:
     kind = cache.path_map[key].kind
 
     by_kind = {
+        'casefolding': get_casefolding,
         'derived_normal': get_derived_normal,
         'prop_list': get_prop_list,
         'simple_list': get_simple_list_by_code,
         'single_value': get_single_value_by_code,
+        'special_casing': get_special_casing_by_code,
         'unicode_data': get_unicode_data_by_code,
+        'unihan': get_unihan_by_code,
         'value_range': get_value_range_by_code,
     }
-    value = by_kind[kind](prop, code, key)
+    try:
+        value = by_kind[kind](prop, code, key)
+    except KeyError as ex:
+        if kind == 'denormal_map':
+            msg = (
+                'denormal_map properties must be retrieved with '
+                'db.get_denormal_map_for_code.'
+            )
+            raise ValueError(msg)
+        raise ex
     return alias_value(prop, value)
+
+
+def get_casefolding(prop: str, code: str, key: str) -> str:
+    """Get the value of a property stored in a `casefoldng` file
+    for the given code point.
+    """
+    cfs = getattr(cache, key)
+    cf = cfs[code]
+    if prop == 'cf':
+        value = cf.f if cf.f != '<code>' else cf.c
+    elif prop == 'scf':
+        value = cf.s if cf.s != '<code>' else cf.c
+    if value == '<code>':
+        value = code.upper()
+    return value
 
 
 def get_derived_normal(prop: str, code: str, key: str) -> str:
     """Get the value of a property stored in a `derived_normal` file
     for the given code point.
     """
-    single, simple = getattr(cache, key)
+    dn = getattr(cache, key)
+    single, simple = dn
     if prop in single:
-        return single[prop][code]
-    if code in simple[prop]:
+        value = single[prop][code]
+        if value == '<code point>':
+            value = code.upper()
+        return value
+    elif code in simple[prop]:
         return 'Y'
     return 'N'
 
@@ -218,6 +292,15 @@ def get_single_value_by_code(prop: str, code: str, key: str) -> str:
     return value
 
 
+def get_special_casing_by_code(prop: str, code: str, key: str) -> str:
+    """Get the value of a property stored in a `special_casing` file
+    for the given code point.
+    """
+    scs = getattr(cache, key)
+    sc = scs[code]
+    return getattr(sc, prop)
+
+
 def get_unicode_data_by_code(prop: str, code: str, key: str) -> str:
     """Get the value of a property stored in a `unicode_data` file
     for the given code point.
@@ -225,6 +308,19 @@ def get_unicode_data_by_code(prop: str, code: str, key: str) -> str:
     unicode_data = getattr(cache, key)
     ucd = unicode_data[code]
     return getattr(ucd, prop)
+
+
+def get_unihan_by_code(prop: str, code: str, key: str) -> str:
+    """Get the value of a property stored in a `unihan` file
+    for the given code point.
+    """
+    single_value = getattr(cache, key)
+    value = single_value[prop][code]
+
+    if value == '<script>':
+        value = get_value_for_code('sc', code)
+
+    return value
 
 
 def get_value_range_by_code(prop: str, code: str, key: str) -> str:
@@ -239,6 +335,46 @@ def get_value_range_by_code(prop: str, code: str, key: str) -> str:
 
 
 # Load data file by kind.
+def load_casefolding(info: PathInfo) -> Casefolds:
+    """Load a data file that contains a simple mapping of code point
+    to casefolded values.
+    """
+    by_status = {
+        'C': 0,
+        'F': 1,
+        'S': 2,
+        'T': 3,
+    }
+    records, missing = parse(info, True)
+    data: dict[str, list[str]] = dict()
+    for rec in records:
+        code, status, value, *_ = rec
+        code = code.strip()
+        status = status.strip()
+        value = value.strip()
+        key = code.casefold()
+        index = by_status[status]
+        data.setdefault(key, ['<code>' for _ in range(len(by_status))])
+        data[key][index] = value
+    cfs: Casefolds = defaultdict(Casefold)
+    for key in data:
+        cfs[key] = Casefold(*data[key])
+    return cfs
+
+
+def load_denormal_map(info: PathInfo) -> DenormalMap:
+    """Load a data file with a denormalization map."""
+    lines = load_from_archive(info)
+    text = '\n'.join(line for line in lines)
+    json = loads(text)
+    dmap = defaultdict(tuple)
+    for key in json:
+        nums = [ord(s) for s in key]
+        codes = ' '.join(f'{n:04x}' for n in nums)
+        dmap[codes] = tuple(json[key])
+    return dmap
+
+
 def load_derived_normal(info: PathInfo) -> tuple[SingleValues, SimpleLists]:
     """Load a data file with derived normalization properties."""
     docs: list[list[str]] = []
@@ -255,7 +391,7 @@ def load_derived_normal(info: PathInfo) -> tuple[SingleValues, SimpleLists]:
     singles: SingleValues = {}
     simples: SimpleLists = {}
     for doc in docs:
-        records, missing = parse(doc, True)
+        records, missing = parse(doc, True, info.delim)
         missing = missing.split(';')[-1]
         if not records:
             continue
@@ -264,21 +400,40 @@ def load_derived_normal(info: PathInfo) -> tuple[SingleValues, SimpleLists]:
         prop = alias_property(prop).casefold()
         num_fields = len(records[0])
         if num_fields == 2:
-            simples.setdefault(prop, set())
             for rec in records:
                 code, _ = rec
+                simples.setdefault(prop, set())
                 simples[prop].add(code)
 
         elif num_fields == 3:
-            singles.setdefault(prop, defaultdict(Default(missing)))
             for rec in records:
                 code, _, value = rec
+                singles.setdefault(prop, defaultdict(Default(missing)))
                 singles[prop][code.casefold()] = value
 
         else:
             raise ValueError(f'{prop} has {num_fields} fields.')
 
     return singles, simples
+
+
+def load_entity_map(info: PathInfo) -> EntityMap:
+    """Load a data file with an entity map."""
+    path = PKG_DATA / info.path
+
+    fh = path.open()
+    json = load(fh)
+    fh.close()
+
+    emap: dict[str, list[Entity]] = dict()
+    for name in json:
+        codes = tuple(f'{n:04x}' for n in json[name]['codepoints'])
+        chars = json[name]['characters']
+        for code in codes:
+            key = code.casefold()
+            emap.setdefault(key, list())
+            emap[key].append(Entity(name, codes, chars))
+    return {key: tuple(emap[key]) for key in emap}
 
 
 def load_prop_list(info: PathInfo) -> SimpleLists:
@@ -321,6 +476,17 @@ def load_single_value(info: PathInfo) -> SingleValue:
         code, value = rec
         code = code.casefold()
         data[code.strip()] = value.strip()
+    return data
+
+
+def load_special_casing(info: PathInfo) -> SpecialCasing:
+    """Load data from a file that is structured like SpecialCasing.txt."""
+    records, _ = parse(info)
+    data = defaultdict(SpecialCase)
+    for rec in records:
+        code, lower, title, upper, cond_list, *_ = rec
+        speccase = SpecialCase(code, lower, title, upper, cond_list)
+        data[code.casefold()] = speccase
     return data
 
 
@@ -368,6 +534,21 @@ def load_value_aliases(info: PathInfo) -> ValueAliases:
         long = long.casefold()
         data.setdefault(prop, dict())
         data[prop][long] = va
+    return data
+
+
+def load_unihan(info: PathInfo) -> SingleValues:
+    """Load data from a file of Unihan properties."""
+    records, missing = parse(info)
+    data: SingleValues = dict()
+    for rec in records:
+        code, prop, value = rec
+        code = code[2:]
+        code = code.casefold()
+        prop = alias_property(prop.strip())
+        prop = prop.casefold()
+        data.setdefault(prop, defaultdict(Default(missing)))
+        data[prop][code.strip()] = value.strip()
     return data
 
 
@@ -457,14 +638,16 @@ def build_hangul_name(code: str) -> str:
 
 
 # Basic file processing utilities.
-def parse(file: PathInfo | Content, split=False) -> tuple[Records, str]:
+def parse(
+    file: PathInfo | Content, split=False, delim_: str = ';'
+) -> tuple[Records, str]:
     """Perform basic parsing on a Unicode data file."""
     if isinstance(file, PathInfo):
         lines = load_from_archive(file)
         delim = file.delim
     else:
         lines = file
-        delim = ';'
+        delim = delim_
 
     missing = ''
     missing_vrs = parse_missing(lines)
@@ -576,15 +759,21 @@ class FileCache:
     __prop_map = load_prop_map()
 
     def __init__(self) -> None:
-        self.__derived_normal: tuple[SingleValues, SimpleLists] = (
-            dict(), dict(),
-        )
+        self.__casefolding: Casefoldings = dict()
+        self.__denormal_map: DenormalMaps = dict()
+        self.__derived_normal: DerivedNormals = dict()
+        self.__entity_map: EntityMap = dict()
+        self.__kind_map: dict[str, Record] = dict()
         self.__property_alias: PropertyAliases = dict()
-        self.__prop_list: SimpleLists = dict()
+        self.__property_name: PropertyAliases = dict()
+        self.__prop_list: dict[str, SimpleLists] = dict()
         self.__simple_list: SimpleLists = dict()
         self.__single_value: SingleValues = dict()
+        self.__specialcasings: SpecialCasings = dict()
         self.__unicode_data: UnicodeData = dict()
+        self.__unihan: dict[str, SingleValues] = dict()
         self.__value_aliases: ValueAliases = dict()
+        self.__value_names: ValueAliases = dict()
         self.__value_range: dict[str, ValueRanges] = dict()
 
     def __getattr__(self, name:str):
@@ -602,8 +791,8 @@ class FileCache:
         elif pi.kind == 'prop_list':
             if name not in self.__prop_list:
                 prop_list = load_prop_list(pi)
-                self.__prop_list.update(prop_list)
-            return self.__prop_list
+                self.__prop_list[name] = prop_list
+            return self.__prop_list[name]
 
         elif pi.kind == 'simple_list':
             if name not in self.__simple_list:
@@ -621,11 +810,53 @@ class FileCache:
             return self.__value_range[name]
 
         elif pi.kind == 'derived_normal':
-            if not any(self.__derived_normal):
-                single, simple = load_derived_normal(pi)
-                self.__derived_normal[0].update(single)
-                self.__derived_normal[1].update(simple)
-            return self.__derived_normal
+            if name not in self.__derived_normal:
+                dns = load_derived_normal(pi)
+                self.__derived_normal[name] = dns
+            return self.__derived_normal[name]
+
+        elif pi.kind == 'denormal_map':
+            if name not in self.__denormal_map:
+                self.__denormal_map[name] = load_denormal_map(pi)
+            return self.__denormal_map[name]
+
+        elif pi.kind == 'unihan':
+            if name not in self.__unihan:
+                self.__unihan[name] = load_unihan(pi)
+            return self.__unihan[name]
+
+        elif pi.kind == 'casefolding':
+            if name not in self.__casefolding:
+                cf = load_casefolding(pi)
+                self.__casefolding[name] = cf
+            return self.__casefolding[name]
+
+        elif pi.kind == 'special_casing':
+            if name not in self.__specialcasings:
+                scs = load_special_casing(pi)
+                self.__specialcasings[name] = scs
+            return self.__specialcasings[name]
+
+    @property
+    def entity_map(self) -> EntityMap:
+        if not self.__entity_map:
+            info = PathInfo('entities.json', '', 'entity_map', '')
+            emap = load_entity_map(info)
+            self.__entity_map.update(emap)
+        return self.__entity_map
+
+    @property
+    def kind_map(self) -> dict[str, Record]:
+        if not self.__kind_map:
+            kmap: dict[str, list[str]] = {}
+            for prop in self.prop_map:
+                file = self.prop_map[prop]
+                key = self.path_map[file].kind
+                kmap.setdefault(key, list())
+                kmap[key].append(prop)
+            result = {key: tuple(kmap[key]) for key in kmap}
+            self.__kind_map.update(result)
+        return self.__kind_map
 
     @property
     def path_map(self) -> PathMap:
@@ -644,6 +875,14 @@ class FileCache:
         return self.__property_alias
 
     @property
+    def property_name(self) -> PropertyAliases:
+        if not self.__property_name:
+            pmap = self.property_alias
+            data = {pmap[key].alias.casefold(): pmap[key] for key in pmap}
+            self.__property_name.update(data)
+        return self.__property_name
+
+    @property
     def value_aliases(self) -> ValueAliases:
         if not self.__value_aliases:
             info = self.path_map[PATH_VALUE_ALIASES]
@@ -651,5 +890,29 @@ class FileCache:
             self.__value_aliases.update(data)
         return self.__value_aliases
 
+    @property
+    def value_name(self) -> ValueAliases:
+        if not self.__value_names:
+            vmap = self.value_aliases
+            data: ValueAliases = dict()
+            for prop in vmap:
+                pvmap = vmap[prop]
+                data.setdefault(prop, dict())
+                data[prop] = {
+                    pvmap[key].alias.casefold(): pvmap[key]
+                    for key in pvmap
+                }
+            self.__value_names.update(data)
+        return self.__value_names
+
 
 cache = FileCache()
+
+
+if __name__ == '__main__':
+    pmap = cache.property_name
+    for prop in pmap:
+        prop = prop.casefold()
+        if prop.startswith('a'):
+            print(prop)
+    print(pmap['ahex'])

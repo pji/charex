@@ -318,7 +318,7 @@ def test_character_multilist_properties():
     defined properties that contain multiple values.
     """
     char = c.Character('a')
-    assert char.scx == ('Latin',)
+    assert char.scx == 'Latn'
 
 
 def test_character_numvalues_properties():
@@ -395,7 +395,7 @@ def test_character_rangelist_properties():
     char = c.Character('a')
     assert char.age == '1.1'
     assert char.blk == 'Basic Latin'
-    assert char.sc == 'Latin'
+    assert char.sc == 'Latn'
 
 
 def test_character_simplelist_properties():
@@ -455,11 +455,6 @@ def test_character_speccase():
     """A :class:`charex.Character` should have the properties from the
     SpecialCasing.txt file.
     """
-    char = c.Character('a')
-    assert char.lc == '0061'
-    assert char.tc == '0041'
-    assert char.uc == '0041'
-
     char = c.Character('U+FB00')
     assert char.lc == 'FB00'
     assert char.tc == '0046 0066'

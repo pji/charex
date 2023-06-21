@@ -9,6 +9,7 @@ from blessed import Terminal
 from datetime import date
 from json import dump, load
 from pathlib import Path
+from zipfile import ZipFile
 
 from charex.normal import build_denormalization_map
 from requests import get
@@ -46,6 +47,11 @@ def build_map(formkey: str, path: Path) -> bool:
         content = build_denormalization_map(formkey)
         with open(path, 'w') as fh:
             fh.write(content)
+
+        zpath = path.parent / 'Denormal.zip'
+        with ZipFile(zpath, 'a') as zf:
+            zf.writestr(path.name, content)
+
         result = True
     except Exception as ex:
         print(f'{type(ex)}({ex})...', end='')
@@ -56,6 +62,9 @@ def build_map(formkey: str, path: Path) -> bool:
 # Set up values.
 today = date.today()
 data_path = Path('charex/data')
+zpath = data_path / 'Denormal.zip'
+if zpath.exists():
+    zpath.unlink()
 
 # Get the list of data files to update.
 src_path = data_path / 'sources.json'

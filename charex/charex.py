@@ -4,824 +4,16 @@ charex
 
 Tools for exploring unicode characters and other character sets.
 """
-from collections import defaultdict
 from collections.abc import Generator, Sequence
-from dataclasses import dataclass
-from json import loads
 import re
 import unicodedata as ucd
 
+from charex import db
 from charex import util
 from charex.escape import schemes
 
 
-# Data classes.
-@dataclass
-class CaseFold:
-    """A record in CaseFolding.txt.
-
-    :param code: The address of the character.
-    :param status: The type of casefold being defined.
-    :param mapping: The casefolded character(s).
-    """
-    code: str
-    status: str
-    mapping: str
-
-
-@dataclass
-class NameAlias:
-    """A record in NameAliases.txt.
-
-    :param code: The address of the character.
-    :param alias: The name alias for the character.
-    :param type_: The type of name alias.
-    """
-    code: str
-    alias: str
-    type_: str
-
-    def __str__(self) -> str:
-        return f'<{self.type_}>{self.alias}'
-
-
-@dataclass
-class Property:
-    alias: str
-    long: str
-    other: tuple[str, ...]
-
-
-@dataclass
-class PropertyValue:
-    property: str
-    alias: str
-    long: str
-    other: tuple[str, ...]
-
-
-@dataclass
-class SpecialCase:
-    code: str
-    lower: str
-    title: str
-    upper: str
-    condition_list: str
-
-
-@dataclass
-class UCD:
-    """A record from the UnicodeData.txt file for Unicode 14.0.0.
-
-    :param code_point: The address for the character in Unicode.
-    :param name: The name for the code point.
-    :param category: The type of code point, such as "control" or
-        "lower case letter."
-    :param canonical_combining_class: The combining class of the code point,
-        largely used for CJK languages.
-    :param bidi_class: Unknown.
-    :param decomposition_type: Whether and how the character can be
-        decomposed.
-    :param decimal: If the character is a decimal digit, this is its
-        numeric value.
-    :param digit: If the character is a digit, this is its numeric
-        value.
-    :param numeric: If the character is a number, this is its numeric
-        value.
-    :param bidi_mirrored: Unknown.
-    :param unicode_1_name: The name of the character used in Unicode
-        version 1. This is mainly needed to give names to control
-        characters.
-    :param iso_comment: Unknown.
-    :param simple_uppercase_mapping: The code point for the upper case
-        version of the code point.
-    :param simple_lowercase_mapping: The code point for the lower case
-        version of the code point.
-    :param simple titlecase_mapping: The code point for the title case
-        version of the code point.
-    """
-    address: str
-    na: str
-    gc: str
-    ccc: str
-    bc: str
-    dt: str
-    decimal: str
-    digit: str
-    nv: str
-    bidi_m: str
-    na1: str
-    isc: str
-    suc: str
-    slc: str
-    stc: str
-
-
-@dataclass(order=True)
-class ValueRange:
-    """The range of characters that have a property value."""
-    start: int
-    stop: int
-    value: str
-
-
-# Types:
-CaseFoldCache = defaultdict[str, tuple[CaseFold, ...]]
-DenormalCache = dict[str, defaultdict[str, tuple[str, ...]]]
-PropsCache = dict[str, Property]
-PropValsCache = dict[str, dict[str, PropertyValue]]
-MultiValCache = dict[str, defaultdict[str, tuple[str, ...]]]
-NameAliasCache = defaultdict[str, tuple[NameAlias, ...]]
-RangeListCache = dict[str, tuple[ValueRange, ...]]
-Records = tuple[tuple[str, ...], ...]
-SimpleListCache = dict[str, tuple[str, ...]]
-SingleValCache = dict[str, defaultdict[str, str]]
-SpecCaseCache = defaultdict[str, tuple[SpecialCase, ...]]
-UnicodeDataCache = dict[str, UCD]
-UnihanCache = dict[str, SingleValCache]
-
-
-# Default values for defaultdicts.
-class MissingCaseFold:
-    def __init__(self, value: tuple[CaseFold, ...]) -> None:
-        self.value = value
-
-    def __call__(self) -> tuple[CaseFold, ...]:
-        return self.value
-
-
-class MissingSpecialCase:
-    def __init__(self, value: tuple[SpecialCase, ...]) -> None:
-        self.value = value
-
-    def __call__(self) -> tuple[SpecialCase, ...]:
-        return self.value
-
-
-class MissingTuple:
-    def __init__(self, value: tuple[str, ...]) -> None:
-        self.value = value
-
-    def __call__(self) -> tuple[str, ...]:
-        return self.value
-
-
-class MissingValue:
-    def __init__(self, value: str) -> None:
-        self.value = value
-
-    def __call__(self) -> str:
-        return self.value
-
-
 # Classes.
-class Cache:
-    """Data caching mechanism for :mod:`charex`. This is used to
-    reduce the number of times data needs to be loaded from disk.
-    It shouldn't be called directly. It's intended to be used
-    through :class:`charex.Character`.
-    """
-    prefixes = defaultdict(str, {
-        0x3400: 'CJK UNIFIED IDEOGRAPH-',
-        0x4e00: 'CJK UNIFIED IDEOGRAPH-',
-        0xac00: 'HANGUL SYLLABLE ',
-        0xf900: 'CJK UNIFIED IDEOGRAPH-',
-        0xfa70: 'CJK UNIFIED IDEOGRAPH-',
-        0x17000: 'TANGUT IDEOGRAPH-',
-        0x18d00: 'TANGUT IDEOGRAPH-',
-        0x18b00: 'KHITAN SMALL SCRIPT CHARACTER-',
-        0x1b170: 'NUSHU CHARACTER-',
-        0x20000: 'CJK UNIFIED IDEOGRAPH-',
-        0x2a700: 'CJK UNIFIED IDEOGRAPH-',
-        0x2b740: 'CJK UNIFIED IDEOGRAPH-',
-        0x2b820: 'CJK UNIFIED IDEOGRAPH-',
-        0x2ceb0: 'CJK UNIFIED IDEOGRAPH-',
-        0x2f800: 'CJK UNIFIED IDEOGRAPH-',
-        0x30000: 'CJK UNIFIED IDEOGRAPH-',
-    })
-    sources = {
-        'dictlike': (
-            'kcangjie', 'kcihait', 'kstrange', 'kphonetic', 'kfenn',
-            'kunihancore2020', 'kcheungbauer', 'kfourcornercode',
-            'kfrequency', 'kgradelevel', 'khdzradbreak', 'khkglyph',
-        ),
-        'dindices': (
-            'khanyu', 'kirghanyudazidian', 'kirgkangxi', 'ksbgy', 'knelson',
-            'kcowles', 'kmatthews', 'kgsr', 'kkangxi', 'kfennindex',
-            'kkarlgren', 'kmeyerwempe', 'klau', 'kcheungbauerindex',
-            'kmorohashi', 'kdaejaweon', 'kirgdaejaweon', 'kirgdaikanwaziten',
-        ),
-        'irgsources': (
-            'cjkirg_gsource', 'cjkirg_jsource', 'cjkirg_tsource',
-            'cjkrsunicode', 'ktotalstrokes', 'cjkirg_ksource',
-            'cjkirg_kpsource', 'cjkirg_vsource', 'cjkirg_hsource',
-            'cjkirg_usource', 'cjkiicore', 'cjkirg_msource',
-            'cjkirg_uksource', 'cjkcompatibilityvariant', 'cjkirg_ssource',
-        ),
-        'mappings': (
-            'kjis0213', 'kkps1', 'khkscs', 'ktgh', 'kkoreanname', 'keacc',
-            'ktaiwantelegraph', 'kja', 'kkps0', 'kbigfive', 'kcccii',
-            'kcns1986', 'kcns1992', 'kgb0', 'kgb1', 'kjis0', 'kjoyokanji',
-            'kksc0', 'kkoreaneducationhanja', 'kmainlandtelegraph', 'kxerox',
-            'kgb5', 'kjis1', 'kpseudogb1', 'kgb3', 'kgb8', 'kjinmeiyokanji',
-            'kksc1', 'kibmjapan', 'kgb7',
-        ),
-        'numvalues': (
-            'cjkothernumeric', 'cjkprimarynumeric', 'cjkaccountingnumeric',
-        ),
-        'radstroke': ('krsadobe_japan1_6', 'krskangxi',),
-        'readings': (
-            'kcantonese', 'kdefinition', 'kmandarin', 'khanyupinyin',
-            'ktghz2013', 'kxhc1983', 'kvietnamese', 'khangul', 'ktang',
-            'kjapanesekun', 'kjapaneseon', 'khanyupinlu', 'kkorean',
-        ),
-        'variants': (
-            'ksemanticvariant', 'kspoofingvariant', 'ktraditionalvariant',
-            'ksimplifiedvariant', 'kspecializedsemanticvariant',
-            'kzvariant',
-        ),
-    }
-    forms = ('casefold', 'nfc', 'nfd', 'nfkc', 'nfkd')
-    multis = ('scx',)
-    ranges = ('age', 'blk', 'sc',)
-    simples = ('ce',)
-    singles = (
-        'bmg', 'ea', 'equideo', 'gcb', 'hst', 'inpc', 'insc', 'jg', 'jsn',
-        'jt', 'lb', 'sb', 'vo', 'wb',
-    )
-    scases = ('lc', 'tc', 'uc',)
-
-    def __init__(self) -> None:
-        mvalue_cf = MissingCaseFold((CaseFold('<self>', 'C', '<self>'),))
-        mvalue_sc = MissingSpecialCase((SpecialCase(
-            '<self>',
-            '<slc>',
-            '<stc>',
-            '<suc>',
-            ''
-        ),))
-        self.__casefold: CaseFoldCache = defaultdict(mvalue_cf)
-        self.__denormal: DenormalCache = {}
-        self.__emoji: SimpleListCache = {}
-        self.__multival: MultiValCache = {}
-        self.__namealias: NameAliasCache = defaultdict(tuple)
-        self.__normalsimplelist: SimpleListCache = {}
-        self.__normalsingleval: SingleValCache = {}
-        self.__numvalues: SingleValCache = {}
-        self.__proplist: SingleValCache = {}
-        self.__props: PropsCache = {}
-        self.__propvals: PropValsCache = {}
-        self.__rangelist: RangeListCache = {}
-        self.__simplelist: SimpleListCache = {}
-        self.__singleval: SingleValCache = {}
-        self.__speccase: SpecCaseCache = defaultdict(mvalue_sc)
-        self.__unicodedata: UnicodeDataCache = {}
-        self.__unihan: UnihanCache = {
-            'dindices': {},
-            'dictlike': {},
-            'irgsources': {},
-            'numvalues': {},
-            'mappings': {},
-            'radstroke': {},
-            'readings': {},
-            'variants': {},
-        }
-
-    def __getattr__(self, name):
-        # The Unihan database.
-        if name in self.__unihan:
-            if not self.__unihan[name]:
-                data = self.get_unihan(name)
-                for key in data:
-                    self.__unihan[name][key] = data[key]
-            return self.__unihan[name]
-
-        # The attribute isn't found.
-        raise AttributeError(name)
-
-    @property
-    def casefold(self) -> CaseFoldCache:
-        if not self.__casefold:
-            data = self.parse('cf')
-            casefold: dict[str, list[CaseFold]] = {}
-            for item in data:
-                code, status, mapping, _ = item
-                n = int(code, 16)
-                c = chr(n)
-                casefold.setdefault(c, list())
-                casefold[c].append(CaseFold(code, status, mapping))
-            for c in casefold:
-                self.__casefold[c] = tuple(casefold[c])
-        return self.__casefold
-
-    @property
-    def denormal(self) -> DenormalCache:
-        if not self.__denormal:
-            for form in self.forms:
-                source = f'rev_{form}'
-                lines = util.read_resource(source)
-                json = '\n'.join(lines)
-                data = loads(json)
-                result = defaultdict(tuple)
-                for key in data:
-                    result[key] = tuple(data[key])
-                self.__denormal[form] = result
-        return self.__denormal
-
-    @property
-    def emoji(self) -> SimpleListCache:
-        if not self.__emoji:
-            self.__emoji = self.get_emoji()
-        return self.__emoji
-
-    @property
-    def multival(self) -> MultiValCache:
-        if not self.__multival:
-            self.__multival = {
-                key: self.get_multiple_value_property(key)
-                for key in self.multis
-            }
-        return self.__multival
-
-    @property
-    def namealias(self) -> NameAliasCache:
-        if not self.__namealias:
-            data = self.parse('name_alias')
-            namealias: dict[str, list[NameAlias]] = {}
-            for item in data:
-                code, alias, type_ = item
-                n = int(code, 16)
-                c = chr(n)
-                namealias.setdefault(c, list())
-                namealias[c].append(NameAlias(code, alias, type_))
-            for c in namealias:
-                self.__namealias[c] = tuple(namealias[c])
-        return self.__namealias
-
-    @property
-    def normalsimplelist(self) -> SimpleListCache:
-        if not self.__normalsimplelist:
-            self.__normalsimplelist = self.get_normalprops()[0]
-        return self.__normalsimplelist
-
-    @property
-    def normalsingleval(self) -> SingleValCache:
-        if not self.__normalsingleval:
-            self.__normalsingleval = self.get_normalprops()[1]
-        return self.__normalsingleval
-
-    @property
-    def numvalues(self) -> SingleValCache:
-        if not self.__numvalues:
-            result = self.get_unihan('numvalues')
-            for key in result:
-                self.__numvalues[key] = result[key]
-        return self.__numvalues
-
-    @property
-    def props(self) -> PropsCache:
-        if not self.__props:
-            self.__props = self.get_properties()
-        return self.__props
-
-    @property
-    def proplist(self) -> SingleValCache:
-        if not self.__proplist:
-            proplist = self.parse_binary_properties('proplist')
-            for prop in proplist:
-                alias = alias_property(prop, True)
-                alias = alias.casefold()
-                self.__proplist[alias] = proplist[prop]
-
-            dproplist = self.parse_binary_properties('dproplist')
-            for prop in dproplist:
-                alias = alias_property(prop, True)
-                alias = alias.casefold()
-                self.__proplist[alias] = dproplist[prop]
-
-        return self.__proplist
-
-    @property
-    def propvals(self) -> PropValsCache:
-        if not self.__propvals:
-            self.__propvals = self.get_property_values()
-        return self.__propvals
-
-    @property
-    def rangelist(self) -> RangeListCache:
-        if not self.__rangelist:
-            self.__rangelist = {
-                key: self.get_value_ranges(key)
-                for key in self.ranges
-            }
-        return self.__rangelist
-
-    @property
-    def simplelist(self) -> SimpleListCache:
-        if not self.__simplelist:
-            for source in self.simples:
-                data = self.parse(source)
-                values = self.parse_simple_ranges(data)
-                self.__simplelist[source] = values
-        return self.__simplelist
-
-    @property
-    def singleval(self) -> SingleValCache:
-        if not self.__singleval:
-            self.__singleval = {
-                key: self.get_single_value_property(key)
-                for key in self.singles
-            }
-        return self.__singleval
-
-    @property
-    def speccase(self) -> SpecCaseCache:
-        if not self.__speccase:
-            data = self.parse('speccase')
-            result: dict[str, list[SpecialCase]] = {}
-            for item in data:
-                code, lc, tc, uc, conds, *_ = item
-                n = int(code, 16)
-                c = chr(n)
-                sc = SpecialCase(code, lc, tc, uc, conds)
-                result.setdefault(c, list())
-                result[c].append(sc)
-            for c in result:
-                self.__speccase[c] = tuple(result[c])
-        return self.__speccase
-
-    @property
-    def unicodedata(self) -> UnicodeDataCache:
-        if not self.__unicodedata:
-            lines = util.read_resource('unicodedata')
-            data: UnicodeDataCache = {}
-            for i, line in enumerate(lines):
-                fields = line.split(';')
-                datum = UCD(*fields)
-                n = int(datum.address, 16)
-                data[chr(n)] = datum
-
-                if (
-                    datum.na.startswith('<')
-                    and datum.na.endswith('First>')
-                ):
-                    nextline = lines[i + 1]
-                    next_fields = nextline.split(';')
-                    start = int(datum.address, 16)
-                    stop = int(next_fields[0], 16) + 1
-                    data.update(self.fill_ucd_range(start, stop, fields))
-
-            self.__unicodedata = data
-        return self.__unicodedata
-
-    def alias_property(self, prop: str) -> str:
-        prop = prop.casefold()
-        return self.props[prop].alias
-
-    def alias_property_value(self, prop: str, value: str) -> str:
-        if not value:
-            return value
-        prop = prop.casefold()
-        if prop in self.propvals:
-            value = self.propvals[prop][value.casefold()].alias
-        return value
-
-    def decomp_hangul(self, s: int) -> tuple[int, ...]:
-        """See Unicode 3.12."""
-        SBASE = 0xac00
-        LBASE = 0x1100
-        VBASE = 0x1161
-        TBASE = 0x11a7
-        LCOUNT = 19
-        VCOUNT = 21
-        TCOUNT = 28
-        NCOUNT = VCOUNT * TCOUNT
-        SCOUNT = LCOUNT * NCOUNT
-
-        sindex = s - SBASE
-        lindex = sindex // NCOUNT
-        vindex = (sindex % NCOUNT) // TCOUNT
-        tindex = sindex % TCOUNT
-
-        return (
-            LBASE + lindex,
-            VBASE + vindex,
-            TBASE + tindex,
-        )
-
-    def fill_ucd_range(
-        self,
-        start: int,
-        stop: int,
-        fields: Sequence[str],
-    ) -> UnicodeDataCache:
-        prefix = self.prefixes[start]
-
-        data = {}
-        for n in range(start, stop):
-            code = f'{n:04x}'.upper()
-            name = prefix
-            if name.startswith('HANGUL'):
-                name += self.get_jamo_name(n)
-            elif name:
-                name += code
-            datum = UCD(code, name, *fields[2:])
-            n = int(datum.address, 16)
-            data[chr(n)] = datum
-        return data
-
-    def get_jamo_name(self, s: int) -> str:
-        parts = self.decomp_hangul(s)
-        jamo = [self.singleval['jsn'][chr(part)] for part in parts]
-        return ''.join(jamo)
-
-    def get_emoji(self) -> SimpleListCache:
-        lines = util.read_resource('emoji')
-        docs: list[list[str]] = []
-        doc: list[str] = list()
-        for line in lines:
-            if line.startswith('# ====='):
-                docs.append(doc)
-                doc = list()
-            doc.append(line)
-        else:
-            docs.append(doc)
-
-        simples: SimpleListCache = {}
-        for doc in docs:
-            lines = self.strip_comments(doc)
-            if not lines:
-                continue
-            data = self.parse_sdt(lines)
-
-            prop = data[0][1].casefold()
-            prop = self.alias_property(prop)
-
-            result = self.parse_simple_ranges(data)
-            simples[prop.casefold()] = tuple(result)
-        return simples
-
-    def get_multiple_value_property(
-        self,
-        source: str
-    ) -> defaultdict[str, tuple[str, ...]]:
-        missing, data = self.parse_with_missing(source)
-        mvalue = MissingTuple(tuple(missing.split()))
-        values: defaultdict[str, tuple[str, ...]] = defaultdict(mvalue)
-        for datum in data:
-            points, value = datum
-            parts = points.split('..')
-            start = int(parts[0], 16)
-            stop = start + 1
-            if len(parts) > 1:
-                stop = int(parts[1], 16) + 1
-            for i in range(start, stop):
-                values[chr(i)] = tuple(value.split())
-        return values
-
-    def get_normalprops(self) -> tuple[SimpleListCache, SingleValCache]:
-        lines = util.read_resource('dnormprops')
-        docs: list[list[str]] = []
-        buffer: list[str] = []
-        for line in lines:
-            if 'property:' in line.casefold():
-                docs.append(buffer)
-                buffer = list()
-            buffer.append(line)
-        else:
-            docs.append(buffer)
-
-        simples: SimpleListCache = {}
-        singles: SingleValCache = {}
-        for doc in docs:
-            mline = self.parse_missing(doc)
-            lines = self.strip_comments(doc)
-            if not lines:
-                continue
-
-            data = self.parse_sdt(lines)
-            prop = data[0][1].casefold()
-            prop = self.alias_property(prop)
-
-            mvalue = ''
-            if mline:
-                mvalue = mline[0][-1]
-                mvalue = self.alias_property_value(prop, mvalue)
-
-            if len(data[0]) == 3:
-                data = tuple((item[0], item[2]) for item in data)
-                singles[prop.casefold()] = self.parse_single(
-                    data, mvalue, prop
-                )
-            else:
-                result = self.parse_simple_ranges(data)
-                simples[prop.casefold()] = tuple(result)
-        return simples, singles
-
-    def get_properties(self) -> PropsCache:
-        data = self.parse('props')
-        result: PropsCache = {}
-        for datum in data:
-            alias, long, *other = datum
-            prop = Property(alias, long, tuple(other))
-            for name in datum:
-                result[name.casefold()] = prop
-        return result
-
-    def get_property_values(self) -> PropValsCache:
-        data = self.parse('propvals')
-        result: PropValsCache = {}
-        for datum in data:
-            prop, *names = datum
-            alias, long, *other = names
-            propval = PropertyValue(prop, alias, long, tuple(other))
-            prop = prop.casefold()
-            result.setdefault(prop, dict())
-            for name in names:
-                result[prop][name.casefold()] = propval
-        return result
-
-    def get_value_ranges(self, src: str) -> tuple[ValueRange, ...]:
-        """Get the tuple of derived ages. The derived age of a character
-        is the Unicode version where the character was assigned to a code
-        point.
-
-        :param src: The source key for the values.
-        :return: The possible ages as a :class:`tuple`.
-        :rtype: tuple
-        """
-        results = (ValueRange(*vr) for vr in self.parse_range_for_value(src))
-        return tuple(results)
-
-    def get_single_value_property(self, source: str) -> defaultdict[str, str]:
-        missing, data = self.parse_with_missing(source)
-        missing = self.alias_property_value(source, missing)
-        mvalue = MissingValue(missing)
-        return self.parse_single(data, missing, source)
-
-    def get_unihan(self, source: str) -> SingleValCache:
-        lines = util.read_resource(source)
-        lines = self.strip_comments(lines)
-        data = []
-        for line in lines:
-            code, prop, value = line.split('\t')
-            data.append((code[2:].casefold(), prop, value))
-        mv = MissingValue('')
-
-        result: SingleValCache = {}
-        for item in data:
-            code, prop, value = item
-            try:
-                alias = self.alias_property(prop).casefold()
-            except KeyError:
-                alias = prop.casefold()
-            result.setdefault(alias, defaultdict(mv))
-            result[alias][code] = value
-        return result
-
-    def parse(self, source: str) -> tuple[tuple[str, ...], ...]:
-        lines = util.read_resource(source)
-        lines = self.strip_comments(lines)
-        data = self.parse_sdt(lines)
-        return data
-
-    def parse_binary_properties(
-        self,
-        source: str
-    ) -> SingleValCache:
-        data = self.parse(source)
-        missing = MissingValue('N')
-        result: SingleValCache = {}
-        for datum in data:
-            try:
-                point, key = datum
-            except ValueError:
-                raise ValueError(datum)
-            if key not in result:
-                result[key] = defaultdict(missing)
-            parts = point.split('..')
-            start = int(parts[0], 16)
-            stop = start + 1
-            if len(parts) > 1:
-                stop = int(parts[1], 16) + 1
-            for i in range(start, stop):
-                result[key][chr(i)] = 'Y'
-
-        return result
-
-    def parse_docs(self, source: str) -> tuple[tuple[str, ...], ...]:
-        lines = util.read_resource(source)
-        text = '\n'.join(lines)
-        docs = text.split(
-            '# ================================================'
-        )
-        return tuple(tuple(doc.split('\n')) for doc in docs)
-
-    def parse_missing(
-        self,
-        lines: Sequence[str]
-    ) -> tuple[tuple[str, ...], ...]:
-        prefix = '# @missing: '
-        lines = [line[12:] for line in lines if line.startswith(prefix)]
-        lines = self.strip_comments(lines)
-        return self.parse_sdt(lines)
-
-    def parse_simple_ranges(
-        self,
-        data: tuple[tuple[str, ...], ...]
-    ) -> tuple[str, ...]:
-        result = list()
-        for points, *_ in data:
-            parts = points.split('..')
-            start = int(parts[0], 16)
-            stop = start + 1
-            if len(parts) > 1:
-                stop = int(parts[1], 16) + 1
-            for i in range(start, stop):
-                result.append(f'{i:04x}'.casefold())
-        return tuple(result)
-
-    def parse_range_for_value(
-        self,
-        source: str
-    ) -> tuple[tuple[int, int, str], ...]:
-        missing, data = self.parse_with_missing(source)
-        values = []
-        for datum in data:
-            parts = datum[0].split('..')
-            start = int(parts[0], 16)
-            stop = start + 1
-            if len(parts) > 1:
-                stop = int(parts[1], 16) + 1
-            value = (start, stop, datum[1])
-            values.append(value)
-        return tuple(fill_gaps(values, missing))
-
-    def parse_sdt(
-        self,
-        lines: tuple[str, ...]
-    ) -> tuple[tuple[str, ...], ...]:
-        """Parse semicolon delimited text.
-
-        :param lines: The lines from a semicolon delimited test file.
-        :return: The lines split into data fields as a :class:`tuple`.
-        :rtype: tuple
-        """
-        result = []
-        for line in lines:
-            parts = line.split(';')
-            fields = (part.strip() for part in parts)
-            result.append(tuple(fields))
-        return tuple(result)
-
-    def parse_single(
-        self,
-        data: Records,
-        missing: str,
-        source: str
-    ) -> defaultdict[str, str]:
-        mvalue = MissingValue(missing)
-        result = defaultdict(mvalue)
-        for datum in data:
-            points, value = datum
-            parts = points.split('..')
-            start = int(parts[0], 16)
-            stop = start + 1
-            if len(parts) > 1:
-                stop = int(parts[1], 16) + 1
-            for i in range(start, stop):
-                result[chr(i)] = self.alias_property_value(source, value)
-        return result
-
-    def parse_with_missing(
-        self,
-        source: str
-    ) -> tuple[str, tuple[tuple[str, ...], ...]]:
-        lines = util.read_resource(source)
-
-        missing_data = self.parse_missing(lines)
-        missing = ''
-        if missing_data:
-            missing = missing_data[0][-1]
-
-        lines = self.strip_comments(lines)
-        data = self.parse_sdt(lines)
-        return missing, data
-
-    def strip_comments(self, lines: Sequence[str]) -> tuple[str, ...]:
-        """Remove the comments and blank lines from a data file.
-
-        :param lines: The lines from a Unicode data file.
-        :return: The lines with comments removed as a :class:`tuple`.
-        :rtype: tuple
-        """
-        lines = [line.split('#')[0] for line in lines]
-        return tuple([
-            line for line in lines
-            if line.strip() and not line.startswith('#')
-        ])
-
-
 class Character:
     """A Unicode character.
 
@@ -901,12 +93,12 @@ class Character:
         >>> char.blk
         'Basic Latin'
         >>> char.sc
-        'Latin'
+        'Latn'
         >>> char.suc
         '0041'
 
     """
-    cache = Cache()
+    cache = db.cache
 
     def __init__(self, value: bytes | int | str) -> None:
         value = util.to_char(value)
@@ -915,98 +107,14 @@ class Character:
 
     def __getattr__(self, name):
         name = name.casefold()
-
-        if name in UCD.__annotations__:
-            try:
-                data = self.cache.unicodedata
-                return getattr(data[self.value], name)
-
-            # There are a few undefined characters in the Unicode
-            # data file. The code points still exist, but they
-            # don't have properties.
-            except KeyError:
-                return ''
-
-        if name in self.cache.proplist:
-            return self.cache.proplist[name][self.value]
-
-        if name in self.cache.ranges:
-            rangelist = self.cache.rangelist[name]
-            vr = bintree(
-                rangelist,
-                ord(self.value),
-                len(rangelist) // 2,
-                0,
-                len(rangelist)
-            )
-            return vr.value
-
-        if name in self.cache.multis:
-            multival = self.cache.multival[name]
-            value = multival[self.value]
-            value = self._handle_dynamic_value(name, value)
-            return value
-
-        if name in self.cache.singles:
-            singleval = self.cache.singleval[name]
-            value = singleval[self.value]
-            return value
-
-        if name in self.cache.simples:
-            simplelist = self.cache.simplelist[name]
-            address = self.code_point[2:]
-            if address in simplelist:
-                return 'Y'
-            return 'N'
-
-        if name in self.cache.normalsimplelist:
-            simplelist = self.cache.normalsimplelist[name]
-            address = self.code_point[2:].casefold()
-            if address in simplelist:
-                return 'Y'
-            return 'N'
-
-        if name in self.cache.normalsingleval:
-            singleval = self.cache.normalsingleval[name]
-            value = singleval[self.value]
-            if value == '<code point>':
-                value = self.code_point[2:]
-            return value
-
-        if name in self.cache.emoji:
-            emoji = self.cache.emoji[name]
-            address = self.code_point[2:].casefold()
-            if address in emoji:
-                return 'Y'
-            return 'N'
-
-        for source in self.cache.sources:
-            if name in self.cache.sources[source]:
-                data = getattr(self.cache, source)[name]
-                address = self.code_point[2:].casefold()
-                return data[address]
-
-        raise AttributeError(name)
+        code = self.code_point[2:].casefold()
+        return db.get_value_for_code(name, code)
 
     def __repr__(self) -> str:
         name = self.na
         if name == '<control>':
             name = f'<{self.na1}>'
         return f'{self.code_point} ({name})'
-
-    # Private methods.
-    def _handle_dynamic_value(
-        self,
-        prop: str,
-        values: Sequence[str]
-    ) -> tuple[str, ...]:
-        result = []
-        for value in values:
-            if value.startswith('<') and value.endswith('>'):
-                attr = self.cache.alias_property(value[1:-1])
-                value = getattr(self, attr.casefold())
-            result.append(value)
-        return tuple(result)
 
     # Derived properties.
     @property
@@ -1037,86 +145,6 @@ class Character:
                 bpt = 'c'
         return bpt
 
-    @property
-    def cf(self) -> str:
-        """Mapping from characters to their case-folded forms. This is
-        an informative file containing normative derived properties.
-        Derived from UnicodeData and SpecialCasing.
-        """
-        data = self.cache.casefold
-        options = {cf.status: cf for cf in data[self.value]}
-        if 'F' in options:
-            value = options['F'].mapping
-        elif 'C' in options and options['C'].mapping == '<self>':
-            value = f'{self.code_point[2:]}'
-        else:
-            value = options['C'].mapping
-        return value
-
-    @property
-    def lc(self) -> str:
-        cases = self.cache.speccase[self.value]
-        values = []
-        for case_ in cases:
-            code = case_.lower
-            if code.startswith('<') and code.endswith('>'):
-                code = getattr(self, code[1:-1])
-                if not code:
-                    code = self.code_point[2:]
-            cond = case_.condition_list
-            if cond:
-                cond = f'({cond})'
-            values.append(f'{cond}{code}')
-        return ';'.join(values)
-
-    @property
-    def scf(self) -> str:
-        """Mapping from characters to their case-folded forms. This is
-        an informative file containing normative derived properties.
-        Derived from UnicodeData and SpecialCasing.
-        """
-        data = self.cache.casefold
-        options = {cf.status: cf for cf in data[self.value]}
-        if 'S' in options:
-            return options['S'].mapping
-        elif 'C' in options and options['C'].mapping == '<self>':
-            return f'{self.code_point[2:]}'
-        else:
-            return options['C'].mapping
-
-    @property
-    def tc(self) -> str:
-        cases = self.cache.speccase[self.value]
-        values = []
-        for case_ in cases:
-            code = case_.title
-            if code.startswith('<') and code.endswith('>'):
-                code = getattr(self, code[1:-1])
-                if not code:
-                    code = self.code_point[2:]
-            cond = case_.condition_list
-            if cond:
-                cond = f'({cond})'
-            values.append(f'{cond}{code}')
-        return ';'.join(values)
-
-    @property
-    def uc(self) -> str:
-        cases = self.cache.speccase[self.value]
-        values = []
-        for case_ in cases:
-            code = case_.upper
-            if code.startswith('<') and code.endswith('>'):
-                code = getattr(self, code[1:-1])
-                if not code:
-                    code = self.code_point[2:]
-            cond = case_.condition_list
-            if cond:
-                cond = f'({cond})'
-            values.append(f'{cond}{code}')
-        return ';'.join(values)
-
-    # Properties.
     @property
     def name_alias(self) -> str:
         return ' '.join(f'{a}' for a in self.cache.namealias[self.value])
@@ -1155,7 +183,9 @@ class Character:
             ('﹤', '＜')
 
         """
-        return self.cache.denormal[form][self.value]
+        prop = f'rev_{form}'
+        code = self.code_point[2:].casefold()
+        return db.get_denormal_map_for_code(prop, code)
 
     def escape(self, scheme: str, codec: str = 'utf8') -> str:
         """The escaped version of the character.
@@ -1175,7 +205,7 @@ class Character:
             >>>
             >>> scheme = 'html'
             >>> char.escape(scheme)
-            '&lt;'
+            '&nvlt;'
 
         """
         try:
@@ -1290,39 +320,6 @@ def alias_property(longname: str, space: bool = True) -> str:
     return Character.cache.props[longname.casefold()].alias
 
 
-def bintree(
-    vranges: Sequence[ValueRange],
-    address: int,
-    index: int,
-    min_: int,
-    max_: int
-) -> ValueRange:
-    """Find the range of a Unicode character using a binary
-    tree search.
-
-    :param vranges: The possible ranges for Unicode characters.
-    :param address: The code point of the character an an :class:`int`.
-    :param index: The current location of the search cursor.
-    :param min_: The minimum possible index within ages that hasn't been
-        excluded by the search.
-    :param max_: The maximum possible index within ages that hasn't been
-        excluded by the search.
-    :return: The range of the character as a
-        :class:`charex.charex.ValueRange`.
-    :rtype: charex.charex.ValueRange
-    """
-    vr = vranges[index]
-    if address < vr.start:
-        max_ = index
-        index = min_ + (max_ - min_) // 2
-        vr = bintree(vranges, address, index, min_, max_)
-    elif address >= vr.stop:
-        min_ = index
-        index = min_ + (max_ - min_) // 2
-        vr = bintree(vranges, address, index, min_, max_)
-    return vr
-
-
 def expand_property(prop: str) -> str:
     """Translate the short name of a Unicode property into the long
     name for that property.
@@ -1340,7 +337,7 @@ def expand_property(prop: str) -> str:
         'Case Folding'
 
     """
-    long = Character.cache.props[prop.casefold()].long
+    long = Character.cache.property_name[prop.casefold()].name
     long = long.replace('_', ' ')
     return long
 
@@ -1366,7 +363,7 @@ def expand_property_value(prop: str, alias: str) -> str:
     """
     prop = prop.casefold()
     alias = alias.casefold()
-    long = Character.cache.propvals[prop][alias].long
+    long = Character.cache.value_name[prop][alias].name
     return long.replace('_', ' ')
 
 
@@ -1524,21 +521,30 @@ def filter_by_property(
             flags = re.IGNORECASE
         pattern = re.compile(value, flags=flags)
         for char in chars:
-            if pattern.match(getattr(char, prop)):
-                yield char
+            try:
+                if pattern.match(getattr(char, prop)):
+                    yield char
+            except KeyError:
+                continue
 
     # Case-insensitive string matching.
     elif insensitive:
         value = value.casefold()
         for char in chars:
-            if getattr(char, prop).casefold() == value:
-                yield char
+            try:
+                if getattr(char, prop).casefold() == value:
+                    yield char
+            except KeyError:
+                continue
 
     # String matching.
     else:
         for char in chars:
-            if getattr(char, prop) == value:
-                yield char
+            try:
+                if getattr(char, prop) == value:
+                    yield char
+            except KeyError:
+                continue
 
 
 def get_category_members(category: str) -> tuple[Character, ...]:
@@ -1565,7 +571,7 @@ def get_properties() -> tuple[str, ...]:
         ('age', 'ahex',... 'xo_nfkd')
 
     """
-    props = Character.cache.props
+    props = Character.cache.property_alias
     result = []
     for key in props:
         if props[key] not in result:
@@ -1591,7 +597,7 @@ def get_property_values(prop: str) -> tuple[str, ...]:
         ('C', 'Cc', 'Cf', 'Cn', 'Co', 'Cs', 'L',... 'Zs')
 
     """
-    propvals = Character.cache.propvals[prop]
+    propvals = Character.cache.value_aliases[prop]
     result = []
     for key in propvals:
         if propvals[key] not in result:
@@ -1600,47 +606,4 @@ def get_property_values(prop: str) -> tuple[str, ...]:
 
 
 if __name__ == '__main__':
-    from json import dump
-
-    def make_key(name):
-        name = name.casefold()
-        name = name.split('/')[-1]
-        name = name.split('.')[0]
-        return name
-
-    cache = Cache()
-    props = {}
-    for prop in UCD.__annotations__:
-        if prop == 'address':
-            continue
-        props[prop] = 'unicodedata'
-    for prop in cache.proplist:
-        props[prop] = 'proplist'
-    for prop in cache.ranges:
-        name = util.UCD[prop]
-        props[prop] = make_key(name)
-    for prop in cache.multis:
-        name = util.UCD[prop]
-        props[prop] = make_key(name)
-    for prop in cache.singles:
-        name = util.UCD[prop]
-        props[prop] = make_key(name)
-    for prop in cache.simples:
-        name = util.UCD[prop]
-        props[prop] = make_key(name)
-    for prop in cache.normalsimplelist:
-        name = util.UCD['dnormprops']
-        props[prop] = make_key(name)
-    for prop in cache.normalsingleval:
-        name = util.UCD['dnormprops']
-        props[prop] = make_key(name)
-    for prop in cache.emoji:
-        name = util.UCD['emoji']
-        props[prop] = make_key(name)
-    for source in cache.sources:
-        for prop in cache.sources[source]:
-            name = util.UNIHAN[source]
-            props[prop] = make_key(name)
-
-    with open('charex/data/prop_map.json', 'w') as fh:
-        dump(props, fh, indent=4)
+    pass

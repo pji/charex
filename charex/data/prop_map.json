@@ -220,5 +220,15 @@
     "di": "derivedcoreproperties",
     "gr_ext": "derivedcoreproperties",
     "gr_base": "derivedcoreproperties",
-    "gr_link": "derivedcoreproperties"
+    "gr_link": "derivedcoreproperties",
+    "rev_casefold": "rev_casefold",
+    "rev_nfc": "rev_nfc",
+    "rev_nfd": "rev_nfd",
+    "rev_nfkc": "rev_nfkc",
+    "rev_nfkd": "rev_nfkd",
+    "cf": "casefolding",
+    "scf": "casefolding",
+    "lc": "specialcasing",
+    "tc": "specialcasing",
+    "uc": "specialcasing"
 }

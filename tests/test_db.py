@@ -47,6 +47,22 @@ def test_cache():
     assert db.cache.jamo['1100'] == 'G'
     assert '0009' in db.cache.proplist['wspace']
     assert db.cache.unicodedata['0020'].na == 'SPACE'
+    assert db.cache.rev_nfc['00c0'] == ('A\u0300',)
+
+
+# Test get_denormal_map_for_code.
+def test_get_denormal_map_for_code():
+    """Given a property and a code point,
+    :func:`charex.db.get_denormal_map_for_code` should
+    return the value for that property for the code point.
+    """
+    code = '0020'
+    assert db.get_denormal_map_for_code('rev_nfc', code) == ()
+
+    code = '00c5'
+    assert db.get_denormal_map_for_code('rev_nfc', code) == (
+        'A\u030a', '\u212b',
+    )
 
 
 # Test get_value_for_code.
@@ -64,6 +80,9 @@ def test_get_value_for_code():
     assert db.get_value_for_code('emoji', code) == 'N'
     assert db.get_value_for_code('ce', code) == 'N'
     assert db.get_value_for_code('comp_ex', code) == 'N'
+    assert db.get_value_for_code('cjkirg_gsource', code) == ''
+    assert db.get_value_for_code('cf', code) == '0020'
+    assert db.get_value_for_code('lc', code) == ''
 
     code = '1f600'
     assert db.get_value_for_code('emoji', code) == 'Y'
@@ -73,6 +92,27 @@ def test_get_value_for_code():
 
     code = '0340'
     assert db.get_value_for_code('comp_ex', code) == 'Y'
+
+    code = '3400'
+    assert db.get_value_for_code('cjkirg_gsource', code) == 'GKX-0078.01'
+
+    code = 'fb00'
+    assert db.get_value_for_code('tc', code) == '0046 0066'
+
+
+# Test load_casefolding.
+def test_load_casefolding():
+    """When given the information for a path as a :class:`charex.db.PathInfo`
+    object, :func:`charex.db.load_casefolding` should return the data
+    contained within the path as a :class:`dict`.
+    """
+    pi = db.PathInfo(
+        'CaseFolding.txt', 'UCD.zip', 'casefolding', ';'
+    )
+    data = db.load_casefolding(pi)
+    assert data['0041'] == db.Casefold('0061', '<code>', '<code>', '<code>')
+    assert data['0049'] == db.Casefold('0069', '<code>', '<code>', '0131')
+    assert data['1e921'] == db.Casefold('1E943', '<code>', '<code>', '<code>')
 
 
 # Test load_derived_normal.
@@ -89,6 +129,40 @@ def test_load_derived_normal():
     assert single['nfkc_cf']['e0fff'] == ''
     assert '0340' in simple['comp_ex']
     assert 'e0fff' in simple['cwkcf']
+
+
+# Test load_denormal_map.
+def test_load_denormal_map():
+    """When given the information for a path as a :class:`charex.db.PathInfo`
+    object, :func:`charex.db.load_denormal_map` should return the data
+    contained within the path as a :class:`dict`.
+    """
+    pi = db.PathInfo(
+        'rev_nfc.json', 'Denormal.zip', 'denormal_map', ''
+    )
+    data = db.load_denormal_map(pi)
+    assert data['00c0'] == ('A\u0300',)
+    assert data['00c5'] == ('A\u030a', '\u212b')
+    assert data['2a600'] == ('\U0002fa1d',)
+
+
+# Test load_entity_map.
+def test_load_entity_map():
+    """When given the information for a path as a :class:`charex.db.PathInfo`
+    object, :func:`charex.db.load_entity_map` should return the data
+    contained within the path as a :class:`dict`.
+    """
+    pi = db.PathInfo(
+        'entities.json', '', 'entity_map', ''
+    )
+    data = db.load_entity_map(pi)
+    assert data['00c6'] == (
+        db.Entity('&AElig', ('00c6',), '\u00c6'),
+        db.Entity('&AElig;', ('00c6',), '\u00c6'),
+    )
+    assert data['200c'] == (
+        db.Entity('&zwnj;', ('200c',), '\u200c'),
+    )
 
 
 # Test load_from_archive.
@@ -174,6 +248,32 @@ def test_load_single_value():
     assert data['0041'] == ''
 
 
+# Test load_special_casing:.
+def test_load_special_casing():
+    """When given the information for a path as a :class:`charex.db.PathInfo`
+    object, :func:`charex.db.load_special_casing` should return the data
+    contained within the path as a :class:`dict`.
+    """
+    pi = db.PathInfo('SpecialCasing.txt', 'UCD.zip', 'special_casing', ';')
+    data = db.load_special_casing(pi)
+    assert data['fb00'].code == 'FB00'
+    assert data['0069'].condition_list == 'az'
+
+
+# Test load_unihan.
+def test_load_unihan():
+    """When given the information for a path as a :class:`charex.db.PathInfo`
+    object, :func:`charex.db.load_unihan` should return the data
+    contained within the path as a :class:`collections.defaultdict`.
+    """
+    pi = db.PathInfo(
+        'Unihan_IRGSources.txt', 'Unihan.zip', 'single_value', '\t'
+    )
+    data = db.load_unihan(pi)
+    assert data['cjkirg_gsource']['3400'] == 'GKX-0078.01'
+    assert data['ktotalstrokes']['3134a'] == '22'
+
+
 # Test load_unicode_data.
 def test_load_unicode_data():
     """When given the information for a path as a :class:`charex.db.PathInfo`
@@ -201,7 +301,7 @@ def test_load_value_aliases():
 
 
 # Test load_value_range.
-def test_value_range():
+def test_load_value_range():
     """When given the information for a path as a :class:`charex.db.PathInfo`
     object, :func:`charex.db.load_value_range` should return the data
     contained within the path as a :class:`tuple`.

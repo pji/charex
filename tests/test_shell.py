@@ -160,7 +160,7 @@ def test_dt(capsys):
     """Invoked with a character, details mode should print the details
     for the character.
     """
-    with open('tests/data/details_mode_A.txt') as fh:
+    with open('tests/data/dt_A.txt') as fh:
         exp = fh.read()
     cmd = (
         'dt '

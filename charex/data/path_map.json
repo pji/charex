@@ -158,49 +158,91 @@
     "unihan_dictionarylikedata": [
         "Unihan_DictionaryLikeData.txt",
         "Unihan.zip",
-        "single_value",
+        "unihan",
         "\t"
     ],
     "unihan_dictionaryindices": [
         "Unihan_DictionaryIndices.txt",
         "Unihan.zip",
-        "single_value",
+        "unihan",
         "\t"
     ],
     "unihan_irgsources": [
         "Unihan_IRGSources.txt",
         "Unihan.zip",
-        "single_value",
+        "unihan",
         "\t"
     ],
     "unihan_othermappings": [
         "Unihan_OtherMappings.txt",
         "Unihan.zip",
-        "single_value",
+        "unihan",
         "\t"
     ],
     "unihan_numericvalues": [
         "Unihan_NumericValues.txt",
         "Unihan.zip",
-        "single_value",
+        "unihan",
         "\t"
     ],
     "unihan_radicalstrokecounts": [
         "Unihan_RadicalStrokeCounts.txt",
         "Unihan.zip",
-        "single_value",
+        "unihan",
         "\t"
     ],
     "unihan_readings": [
         "Unihan_Readings.txt",
         "Unihan.zip",
-        "single_value",
+        "unihan",
         "\t"
     ],
     "unihan_variants": [
         "Unihan_Variants.txt",
         "Unihan.zip",
-        "single_value",
+        "unihan",
         "\t"
+    ],
+    "rev_casefold": [
+        "rev_casefold.json",
+        "Denormal.zip",
+        "denormal_map",
+        ""
+    ],
+    "rev_nfc": [
+        "rev_nfc.json",
+        "Denormal.zip",
+        "denormal_map",
+        ""
+    ],
+    "rev_nfd": [
+        "rev_nfd.json",
+        "Denormal.zip",
+        "denormal_map",
+        ""
+    ],
+    "rev_nfkc": [
+        "rev_nfkc.json",
+        "Denormal.zip",
+        "denormal_map",
+        ""
+    ],
+    "rev_nfkd": [
+        "rev_nfkd.json",
+        "Denormal.zip",
+        "denormal_map",
+        ""
+    ],
+    "casefolding": [
+        "CaseFolding.txt",
+        "UCD.zip",
+        "casefolding",
+        ";"
+    ],
+    "specialcasing": [
+        "SpecialCasing.txt",
+        "UCD.zip",
+        "special_casing",
+        ";"
     ]
 }

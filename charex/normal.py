@@ -51,11 +51,13 @@ class reg_form:
 
 
 # Utility functions.
-def build_denormalization_map(formkey: str) -> str:
+def build_denormalization_map(formkey: str, by_code: bool = False) -> str:
     """Create a JSON string mapping each Unicode character to the
     other Unicode characters that normalize to it.
 
     :param formkey: The key for the normalization function.
+    :param by_code: Use the code point as the key for the map rather
+        than the character itself.
     :return: The denormalization map as a JSON :class:`str`.
     :rtype: str
     """
@@ -71,6 +73,9 @@ def build_denormalization_map(formkey: str) -> str:
         # add that relationship to the map.
         normal = norm_fn(base)
         if normal and normal != base:
+            if by_code:
+                nums = (ord(c) for c in normal)
+                normal = ' '.join(f'{n:04x}' for n in nums)
             dn_map.setdefault(normal, set())
             dn_map[normal].add(base)
 
@@ -83,16 +88,20 @@ def build_denormalization_map(formkey: str) -> str:
                 rmut = root + ''.join(mut)
                 normal = norm_fn(rmut)
                 if normal != rmut:
+                    if by_code:
+                        nums = (ord(c) for c in normal)
+                        normal = ' '.join(f'{n:04x}' for n in nums)
                     dn_map.setdefault(normal, set())
                     dn_map[normal].add(rmut)
 
     # Test to ensure decompositions are accurate and not redundant.
-    for normal in dn_map:
-        for base in dn_map[normal]:
-            actual = norm_fn(base)
-            assert actual == normal
-            assert actual != base
-            assert normal != base
+    if not by_code:
+        for normal in dn_map:
+            for base in dn_map[normal]:
+                actual = norm_fn(base)
+                assert actual == normal
+                assert actual != base
+                assert normal != base
 
     # Return the map as a JSON string.
     listed = {k: list(dn_map[k]) for k in dn_map}
