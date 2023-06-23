@@ -83,6 +83,7 @@ def test_get_value_for_code():
     assert db.get_value_for_code('cjkirg_gsource', code) == ''
     assert db.get_value_for_code('cf', code) == '0020'
     assert db.get_value_for_code('lc', code) == ''
+    assert db.get_value_for_code('bpb', code) == '<none>'
 
     code = '1f600'
     assert db.get_value_for_code('emoji', code) == 'Y'
@@ -99,6 +100,23 @@ def test_get_value_for_code():
     code = 'fb00'
     assert db.get_value_for_code('tc', code) == '0046 0066'
 
+    code = '0028'
+    assert db.get_value_for_code('bpb', code) == '0029'
+
+
+# Test load_bidi_brackets.
+def test_load_bidi_brackets():
+    """When given the information for a path as a :class:`charex.db.PathInfo`
+    object, :func:`charex.db.load_bidi_brackets` should return the data
+    contained within the path as a :class:`dict`.
+    """
+    pi = db.PathInfo(
+        'BidiBrackets.txt', 'UCD.zip', 'bidi_brackets', ';'
+    )
+    data = db.load_bidi_brackets(pi)
+    assert data['0028'] == db.BidiBracket('0028', '0029', 'o')
+    assert data['ff63'] == db.BidiBracket('FF63', 'FF62', 'c')
+
 
 # Test load_casefolding.
 def test_load_casefolding():
@@ -113,6 +131,21 @@ def test_load_casefolding():
     assert data['0041'] == db.Casefold('0061', '<code>', '<code>', '<code>')
     assert data['0049'] == db.Casefold('0069', '<code>', '<code>', '0131')
     assert data['1e921'] == db.Casefold('1E943', '<code>', '<code>', '<code>')
+
+
+# Test load_ckj_radicals.
+def test_load_ckj_radicals():
+    """When given the information for a path as a :class:`charex.db.PathInfo`
+    object, :func:`charex.db.load_ckj_radicals` should return the data
+    contained within the path as a :class:`dict`.
+    """
+    pi = db.PathInfo(
+        'CJKRadicals.txt', 'UCD.zip', 'cjk_radicals', ';'
+    )
+    data = db.load_ckj_radicals(pi)
+    assert data['1'] == db.Radical('1', '2F00', '4E00')
+    assert data['187\''] == db.Radical('187\'', '2EE2', '9A6C')
+    assert data['214'] == db.Radical('214', '2FD5', '9FA0')
 
 
 # Test load_derived_normal.

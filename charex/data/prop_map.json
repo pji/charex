@@ -230,5 +230,7 @@
     "scf": "casefolding",
     "lc": "specialcasing",
     "tc": "specialcasing",
-    "uc": "specialcasing"
+    "uc": "specialcasing",
+    "bpb": "bidibrackets",
+    "bpt": "bidibrackets"
 }

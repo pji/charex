@@ -6,7 +6,7 @@ Tools for reading the Unicode database and related information.
 """
 from bisect import bisect
 from collections import defaultdict
-from collections.abc import Generator, Sequence
+from collections.abc import Callable, Generator, Sequence
 from dataclasses import dataclass
 from importlib.resources import as_file, files
 from json import load, loads
@@ -43,6 +43,13 @@ UCD_RANGES = defaultdict(str, {
 
 # Data record structures.
 @dataclass(repr=True, eq=True)
+class BidiBracket:
+    code: str = ''
+    bpb: str = '<none>'
+    bpt: str = 'n'
+
+
+@dataclass(repr=True, eq=True)
 class Casefold:
     c: str = '<code>'
     f: str = '<code>'
@@ -58,6 +65,13 @@ class Entity:
 
 
 @dataclass(repr=True, eq=True)
+class Kind:
+    load: Callable
+    cache: dict
+    action: str
+
+
+@dataclass(repr=True, eq=True)
 class PathInfo:
     path: str
     archive: str
@@ -70,6 +84,13 @@ class PropertyAlias:
     alias: str
     name: str
     other: tuple[str, ...]
+
+
+@dataclass(repr=True, eq=True)
+class Radical:
+    name: str
+    kangxi: str
+    cjk: str
 
 
 @dataclass(repr=True, eq=True)
@@ -145,8 +166,8 @@ class ValueRange:
 
     def __repr__(self):
         cls = self.__class__.__name__
-        start = f'0x{self.start:04x}'
-        stop = f'0x{self.stop:04x}'
+        start = util.to_code(self.start, '0x')
+        stop = util.to_code(self.stop, '0x')
         return f'{cls}({start}, {stop}, {self.value!r})'
 
 
@@ -158,12 +179,14 @@ Record = tuple[str, ...]
 Records = tuple[Record, ...]
 
 # File data structure types.
+BidiBrackets = defaultdict[str, BidiBracket]
 Casefolds = defaultdict[str, Casefold]
 Casefoldings = dict[str, Casefolds]
 DenormalMap = defaultdict[str, tuple[str, ...]]
 DenormalMaps = dict[str, DenormalMap]
 EntityMap = dict[str, tuple[Entity, ...]]
 PropertyAliases = dict[str, PropertyAlias]
+Radicals = dict[str, Radical]
 SingleValue = defaultdict[str, str]
 SingleValues = dict[str, SingleValue]
 SimpleList = set[str]
@@ -205,6 +228,7 @@ def get_value_for_code(prop: str, code: str) -> str:
     kind = cache.path_map[key].kind
 
     by_kind = {
+        'bidi_brackets': get_bidi_brackets,
         'casefolding': get_casefolding,
         'derived_normal': get_derived_normal,
         'prop_list': get_prop_list,
@@ -226,6 +250,15 @@ def get_value_for_code(prop: str, code: str) -> str:
             raise ValueError(msg)
         raise ex
     return alias_value(prop, value)
+
+
+def get_bidi_brackets(prop: str, code: str, key: str) -> str:
+    """Get the value of a property stored in a `bidibrackets` file
+    for the given code point.
+    """
+    bbs = getattr(cache, key)
+    bb = bbs[code]
+    return getattr(bb, prop)
 
 
 def get_casefolding(prop: str, code: str, key: str) -> str:
@@ -335,6 +368,17 @@ def get_value_range_by_code(prop: str, code: str, key: str) -> str:
 
 
 # Load data file by kind.
+def load_bidi_brackets(info: PathInfo) -> BidiBrackets:
+    """Load data from a file that is structured like BidiBrackets.txt."""
+    records, _ = parse(info)
+    data = defaultdict(BidiBracket)
+    for rec in records:
+        code, bpb, bpt, *_ = rec
+        bracket = BidiBracket(code, bpb, bpt)
+        data[code.casefold()] = bracket
+    return data
+
+
 def load_casefolding(info: PathInfo) -> Casefolds:
     """Load a data file that contains a simple mapping of code point
     to casefolded values.
@@ -362,6 +406,16 @@ def load_casefolding(info: PathInfo) -> Casefolds:
     return cfs
 
 
+def load_ckj_radicals(info: PathInfo) -> Radicals:
+    """Load a data file that contains CKJ radical mappings."""
+    records, missing = parse(info, True)
+    rads: Radicals = dict()
+    for rec in records:
+        rad = Radical(*rec)
+        rads[rad.name] = rad
+    return rads
+
+
 def load_denormal_map(info: PathInfo) -> DenormalMap:
     """Load a data file with a denormalization map."""
     lines = load_from_archive(info)
@@ -369,8 +423,7 @@ def load_denormal_map(info: PathInfo) -> DenormalMap:
     json = loads(text)
     dmap = defaultdict(tuple)
     for key in json:
-        nums = [ord(s) for s in key]
-        codes = ' '.join(f'{n:04x}' for n in nums)
+        codes = ' '.join(util.to_code(s) for s in key)
         dmap[codes] = tuple(json[key])
     return dmap
 
@@ -427,7 +480,7 @@ def load_entity_map(info: PathInfo) -> EntityMap:
 
     emap: dict[str, list[Entity]] = dict()
     for name in json:
-        codes = tuple(f'{n:04x}' for n in json[name]['codepoints'])
+        codes = tuple(util.to_code(n) for n in json[name]['codepoints'])
         chars = json[name]['characters']
         for code in codes:
             key = code.casefold()
@@ -507,7 +560,7 @@ def load_unicode_data(info: PathInfo) -> UnicodeData:
             start = int(code, 16)
             stop = int(records[i + 1][0], 16) + 1
             for n in range(start, stop):
-                code = f'{n:04x}'.upper()
+                code = util.to_code(n).upper()
                 key = code.casefold()
                 if start in UCD_RANGES:
                     name = UCD_RANGES[start]
@@ -633,7 +686,7 @@ def build_hangul_name(code: str) -> str:
     parts = decompose_hangul(s)
 
     data = cache.jamo
-    codes = (f'{part:04x}' for part in parts)
+    codes = (util.to_code(part) for part in parts)
     return ''.join(data[code] for code in codes)
 
 
@@ -700,7 +753,7 @@ def split_range(rec: Record) -> Generator[Record, None, None]:
     if len(codes) > 1:
         stop = int(codes[1], 16) + 1
     for n in range(start, stop):
-        yield (f'{n:04x}', *other)
+        yield (util.to_code(n), *other)
 
 
 def strip_comments(lines: Content) -> Content:
@@ -759,7 +812,9 @@ class FileCache:
     __prop_map = load_prop_map()
 
     def __init__(self) -> None:
+        self.__bidibrackets: dict[str, BidiBrackets] = dict()
         self.__casefolding: Casefoldings = dict()
+        self.__cjk_radicals: Radicals = dict()
         self.__denormal_map: DenormalMaps = dict()
         self.__derived_normal: DerivedNormals = dict()
         self.__entity_map: EntityMap = dict()
@@ -776,66 +831,87 @@ class FileCache:
         self.__value_names: ValueAliases = dict()
         self.__value_range: dict[str, ValueRanges] = dict()
 
+        self.by_kind = {
+            'unicode_data': Kind(
+                load_unicode_data,
+                self.__unicode_data,
+                'update'
+            ),
+            'prop_list': Kind(
+                load_prop_list,
+                self.__prop_list,
+                'store'
+            ),
+            'simple_list': Kind(
+                load_simple_list,
+                self.__simple_list,
+                'store'
+            ),
+            'single_value': Kind(
+                load_single_value,
+                self.__single_value,
+                'store'
+            ),
+            'value_range': Kind(
+                load_value_range,
+                self.__value_range,
+                'store'
+            ),
+            'derived_normal': Kind(
+                load_derived_normal,
+                self.__derived_normal,
+                'store'
+            ),
+            'denormal_map': Kind(
+                load_denormal_map,
+                self.__denormal_map,
+                'store'
+            ),
+            'unihan': Kind(
+                load_unihan,
+                self.__unihan,
+                'store'
+            ),
+            'casefolding': Kind(
+                load_casefolding,
+                self.__casefolding,
+                'store'
+            ),
+            'special_casing': Kind(
+                load_special_casing,
+                self.__specialcasings,
+                'store'
+            ),
+            'bidi_brackets': Kind(
+                load_bidi_brackets,
+                self.__bidibrackets,
+                'store'
+            ),
+            'cjk_radicals': Kind(
+                load_ckj_radicals,
+                self.__cjk_radicals,
+                'update'
+            ),
+        }
+
     def __getattr__(self, name:str):
         try:
             pi = self.path_map[name]
+            kind = self.by_kind[pi.kind]
+            if kind.action == 'update':
+                if not kind.cache:
+                    loaded: dict = kind.load(pi)
+                    kind.cache.update(loaded)
+                return kind.cache
+
+            elif kind.action == 'store':
+                if name not in kind.cache:
+                    loaded = kind.load(pi)
+                    kind.cache[name] = loaded
+                return kind.cache[name]
+
         except KeyError:
             raise AttributeError(name)
-
-        if pi.kind == 'unicode_data':
-            if not self.__unicode_data:
-                unicode_data = load_unicode_data(pi)
-                self.__unicode_data.update(unicode_data)
-            return self.__unicode_data
-
-        elif pi.kind == 'prop_list':
-            if name not in self.__prop_list:
-                prop_list = load_prop_list(pi)
-                self.__prop_list[name] = prop_list
-            return self.__prop_list[name]
-
-        elif pi.kind == 'simple_list':
-            if name not in self.__simple_list:
-                self.__simple_list[name] = load_simple_list(pi)
-            return self.__simple_list[name]
-
-        elif pi.kind == 'single_value':
-            if name not in self.__single_value:
-                self.__single_value[name] = load_single_value(pi)
-            return self.__single_value[name]
-
-        elif pi.kind == 'value_range':
-            if name not in self.__value_range:
-                self.__value_range[name] = load_value_range(pi)
-            return self.__value_range[name]
-
-        elif pi.kind == 'derived_normal':
-            if name not in self.__derived_normal:
-                dns = load_derived_normal(pi)
-                self.__derived_normal[name] = dns
-            return self.__derived_normal[name]
-
-        elif pi.kind == 'denormal_map':
-            if name not in self.__denormal_map:
-                self.__denormal_map[name] = load_denormal_map(pi)
-            return self.__denormal_map[name]
-
-        elif pi.kind == 'unihan':
-            if name not in self.__unihan:
-                self.__unihan[name] = load_unihan(pi)
-            return self.__unihan[name]
-
-        elif pi.kind == 'casefolding':
-            if name not in self.__casefolding:
-                cf = load_casefolding(pi)
-                self.__casefolding[name] = cf
-            return self.__casefolding[name]
-
-        elif pi.kind == 'special_casing':
-            if name not in self.__specialcasings:
-                scs = load_special_casing(pi)
-                self.__specialcasings[name] = scs
-            return self.__specialcasings[name]
 
     @property
     def entity_map(self) -> EntityMap:

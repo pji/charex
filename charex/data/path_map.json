@@ -244,5 +244,11 @@
         "UCD.zip",
         "special_casing",
         ";"
+    ],
+    "bidibrackets": [
+        "BidiBrackets.txt",
+        "UCD.zip",
+        "bidi_brackets",
+        ";"
     ]
 }

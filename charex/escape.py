@@ -60,8 +60,7 @@ class EscapeError(ValueError):
 # Utility functions.
 def get_named_entity(char: str) -> str:
     """Get a named entity from the HTML entity data."""
-    n = ord(char)
-    code = f'{n:04x}'.casefold()
+    code = util.to_code(char).casefold()
     if code in cache.entity_map:
         return cache.entity_map[code][-1].name
     return escape_htmldec(char, '')
@@ -139,7 +138,7 @@ def unicode_2_byte_escape(char: str) -> str:
     n = ord(char)
     if n > 0xFFFF:
         raise EscapeError('Cannot escape characters over 0xFFFF.')
-    return f'\\u{n:04x}'
+    return util.to_code(n, '\\u')
 
 
 def unicode_utf16_escape(char: str) -> str:

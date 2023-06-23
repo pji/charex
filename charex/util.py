@@ -286,3 +286,10 @@ def to_char(value: bytes | int | str) -> str:
         msg = 'Value cannot be made a str with length one.'
         raise NotCharacterError(msg)
     return value
+
+
+def to_code(value: int | str, prefix: str = '') -> str:
+    """Convert an int or character to a code point."""
+    if isinstance(value, str):
+        value = ord(value)
+    return f'{prefix}{value:04x}'

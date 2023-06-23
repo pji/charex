@@ -114,6 +114,10 @@
 
                                 ---  Special_Casing
 
+                                ---  Bidi_Brackets
+                Bidi Paired Bracket: <none>
+           Bidi Paired Bracket Type: n
+
                                 ---  Encoding
                               UTF-8: 41
                              UTF-16: 00 41

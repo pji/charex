@@ -118,42 +118,9 @@ class Character:
 
     # Derived properties.
     @property
-    def bpb(self) -> str:
-        """For an opening bracket, the code point of the matching
-        closing bracket. For a closing bracket, the code point of
-        the matching opening bracket. This property is used in the
-        implementation of parenthesis matching. See Unicode Standard
-        Annex #9, "Unicode Bidirectional Algorithm" [UAX9].
-        """
-        bpb = '<none>'
-        if self.bpt != 'n':
-            bpb = self.bmg
-        return bpb
-
-    @property
-    def bpt(self) -> str:
-        """Type of a paired bracket, either opening or closing. This
-        property is used in the implementation of parenthesis matching.
-        See Unicode Standard Annex #9, "Unicode Bidirectional Algorithm"
-        [UAX9].
-        """
-        bpt = 'n'
-        if self.bc == 'ON' and self.bidi_m == 'Y':
-            if self.gc == 'Ps':
-                bpt = 'o'
-            elif self.gc == 'Pe':
-                bpt = 'c'
-        return bpt
-
-    @property
-    def name_alias(self) -> str:
-        return ' '.join(f'{a}' for a in self.cache.namealias[self.value])
-
-    @property
     def code_point(self) -> str:
         """The address for the character in the Unicode database."""
-        x = ord(self.value)
-        return f'U+{x:04x}'.upper()
+        return util.to_code(self.value, 'U+').upper()
 
     @property
     def value(self) -> str:
