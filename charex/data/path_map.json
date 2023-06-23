@@ -203,6 +203,38 @@
         "unihan",
         "\t"
     ],
+    "casefolding": [
+        "CaseFolding.txt",
+        "UCD.zip",
+        "casefolding",
+        ";"
+    ],
+    "specialcasing": [
+        "SpecialCasing.txt",
+        "UCD.zip",
+        "special_casing",
+        ";"
+    ],
+    "bidibrackets": [
+        "BidiBrackets.txt",
+        "UCD.zip",
+        "bidi_brackets",
+        ";"
+    ],
+    "namealiases": [
+        "NameAliases.txt",
+        "UCD.zip",
+        "name_alias",
+        ";"
+    ],
+    
+    "cjkradicals": [
+        "CJKRadicals.txt",
+        "UCD.zip",
+        "cjk_radicals",
+        ";"
+    ],
+    
     "rev_casefold": [
         "rev_casefold.json",
         "Denormal.zip",
@@ -232,23 +264,5 @@
         "Denormal.zip",
         "denormal_map",
         ""
-    ],
-    "casefolding": [
-        "CaseFolding.txt",
-        "UCD.zip",
-        "casefolding",
-        ";"
-    ],
-    "specialcasing": [
-        "SpecialCasing.txt",
-        "UCD.zip",
-        "special_casing",
-        ";"
-    ],
-    "bidibrackets": [
-        "BidiBrackets.txt",
-        "UCD.zip",
-        "bidi_brackets",
-        ";"
     ]
 }

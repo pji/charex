@@ -118,6 +118,10 @@
                 Bidi Paired Bracket: <none>
            Bidi Paired Bracket Type: n
 
+                                ---  Name_Alias
+
+                                ---  Cjk_Radicals
+
                                 ---  Encoding
                               UTF-8: 41
                              UTF-16: 00 41

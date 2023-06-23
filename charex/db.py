@@ -87,6 +87,13 @@ class PropertyAlias:
 
 
 @dataclass(repr=True, eq=True)
+class NameAlias:
+    code: str
+    alias: str
+    kind: str
+
+
+@dataclass(repr=True, eq=True)
 class Radical:
     name: str
     kangxi: str
@@ -185,6 +192,7 @@ Casefoldings = dict[str, Casefolds]
 DenormalMap = defaultdict[str, tuple[str, ...]]
 DenormalMaps = dict[str, DenormalMap]
 EntityMap = dict[str, tuple[Entity, ...]]
+NameAliases = dict[str, tuple[NameAlias, ...]]
 PropertyAliases = dict[str, PropertyAlias]
 Radicals = dict[str, Radical]
 SingleValue = defaultdict[str, str]
@@ -230,7 +238,9 @@ def get_value_for_code(prop: str, code: str) -> str:
     by_kind = {
         'bidi_brackets': get_bidi_brackets,
         'casefolding': get_casefolding,
+        'cjk_radicals': get_cjk_radical_by_code,
         'derived_normal': get_derived_normal,
+        'name_alias': get_name_alias_by_code,
         'prop_list': get_prop_list,
         'simple_list': get_simple_list_by_code,
         'single_value': get_single_value_by_code,
@@ -250,6 +260,18 @@ def get_value_for_code(prop: str, code: str) -> str:
             raise ValueError(msg)
         raise ex
     return alias_value(prop, value)
+
+
+def get_cjk_radical_by_code(prop: str, code: str, key: str) -> str:
+    """Get the value of a property stored in a `cjk_radical` file
+    for the given code point.
+    """
+    rads = getattr(cache, key)
+    try:
+        rad = rads[code]
+    except KeyError:
+        return ''
+    return getattr(rad, 'name')
 
 
 def get_bidi_brackets(prop: str, code: str, key: str) -> str:
@@ -290,6 +312,19 @@ def get_derived_normal(prop: str, code: str, key: str) -> str:
     elif code in simple[prop]:
         return 'Y'
     return 'N'
+
+
+def get_name_alias_by_code(prop: str, code: str, key: str) -> str:
+    """Get the value of a property stored in a `name_alias` file
+    for the given code point.
+    """
+    nas_by_code = getattr(cache, key)
+    try:
+        nas = nas_by_code[code]
+    except KeyError:
+        nas = ()
+    results = [f'<{na.kind}>{na.alias}' for na in nas]
+    return ' '.join(results)
 
 
 def get_prop_list(prop: str, code: str, key: str) -> str:
@@ -406,13 +441,14 @@ def load_casefolding(info: PathInfo) -> Casefolds:
     return cfs
 
 
-def load_ckj_radicals(info: PathInfo) -> Radicals:
+def load_cjk_radicals(info: PathInfo) -> Radicals:
     """Load a data file that contains CKJ radical mappings."""
     records, missing = parse(info, True)
     rads: Radicals = dict()
     for rec in records:
         rad = Radical(*rec)
-        rads[rad.name] = rad
+        rads[rad.kangxi.casefold()] = rad
+        rads[rad.cjk.casefold()] = rad
     return rads
 
 
@@ -487,6 +523,18 @@ def load_entity_map(info: PathInfo) -> EntityMap:
             emap.setdefault(key, list())
             emap[key].append(Entity(name, codes, chars))
     return {key: tuple(emap[key]) for key in emap}
+
+
+def load_name_alias(info: PathInfo) -> NameAliases:
+    """Load the Unicode name aliases."""
+    records, _ = parse(info)
+    nas: dict[str, list[NameAlias]] = {}
+    for rec in records:
+        code, alias, kind = rec
+        key = code.casefold()
+        nas.setdefault(key, list())
+        nas[key].append(NameAlias(code, alias, kind))
+    return {key: tuple(nas[key]) for key in nas}
 
 
 def load_prop_list(info: PathInfo) -> SimpleLists:
@@ -819,6 +867,7 @@ class FileCache:
         self.__derived_normal: DerivedNormals = dict()
         self.__entity_map: EntityMap = dict()
         self.__kind_map: dict[str, Record] = dict()
+        self.__name_alias: NameAliases = dict()
         self.__property_alias: PropertyAliases = dict()
         self.__property_name: PropertyAliases = dict()
         self.__prop_list: dict[str, SimpleLists] = dict()
@@ -888,8 +937,13 @@ class FileCache:
                 'store'
             ),
             'cjk_radicals': Kind(
-                load_ckj_radicals,
+                load_cjk_radicals,
                 self.__cjk_radicals,
+                'update'
+            ),
+            'name_alias': Kind(
+                load_name_alias,
+                self.__name_alias,
                 'update'
             ),
         }

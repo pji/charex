@@ -84,6 +84,8 @@ def test_get_value_for_code():
     assert db.get_value_for_code('cf', code) == '0020'
     assert db.get_value_for_code('lc', code) == ''
     assert db.get_value_for_code('bpb', code) == '<none>'
+    assert db.get_value_for_code('cjkradical', code) == ''
+    assert db.get_value_for_code('name_alias', code) == '<abbreviation>SP'
 
     code = '1f600'
     assert db.get_value_for_code('emoji', code) == 'Y'
@@ -102,6 +104,14 @@ def test_get_value_for_code():
 
     code = '0028'
     assert db.get_value_for_code('bpb', code) == '0029'
+
+    code = '2f00'
+    assert db.get_value_for_code('cjkradical', code) == '1'
+
+    code = '0000'
+    assert db.get_value_for_code('name_alias', code) == (
+        '<control>NULL <abbreviation>NUL'
+    )
 
 
 # Test load_bidi_brackets.
@@ -133,19 +143,19 @@ def test_load_casefolding():
     assert data['1e921'] == db.Casefold('1E943', '<code>', '<code>', '<code>')
 
 
-# Test load_ckj_radicals.
-def test_load_ckj_radicals():
+# Test load_cjk_radicals.
+def test_load_cjk_radicals():
     """When given the information for a path as a :class:`charex.db.PathInfo`
-    object, :func:`charex.db.load_ckj_radicals` should return the data
+    object, :func:`charex.db.load_cjk_radicals` should return the data
     contained within the path as a :class:`dict`.
     """
     pi = db.PathInfo(
         'CJKRadicals.txt', 'UCD.zip', 'cjk_radicals', ';'
     )
-    data = db.load_ckj_radicals(pi)
-    assert data['1'] == db.Radical('1', '2F00', '4E00')
-    assert data['187\''] == db.Radical('187\'', '2EE2', '9A6C')
-    assert data['214'] == db.Radical('214', '2FD5', '9FA0')
+    data = db.load_cjk_radicals(pi)
+    assert data['2f00'] == db.Radical('1', '2F00', '4E00')
+    assert data['2ee2'] == db.Radical('187\'', '2EE2', '9A6C')
+    assert data['9fa0'] == db.Radical('214', '2FD5', '9FA0')
 
 
 # Test load_derived_normal.
@@ -207,6 +217,25 @@ def test_load_from_archive():
     lines = db.load_from_archive(pi)
     assert lines[0] == '# Jamo-14.0.0.txt'
     assert lines[-1] == '# EOF'
+
+
+# Test load_name_alias.
+def test_load_name_alias():
+    """When given the information for a path as a :class:`charex.db.PathInfo`
+    object, :func:`charex.db.load_name_alias` should return the data
+    contained within the path as a :class:`set`.
+    """
+    pi = db.PathInfo(
+        'NameAliases.txt', 'UCD.zip', 'simple_list', ';'
+    )
+    data = db.load_name_alias(pi)
+    assert data['0000'] == (
+        db.NameAlias('0000', 'NULL', 'control'),
+        db.NameAlias('0000', 'NUL', 'abbreviation'),
+    )
+    assert data['e01ef'] == (
+        db.NameAlias('E01EF', 'VS256', 'abbreviation'),
+    )
 
 
 # Test load_path_map.
