@@ -94,6 +94,12 @@ class NameAlias:
 
 
 @dataclass(repr=True, eq=True)
+class NamedSequence:
+    name: str
+    codes: str
+
+
+@dataclass(repr=True, eq=True)
 class Radical:
     name: str
     kangxi: str
@@ -193,6 +199,7 @@ DenormalMap = defaultdict[str, tuple[str, ...]]
 DenormalMaps = dict[str, DenormalMap]
 EntityMap = dict[str, tuple[Entity, ...]]
 NameAliases = dict[str, tuple[NameAlias, ...]]
+NamedSequences = dict[str, NamedSequence]
 PropertyAliases = dict[str, PropertyAlias]
 Radicals = dict[str, Radical]
 SingleValue = defaultdict[str, str]
@@ -402,6 +409,15 @@ def get_value_range_by_code(prop: str, code: str, key: str) -> str:
     return vrs[index - 1].value
 
 
+# Query named sequences.
+def get_named_sequences() -> tuple[NamedSequence, ...]:
+    """Return the contents of a `namedsequences` file as a :class:`dict`
+    with the case-folded sequence name as the key.
+    """
+    nseqs = cache.namedsequences
+    return tuple(nseqs[key] for key in nseqs)
+
+
 # Load data file by kind.
 def load_bidi_brackets(info: PathInfo) -> BidiBrackets:
     """Load data from a file that is structured like BidiBrackets.txt."""
@@ -535,6 +551,17 @@ def load_name_alias(info: PathInfo) -> NameAliases:
         nas.setdefault(key, list())
         nas[key].append(NameAlias(code, alias, kind))
     return {key: tuple(nas[key]) for key in nas}
+
+
+def load_named_sequence(info: PathInfo) -> NamedSequences:
+    """Load the Unicode named sequences."""
+    records, _ = parse(info)
+    nseqs: NamedSequences = dict()
+    for rec in records:
+        name, codes = rec
+        key = name.casefold()
+        nseqs[key] = NamedSequence(name, codes)
+    return nseqs
 
 
 def load_prop_list(info: PathInfo) -> SimpleLists:
@@ -868,6 +895,7 @@ class FileCache:
         self.__entity_map: EntityMap = dict()
         self.__kind_map: dict[str, Record] = dict()
         self.__name_alias: NameAliases = dict()
+        self.__named_sequence: NamedSequences = dict()
         self.__property_alias: PropertyAliases = dict()
         self.__property_name: PropertyAliases = dict()
         self.__prop_list: dict[str, SimpleLists] = dict()
@@ -946,6 +974,11 @@ class FileCache:
                 self.__name_alias,
                 'update'
             ),
+            'named_sequence': Kind(
+                load_named_sequence,
+                self.__named_sequence,
+                'update'
+            ),
         }
 
     def __getattr__(self, name:str):
@@ -965,6 +998,8 @@ class FileCache:
                 return kind.cache[name]
 
         except KeyError:
+            if name not in self.path_map:
+                raise AttributeError(f'Not in path_map: {name}.')
             raise AttributeError(name)
 
     @property

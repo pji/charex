@@ -234,6 +234,12 @@
         "cjk_radicals",
         ";"
     ],
+    "namedsequences": [
+        "NamedSequences.txt",
+        "UCD.zip",
+        "named_sequence",
+        ";"
+    ],
     
     "rev_casefold": [
         "rev_casefold.json",

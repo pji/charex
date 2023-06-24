@@ -65,6 +65,18 @@ def test_get_denormal_map_for_code():
     )
 
 
+# Test get_named_sequences:
+def test_get_named_sequences():
+    """When called, :funct:`charex.db.get_named_sequences` returns the list
+    of named sequences.
+    """
+    data = db.get_named_sequences()
+    assert data[0] == db.NamedSequence(
+        'KEYCAP NUMBER SIGN',
+        '0023 FE0F 20E3'
+    )
+
+
 # Test get_value_for_code.
 def test_get_value_for_code():
     """Given a property and a code point,
@@ -235,6 +247,28 @@ def test_load_name_alias():
     )
     assert data['e01ef'] == (
         db.NameAlias('E01EF', 'VS256', 'abbreviation'),
+    )
+
+
+# Test load_named_sequence.
+def test_load_named_sequence():
+    """When given the information for a path as a :class:`charex.db.PathInfo`
+    object, :func:`charex.db.load_named_sequence` should return the data
+    contained within the path as a :class:`set`.
+    """
+    pi = db.PathInfo(
+        'NamedSequences.txt', 'UCD.zip', 'named_sequence', ';'
+    )
+    data = db.load_named_sequence(pi)
+    assert data['keycap number sign'] == db.NamedSequence(
+        'KEYCAP NUMBER SIGN',
+        '0023 FE0F 20E3'
+    )
+    assert data[
+        'modifier letter extra-low extra-high contour tone bar'
+    ] == db.NamedSequence(
+        'MODIFIER LETTER EXTRA-LOW EXTRA-HIGH CONTOUR TONE BAR',
+        '02E9 02E5'
     )
 
 
