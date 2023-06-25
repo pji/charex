@@ -212,6 +212,18 @@ def mode_nl(args: Namespace) -> None:
     print()
 
 
+def mode_ns(args: Namespace) -> None:
+    """Show the list of named sequences.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    for line in cmds.ns():
+        print(line)
+    print()
+
+
 def mode_pf(args: Namespace) -> None:
     """List characters with a given property value.
 
@@ -665,6 +677,23 @@ def parse_nl(spa: _SubParsersAction) -> None:
         action='store_true'
     )
     sp.set_defaults(func=mode_nl)
+
+
+@subparser
+def parse_nl(spa: _SubParsersAction) -> None:
+    """Add the ns mode subparser.
+
+    :param spa: The subparser action used to add a new subparser to
+        the main parser.
+    :return: None.
+    :rtype: NoneType
+    """
+    sp = spa.add_parser(
+        'ns',
+        aliases=['nseqs', 'named_sequences',],
+        description='Show the list of named sequences.'
+    )
+    sp.set_defaults(func=mode_ns)
 
 
 @subparser

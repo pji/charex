@@ -333,6 +333,18 @@ def test_nl(capsys):
     cli_test(exp, cmd, capsys)
 
 
+# Test ns mode.
+def test_ns(capsys):
+    """When invoked, ns mode returns the list of named sequences."""
+    with open('tests/data/ns.txt') as fh:
+        exp = fh.read()
+    cmd = (
+        'python -m charex',
+        'ns',
+    )
+    cli_test(exp, cmd, capsys)
+
+
 # Test pf mode.
 @pytest.mark.skip(reason='Slow.')
 def test_pf(capsys):

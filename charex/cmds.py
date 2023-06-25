@@ -9,8 +9,11 @@ from functools import partial
 from itertools import zip_longest
 from textwrap import wrap
 
+from blessed import Terminal
+
 from charex import charex as ch
 from charex import charsets as cset
+from charex import db
 from charex import denormal as dnm
 from charex import escape as esc
 from charex import normal as nml
@@ -326,6 +329,21 @@ def nl(form: str, base: str, expand: bool = False) -> str:
                 indent += ' '
             out += f'  {char.summarize()}\n'
     return out
+
+
+def ns() -> Generator[str, None, None]:
+    """Show the list of named sequences.
+
+    :return: Yields each named sequence as a :class:`str`.
+    :rtype: str
+    """
+    term = Terminal()
+    for i, ns in enumerate(db.get_named_sequences()):
+        if i % 2:
+            color = term.on_gray20
+        else:
+            color = f'{term.normal}'
+        yield f'{color}{ns.name + ":":58} {ns.codes:20}{term.normal}'
 
 
 def pf(
