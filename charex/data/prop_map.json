@@ -229,6 +229,13 @@
     "bpb": "bidibrackets",
     "bpt": "bidibrackets",
     "name_alias": "namealiases",
+    "krstunicode": "tangutsources",
+    "ktgt_mergedsrc": "tangutsources",
+    "ksrc_nushuduben": "nushusources",
+    "kreading": "nushusources",
+    "docomo": "emojisources",
+    "kddi": "emojisources",
+    "softbank": "emojisources",
 
     "cjkradical": "cjkradicals",
 

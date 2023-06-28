@@ -10,6 +10,7 @@ from collections.abc import Callable, Generator, Sequence
 from dataclasses import dataclass
 from importlib.resources import as_file, files
 from json import load, loads
+from typing import Any, TypeVar
 from zipfile import ZipFile
 
 from charex import util
@@ -58,6 +59,14 @@ class Casefold:
 
 
 @dataclass(repr=True, eq=True)
+class EmojiSource:
+    code: str = ''
+    docomo: str = ''
+    kddi: str = ''
+    softbank: str = ''
+
+
+@dataclass(repr=True, eq=True)
 class Entity:
     name: str
     codepoints: tuple[str, ...]
@@ -95,8 +104,8 @@ class NameAlias:
 
 @dataclass(repr=True, eq=True)
 class NamedSequence:
-    name: str
-    codes: str
+    name: str = ''
+    codes: str = ''
 
 
 @dataclass(repr=True, eq=True)
@@ -190,6 +199,7 @@ PathMap = dict[str, PathInfo]
 PropMap = dict[str, str]
 Record = tuple[str, ...]
 Records = tuple[Record, ...]
+T = TypeVar('T')
 
 # File data structure types.
 BidiBrackets = defaultdict[str, BidiBracket]
@@ -197,9 +207,10 @@ Casefolds = defaultdict[str, Casefold]
 Casefoldings = dict[str, Casefolds]
 DenormalMap = defaultdict[str, tuple[str, ...]]
 DenormalMaps = dict[str, DenormalMap]
+EmojiSources = defaultdict[str, EmojiSource]
 EntityMap = dict[str, tuple[Entity, ...]]
 NameAliases = dict[str, tuple[NameAlias, ...]]
-NamedSequences = dict[str, NamedSequence]
+NamedSequences = defaultdict[str, NamedSequence]
 PropertyAliases = dict[str, PropertyAlias]
 Radicals = dict[str, Radical]
 SingleValue = defaultdict[str, str]
@@ -243,15 +254,16 @@ def get_value_for_code(prop: str, code: str) -> str:
     kind = cache.path_map[key].kind
 
     by_kind = {
-        'bidi_brackets': get_bidi_brackets,
+        'bidi_brackets': get_defined_record_by_code,
         'casefolding': get_casefolding,
         'cjk_radicals': get_cjk_radical_by_code,
         'derived_normal': get_derived_normal,
+        'emoji_source': get_defined_record_by_code,
         'name_alias': get_name_alias_by_code,
         'prop_list': get_prop_list,
         'simple_list': get_simple_list_by_code,
         'single_value': get_single_value_by_code,
-        'special_casing': get_special_casing_by_code,
+        'special_casing': get_defined_record_by_code,
         'unicode_data': get_unicode_data_by_code,
         'unihan': get_unihan_by_code,
         'value_range': get_value_range_by_code,
@@ -281,15 +293,6 @@ def get_cjk_radical_by_code(prop: str, code: str, key: str) -> str:
     return getattr(rad, 'name')
 
 
-def get_bidi_brackets(prop: str, code: str, key: str) -> str:
-    """Get the value of a property stored in a `bidibrackets` file
-    for the given code point.
-    """
-    bbs = getattr(cache, key)
-    bb = bbs[code]
-    return getattr(bb, prop)
-
-
 def get_casefolding(prop: str, code: str, key: str) -> str:
     """Get the value of a property stored in a `casefoldng` file
     for the given code point.
@@ -303,6 +306,12 @@ def get_casefolding(prop: str, code: str, key: str) -> str:
     if value == '<code>':
         value = code.upper()
     return value
+
+
+def get_defined_record_by_code(prop: str, code: str, key: str) -> str:
+    drecs = getattr(cache, key)
+    drec = drecs[code]
+    return getattr(drec, prop)
 
 
 def get_derived_normal(prop: str, code: str, key: str) -> str:
@@ -367,15 +376,6 @@ def get_single_value_by_code(prop: str, code: str, key: str) -> str:
     return value
 
 
-def get_special_casing_by_code(prop: str, code: str, key: str) -> str:
-    """Get the value of a property stored in a `special_casing` file
-    for the given code point.
-    """
-    scs = getattr(cache, key)
-    sc = scs[code]
-    return getattr(sc, prop)
-
-
 def get_unicode_data_by_code(prop: str, code: str, key: str) -> str:
     """Get the value of a property stored in a `unicode_data` file
     for the given code point.
@@ -418,16 +418,25 @@ def get_named_sequences() -> tuple[NamedSequence, ...]:
     return tuple(nseqs[key] for key in nseqs)
 
 
+# Generic load data file.
+def load_defined_record(
+    info: PathInfo,
+    rectype: Callable[[], T]
+) -> defaultdict[str, T]:
+    """Load a unicode data file that has a defined dataclass."""
+    records, missing = parse(info, True)
+    drecs: defaultdict[str, T] = defaultdict(rectype)
+    for rec in records:
+        key = rec[0].casefold()
+        drec = rectype(*rec)
+        drecs[key] = drec
+    return drecs
+
+
 # Load data file by kind.
 def load_bidi_brackets(info: PathInfo) -> BidiBrackets:
     """Load data from a file that is structured like BidiBrackets.txt."""
-    records, _ = parse(info)
-    data = defaultdict(BidiBracket)
-    for rec in records:
-        code, bpb, bpt, *_ = rec
-        bracket = BidiBracket(code, bpb, bpt)
-        data[code.casefold()] = bracket
-    return data
+    return load_defined_record(info, BidiBracket)
 
 
 def load_casefolding(info: PathInfo) -> Casefolds:
@@ -522,6 +531,11 @@ def load_derived_normal(info: PathInfo) -> tuple[SingleValues, SimpleLists]:
     return singles, simples
 
 
+def load_emoji_source(info: PathInfo) -> EmojiSources:
+    """Load a data file that contains emoji sources."""
+    return load_defined_record(info, EmojiSource)
+
+
 def load_entity_map(info: PathInfo) -> EntityMap:
     """Load a data file with an entity map."""
     path = PKG_DATA / info.path
@@ -555,13 +569,7 @@ def load_name_alias(info: PathInfo) -> NameAliases:
 
 def load_named_sequence(info: PathInfo) -> NamedSequences:
     """Load the Unicode named sequences."""
-    records, _ = parse(info)
-    nseqs: NamedSequences = dict()
-    for rec in records:
-        name, codes = rec
-        key = name.casefold()
-        nseqs[key] = NamedSequence(name, codes)
-    return nseqs
+    return load_defined_record(info, NamedSequence)
 
 
 def load_prop_list(info: PathInfo) -> SimpleLists:
@@ -892,10 +900,11 @@ class FileCache:
         self.__cjk_radicals: Radicals = dict()
         self.__denormal_map: DenormalMaps = dict()
         self.__derived_normal: DerivedNormals = dict()
+        self.__emoji_source: EmojiSources = defaultdict(EmojiSource)
         self.__entity_map: EntityMap = dict()
         self.__kind_map: dict[str, Record] = dict()
         self.__name_alias: NameAliases = dict()
-        self.__named_sequence: NamedSequences = dict()
+        self.__named_sequence: NamedSequences = defaultdict(NamedSequence)
         self.__property_alias: PropertyAliases = dict()
         self.__property_name: PropertyAliases = dict()
         self.__prop_list: dict[str, SimpleLists] = dict()
@@ -977,6 +986,16 @@ class FileCache:
             'named_sequence': Kind(
                 load_named_sequence,
                 self.__named_sequence,
+                'update'
+            ),
+            'named_sequence': Kind(
+                load_named_sequence,
+                self.__named_sequence,
+                'update'
+            ),
+            'emoji_source': Kind(
+                load_emoji_source,
+                self.__emoji_source,
                 'update'
             ),
         }

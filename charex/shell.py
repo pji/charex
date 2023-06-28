@@ -680,7 +680,7 @@ def parse_nl(spa: _SubParsersAction) -> None:
 
 
 @subparser
-def parse_nl(spa: _SubParsersAction) -> None:
+def parse_ns(spa: _SubParsersAction) -> None:
     """Add the ns mode subparser.
 
     :param spa: The subparser action used to add a new subparser to
@@ -919,6 +919,11 @@ class Shell(Cmd):
         cmd = f'nl {arg}'
         self._run_cmd(cmd)
 
+    def do_ns(self, arg):
+        """Normalize the given string."""
+        cmd = f'ns'
+        self._run_cmd(cmd)
+
     def do_pf(self, arg):
         """List characters with a given property value."""
         cmd = f'pf {arg}'
@@ -996,6 +1001,11 @@ class Shell(Cmd):
     def help_nl(self):
         """Help for the nl command."""
         cmd = f'nl -h'
+        self._run_cmd(cmd)
+
+    def help_ns(self):
+        """Help for the nl command."""
+        cmd = f'ns -h'
         self._run_cmd(cmd)
 
     def help_pf(self):

@@ -98,6 +98,8 @@ def test_get_value_for_code():
     assert db.get_value_for_code('bpb', code) == '<none>'
     assert db.get_value_for_code('cjkradical', code) == ''
     assert db.get_value_for_code('name_alias', code) == '<abbreviation>SP'
+    assert db.get_value_for_code('ktgt_mergedsrc', code) == ''
+    assert db.get_value_for_code('kddi', code) == ''
 
     code = '1f600'
     assert db.get_value_for_code('emoji', code) == 'Y'
@@ -124,6 +126,12 @@ def test_get_value_for_code():
     assert db.get_value_for_code('name_alias', code) == (
         '<control>NULL <abbreviation>NUL'
     )
+
+    code = '17000'
+    assert db.get_value_for_code('ktgt_mergedsrc', code) == 'L2008-0008'
+
+    code = '1f6c0'
+    assert db.get_value_for_code('kddi', code) == 'F34B'
 
 
 # Test load_bidi_brackets.
@@ -199,6 +207,22 @@ def test_load_denormal_map():
     assert data['00c0'] == ('A\u0300',)
     assert data['00c5'] == ('A\u030a', '\u212b')
     assert data['2a600'] == ('\U0002fa1d',)
+
+
+# Test load_emoji_source.
+def test_load_emoji_source():
+    """When given the information for a path as a :class:`charex.db.PathInfo`
+    object, :func:`charex.db.load_emoji_source` should return the data
+    contained within the path as a :class:`dict`.
+    """
+    pi = db.PathInfo(
+        'EmojiSources.txt', 'UCD.zip', 'emoji_source', ';'
+    )
+    data = db.load_emoji_source(pi)
+    assert data['0023 20e3'] == db.EmojiSource(
+        '0023 20E3', 'F985', 'F489', 'F7B0'
+    )
+    assert data['1f6c0'] == db.EmojiSource('1F6C0', '', 'F34B', 'F780')
 
 
 # Test load_entity_map.

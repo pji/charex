@@ -331,19 +331,24 @@ def nl(form: str, base: str, expand: bool = False) -> str:
     return out
 
 
-def ns() -> Generator[str, None, None]:
+def ns(row_shade: bool = True) -> Generator[str, None, None]:
     """Show the list of named sequences.
 
+    :param row_shade: (Optional.) Adds the terminal control sequences
+        needed to shade every other row in terminal displays. Defaults
+        to `True`.
     :return: Yields each named sequence as a :class:`str`.
     :rtype: str
     """
     term = Terminal()
     for i, ns in enumerate(db.get_named_sequences()):
-        if i % 2:
-            color = term.on_gray20
-        else:
-            color = f'{term.normal}'
-        yield f'{color}{ns.name + ":":58} {ns.codes:20}{term.normal}'
+        line = ''
+        if row_shade and i % 2:
+            line = term.on_gray20
+        line += f'{ns.name + ":":58} {ns.codes:20}'
+        if row_shade:
+            line += term.normal
+        yield line
 
 
 def pf(

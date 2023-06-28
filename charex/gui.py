@@ -296,6 +296,17 @@ class Application:
         self.pad_kids(frame)
         self.wake_focus[f'!frame{num}'] = char_entry
 
+    def init_ns(self, frame, num=None):
+        self.ns_result = self.make_results(frame)
+
+        self.config_simple_grid(frame)
+        up_button = self.make_button(
+            frame,
+            'List Named Sequences',
+            self.ns
+        )
+        self.pad_kids(frame)
+
     def init_pf(self, frame, num=None):
         self.pf_prop = tk.StringVar()
         self.pf_value = tk.StringVar()
@@ -467,6 +478,11 @@ class Application:
 
         result = cmds.nl(form, base, True)
         self.nl_result.insert('end', result)
+
+    def ns(self, *args):
+        self.ns_result.delete('0.0', 'end')
+        for line in cmds.ns(False):
+            self.ns_result.insert('end', line + '\n')
 
     def pf(self, *args):
         self.pf_result.delete('0.0', 'end')

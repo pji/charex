@@ -120,6 +120,8 @@
 
                                 ---  Name_Alias
 
+                                ---  Emoji_Source
+
                                 ---  Cjk_Radicals
 
                                 ---  Encoding
