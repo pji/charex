@@ -186,54 +186,10 @@ def dt(c: str) -> Generator[str, None, None]:
     kmap = char.cache.kind_map
     details = {}
     for kind in kmap:
-        if kind == 'denormal_map':
+        if kind == 'denormal_map' or 'standardize_variant':
             continue
         details[kind] = (make_prop_line(prop, char) for prop in kmap[kind])
 
-#     details = {
-#         '': (make_prop_line(key, char) for key in ch.UCD.__annotations__ if (
-#             key != 'address'
-#             and key != 'decimal'
-#             and key != 'digit'
-#         )),
-#         'proplist': (
-#             make_prop_line(key, char) for key in char.cache.proplist
-#         ),
-#         'ranges': (make_prop_line(key, char) for key in char.cache.ranges),
-#         'multis': (make_prop_line(key, char) for key in char.cache.multis),
-#         'singles': (make_prop_line(key, char) for key in char.cache.singles),
-#         'simples': (make_prop_line(key, char) for key in char.cache.simples),
-#         'normal simple': (
-#             make_prop_line(key, char) for key in char.cache.normalsimplelist
-#         ),
-#         'normal single': (
-#             make_prop_line(key, char) for key in char.cache.normalsingleval
-#         ),
-#         'emoji': (make_prop_line(key, char) for key in char.cache.emoji),
-#         'cjk dictionary indices': (
-#             make_prop_line(key, char) for key in char.cache.dindices
-#         ),
-#         'cjk dictionary-like': (
-#             make_prop_line(key, char) for key in char.cache.dictlike
-#         ),
-#         'cjk irgsources': (
-#             make_prop_line(key, char) for key in char.cache.irgsources
-#         ),
-#         'cjk numeric values': (
-#             make_prop_line(key, char) for key in char.cache.numvalues
-#         ),
-#         'cjk other mappings': (
-#             make_prop_line(key, char) for key in char.cache.mappings
-#         ),
-#         'cjk radical stroke count': (
-#             make_prop_line(key, char) for key in char.cache.radstroke
-#         ),
-#         'cjk readings': (
-#             make_prop_line(key, char) for key in char.cache.readings
-#         ),
-#         'cjk variants': (
-#             make_prop_line(key, char) for key in char.cache.variants
-#         ),
     details['encoding'] = (val for val in (
         ('UTF-8', char.encode('utf8')),
         ('UTF-16', char.encode('utf_16_be')),
@@ -375,6 +331,28 @@ def pf(
         yield char.summarize()
 
 
+def sv(row_shade: bool = True) -> Generator[str, None, None]:
+    """Show the list of standardized variants.
+
+    :param row_shade: (Optional.) Adds the terminal control sequences
+        needed to shade every other row in terminal displays. Defaults
+        to `True`.
+    :return: Yields each standardized variant as a :class:`str`.
+    :rtype: str
+    """
+    term = Terminal()
+    for i, svar in enumerate(db.get_standardized_variant()):
+        line = ''
+        if row_shade and i % 2:
+            line = term.on_gray20
+        line += f'{svar.code:<12} '
+        line += f'{svar.description:<45} '
+        line += f'{svar.environments:<20}'
+        if row_shade:
+            line += term.normal
+        yield line
+
+
 def up(show_long: bool = False) -> Generator[str, None, None]:
     """List the Unicode properties.
 
@@ -449,5 +427,5 @@ def write_list(
 
 
 if __name__ == '__main__':
-    for s in pf('emod', 'Y'):
+    for s in sv():
         print(s)

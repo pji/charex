@@ -252,6 +252,18 @@ def mode_sh(args: Namespace | None) -> None:
     Shell(completekey='tab').cmdloop()
 
 
+def mode_sv(args: Namespace) -> None:
+    """Show the list of standardized variants.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    for line in cmds.sv():
+        print(line)
+    print()
+
+
 def mode_up(args: Namespace) -> None:
     """List the Unicode properties.
 
@@ -751,6 +763,23 @@ def parse_sh(spa: _SubParsersAction) -> None:
 
 
 @subparser
+def parse_sv(spa: _SubParsersAction) -> None:
+    """Add the sv mode subparser.
+
+    :param spa: The subparser action used to add a new subparser to
+        the main parser.
+    :return: None.
+    :rtype: NoneType
+    """
+    sp = spa.add_parser(
+        'sv',
+        aliases=['svars', 'standardized_variants',],
+        description='Show the list of standardized variants.'
+    )
+    sp.set_defaults(func=mode_sv)
+
+
+@subparser
 def parse_up(spa: _SubParsersAction) -> None:
     """Add the up mode subparser.
 
@@ -929,6 +958,11 @@ class Shell(Cmd):
         cmd = f'pf {arg}'
         self._run_cmd(cmd)
 
+    def do_sv(self, arg):
+        """Show the list of standardized variants."""
+        cmd = f'sv'
+        self._run_cmd(cmd)
+
     def do_up(self, arg):
         """List the Unicode properties."""
         cmd = f'up {arg}'
@@ -1011,6 +1045,11 @@ class Shell(Cmd):
     def help_pf(self):
         """Help for the pf command."""
         cmd = f'pf -h'
+        self._run_cmd(cmd)
+
+    def help_sv(self):
+        """Help for the sv command."""
+        cmd = f'sv -h'
         self._run_cmd(cmd)
 
     def help_up(self):

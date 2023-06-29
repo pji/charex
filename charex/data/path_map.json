@@ -258,6 +258,12 @@
         "named_sequence",
         ";"
     ],
+    "standardizedvariants": [
+        "StandardizedVariants.txt",
+        "UCD.zip",
+        "standardized_variant",
+        ";"
+    ],
     
     "rev_casefold": [
         "rev_casefold.json",

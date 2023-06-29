@@ -193,6 +193,13 @@ class ValueRange:
         return f'{cls}({start}, {stop}, {self.value!r})'
 
 
+@dataclass(repr=True, eq=True)
+class Variant:
+    code: str = ''
+    description: str = ''
+    environments: str = ''
+
+
 # Common data types.
 Content = Sequence[str]
 PathMap = dict[str, PathInfo]
@@ -222,6 +229,7 @@ SpecialCasings = dict[str, SpecialCasing]
 UnicodeData = dict[str, UCD]
 ValueAliases = dict[str, dict[str, ValueAlias]]
 ValueRanges = tuple[ValueRange, ...]
+Variants = defaultdict[str, Variant]
 DerivedNormal = tuple[SingleValues, SimpleLists]
 DerivedNormals = dict[str, DerivedNormal]
 
@@ -409,13 +417,21 @@ def get_value_range_by_code(prop: str, code: str, key: str) -> str:
     return vrs[index - 1].value
 
 
-# Query named sequences.
+# Query data not sorted by code.
 def get_named_sequences() -> tuple[NamedSequence, ...]:
-    """Return the contents of a `namedsequences` file as a :class:`dict`
-    with the case-folded sequence name as the key.
+    """Return the contents of a `namedsequences` file as a
+    :class:`tuple`.
     """
     nseqs = cache.namedsequences
     return tuple(nseqs[key] for key in nseqs)
+
+
+def get_standardized_variant() -> tuple[Variant, ...]:
+    """Return the contents of a `standardized_variant` file as a
+    :class:`tuple`.
+    """
+    variants = cache.standardizedvariants
+    return tuple(variants[key] for key in variants)
 
 
 # Generic load data file.
@@ -624,6 +640,13 @@ def load_special_casing(info: PathInfo) -> SpecialCasing:
         speccase = SpecialCase(code, lower, title, upper, cond_list)
         data[code.casefold()] = speccase
     return data
+
+
+def load_standardized_variant(info: PathInfo) -> Variants:
+    """Load data from a file that is structured like
+    StandardVariants.txt.
+    """
+    return load_defined_record(info, Variant)
 
 
 def load_unicode_data(info: PathInfo) -> UnicodeData:
@@ -911,6 +934,7 @@ class FileCache:
         self.__simple_list: SimpleLists = dict()
         self.__single_value: SingleValues = dict()
         self.__specialcasings: SpecialCasings = dict()
+        self.__standardized_variant: Variants = defaultdict(Variant)
         self.__unicode_data: UnicodeData = dict()
         self.__unihan: dict[str, SingleValues] = dict()
         self.__value_aliases: ValueAliases = dict()
@@ -918,6 +942,11 @@ class FileCache:
         self.__value_range: dict[str, ValueRanges] = dict()
 
         self.by_kind = {
+            'standardized_variant': Kind(
+                load_standardized_variant,
+                self.__standardized_variant,
+                'update'
+            ),
             'unicode_data': Kind(
                 load_unicode_data,
                 self.__unicode_data,

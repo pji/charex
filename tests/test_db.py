@@ -77,6 +77,17 @@ def test_get_named_sequences():
     )
 
 
+# Test get_standardized_variants:
+def test_get_standardized_variants():
+    """When called, :funct:`charex.db.get_standardized_variants` returns
+    the mapping of standardized variants.
+    """
+    data = db.get_standardized_variant()
+    assert data[0] == db.Variant(
+        '0030 FE00', 'short diagonal stroke form', ''
+    )
+
+
 # Test get_value_for_code.
 def test_get_value_for_code():
     """Given a property and a code point,
@@ -378,6 +389,24 @@ def test_load_special_casing():
     data = db.load_special_casing(pi)
     assert data['fb00'].code == 'FB00'
     assert data['0069'].condition_list == 'az'
+
+
+# Test load_standardized_variant:.
+def test_load_standardized_variant():
+    """When given the information for a path as a :class:`charex.db.PathInfo`
+    object, :func:`charex.db.load_standardized_variant` should return the
+    data contained within the path as a :class:`dict`.
+    """
+    pi = db.PathInfo(
+        'StandardizedVariants.txt', 'UCD.zip', 'standard_variant', ';'
+    )
+    data = db.load_standardized_variant(pi)
+    assert data['0030 fe00'] == db.Variant(
+        '0030 FE00', 'short diagonal stroke form', ''
+    )
+    assert data['2a600 fe00'] == db.Variant(
+        '2A600 FE00', 'CJK COMPATIBILITY IDEOGRAPH-2FA1D', ''
+    )
 
 
 # Test load_unihan.

@@ -300,6 +300,17 @@ def test_pf_insensitive(capsys):
     shell_test(exp, cmd, capsys)
 
 
+# Test sv mode.
+def test_sv(capsys):
+    """When invoked, ns mode returns the list of standardized variants."""
+    with open('tests/data/sv.txt') as fh:
+        exp = fh.read()
+    cmd = (
+        'sv'
+    )
+    shell_test(exp, cmd, capsys)
+
+
 # Test up mode.
 def test_up(capsys):
     """When invoked, up mode should return the list of Unicode properties."""

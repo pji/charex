@@ -444,6 +444,18 @@ def test_pf_insensitive_regex(capsys):
     cli_test(exp, cmd, capsys)
 
 
+# Test sv mode.
+def test_sv(capsys):
+    """When invoked, ns mode returns the list of standardized variants."""
+    with open('tests/data/sv.txt') as fh:
+        exp = fh.read()
+    cmd = (
+        'python -m charex',
+        'sv',
+    )
+    cli_test(exp, cmd, capsys)
+
+
 # Test up mode.
 def test_up(capsys):
     """When invoked, up mode should return the list of Unicode properties."""

@@ -238,6 +238,7 @@
     "softbank": "emojisources",
 
     "cjkradical": "cjkradicals",
+    "variants": "standardizedvariants",
 
     "rev_casefold": "rev_casefold",
     "rev_nfc": "rev_nfc",
