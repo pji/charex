@@ -360,6 +360,17 @@ class Application:
         )
         self.pad_kids(frame)
 
+    def init_sv(self, frame, num=None):
+        self.sv_result = self.make_results(frame)
+
+        self.config_simple_grid(frame)
+        up_button = self.make_button(
+            frame,
+            'List Standardized Variants',
+            self.sv
+        )
+        self.pad_kids(frame)
+
     def init_up(self, frame, num=None):
         self.up_result = self.make_results(frame)
 
@@ -493,6 +504,11 @@ class Application:
 
         for line in cmds.pf(prop, value, insensitive, regex):
             self.pf_result.insert('end', line + '\n')
+
+    def sv(self, *args):
+        self.sv_result.delete('0.0', 'end')
+        for line in cmds.sv(False):
+            self.sv_result.insert('end', line + '\n')
 
     def up(self, *args):
         self.up_result.delete('0.0', 'end')
