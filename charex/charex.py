@@ -334,27 +334,6 @@ def expand_property_value(prop: str, alias: str) -> str:
     return long.replace('_', ' ')
 
 
-def fill_gaps(
-    values: Sequence[tuple[int, int, str]],
-    missing: str
-) -> tuple[tuple[int, int, str], ...]:
-    """Fill gaps in the given values."""
-    values = sorted(values)
-    filled = []
-    for i in range(len(values) - 1):
-        filled.append(values[i])
-        _, stop, _ = values[i]
-        nstart, _, _ = values[i + 1]
-        if stop != nstart:
-            gap = (stop, nstart, missing)
-            filled.append(gap)
-    filled.append(values[-1])
-    if filled[-1][1] != util.LEN_UNICODE:
-        gap = (filled[-1][1], util.LEN_UNICODE, missing)
-        filled.append(gap)
-    return tuple(filled)
-
-
 def filter_by_property(
     prop: str,
     value: str,
@@ -570,7 +549,3 @@ def get_property_values(prop: str) -> tuple[str, ...]:
         if propvals[key] not in result:
             result.append(propvals[key])
     return tuple(val.alias for val in result)
-
-
-if __name__ == '__main__':
-    pass

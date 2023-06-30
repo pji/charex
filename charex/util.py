@@ -7,7 +7,6 @@ Utility functions for :mod:`charex`.
 from importlib.resources import as_file, files
 from math import log
 import unicodedata as ucd
-from zipfile import ZipFile
 
 
 # Constants.
