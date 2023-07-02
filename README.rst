@@ -131,7 +131,7 @@ The following features are planned for the v0.2.1 or later releases:
 *   (Done.) Add every Unihan property to charex.Character.
 *   (Done.) Fix names for CJK Ideographs.
 *   (Done.) Move all Y/N properties to simple lists.
-*   (Working.) Move the resource file registry to `sources.json`.
+*   (Done.) Move the resource file registry to `sources.json`.
 *   Support for more versions of Unicode.
 *   Emoji combiner.
 *   Basic doctests for all public classes and functions.

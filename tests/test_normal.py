@@ -101,7 +101,7 @@ def test_build_denormalization_map():
     of every character that normalizes into a character as a
     JSON string.
     """
-    with open('charex/data/rev_nfc.json') as fh:
+    with open('tests/data/rev_nfc.json') as fh:
         exp = fh.read()
     form = 'nfc'
     act = nl.build_denormalization_map(form)
