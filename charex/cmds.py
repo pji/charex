@@ -281,7 +281,7 @@ def nl(form: str, base: str, expand: bool = False) -> str:
         for item in result:
             char = ch.Character(item)
             indent = '  '
-            if 'mark' in char.category.casefold():
+            if 'mark' in char.gc.casefold():
                 indent += ' '
             out += f'  {char.summarize()}\n'
     return out

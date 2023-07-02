@@ -140,10 +140,163 @@ class Application:
         widgets = [
             [True, 'entry', '', 5, self.ct_base],
             [False, 'combo', 'form', 2, self.ct_form, nl.get_forms()],
-            [False, 'entry', 'depth', 3, self.ct_maxdepth],
+            [False, 'entry', 'max depth', 3, self.ct_maxdepth],
             [False, 'button', 'count denomalizations', 5, self.ct],
         ]
         wake_widget = self.build_5x6_grid(frame, widgets)
+        self.pad_kids(frame)
+        self.wake_focus[f'!frame{num}'] = wake_widget
+
+    def init_dn(self, frame, num=None):
+        """Initialize the "dn" tab.
+
+        :param frame: The frame for the tab.
+        :param num: The number of the frame.
+        :return: None.
+        :rtype: NoneType
+        """
+        # The data for the interactive fields in the tab.
+        self.dn_base = tk.StringVar()
+        self.dn_form = tk.StringVar()
+        self.dn_maxdepth = tk.StringVar()
+        self.dn_maxdepth.set('0')
+        self.dn_random = tk.BooleanVar(value=False)
+        self.dn_seed = tk.StringVar()
+        self.dn_result = self.make_results(frame, row=5, colspan=4)
+
+        # Tab layout.
+        widgets = [
+            [True, 'entry', '', 5, self.dn_base],
+            [False, 'combo', 'form', 2, self.dn_form, nl.get_forms()],
+            [False, 'entry', 'max depth', 3, self.dn_maxdepth],
+            [False, 'check', 'random', 2, self.dn_random],
+            [False, 'entry', 'seed', 3, self.dn_seed],
+            [False, 'button', 'count denomalizations', 5, self.ct],
+        ]
+        wake_widget = self.build_5x6_grid(frame, widgets)
+        self.pad_kids(frame)
+        self.wake_focus[f'!frame{num}'] = wake_widget
+
+    def init_dt(self, frame, num=None):
+        """Initialize the "dt" tab.
+
+        :param frame: The frame for the "dt" notebook tab.
+        :return: None.
+        :rtype: NoneType
+        """
+        # The data for the interactive fields in the tab.
+        self.dt_char = tk.StringVar()
+        self.dt_result = self.make_results(frame)
+
+        # Tab layout.
+        widgets = [
+            [True, 'entry', '', 2, self.dt_char],
+            [False, 'button', 'character details', 2, self.dt],
+        ]
+        wake_widget = self.build_2x3_grid(frame, widgets)
+        self.pad_kids(frame)
+        self.wake_focus[f'!frame{num}'] = wake_widget
+
+    def init_el(self, frame, num=None):
+        """Initialize the "el" tab.
+
+        :param frame: The frame for the tab.
+        :param num: The number of the frame.
+        :return: None.
+        :rtype: NoneType
+        """
+        # The data for the interactive fields in the tab.
+        self.el_result = self.make_results(frame)
+
+        # Tab layout.
+        widgets = [
+            [False, 'button', 'list escape schemes', 2, self.el],
+        ]
+        wake_widget = self.build_2x3_grid(frame, widgets)
+        self.pad_kids(frame)
+        self.wake_focus[f'!frame{num}'] = wake_widget
+
+    def init_es(self, frame, num=None):
+        """Initialize the "es" tab.
+
+        :param frame: The frame for the tab.
+        :param num: The number of the frame.
+        :return: None.
+        :rtype: NoneType
+        """
+        # The data for the interactive fields in the tab.
+        self.es_base = tk.StringVar()
+        self.es_scheme = tk.StringVar()
+        self.es_result = self.make_results(frame, row=5, colspan=4)
+
+        # Tab layout.
+        widgets = [
+            [True, 'entry', '', 5, self.es_base],
+            [False, 'combo', 'scheme', 5, self.es_scheme, esc.get_schemes()],
+            [False, 'button', 'count denomalizations', 5, self.es],
+        ]
+        wake_widget = self.build_5x6_grid(frame, widgets)
+        self.pad_kids(frame)
+        self.wake_focus[f'!frame{num}'] = wake_widget
+
+    def init_fl(self, frame, num=None):
+        """Initialize the "fl" tab.
+
+        :param frame: The frame for the tab.
+        :param num: The number of the frame.
+        :return: None.
+        :rtype: NoneType
+        """
+        # The data for the interactive fields in the tab.
+        self.fl_result = self.make_results(frame)
+
+        # Tab layout.
+        widgets = [
+            [False, 'button', 'list normalization forms', 2, self.fl],
+        ]
+        wake_widget = self.build_2x3_grid(frame, widgets)
+        self.pad_kids(frame)
+        self.wake_focus[f'!frame{num}'] = wake_widget
+
+    def init_nl(self, frame, num=None):
+        """Initialize the "nl" tab.
+
+        :param frame: The frame for the tab.
+        :param num: The number of the frame.
+        :return: None.
+        :rtype: NoneType
+        """
+        # The data for the interactive fields in the tab.
+        self.nl_base = tk.StringVar()
+        self.nl_form = tk.StringVar()
+        self.nl_result = self.make_results(frame, row=5, colspan=4)
+
+        # Tab layout.
+        widgets = [
+            [True, 'entry', '', 5, self.nl_base],
+            [False, 'combo', 'form', 5, self.nl_form, nl.get_forms()],
+            [False, 'button', 'normalize', 5, self.nl],
+        ]
+        wake_widget = self.build_5x6_grid(frame, widgets)
+        self.pad_kids(frame)
+        self.wake_focus[f'!frame{num}'] = wake_widget
+
+    def init_ns(self, frame, num=None):
+        """Initialize the "ns" tab.
+
+        :param frame: The frame for the tab.
+        :param num: The number of the frame.
+        :return: None.
+        :rtype: NoneType
+        """
+        # The data for the interactive fields in the tab.
+        self.ns_result = self.make_results(frame)
+
+        # Tab layout.
+        widgets = [
+            [False, 'button', 'list named sequences', 2, self.ns],
+        ]
+        wake_widget = self.build_2x3_grid(frame, widgets)
         self.pad_kids(frame)
         self.wake_focus[f'!frame{num}'] = wake_widget
 
@@ -186,28 +339,6 @@ class Application:
                 row += 1
         return wake_widget
 
-    def add_entry(self, frame, col, row, name, span, value):
-        full_span = span
-        if name:
-            name = name.title()
-            label = ttk.Label(frame, text=name, justify=tk.RIGHT)
-            label.grid(column=col, row=row, columnspan=1, sticky=SIDES)
-            col += 1
-            span -= 1
-        entry = ttk.Entry(
-            frame,
-            # width=width,
-            textvariable=value,
-            justify=tk.RIGHT
-        )
-        entry.grid(
-            column=col,
-            row=row,
-            columnspan=span,
-            sticky=SIDES
-        )
-        return full_span, entry
-
     def add_button(self, frame, col, row, name, span, cmd):
         name = name.title()
         button = ttk.Button(frame, text=name, command=cmd)
@@ -219,19 +350,55 @@ class Application:
         )
         return span, button
 
+    def add_check(self, frame, col, row, name, span, value):
+        name = name.title()
+        label = ttk.Label(frame, text=f'{name}:', justify=tk.RIGHT)
+        label.grid(column=col, row=row, columnspan=1, sticky=tk.E)
+        check = ttk.Checkbutton(
+            frame,
+            variable=value,
+            onvalue='True',
+            offvalue='False'
+        )
+        check.grid(
+            column=col + 1, row=row, columnspan=span, sticky=SIDES
+        )
+        return span, check
+
     def add_combo(self, frame, col, row, name, span, value, options):
         name = name.title()
         label = ttk.Label(frame, text=f'{name}:', justify=tk.RIGHT)
-        label.grid(column=col, row=row, columnspan=1, sticky=SIDES)
+        label.grid(column=col, row=row, columnspan=1, sticky=tk.E)
         combo = ttk.Combobox(frame, textvariable=value)
         combo['values'] = options
         combo.state(['readonly'])
         combo.grid(column=col + 1, row=row, columnspan=span - 1, sticky=SIDES)
         return span, combo
 
+    def add_entry(self, frame, col, row, name, span, value):
+        full_span = span
+        if name:
+            name = name.title()
+            label = ttk.Label(frame, text=f'{name}:', justify=tk.RIGHT)
+            label.grid(column=col, row=row, columnspan=1, sticky=tk.E)
+            col += 1
+            span -= 1
+        entry = ttk.Entry(
+            frame,
+            textvariable=value,
+            justify=tk.RIGHT
+        )
+        entry.grid(
+            column=col,
+            row=row,
+            columnspan=span,
+            sticky=SIDES
+        )
+        return full_span, entry
+
     # Old style tab layouts.
-    def init_dn(self, frame, num=None):
-        """Initialize the "dn" tab.
+    def init_pf(self, frame, num=None):
+        """Initialize the "pf" tab.
 
         :param frame: The frame for the tab.
         :param num: The number of the frame.
@@ -239,165 +406,6 @@ class Application:
         :rtype: NoneType
         """
         # The data for the interactive fields in the tab.
-        self.dn_base = tk.StringVar()
-        self.dn_form = tk.StringVar()
-        self.dn_maxdepth = tk.StringVar()
-        self.dn_maxdepth.set('0')
-        self.dn_random = tk.BooleanVar(value=False)
-        self.dn_seed = tk.StringVar()
-        self.dn_result = self.make_results(frame, row=5, colspan=4)
-
-        # Base tab layout.
-        self.config_five_params_grid(frame)
-
-        # Tab widgets.
-        char_entry = self.make_entry(
-            frame,
-            self.dn_base,
-            colspan=5
-        )
-        form_combo = self.make_combo(
-            frame, 'form', 0, 2, 1, self.dn_form, nl.get_forms()
-        )
-        maxdepth_entry = self.make_entry(
-            frame,
-            self.dn_maxdepth,
-            width=40,
-            col=3,
-            row=2,
-            colspan=2,
-            name='max depth'
-        )
-        random_check = self.make_check(
-            frame, 'random', 0, 3, 1, self.dn_random
-        )
-        seed_entry = self.make_entry(
-            frame,
-            self.dn_seed,
-            width=40,
-            col=3,
-            row=3,
-            colspan=2,
-            name='seed'
-        )
-        dn_button = self.make_button(
-            frame,
-            'Denormalize',
-            self.dn,
-            row=4,
-            colspan=5
-        )
-
-        # Finalize layout.
-        self.pad_kids(frame)
-        self.wake_focus[f'!frame{num}'] = char_entry
-
-    def init_dt(self, frame, num=None):
-        """Initialize the "dt" tab.
-
-        :param frame: The frame for the "dt" notebook tab.
-        :return: None.
-        :rtype: NoneType
-        """
-        self.dt_char = tk.StringVar()
-        self.dt_result = self.make_results(frame)
-
-        self.config_simple_grid(frame)
-        address_entry = self.make_entry(frame, self.dt_char)
-        cd_button = self.make_button(frame, 'Character Details', self.dt)
-        self.pad_kids(frame)
-        self.wake_focus[f'!frame{num}'] = address_entry
-
-    def init_el(self, frame, num=None):
-        self.el_result = self.make_results(frame)
-
-        self.config_simple_grid(frame)
-        el_button = self.make_button(frame, 'List Escape Schemes', self.el)
-        self.pad_kids(frame)
-
-    def init_es(self, frame, num=None):
-        self.es_base = tk.StringVar()
-        self.es_scheme = tk.StringVar()
-        self.es_result = self.make_results(frame, row=5, colspan=4)
-
-        self.config_five_params_grid(frame)
-
-        char_entry = self.make_entry(
-            frame,
-            self.es_base,
-            colspan=5
-        )
-
-        scheme_label = ttk.Label(frame, text='Scheme:', justify=tk.RIGHT)
-        scheme_label.grid(column=0, row=2, columnspan=1, sticky=SIDES)
-        scheme_combo = ttk.Combobox(frame, textvariable=self.es_scheme)
-        scheme_combo['values'] = esc.get_schemes()
-        scheme_combo.state(['readonly'])
-        scheme_combo.grid(column=1, row=2, columnspan=4, sticky=SIDES)
-
-        es_button = self.make_button(
-            frame,
-            'Escape',
-            self.es,
-            row=4,
-            colspan=5
-        )
-        self.pad_kids(frame)
-        self.wake_focus[f'!frame{num}'] = char_entry
-
-    def init_fl(self, frame, num=None):
-        self.fl_result = self.make_results(frame)
-
-        self.config_simple_grid(frame)
-        fl_button = self.make_button(
-            frame,
-            'List Normalization Forms',
-            self.fl
-        )
-        self.pad_kids(frame)
-
-    def init_nl(self, frame, num=None):
-        self.nl_base = tk.StringVar()
-        self.nl_form = tk.StringVar()
-        self.nl_result = self.make_results(frame, row=5, colspan=4)
-
-        self.config_five_params_grid(frame)
-
-        char_entry = self.make_entry(
-            frame,
-            self.nl_base,
-            colspan=5
-        )
-
-        form_label = ttk.Label(frame, text='Form:', justify=tk.RIGHT)
-        form_label.grid(column=0, row=2, columnspan=1, sticky=SIDES)
-        form_combo = ttk.Combobox(frame, textvariable=self.nl_form)
-        form_combo['values'] = nl.get_forms()
-        form_combo.state(['readonly'])
-        form_combo.grid(column=1, row=2, columnspan=4, sticky=SIDES)
-
-        cd_button = self.make_button(
-            frame,
-            'Normalize',
-            self.nl,
-            row=4,
-            colspan=5
-        )
-        self.pad_kids(frame)
-        self.wake_focus[f'!frame{num}'] = char_entry
-
-    def init_ns(self, frame, num=None):
-        self.ns_result = self.make_results(frame)
-
-        self.config_simple_grid(frame)
-        up_button = self.make_button(
-            frame,
-            'List Named Sequences',
-            self.ns
-        )
-        self.pad_kids(frame)
-
-    def init_pf(self, frame, num=None):
         self.pf_prop = tk.StringVar()
         self.pf_value = tk.StringVar()
         self.pf_insensitive = tk.BooleanVar(value=False)
