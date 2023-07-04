@@ -214,7 +214,6 @@ class Application:
         ]
         wake_widget = self.build_2x3_grid(frame, widgets)
         self.pad_kids(frame)
-        self.wake_focus[f'!frame{num}'] = wake_widget
 
     def init_es(self, frame, num=None):
         """Initialize the "es" tab.
@@ -256,7 +255,6 @@ class Application:
         ]
         wake_widget = self.build_2x3_grid(frame, widgets)
         self.pad_kids(frame)
-        self.wake_focus[f'!frame{num}'] = wake_widget
 
     def init_nl(self, frame, num=None):
         """Initialize the "nl" tab.
@@ -298,48 +296,109 @@ class Application:
         ]
         wake_widget = self.build_2x3_grid(frame, widgets)
         self.pad_kids(frame)
+
+    def init_pf(self, frame, num=None):
+        """Initialize the "pf" tab.
+
+        :param frame: The frame for the tab.
+        :param num: The number of the frame.
+        :return: None.
+        :rtype: NoneType
+        """
+        # The data for the interactive fields in the tab.
+        self.pf_prop = tk.StringVar()
+        self.pf_value = tk.StringVar()
+        self.pf_insensitive = tk.BooleanVar(value=False)
+        self.pf_regex = tk.BooleanVar(value=False)
+        self.pf_result = self.make_results(frame, row=5, colspan=4)
+
+        # Tab layout.
+        # This is a little more complex because the property selected
+        # changes the contents of the value combobox.
+        self.build_5x6_grid(frame, [])
+        self.pfprop_combo = self.add_combo(
+            frame, 0, 1, 'property', 5, self.pf_prop, ch.get_properties()
+        )
+        self.pfprop_combo.bind('<<ComboboxSelected>>', self.handle_pf_pfprop)
+        self.pfval_combo = self.add_combo(
+            frame, 0, 2, 'value', 5, self.pf_value, []
+        )
+        self.add_check(frame, 0, 3, 'ignore case', 2, self.pf_insensitive)
+        self.add_check(frame, 2, 3, 'regex', 2, self.pf_regex)
+        self.add_button(frame, 0, 4, 'filter by property value', 5, self.pf)
+        self.pad_kids(frame)
+        self.wake_focus[f'!frame{num}'] = self.pfprop_combo
+
+    def init_sv(self, frame, num=None):
+        """Initialize the "sv" tab.
+
+        :param frame: The frame for the tab.
+        :param num: The number of the frame.
+        :return: None.
+        :rtype: NoneType
+        """
+        # The data for the interactive fields in the tab.
+        self.sv_result = self.make_results(frame)
+
+        # Tab layout.
+        widgets = [
+            [True, 'button', 'list standardized variants', 2, self.sv],
+        ]
+        wake_widget = self.build_2x3_grid(frame, widgets)
+        self.pad_kids(frame)
+
+    def init_up(self, frame, num=None):
+        """Initialize the "up" tab.
+
+        :param frame: The frame for the tab.
+        :param num: The number of the frame.
+        :return: None.
+        :rtype: NoneType
+        """
+        # The data for the interactive fields in the tab.
+        self.up_result = self.make_results(frame)
+
+        # Tab layout.
+        widgets = [
+            [False, 'button', 'list unicode properties', 2, self.up],
+        ]
+        wake_widget = self.build_2x3_grid(frame, widgets)
+        self.pad_kids(frame)
+
+    def init_uv(self, frame, num=None):
+        """Initialize the "up" tab.
+
+        :param frame: The frame for the tab.
+        :param num: The number of the frame.
+        :return: None.
+        :rtype: NoneType
+        """
+        # The data for the interactive fields in the tab.
+        self.uv_prop = tk.StringVar()
+        self.uv_result = self.make_results(frame)
+
+        # Tab layout.
+        widgets = [
+            [True, 'combo', '', 2, self.uv_prop, ch.get_properties()],
+            [False, 'button', 'list values of unicode property', 2, self.uv],
+        ]
+        wake_widget = self.build_2x3_grid(frame, widgets)
+        self.pad_kids(frame)
         self.wake_focus[f'!frame{num}'] = wake_widget
 
-    # Updated layout methods.
-    def build_2x3_grid(self, frame, widgets):
-        frame.columnconfigure(0, weight=1)
-        frame.columnconfigure(1, weight=0)
-        frame.rowconfigure(1, weight=0)
-        frame.rowconfigure(2, weight=0)
-        frame.rowconfigure(3, weight=1)
-        cols, rows = 2, 4
-        return self.build_widgets(frame, cols, rows, widgets)
-
-    def build_5x6_grid(self, frame, widgets):
-        frame.columnconfigure(0, weight=0)
-        frame.columnconfigure(1, weight=1)
-        frame.columnconfigure(2, weight=0)
-        frame.columnconfigure(3, weight=1)
-        frame.columnconfigure(4, weight=0)
-        frame.rowconfigure(1, weight=0)
-        frame.rowconfigure(2, weight=0)
-        frame.rowconfigure(3, weight=0)
-        frame.rowconfigure(4, weight=0)
-        frame.rowconfigure(5, weight=1)
-        cols, rows = 5, 6
-        return self.build_widgets(frame, cols, rows, widgets)
-
-    def build_widgets(self, frame, cols, rows, widgets):
-        col, row = 0, 1
-        wake_widget = None
-        for widget in widgets:
-            wake, kind, *params = widget
-            fn = getattr(self, f'add_{kind}')
-            span, obj = fn(frame, col, row, *params)
-            if wake:
-                wake_widget = obj
-            col += span
-            if col >= cols:
-                col = 0
-                row += 1
-        return wake_widget
-
+    # Layout methods.
     def add_button(self, frame, col, row, name, span, cmd):
+        """Add a button widget to the frame.
+
+        :param frame: The frame to add the button to.
+        :param col: The leftmost column containing the button.
+        :param row: The row containing the button.
+        :param name: The label of the button.
+        :param span: The number of columns the button spans.
+        :param cmd: The method to run when the button is pressed.
+        :return: The button as a :class:`tkinter.ttk.Button`.
+        :rtype: tkinter.ttk.Button
+        """
         name = name.title()
         button = ttk.Button(frame, text=name, command=cmd)
         button.grid(
@@ -348,9 +407,20 @@ class Application:
             columnspan=span,
             sticky=SIDES
         )
-        return span, button
+        return button
 
     def add_check(self, frame, col, row, name, span, value):
+        """Add a checkbox widget to the frame.
+
+        :param frame: The frame to add the button to.
+        :param col: The leftmost column containing the button.
+        :param row: The row containing the button.
+        :param name: The label of the button.
+        :param span: The number of columns the button spans.
+        :param value: The attribute to store the value of the checkbox.
+        :return: The button as a :class:`tkinter.ttk.Checkbutton`.
+        :rtype: tkinter.ttk.Checkbutton
+        """
         name = name.title()
         label = ttk.Label(frame, text=f'{name}:', justify=tk.RIGHT)
         label.grid(column=col, row=row, columnspan=1, sticky=tk.E)
@@ -363,20 +433,47 @@ class Application:
         check.grid(
             column=col + 1, row=row, columnspan=span, sticky=SIDES
         )
-        return span, check
+        return check
 
     def add_combo(self, frame, col, row, name, span, value, options):
-        name = name.title()
-        label = ttk.Label(frame, text=f'{name}:', justify=tk.RIGHT)
-        label.grid(column=col, row=row, columnspan=1, sticky=tk.E)
+        """Add a combobox widget to the frame.
+
+        :param frame: The frame to add the button to.
+        :param col: The leftmost column containing the button.
+        :param row: The row containing the button.
+        :param name: The label of the button. If this is an empty
+            string, no label will be added.
+        :param span: The number of columns the button spans.
+        :param value: The attribute to store the value of the combobox.
+        :param options: The list of options for the combobox.
+        :return: The button as a :class:`tkinter.ttk.Combobox`.
+        :rtype: tkinter.ttk.Combobox
+        """
+        if name:
+            name = name.title()
+            label = ttk.Label(frame, text=f'{name}:', justify=tk.RIGHT)
+            label.grid(column=col, row=row, columnspan=1, sticky=tk.E)
+            col += 1
+            span -= 1
         combo = ttk.Combobox(frame, textvariable=value)
         combo['values'] = options
         combo.state(['readonly'])
-        combo.grid(column=col + 1, row=row, columnspan=span - 1, sticky=SIDES)
-        return span, combo
+        combo.grid(column=col, row=row, columnspan=span, sticky=SIDES)
+        return combo
 
     def add_entry(self, frame, col, row, name, span, value):
-        full_span = span
+        """Add a text field widget to the frame.
+
+        :param frame: The frame to add the button to.
+        :param col: The leftmost column containing the button.
+        :param row: The row containing the button.
+        :param name: The label of the button. If this is an empty
+            string, no label will be added.
+        :param span: The number of columns the button spans.
+        :param value: The attribute to store the value of the field.
+        :return: The button as a :class:`tkinter.ttk.Entry`.
+        :rtype: tkinter.ttk.Entry
+        """
         if name:
             name = name.title()
             label = ttk.Label(frame, text=f'{name}:', justify=tk.RIGHT)
@@ -394,109 +491,92 @@ class Application:
             columnspan=span,
             sticky=SIDES
         )
-        return full_span, entry
+        return entry
 
-    # Old style tab layouts.
-    def init_pf(self, frame, num=None):
-        """Initialize the "pf" tab.
+    def build_2x3_grid(self, frame, widgets):
+        """Populate the tab with a 2x3 grid of widgets.
 
-        :param frame: The frame for the tab.
-        :param num: The number of the frame.
-        :return: None.
-        :rtype: NoneType
+        Note: The scrollbar of the results requires its own column,
+        so this is effectively a 1x3 grid for the placement of
+        widgets. You just need to remember that each widget actually
+        needs a span of two.
+
+        :param frame: The frame to build the grid on.
+        :param widgets: The parameters for the widgets to add to
+            the grid.
+        :return: The widget that should be highlighted when the tab
+            is selected or `None`.
+        :rtype: Any
         """
-        # The data for the interactive fields in the tab.
-        self.pf_prop = tk.StringVar()
-        self.pf_value = tk.StringVar()
-        self.pf_insensitive = tk.BooleanVar(value=False)
-        self.pf_regex = tk.BooleanVar(value=False)
-        self.pf_result = self.make_results(frame, row=5, colspan=4)
+        frame.columnconfigure(0, weight=1)
+        frame.columnconfigure(1, weight=0)
+        frame.rowconfigure(1, weight=0)
+        frame.rowconfigure(2, weight=0)
+        frame.rowconfigure(3, weight=1)
+        cols, rows = 2, 4
+        return self.build_widgets(frame, cols, rows, widgets)
 
-        self.config_five_params_grid(frame)
+    def build_5x6_grid(self, frame, widgets):
+        """Populate the tab with a 5x6 grid of widgets.
 
-        form_label = ttk.Label(frame, text='Property:', justify=tk.RIGHT)
-        form_label.grid(column=0, row=0, columnspan=1, sticky=SIDES)
-        self.pfprop_combo = ttk.Combobox(frame, textvariable=self.pf_prop)
-        self.pfprop_combo['values'] = ch.get_properties()
-        self.pfprop_combo.state(['readonly'])
-        self.pfprop_combo.bind('<<ComboboxSelected>>', self.handle_pf_pfprop)
-        self.pfprop_combo.grid(column=1, row=0, columnspan=4, sticky=SIDES)
+        Note: The scrollbar of the results requires its own column,
+        so this is effectively a 4x6 grid for the placement of
+        widgets. You just need to remember that each widget actually
+        needs a wider span to account for the last column.
 
-        val_label = ttk.Label(frame, text='Value:', justify=tk.RIGHT)
-        val_label.grid(column=0, row=1, columnspan=1, sticky=SIDES)
-        self.pfval_combo = ttk.Combobox(frame, textvariable=self.pf_value)
-        self.pfval_combo.grid(column=1, row=1, columnspan=4, sticky=SIDES)
+        :param frame: The frame to build the grid on.
+        :param widgets: The parameters for the widgets to add to
+            the grid.
+        :return: The widget that should be highlighted when the tab
+            is selected or `None`.
+        :rtype: Any
+        """
+        frame.columnconfigure(0, weight=0)
+        frame.columnconfigure(1, weight=1)
+        frame.columnconfigure(2, weight=0)
+        frame.columnconfigure(3, weight=1)
+        frame.columnconfigure(4, weight=0)
+        frame.rowconfigure(1, weight=0)
+        frame.rowconfigure(2, weight=0)
+        frame.rowconfigure(3, weight=0)
+        frame.rowconfigure(4, weight=0)
+        frame.rowconfigure(5, weight=1)
+        cols, rows = 5, 6
+        return self.build_widgets(frame, cols, rows, widgets)
 
-        insensitive_label = ttk.Label(
-            frame, text='Ignore Case:', justify=tk.RIGHT
-        )
-        insensitive_label.grid(column=0, row=3, columnspan=1, sticky=SIDES)
-        insensitive_check = ttk.Checkbutton(
+    def build_widgets(self, frame, cols, rows, widgets):
+        """Populate the frame with widgets."""
+        col, row = 0, 1
+        wake_widget = None
+        for widget in widgets:
+            wake, kind, name, span, *params = widget
+            fn = getattr(self, f'add_{kind}')
+            obj = fn(frame, col, row, name, span, *params)
+            if wake:
+                wake_widget = obj
+            col += span
+            if col >= cols:
+                col = 0
+                row += 1
+        return wake_widget
+
+    def make_results(self, frame, row=3, colspan=1):
+        """Make the results field for a tab."""
+        text = tk.Text(frame, width=80, height=24, wrap='word')
+        ys = ttk.Scrollbar(
             frame,
-            variable=self.pf_insensitive,
-            onvalue='True',
-            offvalue='False'
+            orient='vertical',
+            command=text.yview
         )
-        insensitive_check.grid(column=1, row=3, columnspan=1, sticky=SIDES)
+        text['yscrollcommand'] = ys.set
+        text.grid(column=0, row=row, columnspan=colspan, sticky=ALL)
+        ys.grid(column=colspan, row=row, sticky=ENDS)
+        return text
 
-        regex_label = ttk.Label(frame, text='Regex:', justify=tk.RIGHT)
-        regex_label.grid(column=2, row=3, columnspan=1, sticky=SIDES)
-        regex_check = ttk.Checkbutton(
-            frame,
-            variable=self.pf_regex,
-            onvalue='True',
-            offvalue='False'
-        )
-        regex_check.grid(column=3, row=3, columnspan=1, sticky=SIDES)
-
-        pf_button = self.make_button(
-            frame,
-            'Filter by the Property Value',
-            self.pf,
-            row=4,
-            colspan=5
-        )
-        self.pad_kids(frame)
-
-    def init_sv(self, frame, num=None):
-        self.sv_result = self.make_results(frame)
-
-        self.config_simple_grid(frame)
-        up_button = self.make_button(
-            frame,
-            'List Standardized Variants',
-            self.sv
-        )
-        self.pad_kids(frame)
-
-    def init_up(self, frame, num=None):
-        self.up_result = self.make_results(frame)
-
-        self.config_simple_grid(frame)
-        up_button = self.make_button(
-            frame,
-            'List Unicode Properties',
-            self.up
-        )
-        self.pad_kids(frame)
-
-    def init_uv(self, frame, num=None):
-        self.uv_prop = tk.StringVar()
-        self.uv_result = self.make_results(frame)
-
-        self.config_simple_grid(frame)
-
-        form_combo = ttk.Combobox(frame, textvariable=self.uv_prop)
-        form_combo['values'] = ch.get_properties()
-        form_combo.state(['readonly'])
-        form_combo.grid(column=0, row=0, columnspan=2, sticky=SIDES)
-
-        uv_button = self.make_button(
-            frame,
-            'List Values of Unicode Property',
-            self.uv
-        )
-        self.pad_kids(frame)
+    def pad_kids(self, frame):
+        """Even out the padding between the widgets on a tab."""
+        for child in frame.winfo_children():
+            child.grid_configure(padx=2, pady=4)
 
     # Core commands.
     def cd(self, *args):
@@ -622,6 +702,7 @@ class Application:
 
     # Event handlers.
     def handle_notebook_tab_changed(self, event):
+        """Set the input focus when switching between tabs."""
         focus = self.root.focus_get()
         name = str(focus)
         frame = name.split('.')[-2]
@@ -630,151 +711,21 @@ class Application:
             entry.focus_set()
 
     def handle_return(self, *args):
+        """Execute the command when hitting return."""
         tab_id = self.book.select()
         tab = self.book.index(tab_id)
         cmd = self.tabs[tab]
         cmd()
 
     def handle_pf_pfprop(self, event):
+        """Populate the property values list when selecting a property
+        in the "pf" tab.
+        """
         prop = self.pf_prop.get()
         self.pfval_combo['values'] = ch.get_property_values(prop)
-
-    # Grid configuration.
-    def config_simple_grid(self, frame):
-        frame.columnconfigure(0, weight=1)
-        frame.columnconfigure(1, weight=0)
-        frame.rowconfigure(1, weight=0)
-        frame.rowconfigure(2, weight=0)
-        frame.rowconfigure(3, weight=1)
-
-    def config_five_params_grid(self, frame):
-        frame.columnconfigure(0, weight=0)
-        frame.columnconfigure(1, weight=1)
-        frame.columnconfigure(2, weight=0)
-        frame.columnconfigure(3, weight=1)
-        frame.columnconfigure(4, weight=0)
-        frame.rowconfigure(1, weight=0)
-        frame.rowconfigure(2, weight=0)
-        frame.rowconfigure(3, weight=0)
-        frame.rowconfigure(4, weight=0)
-        frame.rowconfigure(5, weight=1)
-
-    # Generic widget creation.
-    def make_button(
-        self,
-        frame,
-        name,
-        cmd,
-        col=0,
-        row=2,
-        colspan=2,
-        rowspan=1,
-        sticky=SIDES
-    ):
-        button = ttk.Button(frame, text=name, command=cmd)
-        button.grid(
-            column=col,
-            row=row,
-            columnspan=colspan,
-            rowspan=rowspan,
-            sticky=sticky
-        )
-        return button
-
-    def make_check(self, frame, name, col, row, colspan, value):
-        name = name.title()
-        label = ttk.Label(frame, text=name, justify=tk.RIGHT)
-        label.grid(column=col, row=row, columnspan=1, sticky=SIDES)
-        check = ttk.Checkbutton(
-            frame,
-            variable=value,
-            onvalue='True',
-            offvalue='False'
-        )
-        check.grid(
-            column=col + 1, row=row, columnspan=colspan, sticky=SIDES
-        )
-        return check
-
-    def make_combo(
-        self,
-        frame,
-        name,
-        col,
-        row,
-        colspan,
-        value,
-        options
-    ):
-        name = name.title()
-        label = ttk.Label(frame, text=f'{name}:', justify=tk.RIGHT)
-        label.grid(column=col, row=row, columnspan=1, sticky=SIDES)
-        combo = ttk.Combobox(frame, textvariable=value)
-        combo['values'] = options
-        combo.state(['readonly'])
-        combo.grid(column=col + 1, row=row, columnspan=colspan, sticky=SIDES)
-        return combo
-
-    def make_entry(
-        self,
-        frame,
-        value,
-        width=80,
-        col=0,
-        row=1,
-        colspan=2,
-        rowspan=1,
-        sticky=SIDES,
-        justify=tk.RIGHT,
-        name=''
-    ):
-        if name:
-            name = name.title()
-            label = ttk.Label(frame, text=name, justify=tk.RIGHT)
-            label.grid(column=col - 1, row=row, columnspan=1, sticky=SIDES)
-        entry = ttk.Entry(
-            frame,
-            width=width,
-            textvariable=value,
-            justify=tk.RIGHT
-        )
-        entry.grid(
-            column=col,
-            row=row,
-            columnspan=colspan,
-            rowspan=rowspan,
-            sticky=sticky
-        )
-        return entry
-
-    def make_results(
-        self,
-        frame,
-        row=3,
-        colspan=1
-    ):
-        text = tk.Text(frame, width=80, height=24, wrap='word')
-        ys = ttk.Scrollbar(
-            frame,
-            orient='vertical',
-            command=text.yview
-        )
-        text['yscrollcommand'] = ys.set
-        text.grid(column=0, row=row, columnspan=colspan, sticky=ALL)
-        ys.grid(column=colspan, row=row, sticky=ENDS)
-        return text
-
-    # Generic frame configuration.
-    def pad_kids(self, frame):
-        for child in frame.winfo_children():
-            child.grid_configure(padx=2, pady=4)
 
 
 def main():
     root = tk.Tk()
     app = Application(root)
     root.mainloop()
-
-
-if __name__ == '__main__':
-    main()
