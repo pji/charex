@@ -13,7 +13,7 @@ addopts = [
 
 [project]
 name = "charex"
-version = "0.2.1"
+version = "0.2.2"
 authors = [
     {name="Paul J. Iutzi", email="pji@mac.com"},
 ]
@@ -27,6 +27,7 @@ classifiers = [
 ]
 dependencies = [
     'flask',
+    'blessed',
 ]
 
 [project.urls]
