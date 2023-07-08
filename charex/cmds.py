@@ -210,24 +210,14 @@ def dt(c: str) -> Generator[str, None, None]:
             continue
         yield f'{"---":>{width}}  {kind.title()}'
         for prop in kmap[kind]:
-            try:
-                label, value = make_prop_line(prop, char)
-            except ValueError as ex:
-                print(f'{line}')
-            except KeyError:
-                raise KeyError(f'{detail}')
+            label, value = make_prop_line(prop, char)
             if value:
                 yield f'{label:>{width}}: {value}'
         yield ''
     for kind in omap:
         yield f'{"---":>{width}}  {kind.title()}'
         for rec in omap[kind]:
-            try:
-                label, value = rec
-            except ValueError as ex:
-                print(f'{line}')
-            except KeyError:
-                raise KeyError(f'{detail}')
+            label, value = rec
             if value:
                 yield f'{label:>{width}}: {value}'
         yield ''
