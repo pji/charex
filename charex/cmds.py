@@ -184,37 +184,46 @@ def dt(c: str) -> Generator[str, None, None]:
     # Gather the details for display.
     char = ch.Character(c)
     kmap = char.cache.kind_map
-    details = {}
-    for kind in kmap:
-        if kind == 'denormal_map' or 'standardize_variant':
-            continue
-        details[kind] = (make_prop_line(prop, char) for prop in kmap[kind])
+    omap = {
+        'encoding': (val for val in (
+            ('UTF-8', char.encode('utf8')),
+            ('UTF-16', char.encode('utf_16_be')),
+            ('UTF-32', char.encode('utf_32_be')),
+            ('C encoded', char.escape('c')),
+            ('URL encoded', char.escape('url')),
+            ('HTML encoded', char.escape('html')),
+        )),
+        'denormal': (val for val in (
+            ('Reverse Cfold', rev_normalize(char, 'casefold')),
+            ('Reverse NFC', rev_normalize(char, 'nfc')),
+            ('Reverse NFD', rev_normalize(char, 'nfd')),
+            ('Reverse NFKC', rev_normalize(char, 'nfkc')),
+            ('Reverse NFKD', rev_normalize(char, 'nfkd')),
+        ))
+    }
 
-    details['encoding'] = (val for val in (
-        ('UTF-8', char.encode('utf8')),
-        ('UTF-16', char.encode('utf_16_be')),
-        ('UTF-32', char.encode('utf_32_be')),
-        ('C encoded', char.escape('c')),
-        ('URL encoded', char.escape('url')),
-        ('HTML encoded', char.escape('html')),
-    ))
-    details['denormal'] = (val for val in (
-        ('Reverse Cfold', rev_normalize(char, 'casefold')),
-        ('Reverse NFC', rev_normalize(char, 'nfc')),
-        ('Reverse NFD', rev_normalize(char, 'nfd')),
-        ('Reverse NFKC', rev_normalize(char, 'nfkc')),
-        ('Reverse NFKD', rev_normalize(char, 'nfkd')),
-    ))
-
-    # Display the details.
+    # Yield the display.
     yield (' ' * 10 + char.summarize())
     yield (' ' * 10 + '-' * 60)
-    for detail in details:
-        if detail:
-            yield f'{"---":>{width}}  {detail.title()}'
-        for line in details[detail]:
+    for kind in kmap:
+        if kind == 'denormal_map' or kind == 'standardized_variant':
+            continue
+        yield f'{"---":>{width}}  {kind.title()}'
+        for prop in kmap[kind]:
             try:
-                label, value = line
+                label, value = make_prop_line(prop, char)
+            except ValueError as ex:
+                print(f'{line}')
+            except KeyError:
+                raise KeyError(f'{detail}')
+            if value:
+                yield f'{label:>{width}}: {value}'
+        yield ''
+    for kind in omap:
+        yield f'{"---":>{width}}  {kind.title()}'
+        for rec in omap[kind]:
+            try:
+                label, value = rec
             except ValueError as ex:
                 print(f'{line}')
             except KeyError:
