@@ -632,3 +632,29 @@ def test_character_summarize():
     exp = 'a U+0061 (LATIN SMALL LETTER A)'
     char = c.Character('a')
     assert char.summarize() == exp
+
+
+# Test utility functions.
+def test_validate_normalization_form_valid():
+    """Given a :class:`str` that is a valid normalization form,
+    :func:`validate_normalization_form` should return that form.
+    """
+    exp = 'NFC'
+    assert exp == c.validate_normalization_form(exp)
+
+
+def test_validate_normalization_form_lower_case():
+    """Given a :class:`str` that is a valid normalization form,
+    :func:`validate_normalization_form` should return that form.
+    """
+    exp = 'NFC'
+    assert exp == c.validate_normalization_form(exp.lower())
+
+
+def test_validate_normalization_invalid():
+    """Given a :class:`str` that is a valid normalization form,
+    :func:`validate_normalization_form` should return that form.
+    """
+    exp = c.InvalidNormalizationFormError
+    with pytest.raises(exp):
+        _ = c.validate_normalization_form('spam')

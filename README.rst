@@ -156,3 +156,16 @@ tests:
 *   Install the development dependencies: `pipenv install --dev`
 *   To run just the unit tests: `make test`
 *   To run the full test suite: `make pre`
+
+
+Common Problems
+===============
+
+`ModuleNotFoundError: No module name '_tkinter'` error
+------------------------------------------------------
+If you get the above error when running `charex` or its tests, it's
+likely your Python install doesn't have `tkinter` linked. How you
+fix it depends upon your Python install. If you are using Python 3.13 
+installed with `homebrew` on macOS, you can probably fix it with::
+
+    brew install python-tk@3.13

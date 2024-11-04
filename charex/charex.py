@@ -5,12 +5,26 @@ charex
 Tools for exploring unicode characters and other character sets.
 """
 from collections.abc import Generator, Sequence
+from typing import cast, Literal
 import re
 import unicodedata as ucd
 
 from charex import db
 from charex import util
 from charex.escape import schemes
+
+
+# Global values.
+normalization_forms = ['NFC', 'NFD', 'NFKC', 'NFKD']
+
+
+# Common types.
+NormForms = Literal['NFC', 'NFD', 'NFKC', 'NFKD']
+
+
+# Exceptions.
+class InvalidNormalizationFormError(ValueError):
+    """The given string was not a valid normalization form."""
 
 
 # Classes.
@@ -237,7 +251,8 @@ class Character:
             True
 
         """
-        return ucd.is_normalized(form.upper(), self.value)
+        valid = validate_normalization_form(form)
+        return ucd.is_normalized(valid, self.value)
 
     def normalize(self, form: str) -> str:
         """Normalize the character using the given form.
@@ -258,7 +273,8 @@ class Character:
             '<'
 
         """
-        return ucd.normalize(form.upper(), self.value)
+        valid = validate_normalization_form(form)
+        return ucd.normalize(valid, self.value)
 
     def summarize(self) -> str:
         """Return a summary of the character's information.
@@ -549,3 +565,27 @@ def get_property_values(prop: str) -> tuple[str, ...]:
         if propvals[key] not in result:
             result.append(propvals[key])
     return tuple(val.alias for val in result)
+
+
+def validate_normalization_form(form: str) -> NormForms:
+    """Validate whether the given data is a normalization form.
+
+    :param form: A :mod:`str` that should be a normalization form.
+    :return: A validated normalization form.
+    :rtype: str
+
+    Usage
+    -----
+    To validate a normalization form::
+
+        >>> form = 'NFD'
+        >>> form == validate_normalization_form(form)
+        True
+
+    """
+    normal = form.upper()
+    if normal in normalization_forms:
+        return cast(NormForms, normal)
+    else:
+        msg = f'{form} is not a valid normalization form.'
+        raise InvalidNormalizationFormError(msg)
