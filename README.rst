@@ -134,9 +134,17 @@ The following features are planned for the v0.2.1 or later releases:
 *   (Done.) Move the resource file registry to `sources.json`.
 *   (Done.) Escaper for tag characters (U+E00xx range).
 *   Move the package into a `src` folder.
+*   Check version of Unicode supported by:
+
+    *   `charex`
+    *   Current running Python
+    *   Current running OS
+
 *   Support for more versions of Unicode.
+
     *   Add support for Unicode 15.1.0 due to Python 3.13.
     *   Add support for Unicode 16.
+
 *   Keep local copy of unicode data.
 *   Emoji combiner.
 *   Basic doctests for all public classes and functions.
