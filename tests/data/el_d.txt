@@ -47,6 +47,12 @@ sql      Escape scheme for MySQL encoding, based on the MySQL Specification.
 sqldq    Escape scheme for MySQL encoding, based on the MySQL Specification.
          This escapes qoutes by doubling them rather than using a backslash.
 
+tag      Escape scheme for tag characters, which are nonprinting characters
+         used in identifying regional flags in Emoji. It's been found they can
+         also be interpreted as their ASCII equivalents by large language
+         models. This escape will only change characters that have an
+         equivalent tag character, leaving any other characters the same.
+
 url      Escape scheme for URL percent encoding.
 
 

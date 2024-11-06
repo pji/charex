@@ -4,6 +4,8 @@ test_escape
 
 Unit tests for :mod:`charex.escape`.
 """
+import pytest as pt
+
 from charex import escape as esc
 
 
@@ -236,7 +238,7 @@ def test_escape_jsonu_4_byte_character():
 
 # Test escape_smol.
 def test_escape_smol():
-    """Give a character and a codec, return the superscript
+    """Given a character and a codec, return the superscript
     Unicode character version of the given character. Note: the
     codec doesn't do anything. It's just here for compatibility.
     """
@@ -262,6 +264,25 @@ def test_escape_sqldq():
     """
     exp = r'""'
     assert esc.escape_sqldq('\u0022', '') == exp
+
+
+# Test escape_tag.
+def test_escape_tag():
+    """Given a character and a codec, return the Unicode tag character
+    version of the given character. Note: the codec doesn't do anything.
+    It's just here for compatibility.
+    """
+    exp = '\U000e0061'
+    assert esc.escape_tag('a', '') == exp
+
+
+def test_escape_tag_invalid():
+    """Given an a character without a tag equivalent and a codec, return
+    the given character. Note: the codec doesn't do anything.
+    It's just here for compatibility.
+    """
+    exp = '\u0081'
+    assert esc.escape_tag(exp, '') == exp
 
 
 # Test escape_url.

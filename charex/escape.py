@@ -576,6 +576,26 @@ def escape_sqldq(char: str, codec: str) -> str:
         return char
 
 
+@reg_escape('tag')
+def escape_tag(char: str, codec: str) -> str:
+    """Escape scheme for tag characters, which are nonprinting characters
+    used in identifying regional flags in Emoji. It's been found they can
+    also be interpreted as their ASCII equivalents by large language models.
+    This escape will only change characters that have an equivalent tag
+    character, leaving any other characters the same.
+
+    :param char: The character to escape.
+    :param codec: The character set to use when encoding the character.
+    :return: The escaped character as a :class:`str`.
+    :rtype: str
+    """
+    n = ord(char)
+    if (n >= 0x20 and n < 0x80):
+        n += 0xE0000
+        return util.to_char(n)
+    return char
+
+
 @reg_escape('url')
 def escape_url(char: str, codec: str) -> str:
     """Escape scheme for URL percent encoding.
