@@ -173,6 +173,13 @@ class UCD:
 
 
 @dataclass(repr=True, eq=True)
+class URL:
+    """A URL used in the Unicode standard."""
+    name: str
+    address: str
+
+
+@dataclass(repr=True, eq=True)
 class ValueAlias:
     property: str
     alias: str
@@ -198,6 +205,17 @@ class Variant:
     code: str = ''
     description: str = ''
     environments: str = ''
+
+
+@dataclass(repr=True, eq=True)
+class Version:
+    """A version of Unicode."""
+    version: tuple[int, ...]
+    documentation: URL
+    components: URL | None
+    year: int | None
+    release: tuple[URL, ...] | None
+    other: URL | None
 
 
 # Common data types.

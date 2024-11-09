@@ -133,7 +133,8 @@ The following features are planned for the v0.2.1 or later releases:
 *   (Done.) Move all Y/N properties to simple lists.
 *   (Done.) Move the resource file registry to `sources.json`.
 *   (Done.) Escaper for tag characters (U+E00xx range).
-*   Move the package into a `src` folder.
+*   (Done.) Move the package into a `src` folder.
+*   List versions of Unicode.
 *   Check version of Unicode supported by:
 
     *   `charex`

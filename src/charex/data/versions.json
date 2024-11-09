@@ -1,0 +1,865 @@
+[
+    {
+        "version": [
+            16,
+            0,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 16.0.0",
+            "address": "https://www.unicode.org/versions/Unicode16.0.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/Unicode16.0.0/#Components"
+        },
+        "year": 2024,
+        "release": [
+            {
+                "name": "16.0.0 Blog Post",
+                "address": "https://blog.unicode.org/2024/09/announcing-unicode-standard-version-160.html"
+            }
+        ],
+        "other": null,
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            15,
+            1,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 15.1.0",
+            "address": "https://www.unicode.org/versions/Unicode15.1.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-15.1.0.html"
+        },
+        "year": 2023,
+        "release": [
+            {
+                "name": "15.1.0 Blog Post",
+                "address": "https://blog.unicode.org/2023/09/announcing-unicode-standard-version-151.html"
+            }
+        ],
+        "other": null,
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            15,
+            0,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 15.0.0",
+            "address": "https://www.unicode.org/versions/Unicode15.0.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-15.0.0.html"
+        },
+        "year": 2022,
+        "release": [
+            {
+                "name": "15.0.0 Blog Post",
+                "address": "https://blog.unicode.org/2022/09/announcing-unicode-standard-version-150.html"
+            }
+        ],
+        "other": null,
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            14,
+            0,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 14.0.0",
+            "address": "https://www.unicode.org/versions/Unicode14.0.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-14.0.0.html"
+        },
+        "year": 2021,
+        "release": [
+            {
+                "name": "14.0.0 Blog Post",
+                "address": "https://blog.unicode.org/2021/09/announcing-unicode-standard-version-140.html"
+            }
+        ],
+        "other": {
+            "name": "POD Publication",
+            "address": "https://blog.unicode.org/2022/01/unicode-140-paperback-available.html"
+        },
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            13,
+            0,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 13.0.0",
+            "address": "https://www.unicode.org/versions/Unicode13.0.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-13.0.0.html"
+        },
+        "year": 2020,
+        "release": [
+            {
+                "name": "13.0.0 Blog Post",
+                "address": "https://blog.unicode.org/2020/03/announcing-unicode-standard-version-130.html"
+            }
+        ],
+        "other": {
+            "name": "POD Publication",
+            "address": "https://blog.unicode.org/2020/06/unicode-130-paperback-available.html"
+        },
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            12,
+            1,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 12.1.0",
+            "address": "https://www.unicode.org/versions/Unicode12.1.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-12.1.0.html"
+        },
+        "year": 2019,
+        "release": [
+            {
+                "name": "12.1.0 Blog Post",
+                "address": "https://blog.unicode.org/2019/05/unicode-12-1-en.html"
+            },
+            {
+                "name": "in Japanese",
+                "address": "https://blog.unicode.org/2019/05/unicode-12-1-jp.html"
+            }
+        ],
+        "other": null,
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            12,
+            0,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 12.0.0",
+            "address": "https://www.unicode.org/versions/Unicode12.0.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-12.0.0.html"
+        },
+        "year": 2019,
+        "release": [
+            {
+                "name": "12.0.0 Blog Post",
+                "address": "https://blog.unicode.org/2019/03/announcing-unicode-standard-version-120.html"
+            }
+        ],
+        "other": {
+            "name": "POD Publication",
+            "address": "https://blog.unicode.org/2019/06/unicode-120-paperback-available.html"
+        },
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            11,
+            0,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 11.0.0",
+            "address": "https://www.unicode.org/versions/Unicode11.0.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-11.0.0.html"
+        },
+        "year": 2018,
+        "release": [
+            {
+                "name": "11.0.0 Blog Post",
+                "address": "https://blog.unicode.org/2018/06/announcing-unicode-standard-version-110.html"
+            }
+        ],
+        "other": {
+            "name": "POD Publication",
+            "address": "https://blog.unicode.org/2018/07/unicode-110-paperback-available.html"
+        },
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            10,
+            0,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 10.0.0",
+            "address": "https://www.unicode.org/versions/Unicode10.0.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-10.0.0.html"
+        },
+        "year": 2017,
+        "release": [
+            {
+                "name": "10.0.0 Blog Post",
+                "address": "https://blog.unicode.org/2017/06/announcing-unicode-standard-version-100.html"
+            }
+        ],
+        "other": {
+            "name": "POD Publication",
+            "address": "https://blog.unicode.org/2017/08/unicode-100-paperback-available.html"
+        },
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            9,
+            0,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 9.0.0",
+            "address": "https://www.unicode.org/versions/Unicode9.0.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-9.0.0.html"
+        },
+        "year": 2016,
+        "release": [
+            {
+                "name": "9.0.0 Blog Post",
+                "address": "https://blog.unicode.org/2016/06/announcing-unicode-standard-version-90.html"
+            }
+        ],
+        "other": {
+            "name": "Core Spec Publication",
+            "address": "https://blog.unicode.org/2016/07/unicode-version-90-complete-text-of.html"
+        },
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            8,
+            0,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 8.0.0",
+            "address": "https://www.unicode.org/versions/Unicode8.0.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-8.0.0.html"
+        },
+        "year": 2015,
+        "release": [
+            {
+                "name": "8.0.0 Blog Post",
+                "address": "https://blog.unicode.org/2015/06/announcing-unicode-standard-version-80.html"
+            }
+        ],
+        "other": {
+            "name": "Core Spec Publication",
+            "address": "https://blog.unicode.org/2015/08/unicode-version-80-complete-text-of.html"
+        },
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            7,
+            0,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 7.0.0",
+            "address": "https://www.unicode.org/versions/Unicode7.0.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-7.0.0.html"
+        },
+        "year": 2014,
+        "release": [
+            {
+                "name": "7.0.0 Blog Post",
+                "address": "https://blog.unicode.org/2014/06/announcing-unicode-standard-version-70.html"
+            }
+        ],
+        "other": {
+            "name": "Core Spec Publication",
+            "address": "https://blog.unicode.org/2014/10/unicode-version-70-complete-text-of.html"
+        },
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            6,
+            3,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 6.3.0",
+            "address": "https://www.unicode.org/versions/Unicode6.3.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-6.3.0.html"
+        },
+        "year": 2013,
+        "release": [
+            {
+                "name": "6.3.0 Blog Post",
+                "address": "https://blog.unicode.org/2013/09/announcing-unicode-standard-version-63.html"
+            }
+        ],
+        "other": null,
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            6,
+            2,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 6.2.0",
+            "address": "https://www.unicode.org/versions/Unicode6.2.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-6.2.0.html"
+        },
+        "year": 2012,
+        "release": [
+            {
+                "name": "6.2.0 Blog Post",
+                "address": "https://blog.unicode.org/2012/09/announcing-unicode-standard-version-62.html"
+            }
+        ],
+        "other": {
+            "name": "Core Spec Publication",
+            "address": "https://blog.unicode.org/2012/11/the-unicode-6.html"
+        },
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            6,
+            1,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 6.1.0",
+            "address": "https://www.unicode.org/versions/Unicode6.1.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-6.1.0.html"
+        },
+        "year": 2012,
+        "release": [
+            {
+                "name": "6.1.0 Blog Post",
+                "address": "https://blog.unicode.org/2012/01/announcing-unicode-standard-version-61.html"
+            }
+        ],
+        "other": {
+            "name": "Core Spec Publication",
+            "address": "https://blog.unicode.org/2012/04/unicode-version-61-complete-text-of.html"
+        },
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            6,
+            0,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 6.0.0",
+            "address": "https://www.unicode.org/versions/Unicode6.0.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-6.0.0.html"
+        },
+        "year": 2010,
+        "release": [
+            {
+                "name": "6.0.0 Blog Post",
+                "address": "https://blog.unicode.org/2010/10/unicode-version-60-support-for-popular.html"
+            }
+        ],
+        "other": {
+            "name": "Core Spec Publication",
+            "address": "https://blog.unicode.org/2011/02/unicode-version-60-complete-text-of.html"
+        },
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            5,
+            2,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 5.2.0",
+            "address": "https://www.unicode.org/versions/Unicode5.2.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-5.2.0.html"
+        },
+        "year": 2009,
+        "release": [
+            {
+                "name": "5.2.0 Blog Post",
+                "address": "https://blog.unicode.org/2009/10/unicode-announcement-unicode-520.html"
+            }
+        ],
+        "other": null,
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            5,
+            1,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 5.1.0",
+            "address": "https://www.unicode.org/versions/Unicode5.1.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-5.1.0.html"
+        },
+        "year": 2008,
+        "release": [
+            {
+                "name": "5.1.0 Press Release",
+                "address": "https://www.unicode.org/announcements/pr-5.1.html"
+            }
+        ],
+        "other": null,
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            5,
+            0,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 5.0.0",
+            "address": "https://www.unicode.org/versions/Unicode5.0.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-5.0.0.html"
+        },
+        "year": 2006,
+        "release": [
+            {
+                "name": "5.0.0 Press Release",
+                "address": "https://www.unicode.org/announcements/pr-ucd5.0.html"
+            }
+        ],
+        "other": {
+            "name": "Book Publication",
+            "address": "https://www.unicode.org/announcements/pr-5.0.html"
+        },
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            4,
+            1,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 4.1.0",
+            "address": "https://www.unicode.org/versions/Unicode4.1.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-4.1.0.html"
+        },
+        "year": 2005,
+        "release": [
+            {
+                "name": "4.1.0 Press Release",
+                "address": "https://www.unicode.org/announcements/pr-4.1.html"
+            }
+        ],
+        "other": null,
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            4,
+            0,
+            1
+        ],
+        "documentation": {
+            "name": "Unicode 4.0.1",
+            "address": "https://www.unicode.org/versions/Unicode4.0.1/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-4.0.1.html"
+        },
+        "year": 2004,
+        "release": [
+            {
+                "name": "4.0.1 Press Release",
+                "address": "https://www.unicode.org/announcements/pr-401.html"
+            }
+        ],
+        "other": null,
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            4,
+            0,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 4.0.0",
+            "address": "https://www.unicode.org/versions/Unicode4.0.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-4.0.0.html"
+        },
+        "year": 2003,
+        "release": [
+            {
+                "name": "4.0.0 Press Release",
+                "address": "https://www.unicode.org/announcements/pr-4.0.html"
+            }
+        ],
+        "other": {
+            "name": "Book Publication",
+            "address": "https://www.unicode.org/announcements/pr-4.0Book.html"
+        },
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            3,
+            2,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 3.2.0",
+            "address": "https://www.unicode.org/versions/Unicode3.2.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-3.2.0.html"
+        },
+        "year": 2002,
+        "release": [
+            {
+                "name": "3.2.0 Press Release",
+                "address": "https://www.unicode.org/announcements/pr-3.2.html"
+            }
+        ],
+        "other": null,
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            3,
+            1,
+            1
+        ],
+        "documentation": {
+            "name": "Unicode 3.1.1",
+            "address": "https://www.unicode.org/versions/Unicode3.1.1/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-3.1.1.html"
+        },
+        "year": 2001,
+        "release": null,
+        "other": null,
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            3,
+            1,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 3.1.0",
+            "address": "https://www.unicode.org/versions/Unicode3.1.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-3.1.0.html"
+        },
+        "year": 2001,
+        "release": null,
+        "other": null,
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            3,
+            0,
+            1
+        ],
+        "documentation": {
+            "name": "Unicode 3.0.1",
+            "address": "https://www.unicode.org/versions/Unicode3.0.1/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-3.0.1.html"
+        },
+        "year": 2000,
+        "release": null,
+        "other": null,
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            3,
+            0,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 3.0.0",
+            "address": "https://www.unicode.org/versions/Unicode3.0.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-3.0.0.html"
+        },
+        "year": 1999,
+        "release": [
+            {
+                "name": "3.0.0 Press Release",
+                "address": "https://www.unicode.org/announcements/pr-3.0.html"
+            }
+        ],
+        "other": null,
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            2,
+            1,
+            9
+        ],
+        "documentation": {
+            "name": "Unicode 2.1.9",
+            "address": "https://www.unicode.org/versions/Unicode2.1.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-2.1.9.html"
+        },
+        "year": 1999,
+        "release": null,
+        "other": null,
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            2,
+            1,
+            8
+        ],
+        "documentation": {
+            "name": "Unicode 2.1.8",
+            "address": "https://www.unicode.org/versions/Unicode2.1.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-2.1.8.html"
+        },
+        "year": 1998,
+        "release": null,
+        "other": null,
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            2,
+            1,
+            5
+        ],
+        "documentation": {
+            "name": "Unicode 2.1.5",
+            "address": "https://www.unicode.org/versions/Unicode2.1.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-2.1.5.html"
+        },
+        "year": 1998,
+        "release": null,
+        "other": null,
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            2,
+            1,
+            2
+        ],
+        "documentation": {
+            "name": "Unicode 2.1.2",
+            "address": "https://www.unicode.org/versions/Unicode2.1.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-2.1.2.html"
+        },
+        "year": 1998,
+        "release": null,
+        "other": null,
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            2,
+            1,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 2.1.0",
+            "address": "https://www.unicode.org/versions/Unicode2.1.0/"
+        },
+        "components": null,
+        "year": null,
+        "release": null,
+        "other": null,
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            2,
+            0,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 2.0.0",
+            "address": "https://www.unicode.org/versions/Unicode2.0.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-2.0.0.html"
+        },
+        "year": 1996,
+        "release": null,
+        "other": null,
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            1,
+            1,
+            5
+        ],
+        "documentation": {
+            "name": "Unicode 1.1.5",
+            "address": "https://www.unicode.org/versions/Unicode1.1.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-1.1.5.html"
+        },
+        "year": 1995,
+        "release": null,
+        "other": null,
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            1,
+            1,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 1.1.0",
+            "address": "https://www.unicode.org/versions/Unicode1.1.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-1.1.0.html"
+        },
+        "year": 1993,
+        "release": null,
+        "other": null,
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            1,
+            0,
+            1
+        ],
+        "documentation": {
+            "name": "Unicode 1.0.1",
+            "address": "https://www.unicode.org/versions/Unicode1.0.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-1.0.1.html"
+        },
+        "year": 1992,
+        "release": null,
+        "other": null,
+        "__class__": "Version"
+    },
+    {
+        "version": [
+            1,
+            0,
+            0
+        ],
+        "documentation": {
+            "name": "Unicode 1.0.0",
+            "address": "https://www.unicode.org/versions/Unicode1.0.0/"
+        },
+        "components": {
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-1.0.0.html"
+        },
+        "year": 1991,
+        "release": null,
+        "other": null,
+        "__class__": "Version"
+    }
+]

@@ -13,28 +13,7 @@ from zipfile import ZipFile
 
 from charex.normal import build_denormalization_map
 from requests import get
-
-
-def pull_data(url: str, path: Path) -> bool:
-    """Pull the data from the given URL, returning whether the
-    pull was successful.
-    """
-    result = False
-
-    try:
-        resp = get(url)
-        if resp.status_code == 200 and resp.text:
-            if url.endswith('.zip'):
-                with open(path, 'wb') as fh:
-                    fh.write(resp.content)
-            else:
-                with open(path, 'w') as fh:
-                    fh.write(resp.text)
-            result = True
-    except Exception as ex:
-        print(f'{type(ex)}({ex})...', end='')
-
-    return result
+from util.rebuild import pull_data
 
 
 def build_map(formkey: str, path: Path) -> bool:

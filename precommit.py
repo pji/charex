@@ -179,7 +179,8 @@ def get_module_dir():
     """Get the directory of the module."""
     cwd = os.getcwd()
     dirs = cwd.split('/')
-    return f'{cwd}/{dirs[-1]}'
+    return f'{cwd}/src'
+#     return f'{cwd}/{dirs[-1]}'
 
 
 def in_ignore(name, ignore):
