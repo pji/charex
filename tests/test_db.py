@@ -4,9 +4,15 @@ test_db
 
 Unit tests for :mod:`charex.db`.
 """
+from pathlib import Path
+
 import pytest
 
 from charex import db
+
+
+# Configuration.
+TEST_DATA = Path('tests/data')
 
 
 # Test alias_property.
@@ -48,6 +54,7 @@ def test_cache():
     assert '0009' in db.cache.proplist['wspace']
     assert db.cache.unicodedata['0020'].na == 'SPACE'
     assert db.cache.rev_nfc['00c0'] == ('A\u0300',)
+    assert db.cache.versions['1.0.0'].version == (1, 0, 0)
 
 
 # Test get_denormal_map_for_code.
@@ -63,6 +70,52 @@ def test_get_denormal_map_for_code():
     assert db.get_denormal_map_for_code('rev_nfc', code) == (
         'A\u030a', '\u212b',
     )
+
+
+# Test deserialize.
+def test_deserialize():
+    """Given a :class:`charex.db.PathInfo` object,
+    :func:`charex.db.deserialize` should open the
+    JSON file at the path in the object and deserialize
+    the JSON data as Python objects.
+    """
+    exp = [
+        db.Version(
+            (1, 0, 1),
+            db.URL(
+                'Unicode 1.0.1',
+                'https://www.unicode.org/versions/Unicode1.0.1/',
+            ),
+            db.URL(
+                'Components',
+                'https://www.unicode.org/versions/components-1.0.1.html',
+            ),
+            1991,
+            None,
+            None
+        ),
+        db.Version(
+            (1, 0, 0),
+            db.URL(
+                'Unicode 1.0.0',
+                'https://www.unicode.org/versions/Unicode1.0.0/',
+            ),
+            db.URL(
+                'Components',
+                'https://www.unicode.org/versions/components-1.0.0.html',
+            ),
+            1991,
+            None,
+            None
+        ),
+    ]
+    info = db.PathInfo(
+        path='deserialize_valid.json',
+        archive='',
+        kind='serialized',
+        delim=''
+    )
+    assert db.deserialize(info, TEST_DATA) == exp
 
 
 # Test get_named_sequences:

@@ -1,0 +1,36 @@
+[
+    {
+        "__class__": "Version",
+        "version": [1, 0, 1],
+        "documentation": {
+            "__class__": "URL",
+            "name": "Unicode 1.0.1",
+            "address": "https://www.unicode.org/versions/Unicode1.0.1/"
+        },
+        "components": {
+            "__class__": "URL",
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-1.0.1.html"
+        },
+        "year": 1991,
+        "release": null,
+        "other": null
+    },
+    {
+        "__class__": "Version",
+        "version": [1, 0, 0],
+        "documentation": {
+            "__class__": "URL",
+            "name": "Unicode 1.0.0",
+            "address": "https://www.unicode.org/versions/Unicode1.0.0/"
+        },
+        "components": {
+            "__class__": "URL",
+            "name": "Components",
+            "address": "https://www.unicode.org/versions/components-1.0.0.html"
+        },
+        "year": 1991,
+        "release": null,
+        "other": null
+    }
+]

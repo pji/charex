@@ -294,5 +294,12 @@
         "Denormal.zip",
         "denormal_map",
         ""
+    ],
+    
+    "versions": [
+        "versions.json",
+        "",
+        "versions",
+        ""
     ]
 }

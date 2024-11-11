@@ -9,7 +9,9 @@ from collections import defaultdict
 from collections.abc import Callable, Generator, Sequence
 from dataclasses import dataclass
 from importlib.resources import as_file, files
-from json import load, loads
+from importlib.resources.abc import Traversable
+from json import JSONDecoder, load, loads
+from pathlib import Path
 from typing import Any, TypeVar
 from zipfile import ZipFile
 
@@ -224,6 +226,7 @@ PathMap = dict[str, PathInfo]
 PropMap = dict[str, str]
 Record = tuple[str, ...]
 Records = tuple[Record, ...]
+Serializable = Version | URL
 T = TypeVar('T')
 
 # File data structure types.
@@ -260,6 +263,13 @@ class Default:
 
     def __call__(self) -> str:
         return self.value
+
+
+# Mapping of classes allowed to be deserialized.
+SERIALIZATION_MAP = {
+    'Version': Version,
+    'URL': URL,
+}
 
 
 # Query data.
@@ -453,6 +463,31 @@ def get_standardized_variant() -> tuple[Variant, ...]:
 
 
 # Generic load data file.
+def charex_decoder(item):
+    """A customer object hook for :mod:`charex` serializable objects."""
+    if '__class__' not in item:
+        return item
+    if item['__class__'] not in SERIALIZATION_MAP:
+        return item
+    cls = SERIALIZATION_MAP[item['__class__']]
+    del item['__class__']
+    for key in item:
+        if isinstance(item[key], list):
+            item[key] = tuple(item[key])
+    return cls(**item)
+
+
+def deserialize(
+    info: PathInfo,
+    pkg_data: Traversable | Path = PKG_DATA
+) -> list[Serializable]:
+    """Deserialize a file of stored data."""
+    pkg_data = Path(str(pkg_data))
+    with open(pkg_data / info.path) as fh:
+        data = load(fh, object_hook=charex_decoder)
+    return data
+
+
 def load_defined_record(
     info: PathInfo,
     rectype: Callable[[], T]
@@ -747,6 +782,13 @@ def load_value_range(info: PathInfo) -> ValueRanges:
     return tuple(data)
 
 
+def load_versions(info: PathInfo) -> dict[str, Version]:
+    """Load a data file containing a list of Unicode versions."""
+    result = deserialize(info, PKG_DATA)
+    versions = [item for item in result if isinstance(item, Version)]
+    return {'.'.join(str(n) for n in v.version): v for v in versions}
+
+
 # Basic file reading.
 def load_path_map() -> PathMap:
     """Load the map of Unicode data files to the archive they are
@@ -958,6 +1000,7 @@ class FileCache:
         self.__value_aliases: ValueAliases = dict()
         self.__value_names: ValueAliases = dict()
         self.__value_range: dict[str, ValueRanges] = dict()
+        self.__versions: dict[str, Version] = dict()
 
         self.by_kind = {
             'standardized_variant': Kind(
@@ -1045,6 +1088,11 @@ class FileCache:
                 self.__emoji_source,
                 'update'
             ),
+            'versions': Kind(
+                load_versions,
+                self.__versions,
+                'load',
+            ),
         }
 
     def __getattr__(self, name:str):
@@ -1062,6 +1110,12 @@ class FileCache:
                     loaded = kind.load(pi)
                     kind.cache[name] = loaded
                 return kind.cache[name]
+            
+            elif kind.action == 'load':
+                if not kind.cache:
+                    loaded = kind.load(pi)
+                    kind.cache = loaded
+                return kind.cache
 
         except KeyError:
             if name not in self.path_map:
@@ -1141,9 +1195,5 @@ cache = FileCache()
 
 
 if __name__ == '__main__':
-    pmap = cache.property_name
-    for prop in pmap:
-        prop = prop.casefold()
-        if prop.startswith('a'):
-            print(prop)
-    print(pmap['ahex'])
+    for key in cache.versions:
+        print(key)
