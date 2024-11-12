@@ -386,6 +386,24 @@ class Application:
         self.pad_kids(frame)
         self.wake_focus[f'!frame{num}'] = wake_widget
 
+    def init_vn(self, frame, num=None):
+        """Initialize the "vn" tab.
+
+        :param frame: The frame for the tab.
+        :param num: The number of the frame.
+        :return: None.
+        :rtype: NoneType
+        """
+        # The data for the interactive fields in the tab.
+        self.vn_result = self.make_results(frame)
+
+        # Tab layout.
+        widgets = [
+            [True, 'button', 'list Unicode versions', 2, self.vn],
+        ]
+        wake_widget = self.build_2x3_grid(frame, widgets)
+        self.pad_kids(frame)
+
     # Layout methods.
     def add_button(self, frame, col, row, name, span, cmd):
         """Add a button widget to the frame.
@@ -700,12 +718,20 @@ class Application:
         for line in cmds.uv(prop, True):
             self.uv_result.insert('end', line + '\n\n')
 
+    def vn(self, *args):
+        self.vn_result.delete('0.0', 'end')
+        for line in cmds.vn():
+            self.vn_result.insert('end', line + '\n')
+
     # Event handlers.
     def handle_notebook_tab_changed(self, event):
         """Set the input focus when switching between tabs."""
         focus = self.root.focus_get()
         name = str(focus)
-        frame = name.split('.')[-2]
+        parts = name.split('.')
+        frame = name
+        if len(parts) > 1:
+            frame = name.split('.')[-2]
         if frame in self.wake_focus:
             entry = self.wake_focus[frame]
             entry.focus_set()

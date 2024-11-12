@@ -292,6 +292,18 @@ def mode_uv(args: Namespace) -> None:
     print()
 
 
+def mode_vn(args: Namespace) -> None:
+    """Show the list of Unicode versions.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    for line in cmds.vn():
+        print(line)
+    print()
+
+
 # Command parsing.
 def build_parser() -> ArgumentParser:
     """Build the argument parser.
@@ -828,6 +840,23 @@ def parse_uv(spa: _SubParsersAction) -> None:
     sp.set_defaults(func=mode_uv)
 
 
+@subparser
+def parse_vn(spa: _SubParsersAction) -> None:
+    """Add the vn mode subparser.
+
+    :param spa: The subparser action used to add a new subparser to
+        the main parser.
+    :return: None.
+    :rtype: NoneType
+    """
+    sp = spa.add_parser(
+        'vn',
+        aliases=['v', 'ver', 'vers', 'versions', 'unicode_versions',],
+        description='Show the list of Unicode versions.'
+    )
+    sp.set_defaults(func=mode_vn)
+
+
 # Command line invocation.
 def invoke(
     cmd: str | None = None,
@@ -979,6 +1008,11 @@ class Shell(Cmd):
         print()
         return True
 
+    def do_vn(self, arg):
+        """Show the list of Unicode versions."""
+        cmd = f'vn'
+        self._run_cmd(cmd)
+
     # Command help.
     def help_cd(self):
         """Help for the cd command."""
@@ -1060,6 +1094,11 @@ class Shell(Cmd):
     def help_uv(self):
         """Help for the uv command."""
         cmd = f'uv -h'
+        self._run_cmd(cmd)
+
+    def help_vn(self):
+        """Help for the vn command."""
+        cmd = f'vn -h'
         self._run_cmd(cmd)
 
     def help_xt(self):

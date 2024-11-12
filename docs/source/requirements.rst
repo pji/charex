@@ -28,9 +28,10 @@ The following are the functional requirements for :mod:`charex`. It can:
 *   Show all code points that normalize to a given code point,
 *   Show escaped versions of a given code point,
 *   Show full details for a given code point,
-*   Guess the code point for a given text.
-*   Show the denormalized forms of a given string.
-*   Put practical limits on the number of denormalized forms given.
+*   Guess the code point for a given text,
+*   Show the denormalized forms of a given string,
+*   Put practical limits on the number of denormalized forms given,
+*   Display the released versions of the Unicode specification.
 
 
 Technical Requirements
@@ -145,3 +146,17 @@ It doesn't seem to like to use :func:`getattr` from within
 :attr:`__getattr__`, which means :attr:`__getattr__` is going to
 get big. That's unfortunate, but it might be less unfortunate than
 what I'm currently doing in :mod:`charex.charex`.
+
+
+Rethinking the Cache
+--------------------
+The :class:`charex.db.FileCache` and all of :mod:`charex.db` feels very
+complex. The goal was to use the data straight from the Unicode files
+as the database, but this requires those files to be loaded and parsed
+while :mod:`charex` is running. That means all the parsing logic needs
+to be in :mod:`charex.db`. Maybe this decision was wrong-headed. Maybe
+I should parse all that data into an easier to call database, allowing
+all the Unicode parsing code to be pulled out into :mod:`util`.
+
+This will be a huge change. I'm not sure it's worth doing in 0.2.3. That
+might be a 1.0.0 feature.

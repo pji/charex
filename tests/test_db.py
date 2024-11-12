@@ -57,21 +57,6 @@ def test_cache():
     assert db.cache.versions['1.0.0'].version == (1, 0, 0)
 
 
-# Test get_denormal_map_for_code.
-def test_get_denormal_map_for_code():
-    """Given a property and a code point,
-    :func:`charex.db.get_denormal_map_for_code` should
-    return the value for that property for the code point.
-    """
-    code = '0020'
-    assert db.get_denormal_map_for_code('rev_nfc', code) == ()
-
-    code = '00c5'
-    assert db.get_denormal_map_for_code('rev_nfc', code) == (
-        'A\u030a', '\u212b',
-    )
-
-
 # Test deserialize.
 def test_deserialize():
     """Given a :class:`charex.db.PathInfo` object,
@@ -116,6 +101,21 @@ def test_deserialize():
         delim=''
     )
     assert db.deserialize(info, TEST_DATA) == exp
+
+
+# Test get_denormal_map_for_code.
+def test_get_denormal_map_for_code():
+    """Given a property and a code point,
+    :func:`charex.db.get_denormal_map_for_code` should
+    return the value for that property for the code point.
+    """
+    code = '0020'
+    assert db.get_denormal_map_for_code('rev_nfc', code) == ()
+
+    code = '00c5'
+    assert db.get_denormal_map_for_code('rev_nfc', code) == (
+        'A\u030a', '\u212b',
+    )
 
 
 # Test get_named_sequences:
@@ -196,6 +196,17 @@ def test_get_value_for_code():
 
     code = '1f6c0'
     assert db.get_value_for_code('kddi', code) == 'F34B'
+
+
+# Test get_versions.
+def test_get_versions():
+    """When called, :func:`charex.db.get_versions` should return
+    a :class:`dict` containing the released versions of the Unicode
+    standard.
+    """
+    versions = db.get_versions()
+    assert versions[-1] == '1.0.0'
+    assert versions[-2] == '1.0.1'
 
 
 # Test load_bidi_brackets.

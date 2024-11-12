@@ -335,6 +335,17 @@ def test_up_description(capsys):
     shell_test(exp, cmd, capsys)
 
 
+# Test vn mode.
+def test_vn(capsys):
+    """When invoked, `vn` mode should return the list of Unicode versions."""
+    with open('tests/data/vn.txt') as fh:
+        exp = fh.read()
+    cmd = (
+        'vn'
+    )
+    shell_test(exp, cmd, capsys)
+
+
 # Utility functions.
 def shell_test(exp, cmd, capsys):
     """Test shell invocation."""

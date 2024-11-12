@@ -378,6 +378,16 @@ def uv(prop: str, show_long: bool = False) -> Generator[str, None, None]:
         yield line
 
 
+def vn() -> Generator[str, None, None]:
+    """List the valid versions of the Unicode specification.
+    
+    :return: Yields each version string as a :class:`str`.
+    :rtype: str
+    """
+    for s in db.get_versions():
+        yield s
+
+
 # Utility functions.
 def make_description_row(name: str, namewidth: int, descr: str) -> str:
     """Create a two column row with a name and description.

@@ -412,6 +412,11 @@ def get_single_value_by_code(prop: str, code: str, key: str) -> str:
     return value
 
 
+def get_versions() -> tuple[str, ...]:
+    """Get the released versions of the Unicode standard."""
+    return tuple(key for key in cache.versions)
+
+
 def get_unicode_data_by_code(prop: str, code: str, key: str) -> str:
     """Get the value of a property stored in a `unicode_data` file
     for the given code point.
