@@ -3,30 +3,25 @@ rebuilder
 ~~~~~~~~~
 Tools for rebuilding the unicode data for :mod:`charex`.
 """
+import datetime as dt
 from collections.abc import Sequence
 from dataclasses import asdict, dataclass
 from json import dump
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from urllib.parse import urlparse
+from zipfile import ZipFile
 
 from bs4 import BeautifulSoup, Tag
 from requests import get
 
 from charex import db
+from charex import model as m
+from charex.normal import build_denormalization_map
 
 
 # Configuration.
 PKG_DATA = Path('src/charex/data')
-
-
-# Data classes.
-@dataclass
-class Source:
-    name: str
-    description: str
-    source: str
-    date: list[int] | None = None
 
 
 # Typing.
@@ -39,6 +34,25 @@ class UnrecognizeableVersionEnumerationError(ValueError):
 
 
 # Functions.
+def build_map(formkey: str, path: Path) -> bool:
+    """Build a denormalization map, returning whether the build was
+    successful.
+    """
+    result = False
+
+    try:
+        content = build_denormalization_map(formkey)
+        zpath = path / 'Denormal.zip'
+        with ZipFile(zpath, 'a') as zf:
+            zf.writestr(f'rev_{formkey}.json', content)
+        result = True
+    
+    except Exception as ex:
+        print(f'{type(ex)}({ex})...', end='')
+
+    return result
+
+
 def build_version_from_row(row: Tag) -> db.Version:
     """Extract version data from a table row."""
     cells = row.find_all('td')
@@ -141,22 +155,78 @@ def serialize(data: Sequence[Serializable], path: Path) -> None:
         dump(result, fh, indent=4)
 
 
+def update_data(path: Path = PKG_DATA) -> None:
+    """Update the data sources for :mod:`charex`."""
+    # Preparation.
+    zpath = path / 'Denormal.zip'
+    if zpath.exists():
+        zpath.unlink()
+    
+    # Get the list of sources.
+    sources = m.deserialize(path / 'sources.json')
+    if isinstance(sources, dict):
+        sources = {
+            k: sources[k] for k in sources
+            if isinstance(sources[k], m.Source)
+        }
+    else:
+        raise TypeError('Bad data in sources.json.')
+    
+    # Process each source.
+    done = {}
+    today = dt.date.today()
+    for name in sources:
+        source = sources[name]
+        print(name)
+        if source.source.startswith('http'):
+            if pull_data(source.source, path / name):
+                done[name] = m.Source(
+                    source.description,
+                    source.source,
+                    (today.year, today.month, today.day,)
+                )
+            else:
+                done[name] = source
+        
+        elif source.source.startswith('form'):
+            key = source.source.split(':')[1]
+            if build_map(key, path):
+                done[name] = m.Source(
+                    source.description,
+                    source.source,
+                    (today.year, today.month, today.day,)
+                )
+            else:
+                done[name] = source
+    
+    # Write out the updated source list.
+    m.serialize(done, path / 'sources.json')
+    
+
 # Data rebuild script.
 def rebuild_data() -> None:
     """Core script to rebuild the Unicode data for :mod:`charex`."""
     # Rebuild version.
-    version_src = Source(
-        name='versions.json',
+    version_src = m.Source(
         description='Current released versions of Unicode.',
-        source='https://www.unicode.org/versions/enumeratedversions.html'
+        source='https://www.unicode.org/versions/enumeratedversions.html',
+        date=(1970, 1, 1)
     )
     with TemporaryDirectory() as tmpdir_str:
         tmpdir = Path(tmpdir_str)
-        tmppath = tmpdir / urlparse(version_src.source).path.split('/')[-1]
+        tmppath = tmpdir / get_file_from_url(version_src.source)
         pull_data(version_src.source, tmppath)
         versions = load_versions(tmppath)
-    serialize(versions, PKG_DATA / version_src.name)
+    serialize(versions, PKG_DATA / 'versions.json')
+
+
+# Utility functions.
+def get_file_from_url(s: str) -> str:
+    """Get the filename from a URL."""
+    url = urlparse(s)
+    return url.path.split('/')[-1]
 
 
 if __name__ == '__main__':
+    update_data()
     rebuild_data()

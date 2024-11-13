@@ -4,16 +4,20 @@ test_rebuilder
 Unit tests for :mod:`util.rebuilder`.
 """
 from dataclasses import dataclass
-from json import load
+from json import dump, load
 from pathlib import Path
+from zipfile import ZipFile
 
+import pytest as pt
 import requests_mock
+from freezegun import freeze_time
 
 from charex import db
 from util import rebuilder as rb
 
 
 # Static configuration data.
+DATE = (2024, 11, 12)
 TEST_DATA = Path('tests/data')
 
 
@@ -88,3 +92,59 @@ def test_serialize(tmp_path):
     
     with open(path) as fh:
         assert load(fh) == exp
+
+
+@freeze_time(f'{DATE[0]}-{DATE[1]}-{DATE[2]}')
+def test_update_data(mocker, tmp_path):
+    """Given the path to a data sources file, :func:`util.rebuild.update_data`
+    should update each of the data sources and then update the dates in
+    the data sources file itself.
+    """
+    exp_spam_file = 'spam.html'
+    exp_spam_content = '<html><body><p>spam</p></body></html>'
+    exp_denormal_file = 'rev_nfc.json'
+    exp_denormal = Path('tests/data/rev_nfc.json').read_text()
+    
+    mocker.patch(
+        'charex.normal.build_denormalization_map',
+        return_value=exp_denormal
+    )
+    tmpdir = Path(tmp_path)
+    sources = {
+        exp_spam_file: {
+            '__class__': 'Source',
+            'description': 'spam',
+            'source': f'http://spam.local/{exp_spam_file}',
+            'date': (1970, 1, 1),
+        },
+        exp_denormal_file: {
+            '__class__': 'Source',
+            'description': 'eggs',
+            'source': 'form:nfc',
+            'date': (1970, 1, 1),
+        },
+    }
+    sources_path = tmpdir / 'sources.json'
+    with open(sources_path, 'w') as fh:
+        dump(sources, fh)
+    with requests_mock.Mocker() as m:
+        m.get(sources[exp_spam_file]['source'], text=exp_spam_content)
+        
+        rb.update_data(tmpdir)
+        
+    with open(sources_path) as fh:
+        data = load(fh)
+    for exp in sources:
+        assert data[exp]['description'] == sources[exp]['description']
+        assert data[exp]['source'] == sources[exp]['source']
+        assert data[exp]['date'] == list(DATE)
+        
+        if sources[exp]['source'].startswith('http'):
+            with open(tmpdir / exp) as fh:
+                assert fh.read() == exp_spam_content
+            
+        elif sources[exp]['source'].startswith('form'):
+            with ZipFile(tmpdir / 'Denormal.zip') as zh:
+                with zh.open(exp) as zch:
+                    data = zch.read()
+            assert data.decode('utf8') == exp_denormal

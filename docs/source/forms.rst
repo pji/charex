@@ -3,7 +3,7 @@ Unicode Normalization Forms
 ###########################
 
 The following is a brief overview of Unicode normalization as of
-Unicode 14.0.0, which is the version supported by Python's
+Unicode 14.0.0, which is the version supported by Python's (3.12)
 :mod:`unicodedata`.
 
 

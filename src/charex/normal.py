@@ -61,6 +61,23 @@ def build_denormalization_map(formkey: str, by_code: bool = False) -> str:
     :return: The denormalization map as a JSON :class:`str`.
     :rtype: str
     """
+    mapping = make_denormalization_map(formkey, by_code)
+    return dumps(mapping, indent=4)
+
+
+def make_denormalization_map(
+    formkey: str,
+    by_code: bool = False
+) -> dict[str, list[str]]:
+    """Map each Unicode character to the other Unicode characters
+    that normalize to it.
+    
+    :param formkey: The key for the normalization function.
+    :param by_code: Use the code point as the key for the map rather
+        than the character itself.
+    :return: The denormalization map as a :class:`dict`.
+    :rtype: dict
+    """
     # The denormalization map.
     dn_map: dict[str, set[str]] = {}
 
@@ -103,10 +120,10 @@ def build_denormalization_map(formkey: str, by_code: bool = False) -> str:
                 assert actual != base
                 assert normal != base
 
-    # Return the map as a JSON string.
+    # Sort and return the denormalization map.
     listed = {k: list(dn_map[k]) for k in dn_map}
     ordered = {k: sorted(listed[k]) for k in listed}
-    return dumps(ordered, indent=4)
+    return ordered
 
 
 def find_max_decomposition() -> tuple[str, int]:

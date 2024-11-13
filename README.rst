@@ -126,7 +126,7 @@ Unicode character::
 
 What Is Left To Do?
 -------------------
-The following features are planned for the v0.2.1 or later releases:
+The following features are planned for the v0.2.3 or later releases:
 
 *   (Done.) Add every Unihan property to charex.Character.
 *   (Done.) Fix names for CJK Ideographs.
@@ -134,7 +134,10 @@ The following features are planned for the v0.2.1 or later releases:
 *   (Done.) Move the resource file registry to `sources.json`.
 *   (Done.) Escaper for tag characters (U+E00xx range).
 *   (Done.) Move the package into a `src` folder.
-*   List versions of Unicode.
+*   (Done.) List versions of Unicode.
+*   (Done.) Keep local copy of unicode data.
+*   (Done.) Add support for Unicode 16.
+*   Add support for new properties added by Unicode 16.
 *   Check version of Unicode supported by:
 
     *   `charex`
@@ -143,10 +146,9 @@ The following features are planned for the v0.2.1 or later releases:
 
 *   Support for more versions of Unicode.
 
-    *   Add support for Unicode 15.1.0 due to Python 3.13.
-    *   Add support for Unicode 16.
+    *   Allow selection of older versions of Unicode.
+    *   Dynamically support the properties for selected Unicode version.
 
-*   Keep local copy of unicode data.
 *   Emoji combiner.
 *   Basic doctests for all public classes and functions.
 *   Web API.

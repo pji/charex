@@ -651,7 +651,7 @@ def load_prop_list(info: PathInfo) -> SimpleLists:
     records, _ = parse(info, True)
     data: SimpleLists = {}
     for rec in records:
-        code, long = rec
+        code, long, *_ = rec
         prop = alias_property(long)
         prop = prop.casefold()
         data.setdefault(prop, set())

@@ -76,6 +76,14 @@ FF10 FE00    short diagonal stroke form
 1D4B3 FE01   roundhand style                                                   
 1D4B4 FE01   roundhand style                                                   
 1D4B5 FE01   roundhand style                                                   
+2018 FE00    non-fullwidth form                                                
+2018 FE01    right-justified fullwidth form                                    
+2019 FE00    non-fullwidth form                                                
+2019 FE01    left-justified fullwidth form                                     
+201C FE00    non-fullwidth form                                                
+201C FE01    right-justified fullwidth form                                    
+201D FE00    non-fullwidth form                                                
+201D FE01    left-justified fullwidth form                                     
 3001 FE00    corner-justified form                                             
 3001 FE01    centered form                                                     
 3002 FE00    corner-justified form                                             
@@ -190,6 +198,110 @@ A868 FE00    phags-pa letter reversed shaping subjoined ya
 1887 180D    fourth form                                   final               
 1888 180B    second form                                   final               
 188A 180B    second form                                   initial medial      
+13091 FE00   rotated 90 degrees                                                
+13093 FE01   rotated 180 degrees                                               
+1310F FE00   rotated 90 degrees                                                
+13117 FE02   rotated 270 degrees                                               
+1311C FE00   rotated 90 degrees                                                
+13121 FE00   rotated 90 degrees                                                
+13127 FE00   rotated 90 degrees                                                
+13132 FE01   rotated 180 degrees                                               
+13139 FE00   rotated 90 degrees                                                
+13139 FE01   rotated 180 degrees                                               
+13139 FE02   rotated 270 degrees                                               
+13183 FE02   rotated 270 degrees                                               
+13187 FE01   rotated 180 degrees                                               
+131A0 FE00   rotated 90 degrees                                                
+131A0 FE02   rotated 270 degrees                                               
+131B1 FE00   rotated 90 degrees                                                
+131B1 FE01   rotated 180 degrees                                               
+131B8 FE00   rotated 90 degrees                                                
+131B9 FE00   rotated 90 degrees                                                
+131BA FE02   rotated 270 degrees                                               
+131CB FE00   rotated 90 degrees                                                
+131E0 FE00   rotated 90 degrees [= 270 degrees]                                
+131EE FE01   rotated 180 degrees                                               
+131EE FE02   rotated 270 degrees                                               
+131F8 FE01   rotated 180 degrees                                               
+131F9 FE00   rotated 90 degrees                                                
+131F9 FE01   rotated 180 degrees                                               
+131FA FE00   rotated 90 degrees                                                
+131FA FE01   rotated 180 degrees                                               
+13216 FE02   rotated 270 degrees                                               
+13257 FE01   rotated 180 degrees                                               
+1327B FE00   rotated 90 degrees                                                
+1327B FE02   rotated 270 degrees                                               
+1327F FE00   rotated 90 degrees                                                
+1327F FE01   rotated 180 degrees                                               
+13285 FE00   rotated 90 degrees                                                
+1328C FE00   rotated 90 degrees                                                
+132A4 FE01   rotated 180 degrees                                               
+132A4 FE02   rotated 270 degrees                                               
+132AA FE00   rotated 90 degrees                                                
+132CB FE00   rotated 90 degrees                                                
+132DC FE00   rotated 90 degrees                                                
+132E7 FE00   rotated 90 degrees                                                
+132E7 FE02   rotated 270 degrees                                               
+132E9 FE02   rotated 270 degrees                                               
+132F8 FE02   rotated 270 degrees                                               
+132FD FE02   rotated 270 degrees                                               
+13302 FE02   rotated 270 degrees                                               
+13303 FE02   rotated 270 degrees                                               
+13307 FE00   rotated 90 degrees                                                
+13308 FE01   rotated 180 degrees                                               
+13310 FE02   rotated 270 degrees                                               
+13311 FE02   rotated 270 degrees                                               
+13312 FE01   rotated 180 degrees                                               
+13312 FE02   rotated 270 degrees                                               
+13313 FE01   rotated 180 degrees                                               
+13313 FE02   rotated 270 degrees                                               
+13314 FE01   rotated 180 degrees                                               
+13314 FE02   rotated 270 degrees                                               
+1331B FE00   rotated 90 degrees                                                
+1331B FE01   rotated 180 degrees                                               
+1331C FE02   rotated 270 degrees                                               
+13321 FE01   rotated 180 degrees                                               
+13321 FE02   rotated 270 degrees                                               
+13322 FE00   rotated 90 degrees                                                
+13322 FE01   rotated 180 degrees                                               
+13331 FE01   rotated 180 degrees                                               
+13331 FE02   rotated 270 degrees                                               
+13338 FE03   rotated approximately 30 degrees                                  
+13338 FE06   rotated approximately 320 degrees [horizontal]                     
+1333C FE00   rotated 90 degrees                                                
+1334A FE02   rotated 270 degrees                                               
+13361 FE02   rotated 270 degrees                                               
+13373 FE02   rotated 270 degrees                                               
+13377 FE00   rotated 90 degrees                                                
+13378 FE00   rotated 90 degrees                                                
+1337D FE02   rotated 270 degrees                                               
+13385 FE02   rotated 270 degrees                                               
+13399 FE00   rotated 90 degrees                                                
+1339A FE00   rotated 90 degrees                                                
+133AF FE02   rotated 270 degrees                                               
+133B0 FE02   rotated 270 degrees                                               
+133BF FE02   rotated 270 degrees                                               
+133D3 FE00   rotated 90 degrees                                                
+133DB FE02   rotated 270 degrees                                               
+133DD FE02   rotated 270 degrees                                               
+133E5 FE00   rotated 90 degrees [= 270 degrees]                                
+133E7 FE00   rotated 90 degrees [= 270 degrees]                                
+133E8 FE01   rotated 180 degrees                                               
+133F2 FE00   rotated 90 degrees                                                
+133F5 FE00   rotated 90 degrees                                                
+133F6 FE00   rotated 90 degrees                                                
+13416 FE00   rotated 90 degrees                                                
+13419 FE00   rotated 90 degrees                                                
+13419 FE01   rotated 180 degrees                                               
+13419 FE02   rotated 270 degrees                                               
+1341A FE00   rotated 90 degrees                                                
+13423 FE00   rotated 90 degrees                                                
+1342C FE02   rotated 270 degrees                                               
+1342E FE02   rotated 270 degrees                                               
+13443 FE00   expanded                                                          
+13444 FE00   expanded                                                          
+13445 FE00   expanded                                                          
+13446 FE00   expanded                                                          
 349E FE00    CJK COMPATIBILITY IDEOGRAPH-2F80C                                 
 34B9 FE00    CJK COMPATIBILITY IDEOGRAPH-2F813                                 
 34BB FE00    CJK COMPATIBILITY IDEOGRAPH-2F9CA                                 

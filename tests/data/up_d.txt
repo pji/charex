@@ -124,6 +124,10 @@ hst                      Hangul Syllable Type
 
 hyphen                   Hyphen
 
+id_compat_math_continue  ID Compat Math Continue
+
+id_compat_math_start     ID Compat Math Start
+
 idc                      ID Continue
 
 ideo                     Ideographic
@@ -133,6 +137,10 @@ ids                      ID Start
 idsb                     IDS Binary Operator
 
 idst                     IDS Trinary Operator
+
+idsu                     IDS Unary Operator
+
+incb                     Indic Conjunct Break
 
 inpc                     Indic Positional Category
 
@@ -148,6 +156,20 @@ jsn                      Jamo Short Name
 
 jt                       Joining Type
 
+keh_cat                  kEH Cat
+
+keh_desc                 kEH Desc
+
+keh_hg                   kEH HG
+
+keh_ifao                 kEH IFAO
+
+keh_jsesh                kEH JSesh
+
+keh_nomirror             kEH NoMirror
+
+keh_norotate             kEH NoRotate
+
 lb                       Line Break
 
 lc                       Lowercase Mapping
@@ -157,6 +179,8 @@ loe                      Logical Order Exception
 lower                    Lowercase
 
 math                     Math
+
+mcm                      Modifier Combining Mark
 
 na                       Name
 
@@ -173,6 +197,8 @@ nfd_qc                   NFD Quick Check
 nfkc_cf                  NFKC Casefold
 
 nfkc_qc                  NFKC Quick Check
+
+nfkc_scf                 NFKC Simple Casefold
 
 nfkd_qc                  NFKD Quick Check
 

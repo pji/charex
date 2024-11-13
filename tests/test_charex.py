@@ -111,7 +111,6 @@ def test_character_dictlike_properties():
     assert char.kunihancore2020 == ''
     assert char.kcheungbauer == ''
     assert char.kfourcornercode == ''
-    assert char.kfrequency == ''
     assert char.kgradelevel == ''
     assert char.khdzradbreak == ''
     assert char.khkglyph == ''
@@ -139,7 +138,6 @@ def test_character_dindices_properties():
     assert char.kmorohashi == ''
     assert char.kdaejaweon == ''
     assert char.kirgdaejaweon == ''
-    assert char.kirgdaikanwaziten == ''
 
     char = c.Character('U+3402')
     assert char.khanyu == ''
@@ -150,16 +148,15 @@ def test_character_dindices_properties():
     assert char.kcowles == ''
     assert char.kmatthews == ''
     assert char.kgsr == ''
-    assert char.kkangxi == ''
+    assert char.kkangxi == '0078.101'
     assert char.kfennindex == ''
     assert char.kkarlgren == ''
     assert char.kmeyerwempe == ''
     assert char.klau == ''
     assert char.kcheungbauerindex == ''
-    assert char.kmorohashi == ''
+    assert char.kmorohashi == 'H001'
     assert char.kdaejaweon == ''
     assert char.kirgdaejaweon == ''
-    assert char.kirgdaikanwaziten == ''
 
 
 def test_character_emoji_properties():
@@ -282,14 +279,11 @@ def test_character_mappings_properties():
     """
     char = c.Character('a')
     assert char.kjis0213 == ''
-    assert char.kkps1 == ''
-    assert char.khkscs == ''
     assert char.ktgh == ''
     assert char.kkoreanname == ''
     assert char.keacc == ''
     assert char.ktaiwantelegraph == ''
     assert char.kja == ''
-    assert char.kkps0 == ''
     assert char.kbigfive == ''
     assert char.kcccii == ''
     assert char.kcns1986 == ''
@@ -298,7 +292,6 @@ def test_character_mappings_properties():
     assert char.kgb1 == ''
     assert char.kjis0 == ''
     assert char.kjoyokanji == ''
-    assert char.kksc0 == ''
     assert char.kkoreaneducationhanja == ''
     assert char.kmainlandtelegraph == ''
     assert char.kxerox == ''
@@ -308,7 +301,6 @@ def test_character_mappings_properties():
     assert char.kgb3 == ''
     assert char.kgb8 == ''
     assert char.kjinmeiyokanji == ''
-    assert char.kksc1 == ''
     assert char.kibmjapan == ''
     assert char.kgb7 == ''
 
@@ -342,15 +334,12 @@ def test_character_radstroke_properties():
     """
     char = c.Character('a')
     assert char.krsadobe_japan1_6 == ''
-    assert char.krskangxi == ''
 
     char = c.Character('U+3427')
     assert char.krsadobe_japan1_6 == 'C+13910+3.1.3 C+13910+6.1.3'
-    assert char.krskangxi == ''
 
     char = c.Character('U+3687')
     assert char.krsadobe_japan1_6 == ''
-    assert char.krskangxi == '35.6'
 
 
 def test_character_readings_properties():

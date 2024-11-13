@@ -326,7 +326,7 @@ def test_load_from_archive():
     """
     pi = db.PathInfo('Jamo.txt', 'UCD.zip', 'single_value', ';')
     lines = db.load_from_archive(pi)
-    assert lines[0] == '# Jamo-14.0.0.txt'
+    assert lines[0] == '# Jamo-16.0.0.txt'
     assert lines[-1] == '# EOF'
 
 
