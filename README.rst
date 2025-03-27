@@ -128,10 +128,6 @@ What Is Left To Do?
 -------------------
 The following features are planned for the v0.2.1 or later releases:
 
-*   (Done.) Add every Unihan property to charex.Character.
-*   (Done.) Fix names for CJK Ideographs.
-*   (Done.) Move all Y/N properties to simple lists.
-*   (Done.) Move the resource file registry to `sources.json`.
 *   Support for more versions of Unicode.
 *   Emoji combiner.
 *   Basic doctests for all public classes and functions.
@@ -144,6 +140,15 @@ The list of Unihan properties is here: `tr38`_
 
 .. _`Index`: https://www.unicode.org/reports/tr44/tr44-28.html#Property_Index
 .. _`tr38`: https://www.unicode.org/reports/tr38/tr38-31.html
+
+
+Changes in v0.2.3
+-----------------
+The following are the changes in v0.2.3:
+
+*   Move dependency management to `poetry`.
+*   (Not started.) Support Unicode 15.1 when running under Python 3.13.
+*   (Not started.) Support Unicode 15.0 when running under Python 3.12.
 
 
 How Do I Run the Tests?

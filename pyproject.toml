@@ -11,9 +11,29 @@ addopts = [
     "--import-mode=importlib",
 ]
 
+
+[tool.poetry.requires-plugins]
+poetry-plugin-export = ">=1.8"
+
+
+[tool.poetry.group.dev.dependencies]
+sphinx = "^8.2.3"
+furo = "^2024.8.6"
+pycodestyle = "^2.12.1"
+mypy = "^1.15.0"
+rstcheck = "^6.2.4"
+wheel = "^0.45.1"
+build = "^1.2.2.post1"
+twine = "^6.1.0"
+pytest = "^8.3.5"
+coverage = "^7.7.1"
+pytest-mock = "^3.14.0"
+requests = "^2.32.3"
+types-requests = "^2.32.0.20250306"
+
 [project]
 name = "charex"
-version = "0.2.2"
+version = "0.2.3dev"
 authors = [
     {name="Paul J. Iutzi", email="pji@mac.com"},
 ]
