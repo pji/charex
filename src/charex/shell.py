@@ -4,21 +4,21 @@ shell
 
 An interactive command shell for :mod:`charex`.
 """
-from collections.abc import Callable, Sequence
+import readline
 from argparse import (
     ArgumentParser,
     Namespace,
-    _SubParsersAction,
-    RawDescriptionHelpFormatter
+    RawDescriptionHelpFormatter,
+    _SubParsersAction
 )
 from cmd import Cmd
-import readline
+from collections.abc import Callable, Sequence
 from shlex import split
 from shutil import get_terminal_size
 from textwrap import wrap
 
-from charex import cmds
 from charex import charsets as cset
+from charex import cmds
 from charex import escape as esc
 from charex import gui
 from charex import normal as nl

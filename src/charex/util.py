@@ -4,9 +4,9 @@ util
 
 Utility functions for :mod:`charex`.
 """
+import unicodedata as ucd
 from importlib.resources import as_file, files
 from math import log
-import unicodedata as ucd
 
 
 # Constants.

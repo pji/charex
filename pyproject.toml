@@ -30,6 +30,42 @@ coverage = "^7.7.1"
 pytest-mock = "^3.14.0"
 requests = "^2.32.3"
 types-requests = "^2.32.0.20250306"
+tox = "^4.25.0"
+isort = "^6.0.1"
+
+
+[tool.setuptools.package-data]
+charex = [
+    'data/entities.json',
+    "data/help_xt.txt",
+    "data/path_map.json",
+    "data/prop_map.json",
+    'data/quote.html',
+    'data/result.html',
+    'data/sources.json',
+    'data/Denormal.zip',
+    'data/UCD.zip',
+    'data/Unihan.zip',
+]
+
+
+[tool.tox]
+legacy_tox_ini = """[tox]
+envlist = py311, # py312, py313
+
+
+[testenv]
+allowlist_externals = isort, poetry
+commands_pre =
+    poetry sync --no-root
+commands =
+    poetry run pytest tests/ --import-mode importlib
+    isort ./src/charex --check-only --diff --skip .tox --lai 2 -m 3
+    isort ./tests --check-only --diff --skip .tox --lai 2 -m 3
+deps = -rrequirements.txt
+    pytest
+    pytest-mock
+"""
 
 [project]
 name = "charex"

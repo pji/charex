@@ -22,5 +22,6 @@ test:
 
 .PHONY: pre
 pre:
+	tox
 	python precommit.py
 	git status

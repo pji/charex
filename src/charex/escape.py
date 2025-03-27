@@ -7,8 +7,8 @@ Character escape schemes.
 from collections.abc import Callable
 from json import loads
 
-from charex.db import cache
 from charex import util
+from charex.db import cache
 
 
 # Registry.

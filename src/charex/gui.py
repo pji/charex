@@ -8,13 +8,13 @@ import tkinter as tk
 from tkinter import ttk
 
 from charex import charex as ch
-from charex import cmds
 from charex import charsets as cset
+from charex import cmds
 from charex import denormal as dn
 from charex import escape as esc
 from charex import normal as nl
-from charex import util
 from charex import shell as sh
+from charex import util
 
 
 # Constants.

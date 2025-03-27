@@ -4,10 +4,10 @@ normal
 
 Functions for normalizing strings.
 """
+import unicodedata as ucd
 from collections.abc import Callable
 from itertools import permutations
 from json import dumps
-import unicodedata as ucd
 
 from charex import util
 

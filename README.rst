@@ -147,6 +147,8 @@ Changes in v0.2.3
 The following are the changes in v0.2.3:
 
 *   Move dependency management to `poetry`.
+*   Move package into /src directory.
+*   Use `tox` for regression testing.
 *   (Not started.) Support Unicode 15.1 when running under Python 3.13.
 *   (Not started.) Support Unicode 15.0 when running under Python 3.12.
 

@@ -4,13 +4,12 @@ charex
 
 Tools for exploring unicode characters and other character sets.
 """
-from collections.abc import Generator, Sequence
-from typing import cast, Literal
 import re
 import unicodedata as ucd
+from collections.abc import Generator, Sequence
+from typing import Literal, cast
 
-from charex import db
-from charex import util
+from charex import db, util
 from charex.escape import schemes
 
 
