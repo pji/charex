@@ -1,0 +1,20 @@
+{
+    "UCD.zip": {
+        "description": "The collected data files for Unicode.",
+        "source": "https://www.unicode.org/Public/zipped/15.0.0/UCD.zip",
+        "date": [
+            2025,
+            3,
+            28
+        ]
+    },
+    "Unihan.zip": {
+        "description": "The collected data files for CJK properties.",
+        "source": "https://www.unicode.org/Public/zipped/15.0.0/Unihan.zip",
+        "date": [
+            2025,
+            3,
+            28
+        ]
+    }
+}

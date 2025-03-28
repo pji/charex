@@ -1029,7 +1029,7 @@ class FileCache:
             ),
         }
 
-    def __getattr__(self, name:str):
+    def __getattr__(self, name: str):
         try:
             pi = self.path_map[name]
             kind = self.by_kind[pi.kind]

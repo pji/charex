@@ -152,6 +152,8 @@ The following are the changes in v0.2.3:
 *   (Not started.) Support Unicode 15.1 when running under Python 3.13.
 *   (Not started.) Support Unicode 15.0 when running under Python 3.12.
 
+    *   Add Unicode 15.0 files.
+
 
 How Do I Run the Tests?
 -----------------------

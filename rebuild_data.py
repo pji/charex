@@ -59,46 +59,99 @@ def build_map(formkey: str, path: Path) -> bool:
     return result
 
 
-# Set up values.
-today = date.today()
-data_path = Path('charex/data')
-zpath = data_path / 'Denormal.zip'
-if zpath.exists():
-    zpath.unlink()
+def get_sources(data_path):
+    src_path = data_path / 'sources.json'
+    with open(src_path) as fh:
+        return load(fh)
 
-# Get the list of data files to update.
-src_path = data_path / 'sources.json'
-with open(src_path) as fh:
-    data = load(fh)
 
-# Update each file.
-for file in data:
-    print(f'Rebuilding {file}...', end='')
-    success = False
+def update_14_0():
+    # Set up values.
+    today = date.today()
+    data_path = Path('src/charex/data')
+    zpath = data_path / 'Denormal.zip'
+    if zpath.exists():
+        zpath.unlink()
 
-    # Update the file.
-    src = data[file]['source']
-    path = data_path / file
+    # Get the list of data files to update.
+    data = get_sources(data_path)
+#     src_path = data_path / 'sources.json'
+#     with open(src_path) as fh:
+#         data = load(fh)
 
-    # Download hosted data.
-    if src.startswith('http'):
-        success = pull_data(src, path)
+    # Update each file.
+    for file in data:
+        print(f'Rebuilding {file}...', end='')
+        success = False
 
-    # Generate denormalization data.
-    elif src.startswith('form'):
-        key = src.split(':')[1]
-        success = build_map(key, path)
+        # Update the file.
+        src = data[file]['source']
+        path = data_path / file
 
-    # Update the date in sources data.
+        # Download hosted data.
+        if src.startswith('http'):
+            success = pull_data(src, path)
+
+        # Generate denormalization data.
+        elif src.startswith('form'):
+            key = src.split(':')[1]
+            success = build_map(key, path)
+
+        # Update the date in sources data.
+        term = Terminal()
+        color = term.red
+        if success:
+            update = (today.year, today.month, today.day)
+            data[file]['date'] = update
+            color = term.green
+        print(color + f'{success}' + term.normal)
+
+    # Update the sources data.
+    path = data_path / 'sources.json'
+    with open(path, 'w') as fh:
+        dump(data, fh, indent=4)
+
+
+def update_sources_date(data, file, today, success):
     term = Terminal()
     color = term.red
     if success:
         update = (today.year, today.month, today.day)
+        for item in update:
+            assert isinstance(item, int)
         data[file]['date'] = update
         color = term.green
     print(color + f'{success}' + term.normal)
+    return data
 
-# Update the sources data.
-path = data_path / 'sources.json'
-with open(path, 'w') as fh:
-    dump(data, fh, indent=4)
+
+def update_sources(data_path, data):
+    path = data_path / 'sources.json'
+    with open(path, 'w') as fh:
+        dump(data, fh, indent=4)
+
+
+def update_15_0(
+    today=date.today(),
+    data_path=Path('src/charex/data/v15_0')
+):
+    data = get_sources(data_path)
+    for file in data:
+        print(f'Rebuilding {file}...', end='')
+        success = False
+
+        # Update the file.
+        src = data[file]['source']
+        path = data_path / file
+
+        # Download hosted data.
+        if src.startswith('http'):
+            success = pull_data(src, path)
+
+        data = update_sources_date(data, file, today, success)
+    update_sources(data_path, data)
+
+
+if __name__ == '__main__':
+    # update_14_0()
+    update_15_0()
