@@ -129,7 +129,7 @@ def update_unicode_version(
 
 
 if __name__ == '__main__':
-    today=date.today()
+    today = date.today()
     for key in data_paths:
         print(f'Updating {key}.')
         data_path = data_paths[key]

@@ -1,0 +1,30 @@
+{
+    "default": {
+        "spam": [
+            "spam.txt",
+            "old/EGGS.zip",
+            "spam",
+            ";"
+        ],
+        "bacon": [
+            "bacon.txt",
+            "old/EGGS.zip",
+            "bacon",
+            ";"
+        ]
+    },
+    "tomato": {
+        "bacon": [
+            "bacon.txt",
+            "new/EGGS.zip",
+            "bacon",
+            ";"
+        ],
+        "bakedbeans": [
+            "bakedbeans.txt",
+            "new/EGGS.zip",
+            "bakedbeans",
+            ";"
+        ]
+    }
+}

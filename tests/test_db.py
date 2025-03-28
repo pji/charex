@@ -4,9 +4,79 @@ test_db
 
 Unit tests for :mod:`charex.db`.
 """
+from pathlib import Path
+
 import pytest
 
 from charex import db
+
+
+@pytest.fixture
+def denormal_path():
+    """Path to the Denormal.zip file."""
+    return 'v14_0/Denormal.zip'
+
+
+@pytest.fixture
+def path_map_default(mocker):
+    path = Path('tests/data/test_path_map.json')
+    mocker.patch('charex.db.get_path_map_file', return_value=path)
+    """A path map with some default values and some overridden values."""
+    data = {
+        'spam': [
+            'spam.txt',
+            'old/EGGS.zip',
+            'spam',
+            ';',
+        ],
+        'bacon': [
+            'bacon.txt',
+            'old/EGGS.zip',
+            'bacon',
+            ';',
+        ],
+    }
+    return {k: db.PathInfo(*data[k]) for k in data}
+
+
+@pytest.fixture
+def path_map_version(mocker):
+    path = Path('tests/data/test_path_map.json')
+    mocker.patch('charex.db.get_path_map_file', return_value=path)
+    """A path map with some default values and some overridden values."""
+    data = {
+        'spam': [
+            'spam.txt',
+            'old/EGGS.zip',
+            'spam',
+            ';',
+        ],
+        'bacon': [
+            'bacon.txt',
+            'new/EGGS.zip',
+            'bacon',
+            ';',
+        ],
+        'bakedbeans': [
+            'bakedbeans.txt',
+            'new/EGGS.zip',
+            'bakedbeans',
+            ';',
+        ],
+    }
+    return {k: db.PathInfo(*data[k]) for k in data}
+
+
+@pytest.fixture
+def ucd_path():
+    """Path to the UCD.zip file."""
+    return 'v14_0/UCD.zip'
+
+
+@pytest.fixture
+def uhn_path():
+    """Path to the default Unihan.zip file."""
+    return 'v14_0/Unihan.zip'
 
 
 # Test alias_property.
@@ -146,13 +216,13 @@ def test_get_value_for_code():
 
 
 # Test load_bidi_brackets.
-def test_load_bidi_brackets():
+def test_load_bidi_brackets(ucd_path):
     """When given the information for a path as a :class:`charex.db.PathInfo`
     object, :func:`charex.db.load_bidi_brackets` should return the data
     contained within the path as a :class:`dict`.
     """
     pi = db.PathInfo(
-        'BidiBrackets.txt', 'UCD.zip', 'bidi_brackets', ';'
+        'BidiBrackets.txt', ucd_path, 'bidi_brackets', ';'
     )
     data = db.load_bidi_brackets(pi)
     assert data['0028'] == db.BidiBracket('0028', '0029', 'o')
@@ -160,13 +230,13 @@ def test_load_bidi_brackets():
 
 
 # Test load_casefolding.
-def test_load_casefolding():
+def test_load_casefolding(ucd_path):
     """When given the information for a path as a :class:`charex.db.PathInfo`
     object, :func:`charex.db.load_casefolding` should return the data
     contained within the path as a :class:`dict`.
     """
     pi = db.PathInfo(
-        'CaseFolding.txt', 'UCD.zip', 'casefolding', ';'
+        'CaseFolding.txt', ucd_path, 'casefolding', ';'
     )
     data = db.load_casefolding(pi)
     assert data['0041'] == db.Casefold('0061', '<code>', '<code>', '<code>')
@@ -175,13 +245,13 @@ def test_load_casefolding():
 
 
 # Test load_cjk_radicals.
-def test_load_cjk_radicals():
+def test_load_cjk_radicals(ucd_path):
     """When given the information for a path as a :class:`charex.db.PathInfo`
     object, :func:`charex.db.load_cjk_radicals` should return the data
     contained within the path as a :class:`dict`.
     """
     pi = db.PathInfo(
-        'CJKRadicals.txt', 'UCD.zip', 'cjk_radicals', ';'
+        'CJKRadicals.txt', ucd_path, 'cjk_radicals', ';'
     )
     data = db.load_cjk_radicals(pi)
     assert data['2f00'] == db.Radical('1', '2F00', '4E00')
@@ -190,13 +260,13 @@ def test_load_cjk_radicals():
 
 
 # Test load_derived_normal.
-def test_load_derived_normal():
+def test_load_derived_normal(ucd_path):
     """When given the information for a path as a :class:`charex.db.PathInfo`
     object, :func:`charex.db.load_derived_normal` should return the data
     contained within the path as a :class:`tuple`.
     """
     pi = db.PathInfo(
-        'DerivedNormalizationProps.txt', 'UCD.zip', 'derived_normal', ';'
+        'DerivedNormalizationProps.txt', ucd_path, 'derived_normal', ';'
     )
     single, simple = db.load_derived_normal(pi)
     assert single['fc_nfkc']['037a'] == '0020 03B9'
@@ -206,13 +276,13 @@ def test_load_derived_normal():
 
 
 # Test load_denormal_map.
-def test_load_denormal_map():
+def test_load_denormal_map(denormal_path):
     """When given the information for a path as a :class:`charex.db.PathInfo`
     object, :func:`charex.db.load_denormal_map` should return the data
     contained within the path as a :class:`dict`.
     """
     pi = db.PathInfo(
-        'rev_nfc.json', 'Denormal.zip', 'denormal_map', ''
+        'rev_nfc.json', denormal_path, 'denormal_map', ''
     )
     data = db.load_denormal_map(pi)
     assert data['00c0'] == ('A\u0300',)
@@ -221,13 +291,13 @@ def test_load_denormal_map():
 
 
 # Test load_emoji_source.
-def test_load_emoji_source():
+def test_load_emoji_source(ucd_path):
     """When given the information for a path as a :class:`charex.db.PathInfo`
     object, :func:`charex.db.load_emoji_source` should return the data
     contained within the path as a :class:`dict`.
     """
     pi = db.PathInfo(
-        'EmojiSources.txt', 'UCD.zip', 'emoji_source', ';'
+        'EmojiSources.txt', ucd_path, 'emoji_source', ';'
     )
     data = db.load_emoji_source(pi)
     assert data['0023 20e3'] == db.EmojiSource(
@@ -256,24 +326,24 @@ def test_load_entity_map():
 
 
 # Test load_from_archive.
-def test_load_from_archive():
+def test_load_from_archive(ucd_path):
     """When given the information for a path as a :class:`charex.db.PathInfo`
     object, return the lines contained in the file as a :class:`tuple`.
     """
-    pi = db.PathInfo('Jamo.txt', 'UCD.zip', 'single_value', ';')
+    pi = db.PathInfo('Jamo.txt', ucd_path, 'single_value', ';')
     lines = db.load_from_archive(pi)
     assert lines[0] == '# Jamo-14.0.0.txt'
     assert lines[-1] == '# EOF'
 
 
 # Test load_name_alias.
-def test_load_name_alias():
+def test_load_name_alias(ucd_path):
     """When given the information for a path as a :class:`charex.db.PathInfo`
     object, :func:`charex.db.load_name_alias` should return the data
     contained within the path as a :class:`set`.
     """
     pi = db.PathInfo(
-        'NameAliases.txt', 'UCD.zip', 'simple_list', ';'
+        'NameAliases.txt', ucd_path, 'simple_list', ';'
     )
     data = db.load_name_alias(pi)
     assert data['0000'] == (
@@ -286,13 +356,13 @@ def test_load_name_alias():
 
 
 # Test load_named_sequence.
-def test_load_named_sequence():
+def test_load_named_sequence(ucd_path):
     """When given the information for a path as a :class:`charex.db.PathInfo`
     object, :func:`charex.db.load_named_sequence` should return the data
     contained within the path as a :class:`set`.
     """
     pi = db.PathInfo(
-        'NamedSequences.txt', 'UCD.zip', 'named_sequence', ';'
+        'NamedSequences.txt', ucd_path, 'named_sequence', ';'
     )
     data = db.load_named_sequence(pi)
     assert data['keycap number sign'] == db.NamedSequence(
@@ -308,26 +378,39 @@ def test_load_named_sequence():
 
 
 # Test load_path_map.
-def test_load_path_map():
-    """When called, :func:`charex.db.load_path_map` should return a
-    :class:`dict` that allows mapping of a Unicode file name to the
-    archive that contains it.
-    """
-    exp = 'UCD.zip'
-    path = 'unicodedata'
-    pm = db.load_path_map()
-    pi = pm[path]
-    assert pi.archive == exp
+class TestLoadPathMap:
+    def test_load_path_map(self, ucd_path):
+        """When called, :func:`charex.db.load_path_map` should return a
+        :class:`dict` that allows mapping of a Unicode file name to the
+        archive that contains it.
+        """
+        exp = ucd_path
+        path = 'unicodedata'
+        pm = db.load_path_map()
+        pi = pm[path]
+        assert pi.archive == exp
+
+    def test_load_default(self, path_map_default):
+        """When called without a version, charex.db.load_path_map
+        should return the default path information.
+        """
+        assert db.load_path_map() == path_map_default
+
+    def test_load_version(self, path_map_version):
+        """When called without a version, charex.db.load_path_map
+        should return the default path information.
+        """
+        assert db.load_path_map('tomato') == path_map_version
 
 
 # Test load_prop_list.
-def test_load_prop_list():
+def test_load_prop_list(ucd_path):
     """When given the information for a path as a :class:`charex.db.PathInfo`
     object, :func:`charex.db.load_prop_list` should return the data
     contained within the path as a :class:`dict`.
     """
     pi = db.PathInfo(
-        'PropList.txt', 'UCD.zip', 'prop_list', ';'
+        'PropList.txt', ucd_path, 'prop_list', ';'
     )
     data = db.load_prop_list(pi)
     assert '0000' not in data['wspace']
@@ -337,13 +420,13 @@ def test_load_prop_list():
 
 
 # Test load_property_alias.
-def test_load_property_alias():
+def test_load_property_alias(ucd_path):
     """When given the information for a path as a :class:`charex.db.PathInfo`
     object, :func:`charex.db.load_property_alias` should return the data
     contained within the path as a :class:`set`.
     """
     pi = db.PathInfo(
-        'PropertyAliases.txt', 'UCD.zip', 'property_alias', ';'
+        'PropertyAliases.txt', ucd_path, 'property_alias', ';'
     )
     data = db.load_property_alias(pi)
     assert data['kaccountingnumeric'].alias == 'cjkAccountingNumeric'
@@ -351,13 +434,13 @@ def test_load_property_alias():
 
 
 # Test load_simple_list.
-def test_load_simple_list():
+def test_load_simple_list(ucd_path):
     """When given the information for a path as a :class:`charex.db.PathInfo`
     object, :func:`charex.db.load_simple_list` should return the data
     contained within the path as a :class:`set`.
     """
     pi = db.PathInfo(
-        'CompositionExclusions.txt', 'UCD.zip', 'simple_list', ';'
+        'CompositionExclusions.txt', ucd_path, 'simple_list', ';'
     )
     data = db.load_simple_list(pi)
     assert '0000' not in data
@@ -367,12 +450,12 @@ def test_load_simple_list():
 
 
 # Test load_single_value.
-def test_load_single_value():
+def test_load_single_value(ucd_path):
     """When given the information for a path as a :class:`charex.db.PathInfo`
     object, :func:`charex.db.load_single_value` should return the data
     contained within the path as a :class:`collections.defaultdict`.
     """
-    pi = db.PathInfo('Jamo.txt', 'UCD.zip', 'single_value', ';')
+    pi = db.PathInfo('Jamo.txt', ucd_path, 'single_value', ';')
     data = db.load_single_value(pi)
     assert data['1100'] == 'G'
     assert data['11c2'] == 'H'
@@ -380,25 +463,25 @@ def test_load_single_value():
 
 
 # Test load_special_casing:.
-def test_load_special_casing():
+def test_load_special_casing(ucd_path):
     """When given the information for a path as a :class:`charex.db.PathInfo`
     object, :func:`charex.db.load_special_casing` should return the data
     contained within the path as a :class:`dict`.
     """
-    pi = db.PathInfo('SpecialCasing.txt', 'UCD.zip', 'special_casing', ';')
+    pi = db.PathInfo('SpecialCasing.txt', ucd_path, 'special_casing', ';')
     data = db.load_special_casing(pi)
     assert data['fb00'].code == 'FB00'
     assert data['0069'].condition_list == 'az'
 
 
 # Test load_standardized_variant:.
-def test_load_standardized_variant():
+def test_load_standardized_variant(ucd_path):
     """When given the information for a path as a :class:`charex.db.PathInfo`
     object, :func:`charex.db.load_standardized_variant` should return the
     data contained within the path as a :class:`dict`.
     """
     pi = db.PathInfo(
-        'StandardizedVariants.txt', 'UCD.zip', 'standard_variant', ';'
+        'StandardizedVariants.txt', ucd_path, 'standard_variant', ';'
     )
     data = db.load_standardized_variant(pi)
     assert data['0030 fe00'] == db.Variant(
@@ -410,13 +493,13 @@ def test_load_standardized_variant():
 
 
 # Test load_unihan.
-def test_load_unihan():
+def test_load_unihan(uhn_path):
     """When given the information for a path as a :class:`charex.db.PathInfo`
     object, :func:`charex.db.load_unihan` should return the data
     contained within the path as a :class:`collections.defaultdict`.
     """
     pi = db.PathInfo(
-        'Unihan_IRGSources.txt', 'Unihan.zip', 'single_value', '\t'
+        'Unihan_IRGSources.txt', uhn_path, 'single_value', '\t'
     )
     data = db.load_unihan(pi)
     assert data['cjkirg_gsource']['3400'] == 'GKX-0078.01'
@@ -424,12 +507,12 @@ def test_load_unihan():
 
 
 # Test load_unicode_data.
-def test_load_unicode_data():
+def test_load_unicode_data(ucd_path):
     """When given the information for a path as a :class:`charex.db.PathInfo`
     object, :func:`charex.db.load_unicode_data` should return the data
     contained within the path as a :class:`dict`.
     """
-    pi = db.PathInfo('UnicodeData.txt', 'UCD.zip', 'unicode_data', ';')
+    pi = db.PathInfo('UnicodeData.txt', ucd_path, 'unicode_data', ';')
     data = db.load_unicode_data(pi)
     assert data['0000'].code == '0000'
     assert data['10fffd'].code == '10FFFD'
@@ -438,24 +521,24 @@ def test_load_unicode_data():
 
 
 # Test load_value_aliases.
-def test_load_value_aliases():
+def test_load_value_aliases(ucd_path):
     """When given the information for a path as a :class:`charex.db.PathInfo`
     object, :func:`charex.db.load_value_aliases` should return the data
     contained within the path as a :class:`collections.dict`.
     """
-    pi = db.PathInfo('PropertyValueAliases.txt', 'UCD.zip', '', ';')
+    pi = db.PathInfo('PropertyValueAliases.txt', ucd_path, '', ';')
     data = db.load_value_aliases(pi)
     assert data['ahex']['no'].alias == 'N'
     assert data['xids']['no'].alias == 'N'
 
 
 # Test load_value_range.
-def test_load_value_range():
+def test_load_value_range(ucd_path):
     """When given the information for a path as a :class:`charex.db.PathInfo`
     object, :func:`charex.db.load_value_range` should return the data
     contained within the path as a :class:`tuple`.
     """
-    pi = db.PathInfo('Blocks.txt', 'UCD.zip', 'value_range', ';')
+    pi = db.PathInfo('Blocks.txt', ucd_path, 'value_range', ';')
     data = db.load_value_range(pi)
     assert data[0] == db.ValueRange(0x0000, 0x0080, 'Basic Latin')
     assert data[-1] == db.ValueRange(

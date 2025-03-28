@@ -153,6 +153,7 @@ The following are the changes in v0.2.3:
 *   (Not started.) Support Unicode 15.0 when running under Python 3.12.
 
     *   Add Unicode 15.0 files.
+    *   Update the path_map to handle different Unicode versions.
 
 
 How Do I Run the Tests?

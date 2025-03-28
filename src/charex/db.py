@@ -9,6 +9,7 @@ from collections import defaultdict
 from collections.abc import Callable, Generator, Sequence
 from dataclasses import dataclass
 from importlib.resources import as_file, files
+from importlib.resources.abc import Traversable
 from json import load, loads
 from typing import Any, TypeVar
 from zipfile import ZipFile
@@ -40,6 +41,21 @@ UCD_RANGES = defaultdict(str, {
     0x2f800: 'CJK UNIFIED IDEOGRAPH-',
     0x30000: 'CJK UNIFIED IDEOGRAPH-',
 })
+
+
+# Construct paths to important files.
+def get_path_map_file() -> Traversable:
+    """Get the fully qualified path to the path map. This mainly
+    exists so it can be mocked during testing.
+    """
+    return PKG_DATA / FILE_PATH_MAP
+
+
+def get_prop_map_file() -> Traversable:
+    """Get the fully qualified path to the prop map. This mainly
+    exists so it can be mocked during testing.
+    """
+    return PKG_DATA / FILE_PROP_MAP
 
 
 # Data record structures.
@@ -601,9 +617,9 @@ def load_prop_list(info: PathInfo) -> SimpleLists:
     return data
 
 
-def load_property_alias(info: PathInfo, version: str = '') -> PropertyAliases:
+def load_property_alias(info: PathInfo) -> PropertyAliases:
     """Load a data file that contains property aliases."""
-    records, _ = parse(info, version=version)
+    records, _ = parse(info)
     data: PropertyAliases = {}
     for rec in records:
         alias, name, *other = rec
@@ -678,11 +694,11 @@ def load_unicode_data(info: PathInfo) -> UnicodeData:
     return data
 
 
-def load_value_aliases(info: PathInfo, version: str = '') -> ValueAliases:
+def load_value_aliases(info: PathInfo) -> ValueAliases:
     """Load a data file that contains information about property
     value aliases.
     """
-    lines = load_from_archive(info, version=version)
+    lines = load_from_archive(info)
     lines = strip_comments(lines)
     records = split_fields(lines, info.delim)
     data: ValueAliases = {}
@@ -730,38 +746,49 @@ def load_value_range(info: PathInfo) -> ValueRanges:
 
 
 # Basic file reading.
-def load_path_map() -> PathMap:
+def load_path_map(version: str = '') -> PathMap:
     """Load the map of Unicode data files to the archive they are
     stored in.
+
+    :param version: (Optional.) The version of Unicode to load.
+    :returns: A :class:`dict` object.
+    :rtype: dict
     """
-    path = PKG_DATA / FILE_PATH_MAP
-    fh = path.open()
-    json = load(fh)
-    fh.close()
-    return {key: PathInfo(*json[key]) for key in json}
+    path = get_path_map_file()
+    text = path.read_text()
+    data = loads(text)
+    result = {key: PathInfo(*data['default'][key]) for key in data['default']}
+    if version:
+        result.update({
+            key: PathInfo(*data[version][key])
+            for key in data[version]
+        })
+    return result
 
 
-def load_prop_map() -> PropMap:
+def load_prop_map(version: str = '') -> PropMap:
     """Load the map of Unicode properties to the key for the archive they
     are stored in.
+
+    :param version: (Optional.) The version of Unicode to load.
+    :returns: A :class:`dict` object.
+    :rtype: dict
     """
-    path = PKG_DATA / FILE_PROP_MAP
-    fh = path.open()
-    map = load(fh)
-    fh.close()
-    return map
+    path = get_prop_map_file()
+    text = path.read_text()
+    data = loads(text)
+    result = data['default']
+    if version:
+        result.update(result[version])
+    return result
 
 
 def load_from_archive(
     info: PathInfo,
-    codec: str = 'utf8',
-    version: str = ''
+    codec: str = 'utf8'
 ) -> Content:
     """Read data from a zip archive."""
-    if version:
-        path = PKG_DATA / version / info.archive
-    else:
-        path = PKG_DATA / info.archive
+    path = PKG_DATA / info.archive
     with as_file(path) as sh:
         with ZipFile(sh) as zh:
             with zh.open(info.path) as zch:
@@ -807,8 +834,7 @@ def build_hangul_name(code: str) -> str:
 def parse(
     file: PathInfo | Content,
     split=False,
-    delim_: str = ';',
-    version: str = ''
+    delim_: str = ';'
 ) -> tuple[Records, str]:
     """Perform basic parsing on a Unicode data file."""
     if isinstance(file, PathInfo):
@@ -924,11 +950,11 @@ def find_gap_in_value_ranges(vrs: ValueRanges) -> int | None:
 
 # File data cache.
 class FileCache:
-    __path_map = load_path_map()
-    __prop_map = load_prop_map()
+    def __init__(self, version: str = 'default') -> None:
+        self.version = version
 
-    def __init__(self) -> None:
-        self.version = 'v14_0'
+        self.__path_map = load_path_map(self.version)
+        self.__prop_map = load_prop_map()
 
         self.__bidibrackets: dict[str, BidiBrackets] = dict()
         self.__casefolding: Casefoldings = dict()
@@ -1066,7 +1092,7 @@ class FileCache:
     def entity_map(self) -> EntityMap:
         if not self.__entity_map:
             info = PathInfo(
-                f'{self.version}/entities.json',
+                f'entities.json',
                 '',
                 'entity_map',
                 ''
@@ -1100,7 +1126,7 @@ class FileCache:
     def property_alias(self) -> PropertyAliases:
         if not self.__property_alias:
             info = self.path_map[PATH_PROPERTY_ALIASES]
-            data = load_property_alias(info, version=self.version)
+            data = load_property_alias(info)
             self.__property_alias.update(data)
         return self.__property_alias
 
@@ -1116,7 +1142,7 @@ class FileCache:
     def value_aliases(self) -> ValueAliases:
         if not self.__value_aliases:
             info = self.path_map[PATH_VALUE_ALIASES]
-            data = load_value_aliases(info, version=self.version)
+            data = load_value_aliases(info)
             self.__value_aliases.update(data)
         return self.__value_aliases
 
