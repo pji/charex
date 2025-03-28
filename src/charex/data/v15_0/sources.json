@@ -1,4 +1,58 @@
 {
+    "rev_casefold.json": {
+        "description": "Casefold denormalization lookup.",
+        "source": "form:casefold",
+        "date": [
+            2025,
+            3,
+            28
+        ]
+    },
+    "rev_nfc.json": {
+        "description": "NFC denormalization lookup.",
+        "source": "form:nfc",
+        "date": [
+            2025,
+            3,
+            28
+        ]
+    },
+    "rev_nfd.json": {
+        "description": "NFD denormalization lookup.",
+        "source": "form:nfd",
+        "date": [
+            2025,
+            3,
+            28
+        ]
+    },
+    "rev_nfkc.json": {
+        "description": "NFKC denormalization lookup.",
+        "source": "form:nfkc",
+        "date": [
+            2025,
+            3,
+            28
+        ]
+    },
+    "rev_nfkd.json": {
+        "description": "NFKD denormalization lookup.",
+        "source": "form:nfkd",
+        "date": [
+            2025,
+            3,
+            28
+        ]
+    },
+    "entities.json": {
+        "description": "List of HTML Entities.",
+        "source": "https://html.spec.whatwg.org/entities.json",
+        "date": [
+            2025,
+            3,
+            28
+        ]
+    },
     "UCD.zip": {
         "description": "The collected data files for Unicode.",
         "source": "https://www.unicode.org/Public/zipped/15.0.0/UCD.zip",

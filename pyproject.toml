@@ -36,16 +36,26 @@ isort = "^6.0.1"
 
 [tool.setuptools.package-data]
 charex = [
-    'data/entities.json',
     "data/help_xt.txt",
     "data/path_map.json",
     "data/prop_map.json",
     'data/quote.html',
     'data/result.html',
     'data/sources.json',
+    'data/entities.json',
     'data/Denormal.zip',
     'data/UCD.zip',
     'data/Unihan.zip',
+    'data/v14_0/sources.json',
+    'data/v14_0/entities.json',
+    'data/v14_0/Denormal.zip',
+    'data/v14_0/UCD.zip',
+    'data/v14_0/Unihan.zip',
+    'data/v15_0/sources.json',
+    'data/v15_0/entities.json',
+    'data/v15_0/Denormal.zip',
+    'data/v15_0/UCD.zip',
+    'data/v15_0/Unihan.zip',
 ]
 
 

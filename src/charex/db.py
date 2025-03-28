@@ -601,9 +601,9 @@ def load_prop_list(info: PathInfo) -> SimpleLists:
     return data
 
 
-def load_property_alias(info: PathInfo) -> PropertyAliases:
+def load_property_alias(info: PathInfo, version: str = '') -> PropertyAliases:
     """Load a data file that contains property aliases."""
-    records, _ = parse(info)
+    records, _ = parse(info, version=version)
     data: PropertyAliases = {}
     for rec in records:
         alias, name, *other = rec
@@ -678,11 +678,11 @@ def load_unicode_data(info: PathInfo) -> UnicodeData:
     return data
 
 
-def load_value_aliases(info: PathInfo) -> ValueAliases:
+def load_value_aliases(info: PathInfo, version: str = '') -> ValueAliases:
     """Load a data file that contains information about property
     value aliases.
     """
-    lines = load_from_archive(info)
+    lines = load_from_archive(info, version=version)
     lines = strip_comments(lines)
     records = split_fields(lines, info.delim)
     data: ValueAliases = {}
@@ -752,9 +752,16 @@ def load_prop_map() -> PropMap:
     return map
 
 
-def load_from_archive(info: PathInfo, codec: str = 'utf8') -> Content:
+def load_from_archive(
+    info: PathInfo,
+    codec: str = 'utf8',
+    version: str = ''
+) -> Content:
     """Read data from a zip archive."""
-    path = PKG_DATA / info.archive
+    if version:
+        path = PKG_DATA / version / info.archive
+    else:
+        path = PKG_DATA / info.archive
     with as_file(path) as sh:
         with ZipFile(sh) as zh:
             with zh.open(info.path) as zch:
@@ -798,7 +805,10 @@ def build_hangul_name(code: str) -> str:
 
 # Basic file processing utilities.
 def parse(
-    file: PathInfo | Content, split=False, delim_: str = ';'
+    file: PathInfo | Content,
+    split=False,
+    delim_: str = ';',
+    version: str = ''
 ) -> tuple[Records, str]:
     """Perform basic parsing on a Unicode data file."""
     if isinstance(file, PathInfo):
@@ -918,6 +928,8 @@ class FileCache:
     __prop_map = load_prop_map()
 
     def __init__(self) -> None:
+        self.version = 'v14_0'
+
         self.__bidibrackets: dict[str, BidiBrackets] = dict()
         self.__casefolding: Casefoldings = dict()
         self.__cjk_radicals: Radicals = dict()
@@ -1053,7 +1065,12 @@ class FileCache:
     @property
     def entity_map(self) -> EntityMap:
         if not self.__entity_map:
-            info = PathInfo('entities.json', '', 'entity_map', '')
+            info = PathInfo(
+                f'{self.version}/entities.json',
+                '',
+                'entity_map',
+                ''
+            )
             emap = load_entity_map(info)
             self.__entity_map.update(emap)
         return self.__entity_map
@@ -1083,7 +1100,7 @@ class FileCache:
     def property_alias(self) -> PropertyAliases:
         if not self.__property_alias:
             info = self.path_map[PATH_PROPERTY_ALIASES]
-            data = load_property_alias(info)
+            data = load_property_alias(info, version=self.version)
             self.__property_alias.update(data)
         return self.__property_alias
 
@@ -1099,7 +1116,7 @@ class FileCache:
     def value_aliases(self) -> ValueAliases:
         if not self.__value_aliases:
             info = self.path_map[PATH_VALUE_ALIASES]
-            data = load_value_aliases(info)
+            data = load_value_aliases(info, version=self.version)
             self.__value_aliases.update(data)
         return self.__value_aliases
 
