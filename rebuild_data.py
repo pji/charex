@@ -19,6 +19,7 @@ from requests import get
 data_paths = {
     'v14_0': Path('src/charex/data/v14_0'),
     'v15_0': Path('src/charex/data/v15_0'),
+    'v15_1': Path('src/charex/data/v15_1'),
 }
 
 

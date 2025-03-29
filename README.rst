@@ -195,6 +195,8 @@ The following are the changes in v0.2.3:
     *   (Not started.) Check if multiple "kPrimaryNumeric" values
         are supported for U+5146 and U+79ED.
 
+*   (Not started.) Generate denormalizations for each version.
+
 
 How Do I Run the Tests?
 -----------------------

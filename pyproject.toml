@@ -58,6 +58,12 @@ charex = [
     'data/v15_0/Denormal.zip',
     'data/v15_0/UCD.zip',
     'data/v15_0/Unihan.zip',
+    'data/v15_1/sources.json',
+    'data/v15_1/entities.json',
+    'data/v15_1/idna2008.txt',
+    'data/v15_1/Denormal.zip',
+    'data/v15_1/UCD.zip',
+    'data/v15_1/Unihan.zip',
 ]
 
 
