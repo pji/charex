@@ -78,6 +78,12 @@
             "single_value",
             ";"
         ],
+        "idna2008": [
+            "v14_0/Idna2008.txt",
+            "",
+            "single_value",
+            ";"
+        ],
         "hangulsyllabletype": [
             "HangulSyllableType.txt",
             "v14_0/UCD.zip",
@@ -373,6 +379,12 @@
         "graphemebreakproperty": [
             "auxiliary/GraphemeBreakProperty.txt",
             "v15_0/UCD.zip",
+            "single_value",
+            ";"
+        ],
+        "idna2008": [
+            "v15_0/Idna2008.txt",
+            "",
             "single_value",
             ";"
         ],

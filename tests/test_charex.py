@@ -7,6 +7,7 @@ import json
 import pytest
 
 from charex import charex as c
+from charex import db
 
 
 # Global constants.
@@ -104,7 +105,6 @@ def test_character_dictlike_properties():
     """
     char = c.Character('a')
     assert char.kcangjie == ''
-    assert char.kcihait == ''
     assert char.kstrange == ''
     assert char.kphonetic == ''
     assert char.kfenn == ''
@@ -115,6 +115,11 @@ def test_character_dictlike_properties():
     assert char.kgradelevel == ''
     assert char.khdzradbreak == ''
     assert char.khkglyph == ''
+
+    if db.cache.version in ['v15_0',]:
+        assert char.kalternatetotalstrokes == ''
+    else:
+        assert char.kcihait == ''
 
 
 def test_character_dindices_properties():
@@ -141,6 +146,9 @@ def test_character_dindices_properties():
     assert char.kirgdaejaweon == ''
     assert char.kirgdaikanwaziten == ''
 
+    if db.cache.version in ['v15_0',]:
+        assert char.kcihait == ''
+
     char = c.Character('U+3402')
     assert char.khanyu == ''
     assert char.kirghanyudazidian == ''
@@ -150,7 +158,6 @@ def test_character_dindices_properties():
     assert char.kcowles == ''
     assert char.kmatthews == ''
     assert char.kgsr == ''
-    assert char.kkangxi == ''
     assert char.kfennindex == ''
     assert char.kkarlgren == ''
     assert char.kmeyerwempe == ''
@@ -160,6 +167,12 @@ def test_character_dindices_properties():
     assert char.kdaejaweon == ''
     assert char.kirgdaejaweon == ''
     assert char.kirgdaikanwaziten == ''
+
+    if db.cache.version in ['v15_0',]:
+        assert char.kcihait == ''
+        assert char.kkangxi == '0078.101'
+    else:
+        assert char.kkangxi == ''
 
 
 def test_character_emoji_properties():
@@ -173,6 +186,14 @@ def test_character_emoji_properties():
     assert char.ebase == 'N'
     assert char.ecomp == 'N'
     assert char.extpict == 'Y'
+
+
+def test_character_idna2008_properties():
+    """A :class:`charex.Character` should have the properties from the
+    Idna2008 data file.
+    """
+    char = c.Character('a')
+    assert char.idna2008 == 'PVALID'
 
 
 def test_character_irgsource_properties():
@@ -212,6 +233,66 @@ def test_character_irgsource_properties():
     assert char.cjkirg_uksource == ''
     assert char.cjkcompatibilityvariant == ''
     assert char.cjkirg_ssource == ''
+
+
+def test_character_mappings_properties():
+    """A :class:`charex.Character` should have the properties from the
+    Unihan Other Mappings database.
+    """
+    char = c.Character('a')
+    assert char.kjis0213 == ''
+    assert char.kkps1 == ''
+    assert char.khkscs == ''
+    assert char.ktgh == ''
+    assert char.kkoreanname == ''
+    assert char.keacc == ''
+    assert char.ktaiwantelegraph == ''
+    assert char.kja == ''
+    assert char.kkps0 == ''
+    assert char.kbigfive == ''
+    assert char.kcccii == ''
+    assert char.kcns1986 == ''
+    assert char.kcns1992 == ''
+    assert char.kgb0 == ''
+    assert char.kgb1 == ''
+    assert char.kjis0 == ''
+    assert char.kjoyokanji == ''
+    assert char.kksc0 == ''
+    assert char.kkoreaneducationhanja == ''
+    assert char.kmainlandtelegraph == ''
+    assert char.kxerox == ''
+    assert char.kgb5 == ''
+    assert char.kjis1 == ''
+    assert char.kpseudogb1 == ''
+    assert char.kgb3 == ''
+    assert char.kgb8 == ''
+    assert char.kjinmeiyokanji == ''
+    assert char.kksc1 == ''
+    assert char.kibmjapan == ''
+    assert char.kgb7 == ''
+
+
+def test_character_multilist_properties():
+    """A :class:`charex.Character` should have the properties from
+    defined properties that contain multiple values.
+    """
+    char = c.Character('a')
+    assert char.scx == 'Latn'
+
+
+def test_character_numvalues_properties():
+    """A :class:`charex.Character` should have the properties from the
+    Unihan Numeric Values database.
+    """
+    char = c.Character('a')
+    assert char.cjkothernumeric == ''
+    assert char.cjkprimarynumeric == ''
+    assert char.cjkaccountingnumeric == ''
+
+    char = c.Character('U+4E07')
+    assert char.cjkothernumeric == ''
+    assert char.cjkprimarynumeric == '10000'
+    assert char.cjkaccountingnumeric == ''
 
 
 def test_character_proplist_properties():
@@ -274,66 +355,6 @@ def test_character_proplist_properties():
     assert char.idc == 'Y'
     assert char.xids == 'Y'
     assert char.xidc == 'Y'
-
-
-def test_character_mappings_properties():
-    """A :class:`charex.Character` should have the properties from the
-    Unihan Other Mappings database.
-    """
-    char = c.Character('a')
-    assert char.kjis0213 == ''
-    assert char.kkps1 == ''
-    assert char.khkscs == ''
-    assert char.ktgh == ''
-    assert char.kkoreanname == ''
-    assert char.keacc == ''
-    assert char.ktaiwantelegraph == ''
-    assert char.kja == ''
-    assert char.kkps0 == ''
-    assert char.kbigfive == ''
-    assert char.kcccii == ''
-    assert char.kcns1986 == ''
-    assert char.kcns1992 == ''
-    assert char.kgb0 == ''
-    assert char.kgb1 == ''
-    assert char.kjis0 == ''
-    assert char.kjoyokanji == ''
-    assert char.kksc0 == ''
-    assert char.kkoreaneducationhanja == ''
-    assert char.kmainlandtelegraph == ''
-    assert char.kxerox == ''
-    assert char.kgb5 == ''
-    assert char.kjis1 == ''
-    assert char.kpseudogb1 == ''
-    assert char.kgb3 == ''
-    assert char.kgb8 == ''
-    assert char.kjinmeiyokanji == ''
-    assert char.kksc1 == ''
-    assert char.kibmjapan == ''
-    assert char.kgb7 == ''
-
-
-def test_character_multilist_properties():
-    """A :class:`charex.Character` should have the properties from
-    defined properties that contain multiple values.
-    """
-    char = c.Character('a')
-    assert char.scx == 'Latn'
-
-
-def test_character_numvalues_properties():
-    """A :class:`charex.Character` should have the properties from the
-    Unihan Numeric Values database.
-    """
-    char = c.Character('a')
-    assert char.cjkothernumeric == ''
-    assert char.cjkprimarynumeric == ''
-    assert char.cjkaccountingnumeric == ''
-
-    char = c.Character('U+4E07')
-    assert char.cjkothernumeric == ''
-    assert char.cjkprimarynumeric == '10000'
-    assert char.cjkaccountingnumeric == ''
 
 
 def test_character_radstroke_properties():

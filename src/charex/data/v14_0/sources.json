@@ -1,20 +1,11 @@
 {
-    "entities.json": {
-        "description": "List of HTML Entities.",
-        "source": "https://html.spec.whatwg.org/entities.json",
-        "date": [
-            2023,
-            6,
-            19
-        ]
-    },
     "rev_casefold.json": {
         "description": "Casefold denormalization lookup.",
         "source": "form:casefold",
         "date": [
             2025,
             3,
-            28
+            29
         ]
     },
     "rev_nfc.json": {
@@ -23,7 +14,7 @@
         "date": [
             2025,
             3,
-            28
+            29
         ]
     },
     "rev_nfd.json": {
@@ -32,7 +23,7 @@
         "date": [
             2025,
             3,
-            28
+            29
         ]
     },
     "rev_nfkc.json": {
@@ -41,7 +32,7 @@
         "date": [
             2025,
             3,
-            28
+            29
         ]
     },
     "rev_nfkd.json": {
@@ -50,25 +41,43 @@
         "date": [
             2025,
             3,
-            28
+            29
+        ]
+    },
+    "entities.json": {
+        "description": "List of HTML Entities.",
+        "source": "https://html.spec.whatwg.org/entities.json",
+        "date": [
+            2025,
+            3,
+            29
+        ]
+    },
+    "Idna2008.txt": {
+        "description": "The IDNA2008 property for Unicode characters.",
+        "source": "https://www.unicode.org/Public/idna/idna2008derived/Idna2008-14.0.0.txt",
+        "date": [
+            2025,
+            3,
+            29
         ]
     },
     "UCD.zip": {
         "description": "The collected data files for Unicode.",
         "source": "https://www.unicode.org/Public/14.0.0/ucd/UCD.zip",
         "date": [
-            2023,
-            6,
-            19
+            2025,
+            3,
+            29
         ]
     },
     "Unihan.zip": {
         "description": "The collected data files for CJK properties.",
         "source": "https://www.unicode.org/Public/14.0.0/ucd/Unihan.zip",
         "date": [
-            2023,
-            6,
-            19
+            2025,
+            3,
+            29
         ]
     }
 }

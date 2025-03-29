@@ -149,11 +149,51 @@ The following are the changes in v0.2.3:
 *   Move dependency management to `poetry`.
 *   Move package into /src directory.
 *   Use `tox` for regression testing.
-*   (Not started.) Support Unicode 15.1 when running under Python 3.13.
-*   (Not started.) Support Unicode 15.0 when running under Python 3.12.
+*   (Started.) Use Unicode version supported by Python version.
+
+    *   Updated the path_map to handle different Unicode versions.
+    *   Updated the prop_map to handle different Unicode versions.
+    *   Can specify the Unicode version of a `FileCache`.
+    *   (Not started.) Create a `FileCache` for the Unicode version
+        supported by the running Python on launch.
+
+*   (Started.) Support Unicode 15.0 when running under Python 3.12.
 
     *   Add Unicode 15.0 files.
-    *   Update the path_map to handle different Unicode versions.
+    *   Added "kalternatetotalstrokes" property.
+    *   Moved "kcihait" property source.
+    *   Added "idna2008" property.
+    *   (Not started.) Look into UAX9-C2 misleading bidirectional
+        ordering of source code spoofing attacks.
+
+*   (Not started.) Support Unicode 15.1 when running under Python 3.13.
+
+    *   (Not started.) Add Unicode 15.1 files.
+    *   (Not started.) Remove seven Unihan properties.
+    
+        *   kHKSCS
+        *   kIRGDaiKanwaZiten
+        *   kKPS0
+        *   kKPS1
+        *   kKSC0
+        *   kKSC1
+        *   kRSKangXi
+    
+    *   (Not started.) Add six Unihan properties.
+    
+        *   kJapanese
+        *   kMojiJoho
+        *   kSMSZD2003Index
+        *   kSMSZD2003Readings
+        *   kVietnameseNumeric
+        *   kZhuangNumeric
+
+    *   (Not started.) Add "IDS_Unary_Operator" property.
+    *   (Not started.) Add "ID_Compat_Math_Start" property.
+    *   (Not started.) Add "ID_Compat_Math_Continue" property.
+    *   (Not started.) Add "NFKC_Simple_Casefold" property.
+    *   (Not started.) Check if multiple "kPrimaryNumeric" values
+        are supported for U+5146 and U+79ED.
 
 
 How Do I Run the Tests?
@@ -162,8 +202,8 @@ How Do I Run the Tests?
 comes with a makefile that automates testing. So, to run the
 tests:
 
-*   Install `pipenv`: `pip install pipenv`
-*   Install the development dependencies: `pipenv install --dev`
+*   Install `poetry`: `pip install poetry`
+*   Install the development dependencies: `poetry install`
 *   To run just the unit tests: `make test`
 *   To run the full test suite: `make pre`
 

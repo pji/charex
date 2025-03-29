@@ -86,6 +86,7 @@
                      Sentence Break: UP
                Vertical Orientation: R
                          Word Break: LE
+                           idna2008: DISALLOWED
 
                                 ---  Value_Range
                               Block: Basic Latin

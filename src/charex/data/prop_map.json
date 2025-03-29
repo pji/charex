@@ -1,4 +1,8 @@
 {
+    "v15_0": {
+        "kalternatetotalstrokes": "unihan_dictionarylikedata",
+        "kcihait": "unihan_dictionaryindices"
+    },
     "default": {
         "na": "unicodedata",
         "gc": "unicodedata",
@@ -237,6 +241,8 @@
         "docomo": "emojisources",
         "kddi": "emojisources",
         "softbank": "emojisources",
+        
+        "idna2008": "idna2008",
     
         "cjkradical": "cjkradicals",
         "variants": "standardizedvariants",

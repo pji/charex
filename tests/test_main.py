@@ -5,10 +5,12 @@ test_main
 Unit tests for the mainline of the `charex` package.
 """
 import sys
+from pathlib import Path
 
 import pytest
 
 from charex import __main__ as m
+from charex import db
 from charex import escape as esc
 from charex import normal as nl
 
@@ -447,8 +449,11 @@ def test_pf_insensitive_regex(capsys):
 # Test sv mode.
 def test_sv(capsys):
     """When invoked, ns mode returns the list of standardized variants."""
-    with open('tests/data/sv.txt') as fh:
-        exp = fh.read()
+    path = Path('tests/data/sv.txt')
+    if db.cache.version in ['v15_0',]:
+        path = Path('tests/data/sv_v15_0.txt')
+    exp = path.read_text()
+
     cmd = (
         'python -m charex',
         'sv',

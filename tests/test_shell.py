@@ -4,8 +4,11 @@ test_shell
 
 Unit tests for :mod:`charex.shell`.
 """
+from pathlib import Path
+
 import pytest
 
+from charex import db
 from charex import escape as esc
 from charex import normal as nl
 from charex import shell as sh
@@ -303,12 +306,16 @@ def test_pf_insensitive(capsys):
 # Test sv mode.
 def test_sv(capsys):
     """When invoked, ns mode returns the list of standardized variants."""
-    with open('tests/data/sv.txt') as fh:
-        exp = fh.read()
+    exp_path = Path('tests/data/sv.txt')
+    if db.cache.version in ['v15_0']:
+        exp_path = Path('tests/data/sv_v15_0.txt')
+    exp = exp_path.read_text()
+
     cmd = (
         'sv'
     )
-    shell_test(exp, cmd, capsys)
+    result = cmd_output(cmd, capsys)
+    assert result == exp
 
 
 # Test up mode.
@@ -336,6 +343,14 @@ def test_up_description(capsys):
 
 
 # Utility functions.
+def cmd_output(cmd, capsys):
+    """Get the output of a shell command."""
+    shell = sh.Shell()
+    shell.onecmd(cmd)
+    captured = capsys.readouterr()
+    return captured.out
+
+
 def shell_test(exp, cmd, capsys):
     """Test shell invocation."""
     shell = sh.Shell()

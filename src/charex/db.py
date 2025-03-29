@@ -642,8 +642,19 @@ def load_single_value(info: PathInfo) -> SingleValue:
     data = defaultdict(Default(missing))
     for rec in records:
         code, value = rec
-        code = code.casefold()
-        data[code.strip()] = value.strip()
+
+        # Handle a single code.
+        if '..' not in code:
+            code = code.casefold()
+            data[code.strip()] = value.strip()
+
+        # Handle a range.
+        else:
+            start, stop = [int(n, 16) for n in code.split('..')]
+            stop += 1
+            for n in range(start, stop):
+                data[f'{n:0>4x}'] = value.strip()
+
     return data
 
 
@@ -779,7 +790,7 @@ def load_prop_map(version: str = '') -> PropMap:
     data = loads(text)
     result = data['default']
     if version:
-        result.update(result[version])
+        result.update(data[version])
     return result
 
 
@@ -788,12 +799,21 @@ def load_from_archive(
     codec: str = 'utf8'
 ) -> Content:
     """Read data from a zip archive."""
-    path = PKG_DATA / info.archive
-    with as_file(path) as sh:
-        with ZipFile(sh) as zh:
-            with zh.open(info.path) as zch:
-                blines = zch.readlines()
-    lines = [bline.decode(codec) for bline in blines]
+    # Read the data from a ZIP archive.
+    if info.archive:
+        path = PKG_DATA / info.archive
+        with as_file(path) as sh:
+            with ZipFile(sh) as zh:
+                with zh.open(info.path) as zch:
+                    blines = zch.readlines()
+        lines = [bline.decode(codec) for bline in blines]
+
+    # Read the data from a TXT archive.
+    else:
+        path = PKG_DATA / info.path
+        with open(str(path)) as fh:
+            lines = fh.readlines()
+
     return tuple(line.rstrip() for line in lines)
 
 
@@ -950,11 +970,11 @@ def find_gap_in_value_ranges(vrs: ValueRanges) -> int | None:
 
 # File data cache.
 class FileCache:
-    def __init__(self, version: str = 'default') -> None:
+    def __init__(self, version: str = 'v15_0') -> None:
         self.version = version
 
         self.__path_map = load_path_map(self.version)
-        self.__prop_map = load_prop_map()
+        self.__prop_map = load_prop_map(self.version)
 
         self.__bidibrackets: dict[str, BidiBrackets] = dict()
         self.__casefolding: Casefoldings = dict()
