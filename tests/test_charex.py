@@ -14,6 +14,12 @@ from charex import db
 UNICODE_LEN = 0x110000
 
 
+# Utility functions.
+def raises_exception(char, attr, ex):
+    with pytest.raises(ex):
+        getattr(char, attr)
+
+
 # Test Character.
 def test_character_init():
     """Given a string containing a character, a :class:`Character`
@@ -116,10 +122,13 @@ def test_character_dictlike_properties():
     assert char.khdzradbreak == ''
     assert char.khkglyph == ''
 
-    if db.cache.version in ['v15_0',]:
+    if db.cache.version in ['v15_0', 'v15_1',]:
         assert char.kalternatetotalstrokes == ''
     else:
         assert char.kcihait == ''
+
+    if db.cache.version in ['v15_1',]:
+        assert char.kmojijoho == ''
 
 
 def test_character_dindices_properties():
@@ -128,8 +137,8 @@ def test_character_dindices_properties():
     """
     char = c.Character('a')
     assert char.khanyu == ''
-    assert char.kirghanyudazidian == ''
     assert char.kirgkangxi == ''
+    assert char.kirghanyudazidian == ''
     assert char.ksbgy == ''
     assert char.knelson == ''
     assert char.kcowles == ''
@@ -144,15 +153,20 @@ def test_character_dindices_properties():
     assert char.kmorohashi == ''
     assert char.kdaejaweon == ''
     assert char.kirgdaejaweon == ''
-    assert char.kirgdaikanwaziten == ''
 
-    if db.cache.version in ['v15_0',]:
+    if db.cache.version in ['v15_0', 'v15_1',]:
         assert char.kcihait == ''
+
+    if db.cache.version in ['v15_1',]:
+        raises_exception(char, 'kirgdaikanwaziten', KeyError)
+        assert char.ksmszd2003index == ''
+    else:
+        assert char.kirgdaikanwaziten == ''
 
     char = c.Character('U+3402')
     assert char.khanyu == ''
-    assert char.kirghanyudazidian == ''
     assert char.kirgkangxi == '0078.101'
+    assert char.kirghanyudazidian == ''
     assert char.ksbgy == ''
     assert char.knelson == '0265'
     assert char.kcowles == ''
@@ -163,16 +177,22 @@ def test_character_dindices_properties():
     assert char.kmeyerwempe == ''
     assert char.klau == ''
     assert char.kcheungbauerindex == ''
-    assert char.kmorohashi == ''
     assert char.kdaejaweon == ''
     assert char.kirgdaejaweon == ''
-    assert char.kirgdaikanwaziten == ''
 
-    if db.cache.version in ['v15_0',]:
+    if db.cache.version in ['v15_0', 'v15_1',]:
         assert char.kcihait == ''
         assert char.kkangxi == '0078.101'
     else:
         assert char.kkangxi == ''
+
+    if db.cache.version in ['v15_1',]:
+        raises_exception(char, 'kirgdaikanwaziten', KeyError)
+        assert char.kmorohashi == 'H001'
+        assert char.ksmszd2003index == ''
+    else:
+        assert char.kirgdaikanwaziten == ''
+        assert char.kmorohashi == ''
 
 
 def test_character_emoji_properties():
@@ -241,14 +261,11 @@ def test_character_mappings_properties():
     """
     char = c.Character('a')
     assert char.kjis0213 == ''
-    assert char.kkps1 == ''
-    assert char.khkscs == ''
     assert char.ktgh == ''
     assert char.kkoreanname == ''
     assert char.keacc == ''
     assert char.ktaiwantelegraph == ''
     assert char.kja == ''
-    assert char.kkps0 == ''
     assert char.kbigfive == ''
     assert char.kcccii == ''
     assert char.kcns1986 == ''
@@ -257,7 +274,6 @@ def test_character_mappings_properties():
     assert char.kgb1 == ''
     assert char.kjis0 == ''
     assert char.kjoyokanji == ''
-    assert char.kksc0 == ''
     assert char.kkoreaneducationhanja == ''
     assert char.kmainlandtelegraph == ''
     assert char.kxerox == ''
@@ -267,9 +283,21 @@ def test_character_mappings_properties():
     assert char.kgb3 == ''
     assert char.kgb8 == ''
     assert char.kjinmeiyokanji == ''
-    assert char.kksc1 == ''
     assert char.kibmjapan == ''
     assert char.kgb7 == ''
+
+    if db.cache.version in ['v15_1',]:
+        raises_exception(char, 'kkps0', KeyError)
+        raises_exception(char, 'kkps1', KeyError)
+        raises_exception(char, 'kksc0', KeyError)
+        raises_exception(char, 'kksc1', KeyError)
+        raises_exception(char, 'khkscs', KeyError)
+    else:
+        assert char.kkps0 == ''
+        assert char.kkps1 == ''
+        assert char.kksc0 == ''
+        assert char.kksc1 == ''
+        assert char.khkscs == ''
 
 
 def test_character_multilist_properties():
@@ -289,10 +317,18 @@ def test_character_numvalues_properties():
     assert char.cjkprimarynumeric == ''
     assert char.cjkaccountingnumeric == ''
 
+    if db.cache.version in ['v15_1',]:
+        assert char.kvietnamesenumeric == ''
+        assert char.kzhuangnumeric == ''
+
     char = c.Character('U+4E07')
     assert char.cjkothernumeric == ''
     assert char.cjkprimarynumeric == '10000'
     assert char.cjkaccountingnumeric == ''
+
+    if db.cache.version in ['v15_1',]:
+        assert char.kvietnamesenumeric == ''
+        assert char.kzhuangnumeric == ''
 
 
 def test_character_proplist_properties():
@@ -363,15 +399,27 @@ def test_character_radstroke_properties():
     """
     char = c.Character('a')
     assert char.krsadobe_japan1_6 == ''
-    assert char.krskangxi == ''
+
+    if db.cache.version in ['v15_1',]:
+        raises_exception(char, 'krskangxi', KeyError)
+    else:
+        assert char.krskangxi == ''
 
     char = c.Character('U+3427')
     assert char.krsadobe_japan1_6 == 'C+13910+3.1.3 C+13910+6.1.3'
-    assert char.krskangxi == ''
+
+    if db.cache.version in ['v15_1',]:
+        raises_exception(char, 'krskangxi', KeyError)
+    else:
+        assert char.krskangxi == ''
 
     char = c.Character('U+3687')
     assert char.krsadobe_japan1_6 == ''
-    assert char.krskangxi == '35.6'
+
+    if db.cache.version in ['v15_1',]:
+        raises_exception(char, 'krskangxi', KeyError)
+    else:
+        assert char.krskangxi == '35.6'
 
 
 def test_character_readings_properties():
@@ -393,6 +441,10 @@ def test_character_readings_properties():
     assert char.khanyupinlu == ''
     assert char.kkorean == ''
 
+    if db.cache.version in ['v15_1',]:
+        assert char.kjapanese == ''
+        assert char.ksmszd2003readings == ''
+
     char = c.Character('U+3404')
     assert char.kcantonese == 'kwaa1'
     assert char.kdefinition == ''
@@ -407,6 +459,10 @@ def test_character_readings_properties():
     assert char.kjapaneseon == ''
     assert char.khanyupinlu == ''
     assert char.kkorean == ''
+
+    if db.cache.version in ['v15_1',]:
+        assert char.kjapanese == 'カ ケ'
+        assert char.ksmszd2003readings == ''
 
 
 def test_character_rangelist_properties():

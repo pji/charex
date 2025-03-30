@@ -609,7 +609,9 @@ def load_prop_list(info: PathInfo) -> SimpleLists:
     records, _ = parse(info, True)
     data: SimpleLists = {}
     for rec in records:
-        code, long = rec
+        code, long, *values = rec
+        if values:
+            long = f'{long}: {" ".join(values)}'
         prop = alias_property(long)
         prop = prop.casefold()
         data.setdefault(prop, set())
@@ -970,7 +972,7 @@ def find_gap_in_value_ranges(vrs: ValueRanges) -> int | None:
 
 # File data cache.
 class FileCache:
-    def __init__(self, version: str = 'v15_0') -> None:
+    def __init__(self, version: str = 'v15_1') -> None:
         self.version = version
 
         self.__path_map = load_path_map(self.version)

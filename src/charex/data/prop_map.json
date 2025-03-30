@@ -1,7 +1,35 @@
 {
-    "v15_0": {
+    "v15_1": {
+        "kjapanese": "unihan_readings",
+        "kmojijoho": "unihan_dictionarylikedata",
+        "ksmszd2003index": "unihan_dictionaryindices",
+        "ksmszd2003readings": "unihan_readings",
+        "kvietnamesenumeric": "unihan_numericvalues",
+        "kzhuangnumeric": "unihan_numericvalues",
+        
         "kalternatetotalstrokes": "unihan_dictionarylikedata",
         "kcihait": "unihan_dictionaryindices"
+    },
+    "v15_0": {
+        "kalternatetotalstrokes": "unihan_dictionarylikedata",
+        "kcihait": "unihan_dictionaryindices",
+
+        "khkscs": "unihan_othermappings",
+        "kirgdaikanwaziten": "unihan_dictionaryindices",
+        "kkps0": "unihan_othermappings",
+        "kkps1": "unihan_othermappings",
+        "kksc0": "unihan_othermappings",
+        "kksc1": "unihan_othermappings",
+        "krskangxi": "unihan_radicalstrokecounts"
+    },
+    "v14_0": {
+        "khkscs": "unihan_othermappings",
+        "kirgdaikanwaziten": "unihan_dictionaryindices",
+        "kkps0": "unihan_othermappings",
+        "kkps1": "unihan_othermappings",
+        "kksc0": "unihan_othermappings",
+        "kksc1": "unihan_othermappings",
+        "krskangxi": "unihan_radicalstrokecounts"
     },
     "default": {
         "na": "unicodedata",
@@ -137,7 +165,6 @@
         "kmorohashi": "unihan_dictionaryindices",
         "kdaejaweon": "unihan_dictionaryindices",
         "kirgdaejaweon": "unihan_dictionaryindices",
-        "kirgdaikanwaziten": "unihan_dictionaryindices",
         "cjkirg_gsource": "unihan_irgsources",
         "cjkirg_jsource": "unihan_irgsources",
         "cjkirg_tsource": "unihan_irgsources",
@@ -154,14 +181,11 @@
         "cjkcompatibilityvariant": "unihan_irgsources",
         "cjkirg_ssource": "unihan_irgsources",
         "kjis0213": "unihan_othermappings",
-        "kkps1": "unihan_othermappings",
-        "khkscs": "unihan_othermappings",
         "ktgh": "unihan_othermappings",
         "kkoreanname": "unihan_othermappings",
         "keacc": "unihan_othermappings",
         "ktaiwantelegraph": "unihan_othermappings",
         "kja": "unihan_othermappings",
-        "kkps0": "unihan_othermappings",
         "kbigfive": "unihan_othermappings",
         "kcccii": "unihan_othermappings",
         "kcns1986": "unihan_othermappings",
@@ -170,7 +194,6 @@
         "kgb1": "unihan_othermappings",
         "kjis0": "unihan_othermappings",
         "kjoyokanji": "unihan_othermappings",
-        "kksc0": "unihan_othermappings",
         "kkoreaneducationhanja": "unihan_othermappings",
         "kmainlandtelegraph": "unihan_othermappings",
         "kxerox": "unihan_othermappings",
@@ -180,14 +203,12 @@
         "kgb3": "unihan_othermappings",
         "kgb8": "unihan_othermappings",
         "kjinmeiyokanji": "unihan_othermappings",
-        "kksc1": "unihan_othermappings",
         "kibmjapan": "unihan_othermappings",
         "kgb7": "unihan_othermappings",
         "cjkothernumeric": "unihan_numericvalues",
         "cjkprimarynumeric": "unihan_numericvalues",
         "cjkaccountingnumeric": "unihan_numericvalues",
         "krsadobe_japan1_6": "unihan_radicalstrokecounts",
-        "krskangxi": "unihan_radicalstrokecounts",
         "kcantonese": "unihan_readings",
         "kdefinition": "unihan_readings",
         "kmandarin": "unihan_readings",

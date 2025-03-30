@@ -1,0 +1,269 @@
+age                      Age
+
+ahex                     ASCII Hex Digit
+
+alpha                    Alphabetic
+
+bc                       Bidi Class
+
+bidi_c                   Bidi Control
+
+bidi_m                   Bidi Mirrored
+
+blk                      Block
+
+bmg                      Bidi Mirroring Glyph
+
+bpb                      Bidi Paired Bracket
+
+bpt                      Bidi Paired Bracket Type
+
+cased                    Cased
+
+ccc                      Canonical Combining Class
+
+ce                       Composition Exclusion
+
+cf                       Case Folding
+
+ci                       Case Ignorable
+
+cjkaccountingnumeric     kAccountingNumeric
+
+cjkcompatibilityvariant  kCompatibilityVariant
+
+cjkiicore                kIICore
+
+cjkirg_gsource           kIRG GSource
+
+cjkirg_hsource           kIRG HSource
+
+cjkirg_jsource           kIRG JSource
+
+cjkirg_kpsource          kIRG KPSource
+
+cjkirg_ksource           kIRG KSource
+
+cjkirg_msource           kIRG MSource
+
+cjkirg_ssource           kIRG SSource
+
+cjkirg_tsource           kIRG TSource
+
+cjkirg_uksource          kIRG UKSource
+
+cjkirg_usource           kIRG USource
+
+cjkirg_vsource           kIRG VSource
+
+cjkothernumeric          kOtherNumeric
+
+cjkprimarynumeric        kPrimaryNumeric
+
+cjkrsunicode             kRSUnicode
+
+comp_ex                  Full Composition Exclusion
+
+cwcf                     Changes When Casefolded
+
+cwcm                     Changes When Casemapped
+
+cwkcf                    Changes When NFKC Casefolded
+
+cwl                      Changes When Lowercased
+
+cwt                      Changes When Titlecased
+
+cwu                      Changes When Uppercased
+
+dash                     Dash
+
+dep                      Deprecated
+
+di                       Default Ignorable Code Point
+
+dia                      Diacritic
+
+dm                       Decomposition Mapping
+
+dt                       Decomposition Type
+
+ea                       East Asian Width
+
+ebase                    Emoji Modifier Base
+
+ecomp                    Emoji Component
+
+emod                     Emoji Modifier
+
+emoji                    Emoji
+
+epres                    Emoji Presentation
+
+equideo                  Equivalent Unified Ideograph
+
+ext                      Extender
+
+extpict                  Extended Pictographic
+
+fc_nfkc                  FC NFKC Closure
+
+gc                       General Category
+
+gcb                      Grapheme Cluster Break
+
+gr_base                  Grapheme Base
+
+gr_ext                   Grapheme Extend
+
+gr_link                  Grapheme Link
+
+hex                      Hex Digit
+
+hst                      Hangul Syllable Type
+
+hyphen                   Hyphen
+
+id_compat_math_continue  ID Compat Math Continue
+
+id_compat_math_start     ID Compat Math Start
+
+idc                      ID Continue
+
+ideo                     Ideographic
+
+ids                      ID Start
+
+idsb                     IDS Binary Operator
+
+idst                     IDS Trinary Operator
+
+idsu                     IDS Unary Operator
+
+incb                     Indic Conjunct Break
+
+inpc                     Indic Positional Category
+
+insc                     Indic Syllabic Category
+
+isc                      ISO Comment
+
+jg                       Joining Group
+
+join_c                   Join Control
+
+jsn                      Jamo Short Name
+
+jt                       Joining Type
+
+lb                       Line Break
+
+lc                       Lowercase Mapping
+
+loe                      Logical Order Exception
+
+lower                    Lowercase
+
+math                     Math
+
+na                       Name
+
+na1                      Unicode 1 Name
+
+name_alias               Name Alias
+
+nchar                    Noncharacter Code Point
+
+nfc_qc                   NFC Quick Check
+
+nfd_qc                   NFD Quick Check
+
+nfkc_cf                  NFKC Casefold
+
+nfkc_qc                  NFKC Quick Check
+
+nfkc_scf                 NFKC Simple Casefold
+
+nfkd_qc                  NFKD Quick Check
+
+nt                       Numeric Type
+
+nv                       Numeric Value
+
+oalpha                   Other Alphabetic
+
+odi                      Other Default Ignorable Code Point
+
+ogr_ext                  Other Grapheme Extend
+
+oidc                     Other ID Continue
+
+oids                     Other ID Start
+
+olower                   Other Lowercase
+
+omath                    Other Math
+
+oupper                   Other Uppercase
+
+pat_syn                  Pattern Syntax
+
+pat_ws                   Pattern White Space
+
+pcm                      Prepended Concatenation Mark
+
+qmark                    Quotation Mark
+
+radical                  Radical
+
+ri                       Regional Indicator
+
+sb                       Sentence Break
+
+sc                       Script
+
+scf                      Simple Case Folding
+
+scx                      Script Extensions
+
+sd                       Soft Dotted
+
+slc                      Simple Lowercase Mapping
+
+stc                      Simple Titlecase Mapping
+
+sterm                    Sentence Terminal
+
+suc                      Simple Uppercase Mapping
+
+tc                       Titlecase Mapping
+
+term                     Terminal Punctuation
+
+uc                       Uppercase Mapping
+
+uideo                    Unified Ideograph
+
+upper                    Uppercase
+
+vo                       Vertical Orientation
+
+vs                       Variation Selector
+
+wb                       Word Break
+
+wspace                   White Space
+
+xidc                     XID Continue
+
+xids                     XID Start
+
+xo_nfc                   Expands On NFC
+
+xo_nfd                   Expands On NFD
+
+xo_nfkc                  Expands On NFKC
+
+xo_nfkd                  Expands On NFKD
+
+

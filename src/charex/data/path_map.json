@@ -1,5 +1,6 @@
 {
-    "default": {
+    "default": {},
+    "v14_0": {
         "propertyaliases": [
             "PropertyAliases.txt",
             "v14_0/UCD.zip",
@@ -603,6 +604,310 @@
         "rev_nfkd": [
             "rev_nfkd.json",
             "v15_0/Denormal.zip",
+            "denormal_map",
+            ""
+        ]
+    },
+    "v15_1": {
+        "propertyaliases": [
+            "PropertyAliases.txt",
+            "v15_1/UCD.zip",
+            "property_alias",
+            ";"
+        ],
+        "propertyvaluealiases": [
+            "PropertyValueAliases.txt",
+            "v15_1/UCD.zip",
+            "value_alias",
+            ";"
+        ],
+        "unicodedata": [
+            "UnicodeData.txt",
+            "v15_1/UCD.zip",
+            "unicode_data",
+            ";"
+        ],
+        "proplist": [
+            "PropList.txt",
+            "v15_1/UCD.zip",
+            "prop_list",
+            ";"
+        ],
+        "derivedcoreproperties": [
+            "DerivedCoreProperties.txt",
+            "v15_1/UCD.zip",
+            "prop_list",
+            ";"
+        ],
+        "derivedage": [
+            "DerivedAge.txt",
+            "v15_1/UCD.zip",
+            "single_value",
+            ";"
+        ],
+        "blocks": [
+            "Blocks.txt",
+            "v15_1/UCD.zip",
+            "value_range",
+            ";"
+        ],
+        "scripts": [
+            "Scripts.txt",
+            "v15_1/UCD.zip",
+            "single_value",
+            ";"
+        ],
+        "scriptextensions": [
+            "ScriptExtensions.txt",
+            "v15_1/UCD.zip",
+            "single_value",
+            ";"
+        ],
+        "bidimirroring": [
+            "BidiMirroring.txt",
+            "v15_1/UCD.zip",
+            "single_value",
+            ";"
+        ],
+        "eastasianwidth": [
+            "EastAsianWidth.txt",
+            "v15_1/UCD.zip",
+            "single_value",
+            ";"
+        ],
+        "equivalentunifiedideograph": [
+            "EquivalentUnifiedIdeograph.txt",
+            "v15_1/UCD.zip",
+            "single_value",
+            ";"
+        ],
+        "graphemebreakproperty": [
+            "auxiliary/GraphemeBreakProperty.txt",
+            "v15_1/UCD.zip",
+            "single_value",
+            ";"
+        ],
+        "idna2008": [
+            "v15_1/Idna2008.txt",
+            "",
+            "single_value",
+            ";"
+        ],
+        "hangulsyllabletype": [
+            "HangulSyllableType.txt",
+            "v15_1/UCD.zip",
+            "single_value",
+            ";"
+        ],
+        "indicpositionalcategory": [
+            "IndicPositionalCategory.txt",
+            "v15_1/UCD.zip",
+            "single_value",
+            ";"
+        ],
+        "indicsyllabiccategory": [
+            "IndicSyllabicCategory.txt",
+            "v15_1/UCD.zip",
+            "single_value",
+            ";"
+        ],
+        "derivedjoininggroup": [
+            "extracted/DerivedJoiningGroup.txt",
+            "v15_1/UCD.zip",
+            "single_value",
+            ";"
+        ],
+        "jamo": [
+            "Jamo.txt",
+            "v15_1/UCD.zip",
+            "single_value",
+            ";"
+        ],
+        "derivedjoiningtype": [
+            "extracted/DerivedJoiningType.txt",
+            "v15_1/UCD.zip",
+            "single_value",
+            ";"
+        ],
+        "linebreak": [
+            "LineBreak.txt",
+            "v15_1/UCD.zip",
+            "single_value",
+            ";"
+        ],
+        "sentencebreakproperty": [
+            "auxiliary/SentenceBreakProperty.txt",
+            "v15_1/UCD.zip",
+            "single_value",
+            ";"
+        ],
+        "verticalorientation": [
+            "VerticalOrientation.txt",
+            "v15_1/UCD.zip",
+            "single_value",
+            ";"
+        ],
+        "wordbreakproperty": [
+            "auxiliary/WordBreakProperty.txt",
+            "v15_1/UCD.zip",
+            "single_value",
+            ";"
+        ],
+        "compositionexclusions": [
+            "CompositionExclusions.txt",
+            "v15_1/UCD.zip",
+            "simple_list",
+            ";"
+        ],
+        "derivednormalizationprops": [
+            "DerivedNormalizationProps.txt",
+            "v15_1/UCD.zip",
+            "derived_normal",
+            ";"
+        ],
+        "emoji-data": [
+            "emoji/emoji-data.txt",
+            "v15_1/UCD.zip",
+            "prop_list",
+            ";"
+        ],
+        "unihan_dictionarylikedata": [
+            "Unihan_DictionaryLikeData.txt",
+            "v15_1/Unihan.zip",
+            "unihan",
+            "\t"
+        ],
+        "unihan_dictionaryindices": [
+            "Unihan_DictionaryIndices.txt",
+            "v15_1/Unihan.zip",
+            "unihan",
+            "\t"
+        ],
+        "unihan_irgsources": [
+            "Unihan_IRGSources.txt",
+            "v15_1/Unihan.zip",
+            "unihan",
+            "\t"
+        ],
+        "unihan_othermappings": [
+            "Unihan_OtherMappings.txt",
+            "v15_1/Unihan.zip",
+            "unihan",
+            "\t"
+        ],
+        "unihan_numericvalues": [
+            "Unihan_NumericValues.txt",
+            "v15_1/Unihan.zip",
+            "unihan",
+            "\t"
+        ],
+        "unihan_radicalstrokecounts": [
+            "Unihan_RadicalStrokeCounts.txt",
+            "v15_1/Unihan.zip",
+            "unihan",
+            "\t"
+        ],
+        "unihan_readings": [
+            "Unihan_Readings.txt",
+            "v15_1/Unihan.zip",
+            "unihan",
+            "\t"
+        ],
+        "unihan_variants": [
+            "Unihan_Variants.txt",
+            "v15_1/Unihan.zip",
+            "unihan",
+            "\t"
+        ],
+        "casefolding": [
+            "CaseFolding.txt",
+            "v15_1/UCD.zip",
+            "casefolding",
+            ";"
+        ],
+        "specialcasing": [
+            "SpecialCasing.txt",
+            "v15_1/UCD.zip",
+            "special_casing",
+            ";"
+        ],
+        "bidibrackets": [
+            "BidiBrackets.txt",
+            "v15_1/UCD.zip",
+            "bidi_brackets",
+            ";"
+        ],
+        "namealiases": [
+            "NameAliases.txt",
+            "v15_1/UCD.zip",
+            "name_alias",
+            ";"
+        ],
+        "tangutsources": [
+            "TangutSources.txt",
+            "v15_1/UCD.zip",
+            "unihan",
+            "\t"
+        ],
+        "nushusources": [
+            "NushuSources.txt",
+            "v15_1/UCD.zip",
+            "unihan",
+            "\t"
+        ],
+        "emojisources": [
+            "EmojiSources.txt",
+            "v15_1/UCD.zip",
+            "emoji_source",
+            ";"
+        ],
+        
+        "cjkradicals": [
+            "CJKRadicals.txt",
+            "v15_1/UCD.zip",
+            "cjk_radicals",
+            ";"
+        ],
+        "namedsequences": [
+            "NamedSequences.txt",
+            "v15_1/UCD.zip",
+            "named_sequence",
+            ";"
+        ],
+        "standardizedvariants": [
+            "StandardizedVariants.txt",
+            "v15_1/UCD.zip",
+            "standardized_variant",
+            ";"
+        ],
+        
+        "rev_casefold": [
+            "rev_casefold.json",
+            "v15_1/Denormal.zip",
+            "denormal_map",
+            ""
+        ],
+        "rev_nfc": [
+            "rev_nfc.json",
+            "v15_1/Denormal.zip",
+            "denormal_map",
+            ""
+        ],
+        "rev_nfd": [
+            "rev_nfd.json",
+            "v15_1/Denormal.zip",
+            "denormal_map",
+            ""
+        ],
+        "rev_nfkc": [
+            "rev_nfkc.json",
+            "v15_1/Denormal.zip",
+            "denormal_map",
+            ""
+        ],
+        "rev_nfkd": [
+            "rev_nfkd.json",
+            "v15_1/Denormal.zip",
             "denormal_map",
             ""
         ]

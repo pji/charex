@@ -309,6 +309,8 @@ def test_sv(capsys):
     exp_path = Path('tests/data/sv.txt')
     if db.cache.version in ['v15_0']:
         exp_path = Path('tests/data/sv_v15_0.txt')
+    elif db.cache.version in ['v15_1']:
+        exp_path = Path('tests/data/sv_v15_1.txt')
     exp = exp_path.read_text()
 
     cmd = (
@@ -321,25 +323,31 @@ def test_sv(capsys):
 # Test up mode.
 def test_up(capsys):
     """When invoked, up mode should return the list of Unicode properties."""
-    with open('tests/data/up.txt') as fh:
-        exp = fh.read()
+    exp_path = Path('tests/data/up.txt')
+    if db.cache.version in ['v15_1']:
+        exp_path = Path('tests/data/up_v15_1.txt')
+    exp = exp_path.read_text()
     cmd = (
         'up'
     )
-    shell_test(exp, cmd, capsys)
+    result = cmd_output(cmd, capsys)
+    assert result == exp
 
 
 def test_up_description(capsys):
     """When invoked with -d, up mode should return a list of
     Unicode properties and their long names.
     """
-    with open('tests/data/up_d.txt') as fh:
-        exp = fh.read()
+    exp_path = Path('tests/data/up_d.txt')
+    if db.cache.version in ['v15_1']:
+        exp_path = Path('tests/data/up_d_v15_1.txt')
+    exp = exp_path.read_text()
     cmd = (
         'up '
         '-d'
     )
-    shell_test(exp, cmd, capsys)
+    result = cmd_output(cmd, capsys)
+    assert result == exp
 
 
 # Utility functions.

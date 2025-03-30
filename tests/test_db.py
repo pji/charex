@@ -386,7 +386,7 @@ class TestLoadPathMap:
         """
         exp = ucd_path
         path = 'unicodedata'
-        pm = db.load_path_map()
+        pm = db.load_path_map(version='v14_0')
         pi = pm[path]
         assert pi.archive == exp
 
