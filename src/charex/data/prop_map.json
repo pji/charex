@@ -1,5 +1,7 @@
 {
     "v15_1": {
+        "idsu": "proplist",
+        
         "kjapanese": "unihan_readings",
         "kmojijoho": "unihan_dictionarylikedata",
         "ksmszd2003index": "unihan_dictionaryindices",

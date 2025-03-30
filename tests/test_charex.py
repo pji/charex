@@ -371,6 +371,9 @@ def test_character_proplist_properties():
     assert char.pcm == 'N'
     assert char.ri == 'N'
 
+    if db.cache.version in ['v15_1',]:
+        assert char.idsu == 'N'
+
     # DerivedCoreProperties.
     assert char.lower == 'Y'
     assert char.upper == 'N'

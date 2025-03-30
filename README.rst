@@ -166,10 +166,10 @@ The following are the changes in v0.2.3:
     *   (Not started.) Look into UAX9-C2 misleading bidirectional
         ordering of source code spoofing attacks.
 
-*   (Not started.) Support Unicode 15.1 when running under Python 3.13.
+*   (Started.) Support Unicode 15.1 when running under Python 3.13.
 
-    *   (Not started.) Add Unicode 15.1 files.
-    *   (Not started.) Remove seven Unihan properties.
+    *   Add Unicode 15.1 files.
+    *   Remove seven Unihan properties.
     
         *   kHKSCS
         *   kIRGDaiKanwaZiten
@@ -179,7 +179,7 @@ The following are the changes in v0.2.3:
         *   kKSC1
         *   kRSKangXi
     
-    *   (Not started.) Add six Unihan properties.
+    *   Add six Unihan properties.
     
         *   kJapanese
         *   kMojiJoho
@@ -188,13 +188,15 @@ The following are the changes in v0.2.3:
         *   kVietnameseNumeric
         *   kZhuangNumeric
 
-    *   (Not started.) Add "IDS_Unary_Operator" property.
+    *   Add "IDS_Unary_Operator" property.
     *   (Not started.) Add "ID_Compat_Math_Start" property.
     *   (Not started.) Add "ID_Compat_Math_Continue" property.
     *   (Not started.) Add "NFKC_Simple_Casefold" property.
     *   (Not started.) Check if multiple "kPrimaryNumeric" values
         are supported for U+5146 and U+79ED.
 
+*   (Not started.) Return an AttributeError rather than KeyError
+    when an attribute doesn't exist.
 *   (Not started.) Generate denormalizations for each version.
 
 

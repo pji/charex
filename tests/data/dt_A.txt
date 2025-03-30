@@ -68,6 +68,7 @@
                 Emoji Modifier Base: N
                     Emoji Component: N
               Extended Pictographic: N
+                 IDS Unary Operator: N
 
                                 ---  Single_Value
                                 Age: 1.1
