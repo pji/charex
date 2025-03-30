@@ -86,6 +86,11 @@ def bin2bytes(value: str, endian: str = 'big') -> bytes:
     return b''.join(octets)
 
 
+def constant_factory(value):
+    """Return a function that always returns the same value."""
+    return lambda: value
+
+
 def get_description_from_docstring(obj: object) -> str:
     """Get the first paragraph of the docstring from the given object.
 

@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from importlib.resources import as_file, files
 from importlib.resources.abc import Traversable
 from json import load, loads
+from sys import version_info
 from typing import Any, TypeVar
 from zipfile import ZipFile
 
@@ -40,6 +41,11 @@ UCD_RANGES = defaultdict(str, {
     0x2ceb0: 'CJK UNIFIED IDEOGRAPH-',
     0x2f800: 'CJK UNIFIED IDEOGRAPH-',
     0x30000: 'CJK UNIFIED IDEOGRAPH-',
+})
+VERSIONS = defaultdict(util.constant_factory('v15_1'), {
+    11: 'v14_0',
+    12: 'v15_0',
+    13: 'v15_1',
 })
 
 
@@ -978,6 +984,14 @@ def find_gap_in_value_ranges(vrs: ValueRanges) -> int | None:
 
 # File data cache.
 class FileCache:
+    @classmethod
+    def from_python(cls, python) -> 'FileCache':
+        """Given a Python version, return a :class:`charex.db.FileCache`
+        object using the supported version of Unicode.
+        """
+        version = VERSIONS[python.minor]
+        return cls(version)
+
     def __init__(self, version: str = 'v15_1') -> None:
         self.version = version
 
@@ -1190,7 +1204,7 @@ class FileCache:
         return self.__value_names
 
 
-cache = FileCache()
+cache = FileCache.from_python(version_info)
 
 
 if __name__ == '__main__':

@@ -237,8 +237,8 @@ def test_dt(capsys):
     """Invoked with a character, details mode should print the details
     for the character.
     """
-    with open('tests/data/dt_A.txt') as fh:
-        exp = fh.read()
+    path = Path(f'tests/data/dt_A_{db.cache.version}.txt')
+    exp = path.read_text()
     cmd = (
         'python -m charex',
         'dt',

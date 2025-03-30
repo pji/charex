@@ -4,6 +4,7 @@ test_db
 
 Unit tests for :mod:`charex.db`.
 """
+from dataclasses import dataclass
 from pathlib import Path
 
 import pytest
@@ -107,17 +108,50 @@ def test_build_hangul_name():
 
 
 # Test cache.
-def test_cache():
-    """When called, an attribute of :class:`FileCache` should return
-    the data for the file tied to that attribute.
-    """
-    assert db.cache.blocks[0].start == 0x0000
-    assert '0958' in db.cache.compositionexclusions
-    assert '0340' in db.cache.derivednormalizationprops[1]['comp_ex']
-    assert db.cache.jamo['1100'] == 'G'
-    assert '0009' in db.cache.proplist['wspace']
-    assert db.cache.unicodedata['0020'].na == 'SPACE'
-    assert db.cache.rev_nfc['00c0'] == ('A\u0300',)
+class TestCache:
+    def test_cache(self):
+        """When called, an attribute of :class:`FileCache` should return
+        the data for the file tied to that attribute.
+        """
+        assert db.cache.blocks[0].start == 0x0000
+        assert '0958' in db.cache.compositionexclusions
+        assert '0340' in db.cache.derivednormalizationprops[1]['comp_ex']
+        assert db.cache.jamo['1100'] == 'G'
+        assert '0009' in db.cache.proplist['wspace']
+        assert db.cache.unicodedata['0020'].na == 'SPACE'
+        assert db.cache.rev_nfc['00c0'] == ('A\u0300',)
+
+    def test_with_python_version(self):
+        """When given a Python version, db.FileCache.from_python
+        should return a FileCache with the correct version of
+        Unicode for that version of Python.
+        """
+        @dataclass
+        class Version_Info:
+            major: int
+            minor: int
+
+        version = Version_Info(3, 12)
+        cache = db.FileCache.from_python(version)
+        assert cache.version == 'v15_0'
+
+        version = Version_Info(3, 13)
+        cache = db.FileCache.from_python(version)
+        assert cache.version == 'v15_1'
+
+    def test_with_higher_than_supported_version(self):
+        """If given a version of python higher than the highest
+        currently supported version, db.FileCache.from_python
+        should return a FileCache object supporting the highest
+        currently supported version of Unicode."""
+        @dataclass
+        class Version_Info:
+            major: int
+            minor: int
+
+        version = Version_Info(3, 6_000_000)
+        cache = db.FileCache.from_python(version)
+        assert cache.version == 'v15_1'
 
 
 # Test get_denormal_map_for_code.

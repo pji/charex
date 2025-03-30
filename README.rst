@@ -156,7 +156,7 @@ The following are the changes in v0.2.3:
     *   Moved "kcihait" property source.
     *   Added "idna2008" property.
 
-*   (Started.) Support Unicode 15.1 for running under Python 3.13.
+*   Support Unicode 15.1 for running under Python 3.13.
 
     *   Add Unicode 15.1 files.
     *   Remove seven Unihan properties.
@@ -185,17 +185,17 @@ The following are the changes in v0.2.3:
     *   Check if multiple "kPrimaryNumeric" values are supported
         (see U+5146 and U+79ED).
 
-*   (Started.) Use Unicode version supported by Python version.
+*   Use Unicode version supported by Python version.
 
     *   Updated the path_map to handle different Unicode versions.
     *   Updated the prop_map to handle different Unicode versions.
     *   Can specify the Unicode version of a `FileCache`.
-    *   (Not started.) Create a `FileCache` for the Unicode version
-        supported by the running Python on launch.
+    *   Create a `FileCache` for the Unicode version supported by
+        the running Python on launch.
 
+*   (Not started.) Generate denormalizations for each version.
 *   Return an AttributeError rather than KeyError when an attribute
     doesn't exist.
-*   (Not started.) Generate denormalizations for each version.
 
 
 How Do I Run the Tests?
