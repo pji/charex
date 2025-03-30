@@ -128,7 +128,7 @@ What Is Left To Do?
 -------------------
 The following features are planned for the v0.2.1 or later releases:
 
-*   Support for more versions of Unicode.
+*   Support for Unicode v16.0 for Python 3.14.
 *   Emoji combiner.
 *   Basic doctests for all public classes and functions.
 *   Web API.
@@ -149,24 +149,14 @@ The following are the changes in v0.2.3:
 *   Move dependency management to `poetry`.
 *   Move package into /src directory.
 *   Use `tox` for regression testing.
-*   (Started.) Use Unicode version supported by Python version.
-
-    *   Updated the path_map to handle different Unicode versions.
-    *   Updated the prop_map to handle different Unicode versions.
-    *   Can specify the Unicode version of a `FileCache`.
-    *   (Not started.) Create a `FileCache` for the Unicode version
-        supported by the running Python on launch.
-
-*   (Started.) Support Unicode 15.0 when running under Python 3.12.
+*   Support Unicode 15.0 for running under Python 3.12.
 
     *   Add Unicode 15.0 files.
     *   Added "kalternatetotalstrokes" property.
     *   Moved "kcihait" property source.
     *   Added "idna2008" property.
-    *   (Not started.) Look into UAX9-C2 misleading bidirectional
-        ordering of source code spoofing attacks.
 
-*   (Started.) Support Unicode 15.1 when running under Python 3.13.
+*   (Started.) Support Unicode 15.1 for running under Python 3.13.
 
     *   Add Unicode 15.1 files.
     *   Remove seven Unihan properties.
@@ -189,14 +179,22 @@ The following are the changes in v0.2.3:
         *   kZhuangNumeric
 
     *   Add "IDS_Unary_Operator" property.
-    *   (Not started.) Add "ID_Compat_Math_Start" property.
-    *   (Not started.) Add "ID_Compat_Math_Continue" property.
-    *   (Not started.) Add "NFKC_Simple_Casefold" property.
-    *   (Not started.) Check if multiple "kPrimaryNumeric" values
-        are supported for U+5146 and U+79ED.
+    *   Add "ID_Compat_Math_Start" property.
+    *   Add "ID_Compat_Math_Continue" property.
+    *   Add "NFKC_Simple_Casefold" property.
+    *   Check if multiple "kPrimaryNumeric" values are supported
+        (see U+5146 and U+79ED).
 
-*   (Not started.) Return an AttributeError rather than KeyError
-    when an attribute doesn't exist.
+*   (Started.) Use Unicode version supported by Python version.
+
+    *   Updated the path_map to handle different Unicode versions.
+    *   Updated the prop_map to handle different Unicode versions.
+    *   Can specify the Unicode version of a `FileCache`.
+    *   (Not started.) Create a `FileCache` for the Unicode version
+        supported by the running Python on launch.
+
+*   Return an AttributeError rather than KeyError when an attribute
+    doesn't exist.
 *   (Not started.) Generate denormalizations for each version.
 
 

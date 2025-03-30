@@ -274,9 +274,15 @@ def get_denormal_map_for_code(prop: str, code: str) -> Record:
 def get_value_for_code(prop: str, code: str) -> str:
     """Retrieve the value of a property for a character."""
     alias = alias_property(prop).casefold()
-    key = cache.prop_map[alias]
-    kind = cache.path_map[key].kind
+    try:
+        key = cache.prop_map[alias]
+    except KeyError:
+        raise AttributeError(
+            f'The attribute {alias} is not defined '
+            f'in Unicode {cache.version}.'
+        )
 
+    kind = cache.path_map[key].kind
     by_kind = {
         'bidi_brackets': get_defined_record_by_code,
         'casefolding': get_casefolding,

@@ -69,6 +69,8 @@
                     Emoji Component: N
               Extended Pictographic: N
                  IDS Unary Operator: N
+               ID Compat Math Start: N
+            ID Compat Math Continue: N
 
                                 ---  Single_Value
                                 Age: 1.1
@@ -107,6 +109,7 @@
                    NFKD Quick Check: Y
                    NFKC Quick Check: Y
                       NFKC Casefold: 0061
+               NFKC Simple Casefold: 0061
 
                                 ---  Unihan
 

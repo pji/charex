@@ -82,6 +82,9 @@ def test_character_derived_normalization_properties():
     assert char.nfkc_qc == 'Y'
     assert char.nfkc_cf == '0061'
 
+    if db.cache.version in ['v15_1',]:
+        assert char.nfkc_scf == '0061'
+
     # Simple list properties.
     assert char.comp_ex == 'N'
     assert char.xo_nfd == 'N'
@@ -158,7 +161,7 @@ def test_character_dindices_properties():
         assert char.kcihait == ''
 
     if db.cache.version in ['v15_1',]:
-        raises_exception(char, 'kirgdaikanwaziten', KeyError)
+        raises_exception(char, 'kirgdaikanwaziten', AttributeError)
         assert char.ksmszd2003index == ''
     else:
         assert char.kirgdaikanwaziten == ''
@@ -187,7 +190,7 @@ def test_character_dindices_properties():
         assert char.kkangxi == ''
 
     if db.cache.version in ['v15_1',]:
-        raises_exception(char, 'kirgdaikanwaziten', KeyError)
+        raises_exception(char, 'kirgdaikanwaziten', AttributeError)
         assert char.kmorohashi == 'H001'
         assert char.ksmszd2003index == ''
     else:
@@ -287,11 +290,11 @@ def test_character_mappings_properties():
     assert char.kgb7 == ''
 
     if db.cache.version in ['v15_1',]:
-        raises_exception(char, 'kkps0', KeyError)
-        raises_exception(char, 'kkps1', KeyError)
-        raises_exception(char, 'kksc0', KeyError)
-        raises_exception(char, 'kksc1', KeyError)
-        raises_exception(char, 'khkscs', KeyError)
+        raises_exception(char, 'kkps0', AttributeError)
+        raises_exception(char, 'kkps1', AttributeError)
+        raises_exception(char, 'kksc0', AttributeError)
+        raises_exception(char, 'kksc1', AttributeError)
+        raises_exception(char, 'khkscs', AttributeError)
     else:
         assert char.kkps0 == ''
         assert char.kkps1 == ''
@@ -329,6 +332,13 @@ def test_character_numvalues_properties():
     if db.cache.version in ['v15_1',]:
         assert char.kvietnamesenumeric == ''
         assert char.kzhuangnumeric == ''
+
+    char = c.Character('U+5146')
+
+    if db.cache.version in ['v15_1',]:
+        assert char.cjkprimarynumeric == '1000000 1000000000000'
+    else:
+        assert char.cjkprimarynumeric == '1000000000000'
 
 
 def test_character_proplist_properties():
@@ -373,6 +383,8 @@ def test_character_proplist_properties():
 
     if db.cache.version in ['v15_1',]:
         assert char.idsu == 'N'
+        assert char.id_compat_math_start == 'N'
+        assert char.id_compat_math_continue == 'N'
 
     # DerivedCoreProperties.
     assert char.lower == 'Y'
@@ -404,7 +416,7 @@ def test_character_radstroke_properties():
     assert char.krsadobe_japan1_6 == ''
 
     if db.cache.version in ['v15_1',]:
-        raises_exception(char, 'krskangxi', KeyError)
+        raises_exception(char, 'krskangxi', AttributeError)
     else:
         assert char.krskangxi == ''
 
@@ -412,7 +424,7 @@ def test_character_radstroke_properties():
     assert char.krsadobe_japan1_6 == 'C+13910+3.1.3 C+13910+6.1.3'
 
     if db.cache.version in ['v15_1',]:
-        raises_exception(char, 'krskangxi', KeyError)
+        raises_exception(char, 'krskangxi', AttributeError)
     else:
         assert char.krskangxi == ''
 
@@ -420,7 +432,7 @@ def test_character_radstroke_properties():
     assert char.krsadobe_japan1_6 == ''
 
     if db.cache.version in ['v15_1',]:
-        raises_exception(char, 'krskangxi', KeyError)
+        raises_exception(char, 'krskangxi', AttributeError)
     else:
         assert char.krskangxi == '35.6'
 

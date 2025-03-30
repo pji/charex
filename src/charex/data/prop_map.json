@@ -1,6 +1,9 @@
 {
     "v15_1": {
         "idsu": "proplist",
+        "id_compat_math_start": "proplist",
+        "id_compat_math_continue": "proplist",
+        "nfkc_scf": "derivednormalizationprops",
         
         "kjapanese": "unihan_readings",
         "kmojijoho": "unihan_dictionarylikedata",
