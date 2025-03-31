@@ -13,7 +13,6 @@ Welcome to :mod:`charex` documentation!
    /unicode.rst
    /forms.rst
    /api.rst
-   /requirements.rst
 
 
 Why Did I Make This?
@@ -132,6 +131,21 @@ Unicode character::
     >>> char = charex.Character(value)
     >>> print(char.summarize())
     a U+0061 (LATIN SMALL LETTER A)
+
+
+What Version of Unicode Does This Support?
+==========================================
+Parts of :mod:`charex` rely on :mod:`unicodedata` in the Python Standard
+Library. This limits :mod:`charex` to supporting the version supported
+by the version of Python you are running. There may be a bit of a lag as
+new Python versions are released, but as of this release of :mod:`charex`
+it supports:
+
+*   Python 3.11: Unicode 14.0
+*   Python 3.12: Unicode 15.0
+*   Python 3.13: Unicode 15.1
+
+Support for Unicode 16.0 should come around the release of Python 3.14.
 
 
 Common Problems

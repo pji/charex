@@ -1,3 +1,8 @@
+.. testsetup::
+
+    from charex import *
+
+
 ###
 API
 ###

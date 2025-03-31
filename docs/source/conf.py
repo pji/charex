@@ -16,13 +16,14 @@ import charex
 project = 'charex'
 copyright = '2023, Paul J. Iutzi'
 author = 'Paul J. Iutzi'
-release = '0.0.1'
+release = '0.2.3'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.doctest',
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
 ]

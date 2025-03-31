@@ -16,35 +16,18 @@ from requests import get
 
 
 # Configuration.
-data_paths = {
-    'v14_0': Path('src/charex/data/v14_0'),
-    'v15_0': Path('src/charex/data/v15_0'),
-    'v15_1': Path('src/charex/data/v15_1'),
+COMMON_FILES = {
+    "entities.json": {
+        "description": "List of HTML Entities.",
+        "source": "https://html.spec.whatwg.org/entities.json",
+    },
 }
-
-
-def build_map(formkey: str, path: Path) -> bool:
-    """Build a denormalization map, returning whether the build was
-    successful.
-    """
-    result = False
-    if ':' in formkey:
-        formkey = formkey.split(':')[-1]
-
-    try:
-        content = build_denormalization_map(formkey)
-        with open(path, 'w') as fh:
-            fh.write(content)
-
-        zpath = path.parent / 'Denormal.zip'
-        with ZipFile(zpath, 'a') as zf:
-            zf.writestr(path.name, content)
-
-        result = True
-    except Exception as ex:
-        print(f'{type(ex)}({ex})...', end='')
-
-    return result
+PKG_DATA = Path('src/charex/data/')
+VERSIONS = {
+    '3.11': 'v14_0',
+    '3.12': 'v15_0',
+    '3.13': 'v15_1',
+}
 
 
 def get_sources(data_path):
@@ -95,19 +78,23 @@ def update_sources(data_path, data):
         dump(data, fh, indent=4)
 
 
+def update_status(success):
+    term = Terminal()
+    color = term.red
+    if success:
+        color = term.green
+    msg = 'SUCCESS' if success else 'FAIL'
+    print(color + f'{msg}' + term.normal)
+
+
 def update_unicode_version(
     today=date.today(),
-    data_path=Path('src/charex/data/v15_0')
+    version='3.11'
 ):
+    data_path = PKG_DATA / VERSIONS[version]
     data = get_sources(data_path)
 
-    # Clear existing denormalization data.
-    zpath = data_path / 'Denormal.zip'
-    if zpath.exists():
-        zpath.unlink()
-
     for file in data:
-        print(f'Rebuilding {file}...', end='')
         success = False
 
         # Update the file.
@@ -116,11 +103,12 @@ def update_unicode_version(
 
         # Download hosted data.
         if src.startswith('http'):
+            print(f'Downloading {file}...', end=' ')
             success = pull_data(src, path)
 
-        # Generate denormalization data.
-        elif src.startswith('form'):
-            success = build_map(src, path)
+        # Ignore everything else.
+        else:
+            continue
 
         # Update the date in sources data.
         data = update_sources_date(data, file, today, success)
@@ -131,9 +119,16 @@ def update_unicode_version(
 
 if __name__ == '__main__':
     today = date.today()
-    for key in data_paths:
-        print(f'Updating {key}.')
-        data_path = data_paths[key]
-        update_unicode_version(today, data_path)
-        print(f'{key} updated.')
+    
+    for name in COMMON_FILES:
+        print(f'Downloading {name}...', end=' ')
+        path = PKG_DATA / name
+        src = COMMON_FILES[name]['source']
+        success = pull_data(src, path)
+        update_status(success)
+    
+    for version in VERSIONS:
+        print(f'Updating {version}.')
+        update_unicode_version(today, version)
+        print(f'{version} updated.')
         print()

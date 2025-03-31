@@ -124,9 +124,24 @@ Unicode character::
     a U+0061 (LATIN SMALL LETTER A)
 
 
+What Version of Unicode Does This Support?
+==========================================
+Parts of :mod:`charex` rely on :mod:`unicodedata` in the Python Standard
+Library. This limits :mod:`charex` to supporting the version supported
+by the version of Python you are running. There may be a bit of a lag as
+new Python versions are released, but as of this release of :mod:`charex`
+it supports:
+
+*   Python 3.11: Unicode 14.0
+*   Python 3.12: Unicode 15.0
+*   Python 3.13: Unicode 15.1
+
+Support for Unicode 16.0 should come around the release of Python 3.14.
+
+
 What Is Left To Do?
--------------------
-The following features are planned for the v0.2.1 or later releases:
+===================
+The following features are planned for the v0.2.4 or later releases:
 
 *   Support for Unicode v16.0 for Python 3.14.
 *   Emoji combiner.
@@ -193,7 +208,7 @@ The following are the changes in v0.2.3:
     *   Create a `FileCache` for the Unicode version supported by
         the running Python on launch.
 
-*   (Not started.) Generate denormalizations for each version.
+*   Generate denormalizations for each version.
 *   Return an AttributeError rather than KeyError when an attribute
     doesn't exist.
 

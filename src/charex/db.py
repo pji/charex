@@ -24,6 +24,8 @@ FILE_PATH_MAP = 'path_map.json'
 FILE_PROP_MAP = 'prop_map.json'
 PATH_PROPERTY_ALIASES = 'propertyaliases'
 PATH_VALUE_ALIASES = 'propertyvaluealiases'
+
+# This is used to build the names of characters in UnicodeData.txt.
 UCD_RANGES = defaultdict(str, {
     0x3400: 'CJK UNIFIED IDEOGRAPH-',
     0x4e00: 'CJK UNIFIED IDEOGRAPH-',
@@ -42,6 +44,12 @@ UCD_RANGES = defaultdict(str, {
     0x2f800: 'CJK UNIFIED IDEOGRAPH-',
     0x30000: 'CJK UNIFIED IDEOGRAPH-',
 })
+
+# This maps the Python minor version to the Unicode version. It
+# will break once Python 4.11 is released, though at that point
+# 3.11 won't be supported any longer, so it may be a moot point.
+# Still, should probably move this to a combination of major and
+# minor Python version at some point.
 VERSIONS = defaultdict(util.constant_factory('v15_1'), {
     11: 'v14_0',
     12: 'v15_0',
@@ -984,10 +992,30 @@ def find_gap_in_value_ranges(vrs: ValueRanges) -> int | None:
 
 # File data cache.
 class FileCache:
+    """A cache for holding data loaded from Unicode data files to
+    reduce the number of times data is read from disk without just
+    dumping the whole thing into memory at launch.
+
+    .. warning:
+        Unless you are maintaining :mod:`charex`, you should never
+        interact directly with this class or any objects of this
+        class. The public interface should mainly be through the
+        :class:`charex.Character` class or other public function.
+
+    :param version: The version of Unicode the cache will use.
+    :returns: A :class:`FileCache` object.
+    :rtype: charex.db.FileCache
+    """
     @classmethod
     def from_python(cls, python) -> 'FileCache':
         """Given a Python version, return a :class:`charex.db.FileCache`
         object using the supported version of Unicode.
+
+        :param python: The version of Python instantiating
+            the object. This should be the output of a call
+            to :class:`sys.version_info`
+        :returns: A :class:`FileCache` object.
+        :rtype: charex.db.FileCache
         """
         version = VERSIONS[python.minor]
         return cls(version)
@@ -995,9 +1023,15 @@ class FileCache:
     def __init__(self, version: str = 'v15_1') -> None:
         self.version = version
 
+        # A mapping of all the files in the Unicode data.
         self.__path_map = load_path_map(self.version)
+
+        # A map from property to Unicode file.
         self.__prop_map = load_prop_map(self.version)
 
+        # Individual properties are not stored as attributes.
+        # Their values are stored in an attribute related to
+        # how their data is loaded from the Unicode data.
         self.__bidibrackets: dict[str, BidiBrackets] = dict()
         self.__casefolding: Casefoldings = dict()
         self.__cjk_radicals: Radicals = dict()
@@ -1021,6 +1055,8 @@ class FileCache:
         self.__value_names: ValueAliases = dict()
         self.__value_range: dict[str, ValueRanges] = dict()
 
+        # Define how and where data should be loaded for the
+        # different types of attributes.
         self.by_kind = {
             'standardized_variant': Kind(
                 load_standardized_variant,
@@ -1110,21 +1146,35 @@ class FileCache:
         }
 
     def __getattr__(self, name: str):
+        """This handles any call for an undefined attribute. It
+        will look up where the data for the desired attribute is
+        located in the Unicode data, load that data if it hasn't
+        been loaded already, and return that data.
+        """
         try:
             pi = self.path_map[name]
             kind = self.by_kind[pi.kind]
+
+            # "Update" attributes just store the data of one
+            # file in their attribute.
             if kind.action == 'update':
                 if not kind.cache:
                     loaded: dict = kind.load(pi)
                     kind.cache.update(loaded)
                 return kind.cache
 
+            # "Store" attributes store data from multiple files
+            # as separate keys within their attribute.
             elif kind.action == 'store':
                 if name not in kind.cache:
                     loaded = kind.load(pi)
                     kind.cache[name] = loaded
                 return kind.cache[name]
 
+        # A KeyError means the requested attribute is not a property
+        # in the Unicode data. At least, it's not one charex has mapped
+        # yet. Either way, since we are acting as an attribute, we
+        # should return an AttributeError rather than a KeyError.
         except KeyError:
             if name not in self.path_map:
                 raise AttributeError(f'Not in path_map: {name}.')
@@ -1132,6 +1182,7 @@ class FileCache:
 
     @property
     def entity_map(self) -> EntityMap:
+        """Maps Unicode code point to HTML entity."""
         if not self.__entity_map:
             info = PathInfo(
                 f'entities.json',
@@ -1145,6 +1196,7 @@ class FileCache:
 
     @property
     def kind_map(self) -> dict[str, Record]:
+        """A map of the properties found in a Unicode data file."""
         if not self.__kind_map:
             kmap: dict[str, list[str]] = {}
             for prop in self.prop_map:
@@ -1158,14 +1210,19 @@ class FileCache:
 
     @property
     def path_map(self) -> PathMap:
+        """The map of the types of properties to Unicode data files."""
         return self.__path_map
 
     @property
     def prop_map(self) -> PropMap:
+        """A map of Unicode data properties to the type of record in
+        the Unicode data.
+        """
         return self.__prop_map
 
     @property
     def property_alias(self) -> PropertyAliases:
+        """A map of property names to aliases."""
         if not self.__property_alias:
             info = self.path_map[PATH_PROPERTY_ALIASES]
             data = load_property_alias(info)
@@ -1204,13 +1261,6 @@ class FileCache:
         return self.__value_names
 
 
+# This is the cache that holds all the data loaded from the data
+# files at runtime.
 cache = FileCache.from_python(version_info)
-
-
-if __name__ == '__main__':
-    pmap = cache.property_name
-    for prop in pmap:
-        prop = prop.casefold()
-        if prop.startswith('a'):
-            print(prop)
-    print(pmap['ahex'])

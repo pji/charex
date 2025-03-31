@@ -41,25 +41,18 @@ charex = [
     "data/prop_map.json",
     'data/quote.html',
     'data/result.html',
-    'data/sources.json',
     'data/entities.json',
-    'data/Denormal.zip',
-    'data/UCD.zip',
-    'data/Unihan.zip',
     'data/v14_0/sources.json',
-    'data/v14_0/entities.json',
     'data/v14_0/idna2008.txt',
     'data/v14_0/Denormal.zip',
     'data/v14_0/UCD.zip',
     'data/v14_0/Unihan.zip',
     'data/v15_0/sources.json',
-    'data/v15_0/entities.json',
     'data/v15_0/idna2008.txt',
     'data/v15_0/Denormal.zip',
     'data/v15_0/UCD.zip',
     'data/v15_0/Unihan.zip',
     'data/v15_1/sources.json',
-    'data/v15_1/entities.json',
     'data/v15_1/idna2008.txt',
     'data/v15_1/Denormal.zip',
     'data/v15_1/UCD.zip',
@@ -87,7 +80,7 @@ deps = -rrequirements.txt
 
 [project]
 name = "charex"
-version = "0.2.3dev"
+version = "0.2.3"
 authors = [
     {name="Paul J. Iutzi", email="pji@mac.com"},
 ]

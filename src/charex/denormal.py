@@ -28,15 +28,14 @@ def count_denormalizations(
     :return: The number of denormalizations as an :class:`int`.
     :rtype: int
 
-    Usage
-    -----
-    To count the number of possible denormalizations for a given string
-    and form::
+    :usage:
+        To count the number of possible denormalizations for a given string
+        and form:
 
-        >>> base = '<->'
-        >>> form = 'nfkc'
-        >>> count_denormalizations(base, form)
-        8
+            >>> base = '<->'
+            >>> form = 'nfkc'
+            >>> count_denormalizations(base, form)
+            8
 
     """
     chars = (Character(c) for c in base)
@@ -80,25 +79,24 @@ def denormalize(
     :return: The denormalizations as a :class:`tuple`.
     :rtype: tuple
 
-    Usage
-    -----
-    To denormalize a given string with the given form::
+    :usage:
+        To denormalize a given string with the given form::
 
-        >>> base = '<>'
-        >>> form = 'nfkc'
-        >>> denormalize(base, form)
-        ('﹤﹥', '﹤＞', '＜﹥', '＜＞')
+            >>> base = '<>'
+            >>> form = 'nfkc'
+            >>> denormalize(base, form)
+            ('﹤﹥', '﹤＞', '＜﹥', '＜＞')
 
-    The `maxdepth` parameter can be used to limit the number of
-    denormalizations per character in the `base` string. This is
-    useful when you want just a few denormalizations of a string
-    with a very large number of denormalizations::
+        The `maxdepth` parameter can be used to limit the number of
+        denormalizations per character in the `base` string. This is
+        useful when you want just a few denormalizations of a string
+        with a very large number of denormalizations::
 
-        >>> base = 'hi'
-        >>> form = 'nfkc'
-        >>> maxdepth = 2
-        >>> denormalize(base, form, maxdepth)
-        ('ʰᵢ', 'ʰⁱ', 'ₕᵢ', 'ₕⁱ')
+            >>> base = 'hi'
+            >>> form = 'nfkc'
+            >>> maxdepth = 2
+            >>> denormalize(base, form, maxdepth)
+            ('ʰᵢ', 'ʰⁱ', 'ₕᵢ', 'ₕⁱ')
 
     """
     if random:
@@ -158,27 +156,26 @@ def gen_denormalize(
         denormalization results.
     :rtype: collections.abc.Generator
 
-    Usage
-    -----
-    To generate denormalizations for a given string with a given form::
+    :usage:
+        To generate denormalizations for a given string with a given form:
 
-        >>> base = '<>'
-        >>> form = 'nfkc'
-        >>> dngen = gen_denormalize(base, form)
-        >>> [result for result in dngen]
-        ['﹤﹥', '﹤＞', '＜﹥', '＜＞']
+            >>> base = '<>'
+            >>> form = 'nfkc'
+            >>> dngen = gen_denormalize(base, form)
+            >>> [result for result in dngen]
+            ['﹤﹥', '﹤＞', '＜﹥', '＜＞']
 
-    The `maxdepth` parameter can be used to limit the number of
-    denormalizations per character in the `base` string. This is
-    useful when you want just a few denormalizations of a string
-    with a very large number of denormalizations::
+        The `maxdepth` parameter can be used to limit the number of
+        denormalizations per character in the `base` string. This is
+        useful when you want just a few denormalizations of a string
+        with a very large number of denormalizations:
 
-        >>> base = 'hi'
-        >>> form = 'nfkc'
-        >>> maxdepth = 2
-        >>> dngen = gen_denormalize(base, form, maxdepth)
-        >>> [result for result in dngen]
-        ['ʰᵢ', 'ʰⁱ', 'ₕᵢ', 'ₕⁱ']
+            >>> base = 'hi'
+            >>> form = 'nfkc'
+            >>> maxdepth = 2
+            >>> dngen = gen_denormalize(base, form, maxdepth)
+            >>> [result for result in dngen]
+            ['ʰᵢ', 'ʰⁱ', 'ₕᵢ', 'ₕⁱ']
 
     """
     c, rest = base[0], base[1:]
@@ -221,36 +218,39 @@ def gen_random_denormalize(
         denormalization results.
     :rtype: collections.abc.Generator
 
-    Usage
-    -----
-    To generate a random denormalization of a given string with a given
-    form::
+    :usage:
+        To generate a random denormalization of a given string with a given
+        form:
 
-        >>> # The seed parameter seeds the RNG to produce repeatable
-        >>> # results for testing. Don't use it unless you want
-        >>> # repeatable results.
-        >>> seed_ = 'spam'
-        >>>
-        >>> base = '<script>'
-        >>> form = 'nfkc'
-        >>> dngrd = gen_random_denormalize(base, form, seed_=seed_)
-        >>> [result for result in dngrd]
-        ['﹤𝓈ᶜ𝕣𝚒𝙥𝙩＞']
+        .. testsetup:: gen_random_denormalize_1
 
-    The `maxresults` parameter tells the generator to return the
-    given number of results::
+            from charex.denormal import gen_random_denormalize, seed
+            seed('spam')
 
-        >>> # The seed parameter seeds the RNG to produce repeatable
-        >>> # results for testing. Don't use it unless you want
-        >>> # repeatable results.
-        >>> seed_ = 'spam'
-        >>>
-        >>> base = '<script>'
-        >>> form = 'nfkc'
-        >>> maxresults = 3
-        >>> dngrd = gen_random_denormalize(base, form, maxresults, seed_=seed_)
-        >>> [result for result in dngrd]
-        ['﹤𝓈ᶜ𝕣𝚒𝙥𝙩＞', '＜𝖘ᶜ𝓇𝕚ᵖ𝓉＞', '﹤𝙨𝚌𝑟𝗂𝐩ｔ＞']
+        .. doctest:: gen_random_denormalize_1
+
+            >>> base = '<script>'
+            >>> form = 'nfkc'
+            >>> dngrd = gen_random_denormalize(base, form)
+            >>> [result for result in dngrd]
+            ['﹤𝓈ᶜ𝕣𝚒𝙥𝙩＞']
+
+        The `maxresults` parameter tells the generator to return the
+        given number of results:
+
+        .. testsetup:: gen_random_denormalize_2
+
+            from charex.denormal import gen_random_denormalize, seed
+            seed('spam')
+
+        .. doctest:: gen_random_denormalize_2
+
+            >>> base = '<script>'
+            >>> form = 'nfkc'
+            >>> maxresults = 3
+            >>> dngrd = gen_random_denormalize(base, form, maxresults)
+            >>> [result for result in dngrd]
+            ['﹤𝓈ᶜ𝕣𝚒𝙥𝙩＞', '＜𝖘ᶜ𝓇𝕚ᵖ𝓉＞', '﹤𝙨𝚌𝑟𝗂𝐩ｔ＞']
 
     """
     chars = [denormalize(char, form) for char in base]
@@ -283,34 +283,33 @@ def random_denormalize(
     :return: The denormalizations as a :class:`tuple`.
     :rtype: tuple
 
-    Usage
-    -----
-    To get a random denormalization of the given string using the given
-    form::
+    :usage:
+        To get a random denormalization of the given string using the given
+        form:
 
-        >>> # The seed parameter seeds the RNG to produce repeatable
-        >>> # results for testing. Don't use it unless you want
-        >>> # repeatable results.
-        >>> seed_ = 'spam'
-        >>>
-        >>> base = '<script>'
-        >>> form = 'nfkc'
-        >>> random_denormalize(base, form,  seed_=seed_)
-        ('﹤𝓈ᶜ𝕣𝚒𝙥𝙩＞',)
+            >>> # The seed parameter seeds the RNG to produce repeatable
+            >>> # results for testing. Don't use it unless you want
+            >>> # repeatable results.
+            >>> seed_ = 'spam'
+            >>>
+            >>> base = '<script>'
+            >>> form = 'nfkc'
+            >>> random_denormalize(base, form,  seed_=seed_)
+            ('﹤𝓈ᶜ𝕣𝚒𝙥𝙩＞',)
 
-    The `maxresults` parameter tells the function to return the
-    given number of results::
+        The `maxresults` parameter tells the function to return the
+        given number of results:
 
-        >>> # The seed parameter seeds the RNG to produce repeatable
-        >>> # results for testing. Don't use it unless you want
-        >>> # repeatable results.
-        >>> seed_ = 'spam'
-        >>>
-        >>> base = '<script>'
-        >>> form = 'nfkc'
-        >>> maxresults = 3
-        >>> random_denormalize(base, form,  maxresults, seed_=seed_)
-        ('﹤𝓈ᶜ𝕣𝚒𝙥𝙩＞', '＜𝖘ᶜ𝓇𝕚ᵖ𝓉＞', '﹤𝙨𝚌𝑟𝗂𝐩ｔ＞')
+            >>> # The seed parameter seeds the RNG to produce repeatable
+            >>> # results for testing. Don't use it unless you want
+            >>> # repeatable results.
+            >>> seed_ = 'spam'
+            >>>
+            >>> base = '<script>'
+            >>> form = 'nfkc'
+            >>> maxresults = 3
+            >>> random_denormalize(base, form,  maxresults, seed_=seed_)
+            ('﹤𝓈ᶜ𝕣𝚒𝙥𝙩＞', '＜𝖘ᶜ𝓇𝕚ᵖ𝓉＞', '﹤𝙨𝚌𝑟𝗂𝐩ｔ＞')
 
     """
     # Ensure at least one result is returned.

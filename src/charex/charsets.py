@@ -546,12 +546,12 @@ def get_codecs() -> tuple[str, ...]:
     :return: The keys of the codecs as a :class:`tuple`.
     :rtype: tuple
 
-    Usage
-    -----
-    To get a tuple containing the keys of the registered codecs::
+    :usage:
+        To get a tuple containing the keys of the registered codecs::
 
-        >>> get_codecs()                        # +ELLIPSIS
-        ('ascii', 'big5', 'big5hkscs', 'cp037'... 'utf_8', 'utf_8_sig')
+            >>> get_codecs()                        # +ELLIPSIS
+            ('ascii', 'big5', 'big5hkscs', 'cp037'... 'utf_8', 'utf_8_sig')
+
     """
     return tuple(codec for codec in codecs)
 
@@ -563,12 +563,11 @@ def get_description(codeckey: str) -> str:
     :return: The description of the codec as a :class:`str`.
     :rtype: str
 
-    Usage
-    -----
-    To get the description for the given codec key::
+    :usage:
+        To get the description for the given codec key::
 
-        >>> get_description('ascii')
-        'RFC20 The ASCII format for Network Interchange.'
+            >>> get_description('ascii')
+            'RFC20 The ASCII format for Network Interchange.'
 
     """
     info = codecs[codeckey]
@@ -587,35 +586,33 @@ def multidecode(
     :return: The decoded value for each character set as a :class:`dict`.
     :rtype: dict
 
-    Address Formats
-    ---------------
-    The understood :class:`str` formats for manual input are:
+    :usage:
+        To get the character for the given address for each of the registered
+        codecs:
 
-    *   Character: A string with length equal to one.
-    *   Code Point: The prefix "U+" followed by a hexadecimal number.
-    *   Binary String: The prefix "0b" followed by a binary number.
-    *   Hex String: The prefix "0x" followed by a hexadecimal number.
+            >>> address = '0x61'
+            >>> multidecode(address)                # +ELLIPSIS
+            {'ascii': 'a', 'big5': 'a'... 'utf_8_sig': 'a'}
 
-    The following formats are available for use through the API:
+        If you just want the UTF-8 character:
 
-    *   Bytes: A :class:`bytes`.
-    *   Integer: An :class:`int`.
+            >>> value = 'a'
+            >>> codecs_ = ('utf_8',)
+            >>> multidecode(value, codecs_)
+            {'utf_8': 'a'}
 
-    Usage
-    -----
-    To get the character for the given address for each of the registered
-    codecs::
+    :address formats:
+        The understood :class:`str` formats for manual input are:
 
-        >>> address = '0x61'
-        >>> multidecode(address)                # +ELLIPSIS
-        {'ascii': 'a', 'big5': 'a'... 'utf_8_sig': 'a'}
+            *   Character: A string with length equal to one.
+            *   Code Point: The prefix "U+" followed by a hexadecimal number.
+            *   Binary String: The prefix "0b" followed by a binary number.
+            *   Hex String: The prefix "0x" followed by a hexadecimal number.
 
-    If you just want the UTF-8 character::
+        The following formats are available for use through the API:
 
-        >>> value = 'a'
-        >>> codecs_ = ('utf_8',)
-        >>> multidecode(value, codecs_)
-        {'utf_8': 'a',}
+            *   Bytes: A :class:`bytes`.
+            *   Integer: An :class:`int`.
 
     """
     # Coerce the given value into bytes.
@@ -655,37 +652,37 @@ def multiencode(
     :return: The encoded value for each character set as a :class:`dict`.
     :rtype: dict
 
-    Character Formats
-    -----------------
-    The understood :class:`str` formats available for manual input are
-    (all formats are big endian unless otherwise stated):
+    :usage:
+        To encode a one character :class:`str` with all registered codecs:
 
-    *   Character: A string with length equal to one.
-    *   Code Point: The prefix "U+" followed by a hexadecimal number.
-    *   Binary String: The prefix "0b" followed by a binary number.
-    *   Octal String: The prefix "0o" followed by an octal number.
-    *   Decimal String: The prefix "0d" followed by a decimal number.
-    *   Hex String: The prefix "0x" followed by a hexadecimal number.
+            >>> value = 'a'
+            >>> multiencode(value)                  # +ELLIPSIS
+            {'ascii': b'a', 'big5': b'a'... 'utf_8_sig': b'\xef\xbb\xbfa'}
 
-    The following formats are available for use through the API:
+        If you just want the UTF-8 address:
 
-    *   Bytes: A :class:`bytes` that decodes to a valid UTF-8 character.
-    *   Integer: An :class:`int` within the range 0x00 <= x <= 0x10FFFF.
+            >>> value = 'a'
+            >>> codecs_ = ('utf_8',)
+            >>> multiencode(value, codecs_)
+            {'utf_8': b'a'}
 
-    Usage
-    -----
-    To encode a one character :class:`str` with all registered codecs::
+    :character formats:
+        The understood :class:`str` formats available for manual input are
+        (all formats are big endian unless otherwise stated):
 
-        >>> value = 'a'
-        >>> multiencode(value)                  # +ELLIPSIS
-        {'ascii': b'a', 'big5': b'a'... 'utf_8_sig': b'\xef\xbb\xbfa'}
+            *   Character: A string with length equal to one.
+            *   Code Point: The prefix "U+" followed by a hexadecimal number.
+            *   Binary String: The prefix "0b" followed by a binary number.
+            *   Octal String: The prefix "0o" followed by an octal number.
+            *   Decimal String: The prefix "0d" followed by a decimal number.
+            *   Hex String: The prefix "0x" followed by a hexadecimal number.
 
-    If you just want the UTF-8 address::
+        The following formats are available for use through the API:
 
-        >>> value = 'a'
-        >>> codecs_ = ('utf_8',)
-        >>> multiencode(value, codecs_)
-        {'utf_8': b'a',}
+            *   Bytes: A :class:`bytes` that decodes to a valid UTF-8
+                character.
+            *   Integer: An :class:`int` within the range 0x00 <= x <=
+                0x10FFFF.
 
     """
     value = util.to_char(value)

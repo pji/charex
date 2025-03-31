@@ -35,80 +35,78 @@ class Character:
     :return: The character as a :class:`charex.Character`.
     :rtype: charex.Character
 
-    Address Formats
-    ---------------
-    The understood str-based formats for manual input of addresses are:
+    :usage:
+        To create a :class:`charex.Character` object for a single
+        character string:
 
-    *   Character: A string with length equal to one.
-    *   Code Point: The prefix "U+" followed by a hexadecimal number.
-    *   Binary String: The prefix "0b" followed by a binary number.
-    *   Hex String: The prefix "0x" followed by a hexadecimal number.
+            >>> value = 'a'
+            >>> char = Character(value)
+            >>> char.value
+            'a'
 
-    The following formats are available for use through the API:
+        To create a :class:`charex.Character` object for a Unicode code
+        point:
 
-    *   Bytes: A :class:`bytes`.
-    *   Integer: An :class:`int`.
+            >>> value = 'U+0061'
+            >>> char = Character(value)
+            >>> char.value
+            'a'
 
-    Usage
-    -----
-    To create a :class:`charex.Character` object for a single
-    character string::
+        To create a :class:`charex.Character` object for a binary string:
 
-        >>> value = 'a'
-        >>> char = Character(value)
-        >>> char.value
-        'a'
+            >>> value = '0b01100001'
+            >>> char = Character(value)
+            >>> char.value
+            'a'
 
-    To create a :class:`charex.Character` object for a Unicode code
-    point::
+        To create a :class:`charex.Character` object for an octal string:
 
-        >>> value = 'U+0061'
-        >>> char = Character(value)
-        >>> char.value
-        'a'
+            >>> value = '0o141'
+            >>> char = Character(value)
+            >>> char.value
+            'a'
 
-    To create a :class:`charex.Character` object for a binary string::
+        To create a :class:`charex.Character` object for a decimal string:
 
-        >>> value = '0b01100001'
-        >>> char = Character(value)
-        >>> char.value
-        'a'
+            >>> value = '0d97'
+            >>> char = Character(value)
+            >>> char.value
+            'a'
 
-    To create a :class:`charex.Character` object for an octal string::
+        To create a :class:`charex.Character` object for a hex string:
 
-        >>> value = '0o141'
-        >>> char = Character(value)
-        >>> char.value
-        'a'
+            >>> value = '0x61'
+            >>> char = Character(value)
+            >>> char.value
+            'a'
 
-    To create a :class:`charex.Character` object for a decimal string::
+        Beyond the declared properties and methods described below, most
+        Unicode properties for the character are available by calling
+        their alias as a property of :class:`charex.Character`:
 
-        >>> value = '0d97'
-        >>> char = Character(value)
-        >>> char.value
-        'a'
+            >>> value = 'a'
+            >>> char = Character(value)
+            >>> char.na
+            'LATIN SMALL LETTER A'
+            >>> char.blk
+            'Basic Latin'
+            >>> char.sc
+            'Latn'
+            >>> char.suc
+            '0041'
 
-    To create a :class:`charex.Character` object for a hex string::
+    :address formats:
+        The understood str-based formats for manual input of addresses are:
 
-        >>> value = '0x61'
-        >>> char = Character(value)
-        >>> char.value
-        'a'
+            *   Character: A string with length equal to one.
+            *   Code Point: The prefix "U+" followed by a hexadecimal number.
+            *   Binary String: The prefix "0b" followed by a binary number.
+            *   Hex String: The prefix "0x" followed by a hexadecimal number.
 
-    Beyond the declared properties and methods described below, most
-    Unicode properties for the character are available by calling
-    their alias as a property of :class:`charex.Character`::
+        The following formats are available for use through the API:
 
-        >>> value = 'a'
-        >>> char = Character(value)
-        >>> char.na
-        'LATIN SMALL LETTER A'
-        >>> char.blk
-        'Basic Latin'
-        >>> char.sc
-        'Latn'
-        >>> char.suc
-        '0041'
+            *   Bytes: A :class:`bytes`.
+            *   Integer: An :class:`int`.
 
     """
     cache = db.cache
@@ -149,18 +147,17 @@ class Character:
         :return: The denormalization results in a :class:`tuple`.
         :rtype: tuple
 
-        Usage
-        -----
-        To denormalize the character for the given form::
+        :usage:
+            To denormalize the character for the given form:
 
-            >>> # Create the character object.
-            >>> value = '<'
-            >>> char = Character(value)
-            >>>
-            >>> # Get the denormalizations for the character.
-            >>> form = 'nfkc'
-            >>> char.denormalize(form)
-            ('﹤', '＜')
+                >>> # Create the character object.
+                >>> value = '<'
+                >>> char = Character(value)
+                >>>
+                >>> # Get the denormalizations for the character.
+                >>> form = 'nfkc'
+                >>> char.denormalize(form)
+                ('﹤', '＜')
 
         """
         prop = f'rev_{form}'
@@ -176,16 +173,15 @@ class Character:
         :return: A :class:`str` with the escaped character.
         :rtype: str
 
-        Usage
-        -----
-        To escape the character with the given form::
+        :usage:
+            To escape the character with the given form:
 
-            >>> value = '<'
-            >>> char = Character(value)
-            >>>
-            >>> scheme = 'html'
-            >>> char.escape(scheme)
-            '&nvlt;'
+                >>> value = '<'
+                >>> char = Character(value)
+                >>>
+                >>> scheme = 'html'
+                >>> char.escape(scheme)
+                '&nvlt;'
 
         """
         try:
@@ -207,16 +203,15 @@ class Character:
         :return: A :class:`str` with the encoded character.
         :rtype: str
 
-        Usage
-        -----
-        To encode the character with the given character set::
+        :usage:
+            To encode the character with the given character set:
 
-            >>> value = 'å'
-            >>> char = Character(value)
-            >>>
-            >>> codec = 'utf8'
-            >>> char.encode(codec)
-            'C3 A5'
+                >>> value = 'å'
+                >>> char = Character(value)
+                >>>
+                >>> codec = 'utf8'
+                >>> char.encode(codec)
+                'C3 A5'
 
         """
         try:
@@ -237,17 +232,16 @@ class Character:
             normalized.
         :rtype: bool
 
-        Usage
-        -----
-        To determine whether the character is already normalized for
-        the given scheme.
+        :usage:
+            To determine whether the character is already normalized for
+            the given scheme.
 
-            >>> value = 'å'
-            >>> char = Character(value)
-            >>>
-            >>> form = 'nfc'
-            >>> char.is_normal(form)
-            True
+                >>> value = 'å'
+                >>> char = Character(value)
+                >>>
+                >>> form = 'nfc'
+                >>> char.is_normal(form)
+                True
 
         """
         valid = validate_normalization_form(form)
@@ -260,16 +254,15 @@ class Character:
         :return: The normalization result as a :class:`str`.
         :rtype: str
 
-        Usage
-        -----
-        To normalize the character for the given form::
+        :usage:
+            To normalize the character for the given form::
 
-            >>> value = '＜'
-            >>> char = Character(value)
-            >>>
-            >>> form = 'nfkc'
-            >>> char.normalize(form)
-            '<'
+                >>> value = '＜'
+                >>> char = Character(value)
+                >>>
+                >>> form = 'nfkc'
+                >>> char.normalize(form)
+                '<'
 
         """
         valid = validate_normalization_form(form)
@@ -281,15 +274,15 @@ class Character:
         :return: The character information as a :class:`str`.
         :rtype: str
 
-        Usage
-        -----
-        To summarize the character::
+        :usage:
+            To summarize the character::
 
-            >>> value = 'å'
-            >>> char = Character(value)
-            >>>
-            >>> char.summarize()
-            'å U+00E5 (LATIN SMALL LETTER A WITH RING ABOVE)'
+                >>> value = 'å'
+                >>> char = Character(value)
+                >>>
+                >>> char.summarize()
+                'å U+00E5 (LATIN SMALL LETTER A WITH RING ABOVE)'
+
         """
         value = util.neutralize_control_characters(self.value)
         return f'{value} {self!r}'
@@ -310,13 +303,12 @@ def expand_property(prop: str) -> str:
     :return: The long name as a :class:`str`.
     :rtype: str
 
-    Usage
-    -----
-    To get the long name of a Unicode property.
+    :usage:
+        To get the long name of a Unicode property.
 
-        >>> prop = 'cf'
-        >>> expand_property(prop)
-        'Case Folding'
+            >>> prop = 'cf'
+            >>> expand_property(prop)
+            'Case Folding'
 
     """
     long = Character.cache.property_name[prop.casefold()].name
@@ -333,14 +325,13 @@ def expand_property_value(prop: str, alias: str) -> str:
     :return: The long name of the property as a :class:`str`.
     :rtype: str
 
-    Usage
-    -----
-    To get the long name for a property value::
+    :usage:
+        To get the long name for a property value:
 
-        >>> alias = 'Cc'
-        >>> prop = 'gc'
-        >>> expand_property_value(prop, alias)
-        'Control'
+            >>> alias = 'Cc'
+            >>> prop = 'gc'
+            >>> expand_property_value(prop, alias)
+            'Control'
 
     """
     prop = prop.casefold()
@@ -370,100 +361,99 @@ def filter_by_property(
         :class:`collections.abc.Generator`.
     :rtype: collections.abc.Generator
 
-    Usage
-    -----
-    To get a generator that produces the Emoji modifiers::
+    :usage:
+        To get a generator that produces the Emoji modifiers:
 
-        >>> prop = 'emod'
-        >>> value = 'Y'
-        >>> gen = filter_by_property(prop, value)
-        >>> for char in gen:
-        ...     print(char.summarize())
-        ...
-        🏻 U+1F3FB (EMOJI MODIFIER FITZPATRICK TYPE-1-2)
-        🏼 U+1F3FC (EMOJI MODIFIER FITZPATRICK TYPE-3)
-        🏽 U+1F3FD (EMOJI MODIFIER FITZPATRICK TYPE-4)
-        🏾 U+1F3FE (EMOJI MODIFIER FITZPATRICK TYPE-5)
-        🏿 U+1F3FF (EMOJI MODIFIER FITZPATRICK TYPE-6)
+            >>> prop = 'emod'
+            >>> value = 'Y'
+            >>> gen = filter_by_property(prop, value)
+            >>> for char in gen:
+            ...     print(char.summarize())
+            ...
+            🏻 U+1F3FB (EMOJI MODIFIER FITZPATRICK TYPE-1-2)
+            🏼 U+1F3FC (EMOJI MODIFIER FITZPATRICK TYPE-3)
+            🏽 U+1F3FD (EMOJI MODIFIER FITZPATRICK TYPE-4)
+            🏾 U+1F3FE (EMOJI MODIFIER FITZPATRICK TYPE-5)
+            🏿 U+1F3FF (EMOJI MODIFIER FITZPATRICK TYPE-6)
 
-    You can limit the number of characters being searched with the
-    `chars` parameter::
+        You can limit the number of characters being searched with the
+        `chars` parameter:
 
-        >>> prop = 'gc'
-        >>> value = 'Cc'
-        >>> chars = [Character(chr(n)) for n in range(128)]
-        >>> gen = filter_by_property(prop, value, chars)
-        >>> for char in gen:
-        ...     print(char.summarize())
-        ...
-        ␀ U+0000 (<NULL>)
-        ␁ U+0001 (<START OF HEADING>)
-        ␂ U+0002 (<START OF TEXT>)
-        ␃ U+0003 (<END OF TEXT>)
-        ␄ U+0004 (<END OF TRANSMISSION>)
-        ␅ U+0005 (<ENQUIRY>)
-        ␆ U+0006 (<ACKNOWLEDGE>)
-        ␇ U+0007 (<BELL>)
-        ␈ U+0008 (<BACKSPACE>)
-        ␉ U+0009 (<CHARACTER TABULATION>)
-        ␊ U+000A (<LINE FEED (LF)>)
-        ␋ U+000B (<LINE TABULATION>)
-        ␌ U+000C (<FORM FEED (FF)>)
-        ␍ U+000D (<CARRIAGE RETURN (CR)>)
-        ␎ U+000E (<SHIFT OUT>)
-        ␏ U+000F (<SHIFT IN>)
-        ␐ U+0010 (<DATA LINK ESCAPE>)
-        ␑ U+0011 (<DEVICE CONTROL ONE>)
-        ␒ U+0012 (<DEVICE CONTROL TWO>)
-        ␓ U+0013 (<DEVICE CONTROL THREE>)
-        ␔ U+0014 (<DEVICE CONTROL FOUR>)
-        ␕ U+0015 (<NEGATIVE ACKNOWLEDGE>)
-        ␖ U+0016 (<SYNCHRONOUS IDLE>)
-        ␗ U+0017 (<END OF TRANSMISSION BLOCK>)
-        ␘ U+0018 (<CANCEL>)
-        ␙ U+0019 (<END OF MEDIUM>)
-        ␚ U+001A (<SUBSTITUTE>)
-        ␛ U+001B (<ESCAPE>)
-        ␜ U+001C (<INFORMATION SEPARATOR FOUR>)
-        ␝ U+001D (<INFORMATION SEPARATOR THREE>)
-        ␞ U+001E (<INFORMATION SEPARATOR TWO>)
-        ␟ U+001F (<INFORMATION SEPARATOR ONE>)
-        ⑿ U+007F (<DELETE>)
+            >>> prop = 'gc'
+            >>> value = 'Cc'
+            >>> chars = [Character(chr(n)) for n in range(128)]
+            >>> gen = filter_by_property(prop, value, chars)
+            >>> for char in gen:
+            ...     print(char.summarize())
+            ...
+            ␀ U+0000 (<NULL>)
+            ␁ U+0001 (<START OF HEADING>)
+            ␂ U+0002 (<START OF TEXT>)
+            ␃ U+0003 (<END OF TEXT>)
+            ␄ U+0004 (<END OF TRANSMISSION>)
+            ␅ U+0005 (<ENQUIRY>)
+            ␆ U+0006 (<ACKNOWLEDGE>)
+            ␇ U+0007 (<BELL>)
+            ␈ U+0008 (<BACKSPACE>)
+            ␉ U+0009 (<CHARACTER TABULATION>)
+            ␊ U+000A (<LINE FEED (LF)>)
+            ␋ U+000B (<LINE TABULATION>)
+            ␌ U+000C (<FORM FEED (FF)>)
+            ␍ U+000D (<CARRIAGE RETURN (CR)>)
+            ␎ U+000E (<SHIFT OUT>)
+            ␏ U+000F (<SHIFT IN>)
+            ␐ U+0010 (<DATA LINK ESCAPE>)
+            ␑ U+0011 (<DEVICE CONTROL ONE>)
+            ␒ U+0012 (<DEVICE CONTROL TWO>)
+            ␓ U+0013 (<DEVICE CONTROL THREE>)
+            ␔ U+0014 (<DEVICE CONTROL FOUR>)
+            ␕ U+0015 (<NEGATIVE ACKNOWLEDGE>)
+            ␖ U+0016 (<SYNCHRONOUS IDLE>)
+            ␗ U+0017 (<END OF TRANSMISSION BLOCK>)
+            ␘ U+0018 (<CANCEL>)
+            ␙ U+0019 (<END OF MEDIUM>)
+            ␚ U+001A (<SUBSTITUTE>)
+            ␛ U+001B (<ESCAPE>)
+            ␜ U+001C (<INFORMATION SEPARATOR FOUR>)
+            ␝ U+001D (<INFORMATION SEPARATOR THREE>)
+            ␞ U+001E (<INFORMATION SEPARATOR TWO>)
+            ␟ U+001F (<INFORMATION SEPARATOR ONE>)
+            ⑿ U+007F (<DELETE>)
 
-    You can set the `insensitive` parameter to do case insensitive
-    matching::
+        You can set the `insensitive` parameter to do case insensitive
+        matching:
 
-        >>> prop = 'emod'
-        >>> value = 'y'
-        >>> insensitive = True
-        >>> gen = filter_by_property(prop, value, insensitive=insensitive)
-        >>> for char in gen:
-        ...     print(char.summarize())
-        ...
-        🏻 U+1F3FB (EMOJI MODIFIER FITZPATRICK TYPE-1-2)
-        🏼 U+1F3FC (EMOJI MODIFIER FITZPATRICK TYPE-3)
-        🏽 U+1F3FD (EMOJI MODIFIER FITZPATRICK TYPE-4)
-        🏾 U+1F3FE (EMOJI MODIFIER FITZPATRICK TYPE-5)
-        🏿 U+1F3FF (EMOJI MODIFIER FITZPATRICK TYPE-6)
+            >>> prop = 'emod'
+            >>> value = 'y'
+            >>> insensitive = True
+            >>> gen = filter_by_property(prop, value, insensitive=insensitive)
+            >>> for char in gen:
+            ...     print(char.summarize())
+            ...
+            🏻 U+1F3FB (EMOJI MODIFIER FITZPATRICK TYPE-1-2)
+            🏼 U+1F3FC (EMOJI MODIFIER FITZPATRICK TYPE-3)
+            🏽 U+1F3FD (EMOJI MODIFIER FITZPATRICK TYPE-4)
+            🏾 U+1F3FE (EMOJI MODIFIER FITZPATRICK TYPE-5)
+            🏿 U+1F3FF (EMOJI MODIFIER FITZPATRICK TYPE-6)
 
-    If you set the `regex` parameter, you can search using regular
-    expressions::
+        If you set the `regex` parameter, you can search using regular
+        expressions:
 
-        >>> prop = 'na'
-        >>> value = '.*EYE$'
-        >>> regex = True
-        >>> gen = filter_by_property(prop, value, regex=regex)
-        >>> for char in gen:
-        ...     print(char.summarize())
-        ...
-        ◉ U+25C9 (FISHEYE)
-        ◎ U+25CE (BULLSEYE)
-        ⺫ U+2EAB (CJK RADICAL EYE)
-        ⽬ U+2F6C (KANGXI RADICAL EYE)
-        👁 U+1F441 (EYE)
-        😜 U+1F61C (FACE WITH STUCK-OUT TONGUE AND WINKING EYE)
-        🤪 U+1F92A (GRINNING FACE WITH ONE LARGE AND ONE SMALL EYE)
-        🫣 U+1FAE3 (FACE WITH PEEKING EYE)
+            >>> prop = 'na'
+            >>> value = '.*EYE$'
+            >>> regex = True
+            >>> gen = filter_by_property(prop, value, regex=regex)
+            >>> for char in gen:
+            ...     print(char.summarize())
+            ...
+            ◉ U+25C9 (FISHEYE)
+            ◎ U+25CE (BULLSEYE)
+            ⺫ U+2EAB (CJK RADICAL EYE)
+            ⽬ U+2F6C (KANGXI RADICAL EYE)
+            👁 U+1F441 (EYE)
+            😜 U+1F61C (FACE WITH STUCK-OUT TONGUE AND WINKING EYE)
+            🤪 U+1F92A (GRINNING FACE WITH ONE LARGE AND ONE SMALL EYE)
+            🫣 U+1FAE3 (FACE WITH PEEKING EYE)
 
     .. _warning:
         If you don't limit the characters you are doing the filter on,
@@ -524,12 +514,11 @@ def get_properties() -> tuple[str, ...]:
     :return: The properties as a :class:`tuple`.
     :rtype: tuple
 
-    Usage
-    -----
-    To get the list of Unicode properties::
+    :usage:
+        To get the list of Unicode properties:
 
-        >>> get_properties()                    # doctest: +ELLIPSIS
-        ('age', 'ahex',... 'xo_nfkd')
+            >>> get_properties()                    # doctest: +ELLIPSIS
+            ('age', 'ahex',... 'xo_nfkd')
 
     """
     props = Character.cache.property_alias
@@ -549,13 +538,12 @@ def get_property_values(prop: str) -> tuple[str, ...]:
     :return: The valid values for the property as a :class:`tuple`.
     :rtype: tuple
 
-    Usage
-    -----
-    To get the valid property values::
+    :usage:
+        To get the valid property values::
 
-        >>> prop = 'gc'
-        >>> get_property_values(prop)           # doctest: +ELLIPSIS
-        ('C', 'Cc', 'Cf', 'Cn', 'Co', 'Cs', 'L',... 'Zs')
+            >>> prop = 'gc'
+            >>> get_property_values(prop)           # doctest: +ELLIPSIS
+            ('C', 'Cc', 'Cf', 'Cn', 'Co', 'Cs', 'L',... 'Zs')
 
     """
     propvals = Character.cache.value_aliases[prop]
@@ -573,13 +561,12 @@ def validate_normalization_form(form: str) -> NormForms:
     :return: A validated normalization form.
     :rtype: str
 
-    Usage
-    -----
-    To validate a normalization form::
+    :usage:
+        To validate a normalization form::
 
-        >>> form = 'NFD'
-        >>> form == validate_normalization_form(form)
-        True
+            >>> form = 'NFD'
+            >>> form == validate_normalization_form(form)
+            True
 
     """
     normal = form.upper()

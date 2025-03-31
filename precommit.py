@@ -273,8 +273,6 @@ def main():
 
     # Only continue with precommit checks if the unit tests passed.
     if result == pytest.ExitCode.OK:
-        if 'doctest_modules' in config:
-            check_doctests(doctest_modules)
         check_style(python_files, ignore)
         check_rst(rst_files, ignore)
         check_type_hints(get_module_dir())

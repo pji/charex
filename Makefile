@@ -12,8 +12,14 @@ clean:
 	rm -rf tests/__pycache__
 	rm -rf charex/__pycache__
 
+.PHONY: data
+data:
+	python tools/rebuild_data.py
+	tox -c tools/rebuild.ini --workdir ./.tox --root ./
+
 .PHONY: docs
 docs:
+	sphinx-build -b doctest docs/source/ docs/build/html
 	sphinx-build -b html docs/source/ docs/build/html
 
 .PHONY: test

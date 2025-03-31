@@ -1,65 +1,11 @@
 {
-    "rev_casefold.json": {
-        "description": "Casefold denormalization lookup.",
-        "source": "form:casefold",
-        "date": [
-            2025,
-            3,
-            29
-        ]
-    },
-    "rev_nfc.json": {
-        "description": "NFC denormalization lookup.",
-        "source": "form:nfc",
-        "date": [
-            2025,
-            3,
-            29
-        ]
-    },
-    "rev_nfd.json": {
-        "description": "NFD denormalization lookup.",
-        "source": "form:nfd",
-        "date": [
-            2025,
-            3,
-            29
-        ]
-    },
-    "rev_nfkc.json": {
-        "description": "NFKC denormalization lookup.",
-        "source": "form:nfkc",
-        "date": [
-            2025,
-            3,
-            29
-        ]
-    },
-    "rev_nfkd.json": {
-        "description": "NFKD denormalization lookup.",
-        "source": "form:nfkd",
-        "date": [
-            2025,
-            3,
-            29
-        ]
-    },
-    "entities.json": {
-        "description": "List of HTML Entities.",
-        "source": "https://html.spec.whatwg.org/entities.json",
-        "date": [
-            2025,
-            3,
-            29
-        ]
-    },
     "Idna2008.txt": {
         "description": "The IDNA2008 property for Unicode characters.",
         "source": "https://www.unicode.org/Public/idna/idna2008derived/Idna2008-14.0.0.txt",
         "date": [
             2025,
             3,
-            29
+            31
         ]
     },
     "UCD.zip": {
@@ -68,7 +14,7 @@
         "date": [
             2025,
             3,
-            29
+            31
         ]
     },
     "Unihan.zip": {
@@ -77,7 +23,7 @@
         "date": [
             2025,
             3,
-            29
+            31
         ]
     }
 }
