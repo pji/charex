@@ -126,10 +126,10 @@ Unicode character::
 
 What Version of Unicode Does This Support?
 ==========================================
-Parts of :mod:`charex` rely on :mod:`unicodedata` in the Python Standard
+Parts of `charex` rely on `unicodedata` in the Python Standard
 Library. This limits :mod:`charex` to supporting the version supported
 by the version of Python you are running. There may be a bit of a lag as
-new Python versions are released, but as of this release of :mod:`charex`
+new Python versions are released, but as of this release of `charex`
 it supports:
 
 *   Python 3.11: Unicode 14.0
