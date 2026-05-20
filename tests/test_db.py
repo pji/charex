@@ -151,7 +151,7 @@ class TestCache:
 
         version = Version_Info(3, 6_000_000)
         cache = db.FileCache.from_python(version)
-        assert cache.version == 'v15_1'
+        assert cache.version == 'v16_0'
 
 
 # Test get_denormal_map_for_code.

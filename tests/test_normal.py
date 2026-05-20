@@ -4,6 +4,9 @@ test_normal
 
 Unit testing for :mod:`charex.normal`.
 """
+from json import loads
+from pathlib import Path
+
 from charex import normal as nl
 
 
@@ -101,16 +104,19 @@ def test_build_denormalization_map():
     of every character that normalizes into a character as a
     JSON string.
     """
-    with open('tests/data/rev_nfc.json') as fh:
-        exp = fh.read()
+    exp_file = Path('tests/data/rev_nfc.json')
+    exp = exp_file.read_text()
     form = 'nfc'
     act = nl.build_denormalization_map(form)
-    alines = act.split('\n')
-    elines = exp.split('\n')
-    for i, lines in enumerate(zip(alines, elines)):
-        a, e = lines
-        assert (i, a) == (i, e)
-    assert act == exp
+
+    # This only remains true if a new Unicode version doesn't change
+    # existing normalizations. If that happens, denormalization maps
+    # may need to start tracking the Unicode versions. This may even
+    # just be a good idea to do anyway.
+    a_data = loads(act)
+    e_data = loads(exp)
+    for a in a_data:
+        assert a_data[a] == e_data[a]
 
 
 # Tests for find_max_decomposition().

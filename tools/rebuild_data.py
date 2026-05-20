@@ -27,6 +27,7 @@ VERSIONS = {
     '3.11': 'v14_0',
     '3.12': 'v15_0',
     '3.13': 'v15_1',
+    '3.14': 'v16_0',
 }
 
 
@@ -119,14 +120,14 @@ def update_unicode_version(
 
 if __name__ == '__main__':
     today = date.today()
-    
+
     for name in COMMON_FILES:
         print(f'Downloading {name}...', end=' ')
         path = PKG_DATA / name
         src = COMMON_FILES[name]['source']
         success = pull_data(src, path)
         update_status(success)
-    
+
     for version in VERSIONS:
         print(f'Updating {version}.')
         update_unicode_version(today, version)

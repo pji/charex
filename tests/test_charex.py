@@ -8,6 +8,7 @@ import pytest
 
 from charex import charex as c
 from charex import db
+from charex.util import vercmp
 
 
 # Global constants.
@@ -157,10 +158,10 @@ def test_character_dindices_properties():
     assert char.kdaejaweon == ''
     assert char.kirgdaejaweon == ''
 
-    if db.cache.version in ['v15_0', 'v15_1',]:
+    if vercmp(f'{db.cache.version} >= v15_0'):
         assert char.kcihait == ''
 
-    if db.cache.version in ['v15_1',]:
+    if vercmp(f'{db.cache.version} >= v15_1'):
         raises_exception(char, 'kirgdaikanwaziten', AttributeError)
         assert char.ksmszd2003index == ''
     else:
@@ -183,13 +184,13 @@ def test_character_dindices_properties():
     assert char.kdaejaweon == ''
     assert char.kirgdaejaweon == ''
 
-    if db.cache.version in ['v15_0', 'v15_1',]:
+    if vercmp(f'{db.cache.version} >= v15_0'):
         assert char.kcihait == ''
         assert char.kkangxi == '0078.101'
     else:
         assert char.kkangxi == ''
 
-    if db.cache.version in ['v15_1',]:
+    if vercmp(f'{db.cache.version} >= v15_1'):
         raises_exception(char, 'kirgdaikanwaziten', AttributeError)
         assert char.kmorohashi == 'H001'
         assert char.ksmszd2003index == ''
@@ -289,7 +290,7 @@ def test_character_mappings_properties():
     assert char.kibmjapan == ''
     assert char.kgb7 == ''
 
-    if db.cache.version in ['v15_1',]:
+    if vercmp(f'{db.cache.version} >= v15_1'):
         raises_exception(char, 'kkps0', AttributeError)
         raises_exception(char, 'kkps1', AttributeError)
         raises_exception(char, 'kksc0', AttributeError)
@@ -335,7 +336,7 @@ def test_character_numvalues_properties():
 
     char = c.Character('U+5146')
 
-    if db.cache.version in ['v15_1',]:
+    if db.cache.version in ['v15_1', 'v16_0',]:
         assert char.cjkprimarynumeric == '1000000 1000000000000'
     else:
         assert char.cjkprimarynumeric == '1000000000000'
@@ -415,7 +416,7 @@ def test_character_radstroke_properties():
     char = c.Character('a')
     assert char.krsadobe_japan1_6 == ''
 
-    if db.cache.version in ['v15_1',]:
+    if db.cache.version in ['v15_1', 'v16_0']:
         raises_exception(char, 'krskangxi', AttributeError)
     else:
         assert char.krskangxi == ''
@@ -423,7 +424,7 @@ def test_character_radstroke_properties():
     char = c.Character('U+3427')
     assert char.krsadobe_japan1_6 == 'C+13910+3.1.3 C+13910+6.1.3'
 
-    if db.cache.version in ['v15_1',]:
+    if db.cache.version in ['v15_1', 'v16_0']:
         raises_exception(char, 'krskangxi', AttributeError)
     else:
         assert char.krskangxi == ''
@@ -431,7 +432,7 @@ def test_character_radstroke_properties():
     char = c.Character('U+3687')
     assert char.krsadobe_japan1_6 == ''
 
-    if db.cache.version in ['v15_1',]:
+    if db.cache.version in ['v15_1', 'v16_0']:
         raises_exception(char, 'krskangxi', AttributeError)
     else:
         assert char.krskangxi == '35.6'

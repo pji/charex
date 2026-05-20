@@ -1,17 +1,33 @@
 {
-    "v15_1": {
+    "v16_0": {
         "idsu": "proplist",
         "id_compat_math_start": "proplist",
         "id_compat_math_continue": "proplist",
         "nfkc_scf": "derivednormalizationprops",
-        
+
         "kjapanese": "unihan_readings",
         "kmojijoho": "unihan_dictionarylikedata",
         "ksmszd2003index": "unihan_dictionaryindices",
         "ksmszd2003readings": "unihan_readings",
         "kvietnamesenumeric": "unihan_numericvalues",
         "kzhuangnumeric": "unihan_numericvalues",
-        
+
+        "kalternatetotalstrokes": "unihan_dictionarylikedata",
+        "kcihait": "unihan_dictionaryindices"
+    },
+    "v15_1": {
+        "idsu": "proplist",
+        "id_compat_math_start": "proplist",
+        "id_compat_math_continue": "proplist",
+        "nfkc_scf": "derivednormalizationprops",
+
+        "kjapanese": "unihan_readings",
+        "kmojijoho": "unihan_dictionarylikedata",
+        "ksmszd2003index": "unihan_dictionaryindices",
+        "ksmszd2003readings": "unihan_readings",
+        "kvietnamesenumeric": "unihan_numericvalues",
+        "kzhuangnumeric": "unihan_numericvalues",
+
         "kalternatetotalstrokes": "unihan_dictionarylikedata",
         "kcihait": "unihan_dictionaryindices"
     },
@@ -267,12 +283,12 @@
         "docomo": "emojisources",
         "kddi": "emojisources",
         "softbank": "emojisources",
-        
+
         "idna2008": "idna2008",
-    
+
         "cjkradical": "cjkradicals",
         "variants": "standardizedvariants",
-    
+
         "rev_casefold": "rev_casefold",
         "rev_nfc": "rev_nfc",
         "rev_nfd": "rev_nfd",

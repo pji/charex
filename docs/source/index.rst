@@ -55,14 +55,14 @@ That will bring you to the :mod:`charex` shell::
 
     Welcome to the charex shell.
     Press ? for a list of comands.
-    
+
     charex>
 
 From here you can type `?` to see the list of available commands::
 
     Welcome to the charex shell.
     Press ? for a list of comands.
-    
+
     charex> ?
     The following commands are available:
 
@@ -144,8 +144,7 @@ it supports:
 *   Python 3.11: Unicode 14.0
 *   Python 3.12: Unicode 15.0
 *   Python 3.13: Unicode 15.1
-
-Support for Unicode 16.0 should come around the release of Python 3.14.
+*   Python 3.14: Unicode 16.0
 
 
 Common Problems
@@ -155,7 +154,7 @@ Common Problems
 ------------------------------------------------------
 If you get the above error when running :mod:`charex` or its tests, it's
 likely your Python install doesn't have :mod:`tkinter` linked. How you
-fix it depends upon your Python install. If you are using Python 3.13 
+fix it depends upon your Python install. If you are using Python 3.13
 installed with `homebrew` on macOS, you can probably fix it with::
 
     brew install python-tk@3.13

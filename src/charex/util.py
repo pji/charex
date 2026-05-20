@@ -297,3 +297,25 @@ def to_code(value: int | str, prefix: str = '') -> str:
     if isinstance(value, str):
         value = ord(value)
     return f'{prefix}{value:04x}'
+
+
+def vercmp(s: str) -> bool:
+    """Compare two Unicode versions."""
+    a_text, op, b_text = s.split()
+    a_text = a_text[1:].replace('_', '.')
+    b_text = b_text[1:].replace('_', '.')
+    a, b = float(a_text), float(b_text)
+    if op == '<':
+        return a < b
+    elif op == '>':
+        return a > b
+    elif op == '<=':
+        return a <= b
+    elif op == '>=':
+        return a >= b
+    elif op == '==':
+        return a == b
+    elif op == '!=':
+        return a != b
+    else:
+        raise ValueError(f'Unknown operation: {op}')

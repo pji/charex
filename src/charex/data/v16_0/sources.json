@@ -1,7 +1,7 @@
 {
     "Idna2008.txt": {
         "description": "The IDNA2008 property for Unicode characters.",
-        "source": "https://www.unicode.org/Public/idna/idna2008derived/Idna2008-15.1.0.txt",
+        "source": "https://www.unicode.org/Public/idna/idna2008derived/Idna2008-16.0.0.txt",
         "date": [
             2026,
             5,
@@ -10,7 +10,7 @@
     },
     "UCD.zip": {
         "description": "The collected data files for Unicode.",
-        "source": "https://www.unicode.org/Public/zipped/15.1.0/UCD.zip",
+        "source": "https://www.unicode.org/Public/zipped/16.0.0/UCD.zip",
         "date": [
             2026,
             5,
@@ -19,7 +19,7 @@
     },
     "Unihan.zip": {
         "description": "The collected data files for CJK properties.",
-        "source": "https://www.unicode.org/Public/zipped/15.1.0/Unihan.zip",
+        "source": "https://www.unicode.org/Public/zipped/16.0.0/Unihan.zip",
         "date": [
             2026,
             5,

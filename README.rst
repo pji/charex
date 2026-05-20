@@ -46,14 +46,14 @@ That will bring you to the `charex` shell::
 
     Welcome to the charex shell.
     Press ? for a list of comands.
-    
+
     charex>
 
 From here you can type `?` to see the list of available commands::
 
     Welcome to the charex shell.
     Press ? for a list of comands.
-    
+
     charex> ?
     The following commands are available:
 
@@ -135,8 +135,7 @@ it supports:
 *   Python 3.11: Unicode 14.0
 *   Python 3.12: Unicode 15.0
 *   Python 3.13: Unicode 15.1
-
-Support for Unicode 16.0 should come around the release of Python 3.14.
+*   Python 3.14: Unicode 16.0
 
 
 What Is Left To Do?
@@ -175,7 +174,7 @@ The following are the changes in v0.2.3:
 
     *   Add Unicode 15.1 files.
     *   Remove seven Unihan properties.
-    
+
         *   kHKSCS
         *   kIRGDaiKanwaZiten
         *   kKPS0
@@ -183,9 +182,9 @@ The following are the changes in v0.2.3:
         *   kKSC0
         *   kKSC1
         *   kRSKangXi
-    
+
     *   Add six Unihan properties.
-    
+
         *   kJapanese
         *   kMojiJoho
         *   kSMSZD2003Index
@@ -232,7 +231,7 @@ Common Problems
 ------------------------------------------------------
 If you get the above error when running `charex` or its tests, it's
 likely your Python install doesn't have `tkinter` linked. How you
-fix it depends upon your Python install. If you are using Python 3.13 
+fix it depends upon your Python install. If you are using Python 3.13
 installed with `homebrew` on macOS, you can probably fix it with::
 
     brew install python-tk@3.13

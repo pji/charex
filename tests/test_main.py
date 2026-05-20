@@ -13,6 +13,7 @@ from charex import __main__ as m
 from charex import db
 from charex import escape as esc
 from charex import normal as nl
+from charex.util import vercmp
 
 
 # Test cd mode.
@@ -448,11 +449,11 @@ def test_pf_insensitive_regex(capsys):
 
 # Test sv mode.
 def test_sv(capsys):
-    """When invoked, ns mode returns the list of standardized variants."""
+    """When invoked, sv mode returns the list of standardized variants."""
     path = Path('tests/data/sv.txt')
-    if db.cache.version in ['v15_0',]:
+    if vercmp(f'{db.cache.version} == v15_0'):
         path = Path('tests/data/sv_v15_0.txt')
-    elif db.cache.version in ['v15_1',]:
+    if vercmp(f'{db.cache.version} >= v15_1'):
         path = Path('tests/data/sv_v15_1.txt')
     exp = path.read_text()
 
@@ -467,7 +468,7 @@ def test_sv(capsys):
 def test_up(capsys):
     """When invoked, up mode should return the list of Unicode properties."""
     exp_path = Path('tests/data/up.txt')
-    if db.cache.version in ['v15_1']:
+    if vercmp(f'{db.cache.version} >= v15_1'):
         exp_path = Path('tests/data/up_v15_1.txt')
     exp = exp_path.read_text()
     cmd = (
@@ -482,7 +483,7 @@ def test_up_description(capsys):
     Unicode properties and their long names.
     """
     exp_path = Path('tests/data/up_d.txt')
-    if db.cache.version in ['v15_1']:
+    if vercmp(f'{db.cache.version} >= v15_1'):
         exp_path = Path('tests/data/up_d_v15_1.txt')
     exp = exp_path.read_text()
     cmd = (

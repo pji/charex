@@ -3,27 +3,27 @@
         "description": "The IDNA2008 property for Unicode characters.",
         "source": "https://www.unicode.org/Public/idna/idna2008derived/Idna2008-14.0.0.txt",
         "date": [
-            2025,
-            3,
-            31
+            2026,
+            5,
+            20
         ]
     },
     "UCD.zip": {
         "description": "The collected data files for Unicode.",
         "source": "https://www.unicode.org/Public/14.0.0/ucd/UCD.zip",
         "date": [
-            2025,
-            3,
-            31
+            2026,
+            5,
+            20
         ]
     },
     "Unihan.zip": {
         "description": "The collected data files for CJK properties.",
         "source": "https://www.unicode.org/Public/14.0.0/ucd/Unihan.zip",
         "date": [
-            2025,
-            3,
-            31
+            2026,
+            5,
+            20
         ]
     }
 }

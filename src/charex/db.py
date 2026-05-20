@@ -50,10 +50,11 @@ UCD_RANGES = defaultdict(str, {
 # 3.11 won't be supported any longer, so it may be a moot point.
 # Still, should probably move this to a combination of major and
 # minor Python version at some point.
-VERSIONS = defaultdict(util.constant_factory('v15_1'), {
+VERSIONS = defaultdict(util.constant_factory('v16_0'), {
     11: 'v14_0',
     12: 'v15_0',
     13: 'v15_1',
+    14: 'v16_0',
 })
 
 
