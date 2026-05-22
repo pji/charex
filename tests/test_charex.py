@@ -546,6 +546,41 @@ def test_character_variants_properties():
     assert char.kzvariant == ''
 
 
+def test_character_unikemet_properties():
+    """A :class:`charex.Character` should have the properties from the
+    Unikemet database.
+    """
+    if vercmp(f'{db.cache.version} <= v16_0'):
+        char = c.Character('a')
+        assert char.keh_cat == ''
+        assert char.keh_core == ''
+        assert char.keh_desc == ''
+        assert char.keh_func == ''
+        assert char.keh_fval == ''
+        assert char.keh_unik == ''
+        assert char.keh_jsesh == ''
+        assert char.keh_hg == ''
+        assert char.keh_ifao == ''
+        assert char.keh_nomirror == ''
+        assert char.keh_norotate == ''
+
+        char = c.Character('U+13000')
+        assert char.keh_cat == 'A-01-001'
+        assert char.keh_core == 'C'
+        assert char.keh_desc == (
+            'Man, seated, right knee raised, right arm raised, '
+            'left arm in front of body.'
+        )
+        assert char.keh_func == 'Classifier human being'
+        assert char.keh_fval == ''
+        assert char.keh_unik == 'A001'
+        assert char.keh_jsesh == 'A1'
+        assert char.keh_hg == 'A1'
+        assert char.keh_ifao == '1,1'
+        assert char.keh_nomirror == ''
+        assert char.keh_norotate == ''
+
+
 def test_character_speccase():
     """A :class:`charex.Character` should have the properties from the
     SpecialCasing.txt file.

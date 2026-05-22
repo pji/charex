@@ -919,6 +919,12 @@
             "do_not_emit",
             ";"
         ],
+        "unikemet": [
+            "Unikemet.txt",
+            "v16_0/UCD.zip",
+            "unihan",
+            "\t"
+        ],
 
         "propertyaliases": [
             "PropertyAliases.txt",

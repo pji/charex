@@ -1,5 +1,18 @@
 {
     "v16_0": {
+        "keh_cat": "unikemet",
+        "keh_core": "unikemet",
+        "keh_desc": "unikemet",
+        "keh_func": "unikemet",
+        "keh_fval": "unikemet",
+        "keh_unik": "unikemet",
+        "keh_jsesh": "unikemet",
+        "keh_hg": "unikemet",
+        "keh_ifao": "unikemet",
+        "keh_nomirror": "unikemet",
+        "keh_norotate": "unikemet",
+        "mcm": "proplist",
+
         "idsu": "proplist",
         "id_compat_math_start": "proplist",
         "id_compat_math_continue": "proplist",

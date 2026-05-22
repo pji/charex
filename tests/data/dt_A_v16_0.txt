@@ -68,6 +68,7 @@
                 Emoji Modifier Base: N
                     Emoji Component: N
               Extended Pictographic: N
+            Modifier Combining Mark: N
                  IDS Unary Operator: N
                ID Compat Math Start: N
             ID Compat Math Continue: N
