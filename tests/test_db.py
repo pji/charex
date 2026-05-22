@@ -6,6 +6,7 @@ Unit tests for :mod:`charex.db`.
 """
 from dataclasses import dataclass
 from pathlib import Path
+from sys import version_info
 
 import pytest
 
@@ -167,6 +168,23 @@ def test_get_denormal_map_for_code():
     assert db.get_denormal_map_for_code('rev_nfc', code) == (
         'A\u030a', '\u212b',
     )
+
+
+# Test get do not emit.
+def test_get_do_not_emit():
+    """When called, :funct:`charex.db.get_do_not_emit` returns the list
+    of do not emit sequences.
+    """
+    if version_info.minor >= 14:
+        assert db.cache.version == 'v16_0'
+        assert 'donotemit' in db.cache.path_map
+        assert 'do_not_emit' in db.cache.by_kind
+        data = db.get_do_not_emit()
+        assert data[0] == db.DoNotEmit(
+            '0905 0946',
+            '0904',
+            'Indic_Vowel_Letter'
+        )
 
 
 # Test get_named_sequences:

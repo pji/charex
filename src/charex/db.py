@@ -90,6 +90,13 @@ class Casefold:
 
 
 @dataclass(repr=True, eq=True)
+class DoNotEmit:
+    sequence: str = ''
+    replacement: str = ''
+    kind: str = ''
+
+
+@dataclass(repr=True, eq=True)
 class EmojiSource:
     code: str = ''
     docomo: str = ''
@@ -245,6 +252,7 @@ Casefolds = defaultdict[str, Casefold]
 Casefoldings = dict[str, Casefolds]
 DenormalMap = defaultdict[str, tuple[str, ...]]
 DenormalMaps = dict[str, DenormalMap]
+DoNotEmits = dict[str, DoNotEmit]
 EmojiSources = defaultdict[str, EmojiSource]
 EntityMap = dict[str, tuple[Entity, ...]]
 NameAliases = dict[str, tuple[NameAlias, ...]]
@@ -455,6 +463,14 @@ def get_value_range_by_code(prop: str, code: str, key: str) -> str:
 
 
 # Query data not sorted by code.
+def get_do_not_emit() -> tuple[DoNotEmit, ...]:
+    """Return the contents of a `donotemit` file as a
+    :class:`tuple`.
+    """
+    dnes = cache.donotemit
+    return tuple(dnes[key] for key in dnes)
+
+
 def get_named_sequences() -> tuple[NamedSequence, ...]:
     """Return the contents of a `namedsequences` file as a
     :class:`tuple`.
@@ -582,6 +598,12 @@ def load_derived_normal(info: PathInfo) -> tuple[SingleValues, SimpleLists]:
             raise ValueError(f'{prop} has {num_fields} fields.')
 
     return singles, simples
+
+
+def load_do_not_emit(info: PathInfo) -> DoNotEmits:
+    """Load a data file that contains do not emit sequences."""
+    records = load_defined_record(info, DoNotEmit)
+    return records
 
 
 def load_emoji_source(info: PathInfo) -> EmojiSources:
@@ -1021,7 +1043,7 @@ class FileCache:
         version = VERSIONS[python.minor]
         return cls(version)
 
-    def __init__(self, version: str = 'v15_1') -> None:
+    def __init__(self, version: str = 'v16_0') -> None:
         self.version = version
 
         # A mapping of all the files in the Unicode data.
@@ -1038,6 +1060,7 @@ class FileCache:
         self.__cjk_radicals: Radicals = dict()
         self.__denormal_map: DenormalMaps = dict()
         self.__derived_normal: DerivedNormals = dict()
+        self.__donotemit: DoNotEmits = dict()
         self.__emoji_source: EmojiSources = defaultdict(EmojiSource)
         self.__entity_map: EntityMap = dict()
         self.__kind_map: dict[str, Record] = dict()
@@ -1144,6 +1167,11 @@ class FileCache:
                 self.__emoji_source,
                 'update'
             ),
+            'do_not_emit': Kind(
+                load_do_not_emit,
+                self.__donotemit,
+                'store'
+            ),
         }
 
     def __getattr__(self, name: str):
@@ -1156,22 +1184,6 @@ class FileCache:
             pi = self.path_map[name]
             kind = self.by_kind[pi.kind]
 
-            # "Update" attributes just store the data of one
-            # file in their attribute.
-            if kind.action == 'update':
-                if not kind.cache:
-                    loaded: dict = kind.load(pi)
-                    kind.cache.update(loaded)
-                return kind.cache
-
-            # "Store" attributes store data from multiple files
-            # as separate keys within their attribute.
-            elif kind.action == 'store':
-                if name not in kind.cache:
-                    loaded = kind.load(pi)
-                    kind.cache[name] = loaded
-                return kind.cache[name]
-
         # A KeyError means the requested attribute is not a property
         # in the Unicode data. At least, it's not one charex has mapped
         # yet. Either way, since we are acting as an attribute, we
@@ -1180,6 +1192,22 @@ class FileCache:
             if name not in self.path_map:
                 raise AttributeError(f'Not in path_map: {name}.')
             raise AttributeError(name)
+
+        # "Update" attributes just store the data of one
+        # file in their attribute.
+        if kind.action == 'update':
+            if not kind.cache:
+                loaded: dict = kind.load(pi)
+                kind.cache.update(loaded)
+            return kind.cache
+
+        # "Store" attributes store data from multiple files
+        # as separate keys within their attribute.
+        elif kind.action == 'store':
+            if name not in kind.cache:
+                loaded = kind.load(pi)
+                kind.cache[name] = loaded
+            return kind.cache[name]
 
     @property
     def entity_map(self) -> EntityMap:

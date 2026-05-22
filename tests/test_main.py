@@ -453,8 +453,10 @@ def test_sv(capsys):
     path = Path('tests/data/sv.txt')
     if vercmp(f'{db.cache.version} == v15_0'):
         path = Path('tests/data/sv_v15_0.txt')
-    if vercmp(f'{db.cache.version} >= v15_1'):
+    elif vercmp(f'{db.cache.version} == v15_1'):
         path = Path('tests/data/sv_v15_1.txt')
+    elif vercmp(f'{db.cache.version} >= v16_0'):
+        path = Path('tests/data/sv_v16_0.txt')
     exp = path.read_text()
 
     cmd = (
@@ -468,8 +470,10 @@ def test_sv(capsys):
 def test_up(capsys):
     """When invoked, up mode should return the list of Unicode properties."""
     exp_path = Path('tests/data/up.txt')
-    if vercmp(f'{db.cache.version} >= v15_1'):
+    if vercmp(f'{db.cache.version} == v15_1'):
         exp_path = Path('tests/data/up_v15_1.txt')
+    elif vercmp(f'{db.cache.version} >= v16_0'):
+        exp_path = Path('tests/data/up_v16_0.txt')
     exp = exp_path.read_text()
     cmd = (
         'python -m charex',
@@ -483,8 +487,10 @@ def test_up_description(capsys):
     Unicode properties and their long names.
     """
     exp_path = Path('tests/data/up_d.txt')
-    if vercmp(f'{db.cache.version} >= v15_1'):
+    if vercmp(f'{db.cache.version} == v15_1'):
         exp_path = Path('tests/data/up_d_v15_1.txt')
+    elif vercmp(f'{db.cache.version} >= v16_0'):
+        exp_path = Path('tests/data/up_d_v16_0.txt')
     exp = exp_path.read_text()
     cmd = (
         'python -m charex',
@@ -506,6 +512,7 @@ def cli_test(exp, cmd, capsys):
 
     # Gather actual result and compare.
     captured = capsys.readouterr()
+
     assert captured.out == exp
 
     # Test tear down.

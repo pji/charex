@@ -121,18 +121,20 @@ def test_character_dictlike_properties():
     assert char.kunihancore2020 == ''
     assert char.kcheungbauer == ''
     assert char.kfourcornercode == ''
-    assert char.kfrequency == ''
     assert char.kgradelevel == ''
     assert char.khdzradbreak == ''
     assert char.khkglyph == ''
 
-    if db.cache.version in ['v15_0', 'v15_1',]:
+    if vercmp(f'{db.cache.version} >= v15_0'):
         assert char.kalternatetotalstrokes == ''
     else:
         assert char.kcihait == ''
 
-    if db.cache.version in ['v15_1',]:
+    if vercmp(f'{db.cache.version} >= v15_1'):
         assert char.kmojijoho == ''
+
+    if vercmp(f'{db.cache.version} < v16_0'):
+        assert char.kfrequency == ''
 
 
 def test_character_dindices_properties():

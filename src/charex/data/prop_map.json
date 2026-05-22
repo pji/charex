@@ -16,6 +16,8 @@
         "kcihait": "unihan_dictionaryindices"
     },
     "v15_1": {
+        "kfrequency": "unihan_dictionarylikedata",
+
         "idsu": "proplist",
         "id_compat_math_start": "proplist",
         "id_compat_math_continue": "proplist",
@@ -32,6 +34,8 @@
         "kcihait": "unihan_dictionaryindices"
     },
     "v15_0": {
+        "kfrequency": "unihan_dictionarylikedata",
+
         "kalternatetotalstrokes": "unihan_dictionarylikedata",
         "kcihait": "unihan_dictionaryindices",
 
@@ -44,6 +48,8 @@
         "krskangxi": "unihan_radicalstrokecounts"
     },
     "v14_0": {
+        "kfrequency": "unihan_dictionarylikedata",
+
         "khkscs": "unihan_othermappings",
         "kirgdaikanwaziten": "unihan_dictionaryindices",
         "kkps0": "unihan_othermappings",
@@ -165,7 +171,6 @@
         "kunihancore2020": "unihan_dictionarylikedata",
         "kcheungbauer": "unihan_dictionarylikedata",
         "kfourcornercode": "unihan_dictionarylikedata",
-        "kfrequency": "unihan_dictionarylikedata",
         "kgradelevel": "unihan_dictionarylikedata",
         "khdzradbreak": "unihan_dictionarylikedata",
         "khkglyph": "unihan_dictionarylikedata",
