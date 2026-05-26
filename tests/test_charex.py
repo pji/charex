@@ -222,6 +222,18 @@ def test_character_idna2008_properties():
     assert char.idna2008 == 'PVALID'
 
 
+def test_character_incb_properties():
+    """A :class:`charex.Character` should have the InCB properties from
+    DerivedCoreProperties.txt.
+    """
+    if vercmp(f'{db.cache.version} >= v15.1'):
+        char = c.Character('A')
+        assert char.incb == 'None'
+
+        char = c.Character('U+094d')
+        assert char.incb == 'Linker'
+
+
 def test_character_irgsource_properties():
     """A :class:`charex.Character` should have the properties from the
     Unicode data database.
@@ -459,9 +471,13 @@ def test_character_readings_properties():
     assert char.khanyupinlu == ''
     assert char.kkorean == ''
 
-    if db.cache.version in ['v15_1',]:
+    if vercmp(f'{db.cache.version} >= v15.1'):
         assert char.kjapanese == ''
         assert char.ksmszd2003readings == ''
+
+    if vercmp(f'{db.cache.version} >= v16.0'):
+        assert char.kfanqie == ''
+        assert char.kzhuang == ''
 
     char = c.Character('U+3404')
     assert char.kcantonese == 'kwaa1'
@@ -478,9 +494,20 @@ def test_character_readings_properties():
     assert char.khanyupinlu == ''
     assert char.kkorean == ''
 
-    if db.cache.version in ['v15_1',]:
+    if vercmp(f'{db.cache.version} >= v15.1'):
         assert char.kjapanese == 'カ ケ'
         assert char.ksmszd2003readings == ''
+
+    if vercmp(f'{db.cache.version} >= v16.0'):
+        assert char.kfanqie == ''
+        assert char.kzhuang == ''
+
+    if vercmp(f'{db.cache.version} >= v16.0'):
+        char = c.Character('U+3401')
+        assert char.kfanqie == '他紺 他念'
+
+        char = c.Character('U+2CEB2')
+        assert char.kzhuang == 'naengh'
 
 
 def test_character_rangelist_properties():
@@ -550,7 +577,7 @@ def test_character_unikemet_properties():
     """A :class:`charex.Character` should have the properties from the
     Unikemet database.
     """
-    if vercmp(f'{db.cache.version} <= v16_0'):
+    if vercmp(f'{db.cache.version} >= v16_0'):
         char = c.Character('a')
         assert char.keh_cat == ''
         assert char.keh_core == ''

@@ -130,6 +130,9 @@
 
                                 ---  Cjk_Radicals
 
+                                ---  Incb
+               Indic Conjunct Break: None
+
                                 ---  Encoding
                               UTF-8: 41
                              UTF-16: 00 41

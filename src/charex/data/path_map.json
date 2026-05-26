@@ -609,6 +609,13 @@
         ]
     },
     "v15_1": {
+        "incb": [
+            "DerivedCoreProperties.txt",
+            "v15_1/UCD.zip",
+            "incb",
+            ";"
+        ],
+
         "propertyaliases": [
             "PropertyAliases.txt",
             "v15_1/UCD.zip",
@@ -924,6 +931,12 @@
             "v16_0/UCD.zip",
             "unihan",
             "\t"
+        ],
+        "incb": [
+            "DerivedCoreProperties.txt",
+            "v15_1/UCD.zip",
+            "incb",
+            ";"
         ],
 
         "propertyaliases": [

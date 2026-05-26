@@ -12,6 +12,10 @@
         "keh_nomirror": "unikemet",
         "keh_norotate": "unikemet",
         "mcm": "proplist",
+        "kfanqie": "unihan_readings",
+        "kzhuang": "unihan_readings",
+
+        "incb": "incb",
 
         "idsu": "proplist",
         "id_compat_math_start": "proplist",
@@ -30,6 +34,7 @@
     },
     "v15_1": {
         "kfrequency": "unihan_dictionarylikedata",
+        "incb": "incb",
 
         "idsu": "proplist",
         "id_compat_math_start": "proplist",
@@ -76,9 +81,11 @@
         "gc": "unicodedata",
         "ccc": "unicodedata",
         "bc": "unicodedata",
+        "dm": "unicodedata",
         "dt": "unicodedata",
         "decimal": "unicodedata",
         "digit": "unicodedata",
+        "nt": "unicodedata",
         "nv": "unicodedata",
         "bidi_m": "unicodedata",
         "na1": "unicodedata",

@@ -90,6 +90,22 @@ def test_alias_property():
     assert db.alias_property('spam') == 'spam'
 
 
+def test_aliased_properties_mapped():
+    """Check to make sure every property alias in the PropAliases.txt
+    file have been mapped. This doesn't ensure that all properties are
+    mapped, but it should check a bunch of them.
+    """
+    info = db.cache.path_map[db.PATH_PROPERTY_ALIASES]
+    data = db.parse(info)
+    for lines in data:
+        for line in lines:
+            try:
+                alias = line[0].casefold()
+                db.cache.prop_map[alias]
+            except KeyError:
+                raise KeyError(f'{line[0]}, {line[1]}')
+
+
 def test_alias_value():
     """Given a property alias and the long name for a value of that
     property, return the alias of that value if it exists. If

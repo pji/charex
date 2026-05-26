@@ -312,6 +312,7 @@ def get_value_for_code(prop: str, code: str) -> str:
         'cjk_radicals': get_cjk_radical_by_code,
         'derived_normal': get_derived_normal,
         'emoji_source': get_defined_record_by_code,
+        'incb': get_incb,
         'name_alias': get_name_alias_by_code,
         'prop_list': get_prop_list,
         'simple_list': get_simple_list_by_code,
@@ -383,6 +384,13 @@ def get_derived_normal(prop: str, code: str, key: str) -> str:
     return 'N'
 
 
+def get_incb(prop: str, code: str, key: str) -> str:
+    """Get the value of a property stored in an `incb` file
+    for the given code point.
+    """
+    return cache.incb[code]
+
+
 def get_name_alias_by_code(prop: str, code: str, key: str) -> str:
     """Get the value of a property stored in a `name_alias` file
     for the given code point.
@@ -401,6 +409,7 @@ def get_prop_list(prop: str, code: str, key: str) -> str:
     for the given code point.
     """
     simple_list = getattr(cache, key)
+    # raise ValueError(f'{" ".join(key for key in simple_list)}')
     if code in simple_list[prop]:
         return 'Y'
     return 'N'
@@ -630,6 +639,18 @@ def load_entity_map(info: PathInfo) -> EntityMap:
     return {key: tuple(emap[key]) for key in emap}
 
 
+def load_incb(info: PathInfo) -> defaultdict[str, str]:
+    """Load the InCB data."""
+    records, _ = parse(info, True)
+    data = defaultdict(Default('None'))
+    keys = set()
+    for rec in records:
+        code, alias, *value = rec
+        if alias.casefold().startswith('incb'):
+            data[code.casefold()] = value[0]
+    return data
+
+
 def load_name_alias(info: PathInfo) -> NameAliases:
     """Load the Unicode name aliases."""
     records, _ = parse(info)
@@ -659,6 +680,13 @@ def load_prop_list(info: PathInfo) -> SimpleLists:
         prop = prop.casefold()
         data.setdefault(prop, set())
         data[prop].add(code.casefold())
+
+    # Handle the addition of InCB into a file that is otherwise a prop list.
+    if 'DerivedCoreProperties.txt' in info.path:
+        for key in [k for k in data]:
+            if key.startswith('incb'):
+                del data[key]
+
     return data
 
 
@@ -1063,6 +1091,7 @@ class FileCache:
         self.__donotemit: DoNotEmits = dict()
         self.__emoji_source: EmojiSources = defaultdict(EmojiSource)
         self.__entity_map: EntityMap = dict()
+        self.__incb: defaultdict[str, str] = defaultdict(Default('None'))
         self.__kind_map: dict[str, Record] = dict()
         self.__name_alias: NameAliases = dict()
         self.__named_sequence: NamedSequences = defaultdict(NamedSequence)
@@ -1170,6 +1199,11 @@ class FileCache:
             'do_not_emit': Kind(
                 load_do_not_emit,
                 self.__donotemit,
+                'store'
+            ),
+            'incb': Kind(
+                load_incb,
+                self.__incb,
                 'store'
             ),
         }

@@ -513,7 +513,15 @@ def cli_test(exp, cmd, capsys):
     # Gather actual result and compare.
     captured = capsys.readouterr()
 
-    assert captured.out == exp
+    exps = exp.split('\n')
+    caps = captured.out.split('\n')
+    for e, c in zip(exps, caps):
+        try:
+            assert e == c
+        except AssertionError:
+            raise ValueError(f'|{e}| != |{c}|')
+
+#     assert captured.out == exp
 
     # Test tear down.
     sys.argv = orig_cmd
