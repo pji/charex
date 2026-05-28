@@ -81,6 +81,46 @@ def uhn_path():
     return 'v14_0/Unihan.zip'
 
 
+class TestPropertyMapping:
+    """Checks data files in the Unicode data to attempt to catch
+    new properties that haven't been properly mapped. This is
+    mainly useful when implementing a new Unicode version. It's
+    not exhaustive.
+    """
+    def test_aliased_properties_mapped(self):
+        """Check to make sure every property alias in the PropAliases.txt
+        file have been mapped. This doesn't ensure that all properties are
+        mapped, but it should check a bunch of them.
+        """
+        info = db.cache.path_map[db.PATH_PROPERTY_ALIASES]
+        data = db.parse(info)
+        for lines in data:
+            for line in lines:
+                try:
+                    alias = line[0].casefold()
+                    db.cache.prop_map[alias]
+                except KeyError:
+                    raise KeyError(f'{line[0]}, {line[1]}')
+
+    def test_unihan_properties_mapped(self):
+        """Check that all the properties defined in Unihan.zip are
+        mapped.
+        """
+        infos = [
+            db.cache.path_map[key] for key in db.cache.path_map
+            if key.startswith('unihan')
+        ]
+        for info in infos:
+            data = db.parse(info)
+            props = set(line[1].casefold() for line in data[0])
+            for prop in props:
+                try:
+                    db.cache.prop_map[prop]
+                except KeyError:
+                    alias = db.cache.property_alias[prop].alias
+                    db.cache.prop_map[alias.casefold()]
+
+
 # Test alias_property.
 def test_alias_property():
     """Given the long name for a property, return the alias of that
@@ -88,22 +128,6 @@ def test_alias_property():
     """
     assert db.alias_property('General_Category') == 'gc'
     assert db.alias_property('spam') == 'spam'
-
-
-def test_aliased_properties_mapped():
-    """Check to make sure every property alias in the PropAliases.txt
-    file have been mapped. This doesn't ensure that all properties are
-    mapped, but it should check a bunch of them.
-    """
-    info = db.cache.path_map[db.PATH_PROPERTY_ALIASES]
-    data = db.parse(info)
-    for lines in data:
-        for line in lines:
-            try:
-                alias = line[0].casefold()
-                db.cache.prop_map[alias]
-            except KeyError:
-                raise KeyError(f'{line[0]}, {line[1]}')
 
 
 def test_alias_value():
@@ -155,6 +179,10 @@ class TestCache:
         version = Version_Info(3, 13)
         cache = db.FileCache.from_python(version)
         assert cache.version == 'v15_1'
+
+        version = Version_Info(3, 14)
+        cache = db.FileCache.from_python(version)
+        assert cache.version == 'v16_0'
 
     def test_with_higher_than_supported_version(self):
         """If given a version of python higher than the highest

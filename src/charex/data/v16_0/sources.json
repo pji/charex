@@ -25,5 +25,40 @@
             5,
             20
         ]
+    },
+    "rev_casefold.json": {
+        "date": [
+            2026,
+            5,
+            26
+        ]
+    },
+    "rev_nfc.json": {
+        "date": [
+            2026,
+            5,
+            26
+        ]
+    },
+    "rev_nfd.json": {
+        "date": [
+            2026,
+            5,
+            26
+        ]
+    },
+    "rev_nfkc.json": {
+        "date": [
+            2026,
+            5,
+            26
+        ]
+    },
+    "rev_nfkd.json": {
+        "date": [
+            2026,
+            5,
+            26
+        ]
     }
 }

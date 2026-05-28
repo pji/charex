@@ -132,7 +132,6 @@ by the version of Python you are running. There may be a bit of a lag as
 new Python versions are released, but as of this release of `charex`
 it supports:
 
-*   Python 3.11: Unicode 14.0
 *   Python 3.12: Unicode 15.0
 *   Python 3.13: Unicode 15.1
 *   Python 3.14: Unicode 16.0
@@ -140,13 +139,13 @@ it supports:
 
 What Is Left To Do?
 ===================
-The following features are planned for the v0.2.4 or later releases:
+The following features are planned for the v0.2.5 or later releases:
 
-*   Support for Unicode v16.0 for Python 3.14.
 *   Emoji combiner.
 *   Basic doctests for all public classes and functions.
 *   Web API.
 *   Registration for character set codecs.
+*   Allow unicode version switching.
 
 The list of Unicode properties can be found here: `Index`_
 
@@ -154,6 +153,16 @@ The list of Unihan properties is here: `tr38`_
 
 .. _`Index`: https://www.unicode.org/reports/tr44/tr44-28.html#Property_Index
 .. _`tr38`: https://www.unicode.org/reports/tr38/tr38-31.html
+
+
+Changes in v0.2.4
+-----------------
+The following are the changes in v0.2.4:
+
+*   Updated dependencies.
+*   Support for Unicode v16.0 for Python 3.14.
+*   Added support for the InCB property to Unicode v15.1.
+*   Removed official support for Python 3.11 to allow `sphinx` to be updated.
 
 
 Changes in v0.2.3
@@ -231,7 +240,7 @@ Common Problems
 ------------------------------------------------------
 If you get the above error when running `charex` or its tests, it's
 likely your Python install doesn't have `tkinter` linked. How you
-fix it depends upon your Python install. If you are using Python 3.13
+fix it depends upon your Python install. If you are using Python 3.14
 installed with `homebrew` on macOS, you can probably fix it with::
 
-    brew install python-tk@3.13
+    brew install python-tk@3.14

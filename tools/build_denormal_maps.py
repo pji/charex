@@ -38,13 +38,15 @@ def build_map(version: str, form: str, file: str, zpath: Path) -> bool:
 def update_source_date(version, updated_file):
     today = date.today()
     update_date = (today.year, today.month, today.day)
-    
+
     path = PKG_DATA / version / 'sources.json'
     text = path.read_text()
     data = loads(text)
-    
+
+    data.setdefault(updated_file, dict())
     data[updated_file]['date'] = update_date
-    
+
+
     updated_text = dumps(data, indent=4)
     path.write_text(updated_text)
 
@@ -57,7 +59,7 @@ if zpath.exists():
 for form in FORMS:
     file = f'rev_{form}.json'
     success = build_map(version, form, file, zpath)
-    
+
     msg = f'{version} {form}: '
     if success:
         update_source_date(version, file)
@@ -74,26 +76,26 @@ for form in FORMS:
 #         success = build_map(version, form, file, PKG_DATA)
 #         if success:
 #             update_source_date(version, file)
-# 
+#
 #     def test_nfc(self):
 #         form = 'nfc'
 #         file = f'rev_{form}.json'
 #         success = build_map(file, PKG_DATA)
-# 
+#
 #     def test_nfd(self):
 #         form = 'nfd'
 #         file = f'rev_{form}.json'
 #         success = build_map(version, form, file, PKG_DATA)
 #         if success:
 #             update_source_date(version, file)
-# 
+#
 #     def test_nfkc(self):
 #         form = 'nfkc'
 #         file = f'rev_{form}.json'
 #         success = build_map(version, form, file, PKG_DATA)
 #         if success:
 #             update_source_date(version, file)
-# 
+#
 #     def test_nfkd(self):
 #         form = 'nfkd'
 #         file = f'rev_{form}.json'

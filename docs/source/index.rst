@@ -154,10 +154,10 @@ Common Problems
 ------------------------------------------------------
 If you get the above error when running :mod:`charex` or its tests, it's
 likely your Python install doesn't have :mod:`tkinter` linked. How you
-fix it depends upon your Python install. If you are using Python 3.13
+fix it depends upon your Python install. If you are using Python 3.14
 installed with `homebrew` on macOS, you can probably fix it with::
 
-    brew install python-tk@3.13
+    brew install python-tk@3.14
 
 
 Indices and tables
