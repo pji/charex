@@ -51,6 +51,7 @@ Normalization and Denormalization
 Unicode Information
 *******************
 
+.. autofunction:: charex.alias_property
 .. autofunction:: charex.get_properties
 .. autofunction:: charex.get_property_values
 .. autofunction:: charex.expand_property

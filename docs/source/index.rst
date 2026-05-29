@@ -26,7 +26,7 @@ part is what's interesting to me, and it's where a lot of fun problems lie.
 How Do I Use This?
 ==================
 It's in PyPI, so you can install it with `pip`, as long as you are
-using Python 3.11 or higher::
+using Python 3.12 or higher::
 
     $ pip install charex
 
@@ -141,7 +141,6 @@ by the version of Python you are running. There may be a bit of a lag as
 new Python versions are released, but as of this release of :mod:`charex`
 it supports:
 
-*   Python 3.11: Unicode 14.0
 *   Python 3.12: Unicode 15.0
 *   Python 3.13: Unicode 15.1
 *   Python 3.14: Unicode 16.0

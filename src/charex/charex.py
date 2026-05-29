@@ -290,9 +290,25 @@ class Character:
 
 # Utility functions.
 def alias_property(longname: str, space: bool = True) -> str:
+    """Translate the long name of a Unicode property into the alias
+    for that property.
+
+    :param longname: The long name for the property.
+    :param space: (Optional.) Whether to replace spaces in the
+        long name with underscores. Defaults to `True`.
+    :return: The alias as a :class:`str`.
+    :rtype: str
+
+    :usage:
+        To get the alias of a Unicode property:
+
+            >>> longname = 'Case Folding'
+            >>> alias_property(longname)
+            'cf'
+    """
     if space:
         longname = longname.replace(' ', '_')
-    return Character.cache.props[longname.casefold()].alias
+    return Character.cache.property_alias[longname.casefold()].alias
 
 
 def expand_property(prop: str) -> str:
@@ -304,7 +320,7 @@ def expand_property(prop: str) -> str:
     :rtype: str
 
     :usage:
-        To get the long name of a Unicode property.
+        To get the long name of a Unicode property:
 
             >>> prop = 'cf'
             >>> expand_property(prop)

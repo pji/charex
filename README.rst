@@ -17,7 +17,7 @@ part is what's interesting to me, and it's where a lot of fun problems lie.
 How Do I Use This?
 ==================
 It's in PyPI, so you can install it with `pip`, as long as you are
-using Python 3.11 or higher::
+using Python 3.12 or higher::
 
     pip install charex
 
@@ -163,6 +163,8 @@ The following are the changes in v0.2.4:
 *   Support for Unicode v16.0 for Python 3.14.
 *   Added support for the InCB property to Unicode v15.1.
 *   Removed official support for Python 3.11 to allow `sphinx` to be updated.
+*   Added some checking to see if Unicode properties had been mapped.
+*   Added `alias_property()` to the defined API.
 
 
 Changes in v0.2.3

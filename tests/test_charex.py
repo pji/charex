@@ -792,6 +792,15 @@ def test_character_summarize():
 
 
 # Test utility functions.
+def test_alias_property():
+    """Given a :class:`str` that is a long name for a Unicode
+    property, :func:`charex.alias_property` should return the
+    alias for that property as a :class:`str`.
+    """
+    exp = 'cf'
+    assert exp == c.alias_property('Case Folding')
+
+
 def test_validate_normalization_form_valid():
     """Given a :class:`str` that is a valid normalization form,
     :func:`validate_normalization_form` should return that form.

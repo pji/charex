@@ -6,6 +6,7 @@ Initialization for the :mod:`charex` package.
 """
 from charex.charex import (
     Character,
+    alias_property,
     expand_property,
     expand_property_value,
     filter_by_property,

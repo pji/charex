@@ -130,7 +130,7 @@ That said, using :attr:`FileCache.__getattr__` seems like the best
 approach. The only problem is that the current keys of the `path_map`
 contain characters that won't work in identifiers (forward slash and
 period). I'll need to have an algorithm to change those. It's not
-idea, but I think it's probably the best approach.
+ideal, but I think it's probably the best approach.
 
 The algorithm will:
 
