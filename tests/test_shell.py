@@ -235,6 +235,18 @@ def test_fl_description(capsys):
     shell_test(exp, cmd, capsys)
 
 
+# Test mf mode.
+def test_mf(capsys):
+    """When invoked with a ISO 3166 region code, mf mode returns the
+    region's flag."""
+    exp = '🇹🇻\n\n'
+    cmd = (
+        'mf '
+        'tv'
+    )
+    shell_test(exp, cmd, capsys)
+
+
 # Test nl mode.
 def test_nl(capsys):
     """When invoked with a normalization form and a base string,

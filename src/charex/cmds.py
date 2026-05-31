@@ -263,6 +263,16 @@ def fl(show_descr: bool = False) -> Generator[str, None, None]:
         yield line
 
 
+def mf(region: str) -> str:
+    """Make the emoji sequence for the given region's flag.
+
+    :param region: The ISO 3166 country or region code.
+    :return: The flag's emoji sequence as a :class:`str`.
+    :rtype: str
+    """
+    return ch.make_flag(region)
+
+
 def nl(form: str, base: str, expand: bool = False) -> str:
     """Perform normalizations.
 

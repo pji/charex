@@ -256,6 +256,26 @@ class Application:
         wake_widget = self.build_2x3_grid(frame, widgets)
         self.pad_kids(frame)
 
+    def init_mf(self, frame, num=None):
+        """Initialize the "mf" tab.
+
+        :param frame: The frame for the "mf" notebook tab.
+        :return: None.
+        :rtype: NoneType
+        """
+        # The data for the interactive fields in the tab.
+        self.mf_region = tk.StringVar()
+        self.mf_result = self.make_results(frame)
+
+        # Tab layout.
+        widgets = [
+            [True, 'entry', '', 2, self.mf_region],
+            [False, 'button', 'make flag', 2, self.mf],
+        ]
+        wake_widget = self.build_2x3_grid(frame, widgets)
+        self.pad_kids(frame)
+        self.wake_focus[f'!frame{num}'] = wake_widget
+
     def init_nl(self, frame, num=None):
         """Initialize the "nl" tab.
 
@@ -385,6 +405,24 @@ class Application:
         wake_widget = self.build_2x3_grid(frame, widgets)
         self.pad_kids(frame)
         self.wake_focus[f'!frame{num}'] = wake_widget
+
+    def init_zc(self, frame, num=None):
+        """Initialize the "zc" tab.
+
+        :param frame: The frame for the tab.
+        :param num: The number of the frame.
+        :return: None.
+        :rtype: NoneType
+        """
+        # The data for the interactive fields in the tab.
+        self.zc_result = self.make_results(frame)
+
+        # Tab layout.
+        widgets = [
+            [False, 'button', 'list ZWJ sequence categories', 2, self.zc],
+        ]
+        _ = self.build_2x3_grid(frame, widgets)
+        self.pad_kids(frame)
 
     # Layout methods.
     def add_button(self, frame, col, row, name, span, cmd):
@@ -660,6 +698,16 @@ class Application:
         for line in cmds.fl(True):
             self.fl_result.insert('end', line + '\n\n')
 
+    def mf(self, *args):
+        try:
+            self.mf_result.delete('0.0', 'end')
+            region = self.mf_region.get()
+            flag = cmds.mf(region)
+            self.mf_result.insert('end', flag + '\n')
+
+        except ValueError:
+            ...
+
     def nl(self, *args):
         self.nl_result.delete('0.0', 'end')
         base = self.nl_base.get()
@@ -700,15 +748,21 @@ class Application:
         for line in cmds.uv(prop, True):
             self.uv_result.insert('end', line + '\n\n')
 
+    def zc(self, *args):
+        self.zc_result.delete('0.0', 'end')
+        for line in cmds.zc(False):
+            self.zc_result.insert('end', line + '\n\n')
+
     # Event handlers.
     def handle_notebook_tab_changed(self, event):
         """Set the input focus when switching between tabs."""
-        focus = self.root.focus_get()
-        name = str(focus)
-        frame = name.split('.')[-2]
-        if frame in self.wake_focus:
-            entry = self.wake_focus[frame]
-            entry.focus_set()
+        # focus = self.root.focus_get()
+        if focus := self.root.focus_get():
+            name = str(focus)
+            frame = name.split('.')[-2]
+            if frame in self.wake_focus:
+                entry = self.wake_focus[frame]
+                entry.focus_set()
 
     def handle_return(self, *args):
         """Execute the command when hitting return."""

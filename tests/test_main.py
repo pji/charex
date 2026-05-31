@@ -320,6 +320,19 @@ def test_fl_description(capsys):
     cli_test(exp, cmd, capsys)
 
 
+# Test mf mode.
+def test_mf(capsys):
+    """When invoked with a ISO 3166 region code, mf mode returns the
+    flag for that region."""
+    exp = '🇹🇻'
+    cmd = (
+        'python -m charex',
+        'mf',
+        'tv',
+    )
+    cli_test(exp, cmd, capsys)
+
+
 # Test nl mode.
 def test_nl(capsys):
     """When invoked with a normalization form and a base string,
@@ -532,8 +545,6 @@ def cli_test(exp, cmd, capsys):
             assert e == c
         except AssertionError:
             raise ValueError(f'|{e}| != |{c}|')
-
-#     assert captured.out == exp
 
     # Test tear down.
     sys.argv = orig_cmd

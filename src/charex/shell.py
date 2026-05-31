@@ -200,6 +200,18 @@ def mode_gui(args: Namespace) -> None:
     print('charex GUI stopped.')
 
 
+def mode_mf(args: Namespace) -> None:
+    """Create emoji sequence for a region's flag.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    result = cmds.mf(args.region)
+    print(result)
+    print()
+
+
 def mode_nl(args: Namespace) -> None:
     """Perform normalizations.
 
@@ -665,6 +677,29 @@ def parse_gui(spa: _SubParsersAction) -> None:
 
 
 @subparser
+def parse_mf(spa: _SubParsersAction) -> None:
+    """Add the mf mode subparser.
+
+    :param spa: The subparser action used to add a new subparser to
+        the main parser.
+    :return: None.
+    :rtype: NoneType
+    """
+    sp = spa.add_parser(
+        'mf',
+        aliases=['make_flag', 'region_flag',],
+        description='Show flag for a region.'
+    )
+    sp.add_argument(
+        'region',
+        help='The ISO 3166 code for the region.',
+        action='store',
+        type=str
+    )
+    sp.set_defaults(func=mode_mf)
+
+
+@subparser
 def parse_nl(spa: _SubParsersAction) -> None:
     """Add the nl mode subparser.
 
@@ -972,6 +1007,11 @@ class Shell(Cmd):
         else:
             super().do_help(arg)
 
+    def do_mf(self, arg):
+        """Show the flag for a region."""
+        cmd = f'mf {arg}'
+        self._run_cmd(cmd)
+
     def do_nl(self, arg):
         """Normalize the given string."""
         cmd = f'nl {arg}'
@@ -1064,6 +1104,11 @@ class Shell(Cmd):
     def help_fl(self):
         """Help for the fl command."""
         cmd = f'fl -h'
+        self._run_cmd(cmd)
+
+    def help_mf(self):
+        """Help for the mh command."""
+        cmd = f'mf -h'
         self._run_cmd(cmd)
 
     def help_nl(self):
