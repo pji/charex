@@ -924,51 +924,6 @@ class Shell(Cmd):
         super().__init__(*args, **kwargs)
 
     # Commands.
-    def do_cd(self, arg):
-        """Decode the given address in all codecs."""
-        cmd = f'cd {arg}'
-        self._run_cmd(cmd)
-
-    def do_ce(self, arg):
-        """Encode the given character in all codecs."""
-        cmd = f'ce {arg}'
-        self._run_cmd(cmd)
-
-    def do_cl(self, arg):
-        """List the registered character sets."""
-        cmd = f'cl {arg}'
-        self._run_cmd(cmd)
-
-    def do_clear(self, arg):
-        """Clear the terminal."""
-        cmd = f'clear {arg}'
-        self._run_cmd(cmd)
-
-    def do_ct(self, arg):
-        """Count denormalization results."""
-        cmd = f'ct {arg}'
-        self._run_cmd(cmd)
-
-    def do_dm(self, arg):
-        """Build a denormalization map."""
-        cmd = f'dm {arg}'
-        self._run_cmd(cmd)
-
-    def do_dn(self, arg):
-        """Denormalize the given string."""
-        cmd = f'dn {arg}'
-        self._run_cmd(cmd)
-
-    def do_dt(self, arg):
-        """Get details for the given character."""
-        cmd = f'dt {arg}'
-        self._run_cmd(cmd)
-
-    def do_el(self, arg):
-        """List the registered escape schemes."""
-        cmd = f'el {arg}'
-        self._run_cmd(cmd)
-
     def do_EOF(self, arg):
         """Exit the charex shell."""
         print()
@@ -976,179 +931,16 @@ class Shell(Cmd):
         print()
         return True
 
-    def do_es(self, arg):
-        """Escape the string."""
-        cmd = f'es {arg}'
-        self._run_cmd(cmd)
-
-    def do_fl(self, arg):
-        """List the registered normalization forms."""
-        cmd = f'fl {arg}'
-        self._run_cmd(cmd)
-
-    def do_help(self, arg):
-        """Display command list."""
-        if not arg:
-            print('The following commands are available:')
-            print()
-            cmds = (
-                cmd for cmd in dir(self)
-                if cmd.startswith('do')
-                and not cmd.endswith('EOF')
-                and not cmd.endswith('eader')
-            )
-            for cmd in cmds:
-                meth = getattr(self, cmd)
-                print(f'*  {cmd[3:]}: {meth.__doc__}')
-            print()
-            print('For help on individual commands, use "help {command}".')
-            print()
-
-        else:
-            super().do_help(arg)
-
-    def do_mf(self, arg):
-        """Show the flag for a region."""
-        cmd = f'mf {arg}'
-        self._run_cmd(cmd)
-
-    def do_nl(self, arg):
-        """Normalize the given string."""
-        cmd = f'nl {arg}'
-        self._run_cmd(cmd)
-
-    def do_ns(self, arg):
-        """Normalize the given string."""
-        cmd = f'ns'
-        self._run_cmd(cmd)
-
-    def do_pf(self, arg):
-        """List characters with a given property value."""
-        cmd = f'pf {arg}'
-        self._run_cmd(cmd)
-
-    def do_sv(self, arg):
-        """Show the list of standardized variants."""
-        cmd = f'sv'
-        self._run_cmd(cmd)
-
-    def do_up(self, arg):
-        """List the Unicode properties."""
-        cmd = f'up {arg}'
-        self._run_cmd(cmd)
-
-    def do_uv(self, arg):
-        """List the valid values of a Unicode property."""
-        cmd = f'uv {arg}'
-        self._run_cmd(cmd)
-
     def do_xt(self, arg):
         """Exit the charex shell."""
         print('Exiting charex.')
         print()
         return True
 
-    def do_zc(self, arg):
-        """Show the emoji ZWJ sequence categories."""
-        cmd = f'zc'
-        self._run_cmd(cmd)
-
     # Command help.
-    def help_cd(self):
-        """Help for the cd command."""
-        cmd = f'cd -h'
-        self._run_cmd(cmd)
-
-    def help_ce(self):
-        cmd = f'ce -h'
-        self._run_cmd(cmd)
-
-    def help_cl(self):
-        cmd = f'cl -h'
-        self._run_cmd(cmd)
-
-    def help_clear(self):
-        cmd = f'clear -h'
-        self._run_cmd(cmd)
-
-    def help_ct(self):
-        """Help for the ct command."""
-        cmd = f'ct -h'
-        self._run_cmd(cmd)
-
-    def help_dn(self):
-        """Help for the dn command."""
-        cmd = f'dn -h'
-        self._run_cmd(cmd)
-
-    def help_dm(self):
-        """Help for the dm command."""
-        cmd = f'dm -h'
-        self._run_cmd(cmd)
-
-    def help_dt(self):
-        """Help for the dt command."""
-        cmd = f'dt -h'
-        self._run_cmd(cmd)
-
-    def help_el(self):
-        """Help for the el command."""
-        cmd = f'el -h'
-        self._run_cmd(cmd)
-
-    def help_es(self):
-        """Help for the es command."""
-        cmd = f'es -h'
-        self._run_cmd(cmd)
-
-    def help_fl(self):
-        """Help for the fl command."""
-        cmd = f'fl -h'
-        self._run_cmd(cmd)
-
-    def help_mf(self):
-        """Help for the mh command."""
-        cmd = f'mf -h'
-        self._run_cmd(cmd)
-
-    def help_nl(self):
-        """Help for the nl command."""
-        cmd = f'nl -h'
-        self._run_cmd(cmd)
-
-    def help_ns(self):
-        """Help for the nl command."""
-        cmd = f'ns -h'
-        self._run_cmd(cmd)
-
-    def help_pf(self):
-        """Help for the pf command."""
-        cmd = f'pf -h'
-        self._run_cmd(cmd)
-
-    def help_sv(self):
-        """Help for the sv command."""
-        cmd = f'sv -h'
-        self._run_cmd(cmd)
-
-    def help_up(self):
-        """Help for the up command."""
-        cmd = f'up -h'
-        self._run_cmd(cmd)
-
-    def help_uv(self):
-        """Help for the uv command."""
-        cmd = f'uv -h'
-        self._run_cmd(cmd)
-
     def help_xt(self):
         lines = util.read_resource('help_xt')
         print(''.join(lines))
-
-    def help_zc(self):
-        """Help for the zc command."""
-        cmd = f'zc -h'
-        self._run_cmd(cmd)
 
     # Private methods.
     def _run_cmd(self, cmd):
@@ -1191,3 +983,42 @@ def list_modes() -> str:
     names = ', '.join(mode.split('_')[1] for mode in modes)
     result += names
     return result
+
+
+def make_cmd_handler(mode: str):
+    """Dynamically build the shell commands."""
+    def handler(self, arg):
+        cmd = f'{mode} {arg}'
+        self._run_cmd(cmd)
+
+    handler.__doc__ = f'Run the `{mode}` command.'
+    return handler
+
+
+def make_help_handler(mode: str):
+    """Dynamically build the help for shell commands."""
+    def handler(self):
+        cmd = f'{mode} -h'
+        self._run_cmd(cmd)
+
+    handler.__doc__ = f'Run the `{mode}` command.'
+    return handler
+
+
+# Add the commands and their help to the shell.
+# This will add any command that has a mode_* function above as
+# a command in Shell.
+for name in modes:
+    _, mode = name.split('_')
+    meth_name = f'do_{mode}'
+    help_name = f'help_{mode}'
+
+    # Add the command method.
+    if not hasattr(Shell, meth_name):
+        method = make_cmd_handler(mode)
+        setattr(Shell, meth_name, method)
+
+    # Add the help method.
+    if not hasattr(Shell, help_name):
+        help_meth = make_help_handler(mode)
+        setattr(Shell, help_name, help_meth)

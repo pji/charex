@@ -57,21 +57,27 @@ From here you can type `?` to see the list of available commands::
     charex> ?
     The following commands are available:
 
-      * cd: Decode the given address in all codecs.
-      * ce: Encode the given character in all codecs.
-      * cl: List registered character sets.
-      * clear: Clear the terminal.
-      * ct: Count denormalization results.
-      * dm: Build a denormalization map.
-      * dn: Perform denormalizations.
-      * dt: Display details for a code point.
-      * el: List the registered escape schemes.
-      * es: Escape a string using the given scheme.
-      * fl: List registered normalization forms.
-      * nl: Perform normalizations.
-      * sh: Run in an interactive shell.
-      * up: List the Unicode properties.
-      * uv: List the valid values for a Unicode property.
+    *  cd: Decode the given address in all codecs.
+    *  ce: Encode the given character in all codecs.
+    *  cl: List the registered character sets.
+    *  clear: Clear the terminal.
+    *  ct: Count denormalization results.
+    *  dm: Build a denormalization map.
+    *  dn: Denormalize the given string.
+    *  dt: Get details for the given character.
+    *  el: List the registered escape schemes.
+    *  es: Escape the string.
+    *  fl: List the registered normalization forms.
+    *  help: Display command list.
+    *  mf: Show the flag for a region.
+    *  nl: Normalize the given string.
+    *  ns: Normalize the given string.
+    *  pf: List characters with a given property value.
+    *  sv: Show the list of standardized variants.
+    *  up: List the Unicode properties.
+    *  uv: List the valid values of a Unicode property.
+    *  xt: Exit the charex shell.
+    *  zc: Show the emoji ZWJ sequence categories.
 
     For help on individual commands, use "help {command}".
 
@@ -129,12 +135,25 @@ What Version of Unicode Does This Support?
 Parts of `charex` rely on `unicodedata` in the Python Standard
 Library. This limits `charex` to supporting the version supported
 by the version of Python you are running. There may be a bit of a lag as
-new Python versions are released, but as of this release of `charex`
-it supports:
+new Python versions are released, but as of this release `charex`
+supports:
 
 *   Python 3.12: Unicode 15.0
 *   Python 3.13: Unicode 15.1
 *   Python 3.14: Unicode 16.0
+
+
+What happened to Unicode 14.0?
+------------------------------
+I have the dependencies I use to generate the documentation in the
+development dependencies. To support Unicode 14.0, I had to support
+Python 3.11. To support Python 3.11, I had to use an old version of
+Sphinx that has some vulnerabilities. To clean that up, I had to drop
+support for Python 3.11 and Unicode 14.0.
+
+Is there a way I could have fixed it without dropping Python 3.11
+support? Probably. It's is something I'll try to look into when I
+get time. If it's a problem for anyone, I'll try to prioritize it.
 
 
 What Is Left To Do?
