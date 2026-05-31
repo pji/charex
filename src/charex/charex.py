@@ -570,6 +570,67 @@ def get_property_values(prop: str) -> tuple[str, ...]:
     return tuple(val.alias for val in result)
 
 
+def make_flag(code: str) -> str:
+    """Get the flag emoji for a region code.
+
+    :param code: The region code for the flag. These can be two
+        character strings as defined by ISO 3166-1 alpha 2, which
+        is also used to define the country code top level domains.
+        It will also try to make longer ISO 3166-2 country region
+        codes work.
+    :return: The country code as regional indicator symbol
+        characters as a :class:`str`, which should render as
+        the flag for the given country code.
+    :rtype: str
+
+    :usage:
+        To get the flag for the United Kingdom:
+
+            >>> make_flag('gb')
+            '🇬🇧'
+
+        This doesn't do any checking against ISO 3166-1 alpha 2, so
+        codes that don't exist will still return, they just won't
+        render as a flag:
+
+            >>> make_flag('uk')
+            '🇺🇰'
+
+        :mod:`charex` doesn't control how glyphs are rendered by the
+        terminal, application, or operating system rendering them.
+        This may lead to some flags not rendering if they aren't
+        supported by the system you are running on.
+
+            >>> c.make_flag('tw')
+            '🇹🇼'
+
+        :func:`charex.make_flag` will interpret strings longer than
+        two characters as OSI 3166-2 country region codes, and try
+        to turn them into flags. Whether the actual flag renders will
+        depend on whether your terminal, application, and operating
+        system support it.
+
+            >>> make_flag('GB-WLS')
+            '🏴󠁧󠁢󠁷󠁬󠁳󠁿󠁢󠁷󠁬󠁳󠁿'
+            >>> make_flag('us-il')
+            '🏴\U000e0075\U000e0073\U000e0069\U000e006c\U000e007f'
+
+    """
+    code = code.casefold()
+
+    # Flags for county codes.
+    if len(code) == 2:
+        offset = 0x1f185
+        return ''.join(chr(offset + ord(c)) for c in code)
+
+    else:
+        offset = 0xe0000
+        flag = '\U0001F3F4'
+        end = '\U000E007F'
+        nums = [offset + ord(c) for c in code if c != '-']
+        return flag + ''.join(chr(n) for n in nums) + end
+
+
 def validate_normalization_form(form: str) -> NormForms:
     """Validate whether the given data is a normalization form.
 

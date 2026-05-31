@@ -154,7 +154,6 @@ class TestAliasing:
         assert db.alias_property('General_Category') == 'gc'
         assert db.alias_property('spam') == 'spam'
 
-
     def test_alias_value(self):
         """Given a property alias and the long name for a value of that
         property, return the alias of that value if it exists. If
@@ -250,6 +249,14 @@ class TestGetting:
                 '0904',
                 'Indic_Vowel_Letter'
             )
+
+    def test_get_emoji_zwj_sequences_category(self):
+        """When called, :funct:`charex.db.get_emoji_zwj_sequence_categories`
+        returns the list of emoji zwj sequences categories.
+        """
+        seqs = db.get_emoji_zwj_sequence_categories()
+        seqs = sorted(seqs)
+        assert seqs[2] == 'Hair'
 
     def test_get_named_sequences(self):
         """When called, :funct:`charex.db.get_named_sequences` returns the list
@@ -423,6 +430,26 @@ class TestLoading:
             '0023 20E3', 'F985', 'F489', 'F7B0'
         )
         assert data['1f6c0'] == db.EmojiSource('1F6C0', '', 'F34B', 'F780')
+
+    def test_load_emoji_zwj_sequences(self, ucd_path):
+        """When given the information for a path as a
+        :class:`charex.db.PathInfo` object,
+        :func:`charex.db.load_zwj_sequences` should return the data
+        contained within the path as a :class:`tuple`.
+        """
+        pi = db.PathInfo(
+            f'{db.cache.version}/emoji-zwj-sequences.txt',
+            '',
+            'emoji_zwj_sequence',
+            ';'
+        )
+        data = db.load_emoji_zwj_sequences(pi)
+        assert data[3] == db.EmojiZWJSequence(
+            'Family',
+            '1F468 200D 1F466 200D 1F466',
+            'RGI_Emoji_ZWJ_Sequence',
+            'family: man, boy, boy',
+        )
 
     def test_load_entity_map(self):
         """When given the information for a path as a

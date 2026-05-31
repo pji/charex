@@ -253,6 +253,12 @@
             "emoji_source",
             ";"
         ],
+        "emojizwjsequences": [
+            "v14_0/emoji-zwj-sequences.txt",
+            "",
+            "emojizwjsequences",
+            ";"
+        ],
 
         "cjkradicals": [
             "CJKRadicals.txt",
@@ -555,6 +561,12 @@
             "EmojiSources.txt",
             "v15_0/UCD.zip",
             "emoji_source",
+            ";"
+        ],
+        "emojizwjsequences": [
+            "v15_0/emoji-zwj-sequences.txt",
+            "",
+            "emojizwjsequences",
             ";"
         ],
 
@@ -866,6 +878,12 @@
             "EmojiSources.txt",
             "v15_1/UCD.zip",
             "emoji_source",
+            ";"
+        ],
+        "emojizwjsequences": [
+            "v15_1/emoji-zwj-sequences.txt",
+            "",
+            "emojizwjsequences",
             ";"
         ],
 
@@ -1189,6 +1207,12 @@
             "EmojiSources.txt",
             "v16_0/UCD.zip",
             "emoji_source",
+            ";"
+        ],
+        "emojizwjsequences": [
+            "v16_0/emoji-zwj-sequences.txt",
+            "",
+            "emojizwjsequences",
             ";"
         ],
 

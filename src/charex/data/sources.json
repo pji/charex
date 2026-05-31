@@ -70,5 +70,14 @@
             6,
             19
         ]
+    },
+    "emoji-zwj-sequences.txt": {
+        "description": "Defined ZWJ sequences for emojis.",
+        "source": "https://www.unicode.org/Public/emoji/16.0/emoji-zwj-sequences.txt",
+        "date": [
+            2026,
+            5,
+            20
+        ]
     }
 }

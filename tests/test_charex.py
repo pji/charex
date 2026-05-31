@@ -801,6 +801,21 @@ def test_alias_property():
     assert exp == c.alias_property('Case Folding')
 
 
+def test_make_flag():
+    """Given a two character :class:'str', :func:`charex.make_flag`
+    should return the flag for that country code as a :class:`str`.
+    """
+    exp = '🇺🇸'
+    assert exp == c.make_flag('us')
+    assert exp == c.make_flag('US')
+
+    exp = '🏴󠁧󠁢󠁥󠁮󠁧󠁿'
+    assert exp == c.make_flag('gb-eng')
+    assert exp == c.make_flag('GB-ENG')
+    assert exp == c.make_flag('gbeng')
+    assert exp == c.make_flag('GBENG')
+
+
 def test_validate_normalization_form_valid():
     """Given a :class:`str` that is a valid normalization form,
     :func:`validate_normalization_form` should return that form.

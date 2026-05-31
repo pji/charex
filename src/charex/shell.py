@@ -292,6 +292,18 @@ def mode_uv(args: Namespace) -> None:
     print()
 
 
+def mode_zc(args: Namespace) -> None:
+    """Show the list of emoji ZWJ sequences.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    for line in cmds.zc():
+        print(line)
+    print()
+
+
 # Command parsing.
 def build_parser() -> ArgumentParser:
     """Build the argument parser.
@@ -828,6 +840,23 @@ def parse_uv(spa: _SubParsersAction) -> None:
     sp.set_defaults(func=mode_uv)
 
 
+@subparser
+def parse_zc(spa: _SubParsersAction) -> None:
+    """Add the zc mode subparser.
+
+    :param spa: The subparser action used to add a new subparser to
+        the main parser.
+    :return: None.
+    :rtype: NoneType
+    """
+    sp = spa.add_parser(
+        'zc',
+        aliases=['emoji_zwj_sequences', 'zwjseqs', 'zwj_sequences',],
+        description='Show the list of named sequences.'
+    )
+    sp.set_defaults(func=mode_zc)
+
+
 # Command line invocation.
 def invoke(
     cmd: str | None = None,
@@ -979,6 +1008,11 @@ class Shell(Cmd):
         print()
         return True
 
+    def do_zc(self, arg):
+        """Show the emoji ZWJ sequence categories."""
+        cmd = f'zc'
+        self._run_cmd(cmd)
+
     # Command help.
     def help_cd(self):
         """Help for the cd command."""
@@ -1065,6 +1099,11 @@ class Shell(Cmd):
     def help_xt(self):
         lines = util.read_resource('help_xt')
         print(''.join(lines))
+
+    def help_zc(self):
+        """Help for the zc command."""
+        cmd = f'zc -h'
+        self._run_cmd(cmd)
 
     # Private methods.
     def _run_cmd(self, cmd):

@@ -5,7 +5,7 @@
         "date": [
             2026,
             5,
-            20
+            31
         ]
     },
     "UCD.zip": {
@@ -14,7 +14,7 @@
         "date": [
             2026,
             5,
-            20
+            31
         ]
     },
     "Unihan.zip": {
@@ -23,7 +23,16 @@
         "date": [
             2026,
             5,
-            20
+            31
+        ]
+    },
+    "emoji-zwj-sequences.txt": {
+        "description": "Defined ZWJ sequences for emojis.",
+        "source": "https://www.unicode.org/Public/emoji/15.1/emoji-zwj-sequences.txt",
+        "date": [
+            2026,
+            5,
+            31
         ]
     }
 }

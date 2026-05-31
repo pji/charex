@@ -500,6 +500,18 @@ def test_up_description(capsys):
     cli_test(exp, cmd, capsys)
 
 
+# Test zc mode.
+def test_zc(capsys):
+    """When invoked, zc mode returns the list of named sequences."""
+    with open('tests/data/zc.txt') as fh:
+        exp = fh.read()
+    cmd = (
+        'python -m charex',
+        'zc',
+    )
+    cli_test(exp, cmd, capsys)
+
+
 # Utility functions.
 def cli_test(exp, cmd, capsys):
     """Test command line invocation."""

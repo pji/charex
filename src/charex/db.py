@@ -22,6 +22,7 @@ from charex import util
 PKG_DATA = files('charex.data')
 FILE_PATH_MAP = 'path_map.json'
 FILE_PROP_MAP = 'prop_map.json'
+PATH_EMOJI_ZWJ_SEQUENCES = 'emojizwjsequences'
 PATH_PROPERTY_ALIASES = 'propertyaliases'
 PATH_VALUE_ALIASES = 'propertyvaluealiases'
 
@@ -102,6 +103,14 @@ class EmojiSource:
     docomo: str = ''
     kddi: str = ''
     softbank: str = ''
+
+
+@dataclass(repr=True, eq=True)
+class EmojiZWJSequence:
+    category: str = ''
+    codes: str = ''
+    type_field: str = ''
+    shortname: str = ''
 
 
 @dataclass(repr=True, eq=True)
@@ -254,6 +263,7 @@ DenormalMap = defaultdict[str, tuple[str, ...]]
 DenormalMaps = dict[str, DenormalMap]
 DoNotEmits = dict[str, DoNotEmit]
 EmojiSources = defaultdict[str, EmojiSource]
+EmojiZWJSequences = tuple[EmojiZWJSequence, ...]
 EntityMap = dict[str, tuple[Entity, ...]]
 NameAliases = dict[str, tuple[NameAlias, ...]]
 NamedSequences = defaultdict[str, NamedSequence]
@@ -480,6 +490,15 @@ def get_do_not_emit() -> tuple[DoNotEmit, ...]:
     return tuple(dnes[key] for key in dnes)
 
 
+def get_emoji_zwj_sequence_categories() -> tuple[str, ...]:
+    """Return the categories for emoji ZMJ sequences as a
+    :class:`tuple`.
+    """
+    seqs = cache.emoji_zwj_sequences
+    categories = set(seq.category for seq in seqs)
+    return tuple(categories)
+
+
 def get_named_sequences() -> tuple[NamedSequence, ...]:
     """Return the contents of a `namedsequences` file as a
     :class:`tuple`.
@@ -620,6 +639,30 @@ def load_emoji_source(info: PathInfo) -> EmojiSources:
     return load_defined_record(info, EmojiSource)
 
 
+def load_emoji_zwj_sequences(info: PathInfo) -> EmojiZWJSequences:
+    """Load a data file that contains emoji ZWJ sequences."""
+    seqs = []
+    lines = load_from_archive(info)
+
+    # Parse through the file.
+    category = ''
+    for line in lines:
+
+        # Some comment lines define the category.
+        if line.startswith('# RGI_Emoji_ZWJ_Sequence:'):
+            _, category = line.split(': ')
+
+        # If there is something in the line, parse it and add it to
+        # the result..
+        elif line and not line.startswith('#'):
+            line, *_ = line.split('#')
+            fields = [field.strip() for field in line.split(info.delim)]
+            seq = EmojiZWJSequence(category, *fields)
+            seqs.append(seq)
+
+    return tuple(seqs)
+
+
 def load_entity_map(info: PathInfo) -> EntityMap:
     """Load a data file with an entity map."""
     path = PKG_DATA / info.path
@@ -643,7 +686,6 @@ def load_incb(info: PathInfo) -> defaultdict[str, str]:
     """Load the InCB data."""
     records, _ = parse(info, True)
     data = defaultdict(Default('None'))
-    keys = set()
     for rec in records:
         code, alias, *value = rec
         if alias.casefold().startswith('incb'):
@@ -1090,6 +1132,7 @@ class FileCache:
         self.__derived_normal: DerivedNormals = dict()
         self.__donotemit: DoNotEmits = dict()
         self.__emoji_source: EmojiSources = defaultdict(EmojiSource)
+        self.__emoji_zwj_sequences: EmojiZWJSequences = tuple()
         self.__entity_map: EntityMap = dict()
         self.__incb: defaultdict[str, str] = defaultdict(Default('None'))
         self.__kind_map: dict[str, Record] = dict()
@@ -1186,11 +1229,6 @@ class FileCache:
                 self.__named_sequence,
                 'update'
             ),
-            'named_sequence': Kind(
-                load_named_sequence,
-                self.__named_sequence,
-                'update'
-            ),
             'emoji_source': Kind(
                 load_emoji_source,
                 self.__emoji_source,
@@ -1216,16 +1254,13 @@ class FileCache:
         """
         try:
             pi = self.path_map[name]
-            kind = self.by_kind[pi.kind]
-
-        # A KeyError means the requested attribute is not a property
-        # in the Unicode data. At least, it's not one charex has mapped
-        # yet. Either way, since we are acting as an attribute, we
-        # should return an AttributeError rather than a KeyError.
         except KeyError:
-            if name not in self.path_map:
-                raise AttributeError(f'Not in path_map: {name}.')
-            raise AttributeError(name)
+            raise AttributeError(f'No mapped path for: {name}')
+
+        try:
+            kind = self.by_kind[pi.kind]
+        except KeyError:
+            raise AttributeError(f'No defined kind for: {pi.kind}')
 
         # "Update" attributes just store the data of one
         # file in their attribute.
@@ -1242,6 +1277,18 @@ class FileCache:
                 loaded = kind.load(pi)
                 kind.cache[name] = loaded
             return kind.cache[name]
+
+        # Other actions are not defined.
+        else:
+            msg = f'Undefined action: {kind.action}.'
+
+    @property
+    def emoji_zwj_sequences(self) -> EmojiZWJSequences:
+        if not self.__emoji_zwj_sequences:
+            info = self.path_map[PATH_EMOJI_ZWJ_SEQUENCES]
+            seqs = load_emoji_zwj_sequences(info)
+            self.__emoji_zwj_sequences = seqs
+        return self.__emoji_zwj_sequences
 
     @property
     def entity_map(self) -> EntityMap:

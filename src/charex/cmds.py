@@ -378,6 +378,27 @@ def uv(prop: str, show_long: bool = False) -> Generator[str, None, None]:
         yield line
 
 
+def zc(row_shade: bool = True) -> Generator[str, None, None]:
+    """Show the list of emoji zwj sequence categories.
+
+    :param row_shade: (Optional.) Adds the terminal control sequences
+        needed to shade every other row in terminal displays. Defaults
+        to `True`.
+    :return: Yields each named sequence as a :class:`str`.
+    :rtype: str
+    """
+    term = Terminal()
+    seqs = sorted(db.get_emoji_zwj_sequence_categories())
+    for i, zc in enumerate(seqs):
+        line = ''
+        if row_shade and i % 2:
+            line = term.on_gray20
+        line += f'{zc:78}'
+        if row_shade:
+            line += term.normal
+        yield line
+
+
 # Utility functions.
 def make_description_row(name: str, namewidth: int, descr: str) -> str:
     """Create a two column row with a name and description.

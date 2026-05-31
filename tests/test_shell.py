@@ -358,6 +358,17 @@ def test_up_description(capsys):
     assert result == exp
 
 
+# Test zc mode.
+def test_zc(capsys):
+    """When invoked, zc mode returns the list of emoji ZWJ sequences."""
+    with open('tests/data/zc.txt') as fh:
+        exp = fh.read()
+    cmd = (
+        'zc'
+    )
+    shell_test(exp, cmd, capsys)
+
+
 # Utility functions.
 def cmd_output(cmd, capsys):
     """Get the output of a shell command."""

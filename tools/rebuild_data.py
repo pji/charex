@@ -99,7 +99,11 @@ def update_unicode_version(
         success = False
 
         # Update the file.
-        src = data[file]['source']
+        try:
+            src = data[file]['source']
+        except KeyError as ex:
+            print(f'Skipping {file}: no source.')
+            continue
         path = data_path / file
 
         # Download hosted data.
