@@ -931,6 +931,27 @@ class Shell(Cmd):
         print()
         return True
 
+    def do_help(self, arg):
+        """Display command list."""
+        if not arg:
+            print('The following commands are available:')
+            print()
+            cmds = (
+                cmd for cmd in dir(self)
+                if cmd.startswith('do')
+                and not cmd.endswith('EOF')
+                and not cmd.endswith('eader')
+            )
+            for cmd in cmds:
+                meth = getattr(self, cmd)
+                print(f'*  {cmd[3:]}: {meth.__doc__}')
+            print()
+            print('For help on individual commands, use "help {command}".')
+            print()
+
+        else:
+            super().do_help(arg)
+
     def do_xt(self, arg):
         """Exit the charex shell."""
         print('Exiting charex.')
@@ -991,7 +1012,9 @@ def make_cmd_handler(mode: str):
         cmd = f'{mode} {arg}'
         self._run_cmd(cmd)
 
-    handler.__doc__ = f'Run the `{mode}` command.'
+    fn = globals()[f'mode_{mode}']
+    docstring = fn.__doc__.split('\n')[0]
+    handler.__doc__ = docstring
     return handler
 
 
