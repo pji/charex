@@ -87,6 +87,7 @@ From here you can type `?` to see the list of available commands::
     *  uv: List the valid values of a Unicode property.
     *  xt: Exit the charex shell.
     *  zc: Show the emoji ZWJ sequence categories.
+    *  zl: Show the list of emoji ZWJ sequences.
 
     For help on individual commands, use "help {command}".
 

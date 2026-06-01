@@ -75,7 +75,7 @@ envlist = py312, py313, py314
 
 
 [testenv]
-allowlist_externals = isort, poetry
+allowlist_externals = isort, poetry, charex
 commands_pre =
     poetry sync --no-root
 commands =

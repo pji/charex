@@ -26,6 +26,10 @@ docs:
 test:
 	python -m pytest
 
+.PHONY: testv
+testv:
+	pytest -vv tests
+
 .PHONY: pre
 pre:
 	tox

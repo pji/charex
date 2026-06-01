@@ -409,6 +409,54 @@ def zc(row_shade: bool = True) -> Generator[str, None, None]:
         yield line
 
 
+def zl(row_shade: bool = True) -> Generator[str, None, None]:
+    """Show the list of emoji zwj sequences.
+
+    :param row_shade: (Optional.) Adds the terminal control sequences
+        needed to shade every other row in terminal displays. Defaults
+        to `True`.
+    :return: Yields each named sequence as a :class:`str`.
+    :rtype: str
+    """
+    cat_width = 8
+    char_width = 2
+    codes_width = 28
+    name_width = 36
+
+    term = Terminal()
+    seqs = db.get_emoji_zwj_sequences()
+    for i, seq in enumerate(seqs):
+        cats = wrap(seq.category, width=cat_width)
+        chars = [util.to_char_sequence(seq.codes),]
+        codes = wrap(seq.codes, width=codes_width)
+        names = wrap(seq.shortname.strip(), width=name_width)
+
+        for cat, char, code, name in zip_longest(
+            cats,
+            chars,
+            codes,
+            names
+        ):
+            line = ''
+            if row_shade and i % 2:
+                line = term.on_gray20
+
+            if not cat and not char and not code and not name:
+                continue
+
+            line += f'{cat if cat else "":8} '
+            line += f'{char if char else "":{char_width}} '
+            line += f'{code if code else "":{codes_width}} '
+            line += f'{name if name else "":{name_width}}'
+
+            if row_shade:
+                line += term.normal
+            yield line
+
+        if not row_shade:
+            yield '\n'
+
+
 # Utility functions.
 def make_description_row(name: str, namewidth: int, descr: str) -> str:
     """Create a two column row with a name and description.
@@ -454,8 +502,3 @@ def write_list(
             yield row
         else:
             yield item
-
-
-if __name__ == '__main__':
-    for s in sv():
-        print(s)

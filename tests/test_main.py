@@ -515,12 +515,30 @@ def test_up_description(capsys):
 
 # Test zc mode.
 def test_zc(capsys):
-    """When invoked, zc mode returns the list of named sequences."""
+    """When invoked, zc mode returns the list of emoji ZWJ sequence
+    categories.
+    """
     with open('tests/data/zc.txt') as fh:
         exp = fh.read()
     cmd = (
         'python -m charex',
         'zc',
+    )
+    cli_test(exp, cmd, capsys)
+
+
+# Test zl mode.
+def test_zl(capsys):
+    """When invoked, zl mode returns the list of emoji ZWJ sequences."""
+    path = Path('tests/data/zl.txt')
+    if vercmp(f'{db.cache.version} == v15_0'):
+        path = Path('tests/data/zl_v15_0.txt')
+    elif vercmp(f'{db.cache.version} == v15_1'):
+        path = Path('tests/data/zl_v15_1.txt')
+    exp = path.read_text()
+    cmd = (
+        'python -m charex',
+        'zl',
     )
     cli_test(exp, cmd, capsys)
 

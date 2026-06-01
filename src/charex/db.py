@@ -490,6 +490,12 @@ def get_do_not_emit() -> tuple[DoNotEmit, ...]:
     return tuple(dnes[key] for key in dnes)
 
 
+def get_emoji_zwj_sequences() -> EmojiZWJSequences:
+    """Return the emoji ZMJ sequences as a :class:`tuple`."""
+    seqs = cache.emoji_zwj_sequences
+    return tuple(seqs)
+
+
 def get_emoji_zwj_sequence_categories() -> tuple[str, ...]:
     """Return the categories for emoji ZMJ sequences as a
     :class:`tuple`.

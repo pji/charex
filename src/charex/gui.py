@@ -4,6 +4,7 @@ gui
 
 A graphical user interface for :mod:`charex`.
 """
+import inspect
 import tkinter as tk
 from tkinter import ttk
 
@@ -61,66 +62,6 @@ class Application:
         root.bind('<Return>', self.handle_return)
         root.bind('<<NotebookTabChanged>>', self.handle_notebook_tab_changed)
 
-    def init_cd(self, frame, num=None):
-        """Initialize the "cd" tab.
-
-        :param frame: The frame for the tab.
-        :param num: The number of the frame.
-        :return: None.
-        :rtype: NoneType
-        """
-        # The data for the interactive fields in the tab.
-        self.cd_address = tk.StringVar()
-        self.cd_result = self.make_results(frame)
-
-        # Tab layout.
-        widgets = [
-            [True, 'entry', '', 2, self.cd_address],
-            [False, 'button', 'decode', 2, self.cd],
-        ]
-        wake_widget = self.build_2x3_grid(frame, widgets)
-        self.pad_kids(frame)
-        self.wake_focus[f'!frame{num}'] = wake_widget
-
-    def init_ce(self, frame, num=None):
-        """Initialize the "ce" tab.
-
-        :param frame: The frame for the tab.
-        :param num: The number of the frame.
-        :return: None.
-        :rtype: NoneType
-        """
-        # The data for the interactive fields in the tab.
-        self.ce_char = tk.StringVar()
-        self.ce_result = self.make_results(frame)
-
-        # Tab layout.
-        widgets = [
-            [True, 'entry', '', 2, self.ce_char],
-            [False, 'button', 'encode', 2, self.ce],
-        ]
-        wake_widget = self.build_2x3_grid(frame, widgets)
-        self.pad_kids(frame)
-        self.wake_focus[f'!frame{num}'] = wake_widget
-
-    def init_cl(self, frame, num=None):
-        """Initialize the "cl" tab.
-
-        :param frame: The frame for the tab.
-        :param num: The number of the frame.
-        :return: None.
-        :rtype: NoneType
-        """
-        # The data for the interactive fields in the tab.
-        self.cl_result = self.make_results(frame)
-
-        # Tab layout.
-        widgets = [
-            [False, 'button', 'list character sets', 2, self.cl],
-        ]
-        _ = self.build_2x3_grid(frame, widgets)
-        self.pad_kids(frame)
-
     def init_ct(self, frame, num=None):
         """Initialize the "ct" tab.
 
@@ -177,44 +118,6 @@ class Application:
         self.pad_kids(frame)
         self.wake_focus[f'!frame{num}'] = wake_widget
 
-    def init_dt(self, frame, num=None):
-        """Initialize the "dt" tab.
-
-        :param frame: The frame for the "dt" notebook tab.
-        :return: None.
-        :rtype: NoneType
-        """
-        # The data for the interactive fields in the tab.
-        self.dt_char = tk.StringVar()
-        self.dt_result = self.make_results(frame)
-
-        # Tab layout.
-        widgets = [
-            [True, 'entry', '', 2, self.dt_char],
-            [False, 'button', 'character details', 2, self.dt],
-        ]
-        wake_widget = self.build_2x3_grid(frame, widgets)
-        self.pad_kids(frame)
-        self.wake_focus[f'!frame{num}'] = wake_widget
-
-    def init_el(self, frame, num=None):
-        """Initialize the "el" tab.
-
-        :param frame: The frame for the tab.
-        :param num: The number of the frame.
-        :return: None.
-        :rtype: NoneType
-        """
-        # The data for the interactive fields in the tab.
-        self.el_result = self.make_results(frame)
-
-        # Tab layout.
-        widgets = [
-            [False, 'button', 'list escape schemes', 2, self.el],
-        ]
-        wake_widget = self.build_2x3_grid(frame, widgets)
-        self.pad_kids(frame)
-
     def init_es(self, frame, num=None):
         """Initialize the "es" tab.
 
@@ -235,44 +138,6 @@ class Application:
             [False, 'button', 'count denomalizations', 5, self.es],
         ]
         wake_widget = self.build_5x6_grid(frame, widgets)
-        self.pad_kids(frame)
-        self.wake_focus[f'!frame{num}'] = wake_widget
-
-    def init_fl(self, frame, num=None):
-        """Initialize the "fl" tab.
-
-        :param frame: The frame for the tab.
-        :param num: The number of the frame.
-        :return: None.
-        :rtype: NoneType
-        """
-        # The data for the interactive fields in the tab.
-        self.fl_result = self.make_results(frame)
-
-        # Tab layout.
-        widgets = [
-            [False, 'button', 'list normalization forms', 2, self.fl],
-        ]
-        wake_widget = self.build_2x3_grid(frame, widgets)
-        self.pad_kids(frame)
-
-    def init_mf(self, frame, num=None):
-        """Initialize the "mf" tab.
-
-        :param frame: The frame for the "mf" notebook tab.
-        :return: None.
-        :rtype: NoneType
-        """
-        # The data for the interactive fields in the tab.
-        self.mf_region = tk.StringVar()
-        self.mf_result = self.make_results(frame)
-
-        # Tab layout.
-        widgets = [
-            [True, 'entry', '', 2, self.mf_region],
-            [False, 'button', 'make flag', 2, self.mf],
-        ]
-        wake_widget = self.build_2x3_grid(frame, widgets)
         self.pad_kids(frame)
         self.wake_focus[f'!frame{num}'] = wake_widget
 
@@ -298,24 +163,6 @@ class Application:
         wake_widget = self.build_5x6_grid(frame, widgets)
         self.pad_kids(frame)
         self.wake_focus[f'!frame{num}'] = wake_widget
-
-    def init_ns(self, frame, num=None):
-        """Initialize the "ns" tab.
-
-        :param frame: The frame for the tab.
-        :param num: The number of the frame.
-        :return: None.
-        :rtype: NoneType
-        """
-        # The data for the interactive fields in the tab.
-        self.ns_result = self.make_results(frame)
-
-        # Tab layout.
-        widgets = [
-            [False, 'button', 'list named sequences', 2, self.ns],
-        ]
-        wake_widget = self.build_2x3_grid(frame, widgets)
-        self.pad_kids(frame)
 
     def init_pf(self, frame, num=None):
         """Initialize the "pf" tab.
@@ -348,81 +195,6 @@ class Application:
         self.add_button(frame, 0, 4, 'filter by property value', 5, self.pf)
         self.pad_kids(frame)
         self.wake_focus[f'!frame{num}'] = self.pfprop_combo
-
-    def init_sv(self, frame, num=None):
-        """Initialize the "sv" tab.
-
-        :param frame: The frame for the tab.
-        :param num: The number of the frame.
-        :return: None.
-        :rtype: NoneType
-        """
-        # The data for the interactive fields in the tab.
-        self.sv_result = self.make_results(frame)
-
-        # Tab layout.
-        widgets = [
-            [True, 'button', 'list standardized variants', 2, self.sv],
-        ]
-        wake_widget = self.build_2x3_grid(frame, widgets)
-        self.pad_kids(frame)
-
-    def init_up(self, frame, num=None):
-        """Initialize the "up" tab.
-
-        :param frame: The frame for the tab.
-        :param num: The number of the frame.
-        :return: None.
-        :rtype: NoneType
-        """
-        # The data for the interactive fields in the tab.
-        self.up_result = self.make_results(frame)
-
-        # Tab layout.
-        widgets = [
-            [False, 'button', 'list unicode properties', 2, self.up],
-        ]
-        wake_widget = self.build_2x3_grid(frame, widgets)
-        self.pad_kids(frame)
-
-    def init_uv(self, frame, num=None):
-        """Initialize the "up" tab.
-
-        :param frame: The frame for the tab.
-        :param num: The number of the frame.
-        :return: None.
-        :rtype: NoneType
-        """
-        # The data for the interactive fields in the tab.
-        self.uv_prop = tk.StringVar()
-        self.uv_result = self.make_results(frame)
-
-        # Tab layout.
-        widgets = [
-            [True, 'combo', '', 2, self.uv_prop, ch.get_properties()],
-            [False, 'button', 'list values of unicode property', 2, self.uv],
-        ]
-        wake_widget = self.build_2x3_grid(frame, widgets)
-        self.pad_kids(frame)
-        self.wake_focus[f'!frame{num}'] = wake_widget
-
-    def init_zc(self, frame, num=None):
-        """Initialize the "zc" tab.
-
-        :param frame: The frame for the tab.
-        :param num: The number of the frame.
-        :return: None.
-        :rtype: NoneType
-        """
-        # The data for the interactive fields in the tab.
-        self.zc_result = self.make_results(frame)
-
-        # Tab layout.
-        widgets = [
-            [False, 'button', 'list ZWJ sequence categories', 2, self.zc],
-        ]
-        _ = self.build_2x3_grid(frame, widgets)
-        self.pad_kids(frame)
 
     # Layout methods.
     def add_button(self, frame, col, row, name, span, cmd):
@@ -617,31 +389,6 @@ class Application:
             child.grid_configure(padx=2, pady=4)
 
     # Core commands.
-    def cd(self, *args):
-        try:
-            self.cd_result.delete('0.0', 'end')
-            address = self.cd_address.get()
-            for line in cmds.cd(address):
-                self.cd_result.insert('end', line + '\n')
-
-        except ValueError:
-            ...
-
-    def ce(self, *args):
-        try:
-            self.ce_result.delete('0.0', 'end')
-            base = self.ce_char.get()
-            for line in cmds.ce(base):
-                self.ce_result.insert('end', line + '\n')
-
-        except ValueError:
-            ...
-
-    def cl(self, *args):
-        self.cl_result.delete('0.0', 'end')
-        for line in cmds.cl(True):
-            self.cl_result.insert('end', line + '\n\n')
-
     def ct(self, *args):
         self.ct_result.delete('0.0', 'end')
         base = self.ct_base.get()
@@ -671,42 +418,12 @@ class Application:
             ):
                 self.dn_result.insert('end', line + '\n')
 
-    def dt(self, *args):
-        try:
-            self.dt_result.delete('0.0', 'end')
-            base = self.dt_char.get()
-            for line in cmds.dt(base):
-                self.dt_result.insert('end', line + '\n')
-
-        except ValueError:
-            ...
-
-    def el(self, *args):
-        self.el_result.delete('0.0', 'end')
-        for line in cmds.el(True):
-            self.el_result.insert('end', line + '\n\n')
-
     def es(self, *args):
         self.es_result.delete('0.0', 'end')
         base = self.es_base.get()
         scheme = self.es_scheme.get()
         line = cmds.es(base, scheme, 'utf8')
         self.es_result.insert('end', line)
-
-    def fl(self, *args):
-        self.fl_result.delete('0.0', 'end')
-        for line in cmds.fl(True):
-            self.fl_result.insert('end', line + '\n\n')
-
-    def mf(self, *args):
-        try:
-            self.mf_result.delete('0.0', 'end')
-            region = self.mf_region.get()
-            flag = cmds.mf(region)
-            self.mf_result.insert('end', flag + '\n')
-
-        except ValueError:
-            ...
 
     def nl(self, *args):
         self.nl_result.delete('0.0', 'end')
@@ -715,11 +432,6 @@ class Application:
 
         result = cmds.nl(form, base, True)
         self.nl_result.insert('end', result)
-
-    def ns(self, *args):
-        self.ns_result.delete('0.0', 'end')
-        for line in cmds.ns(False):
-            self.ns_result.insert('end', line + '\n')
 
     def pf(self, *args):
         self.pf_result.delete('0.0', 'end')
@@ -730,28 +442,6 @@ class Application:
 
         for line in cmds.pf(prop, value, insensitive, regex):
             self.pf_result.insert('end', line + '\n')
-
-    def sv(self, *args):
-        self.sv_result.delete('0.0', 'end')
-        for line in cmds.sv(False):
-            self.sv_result.insert('end', line + '\n')
-
-    def up(self, *args):
-        self.up_result.delete('0.0', 'end')
-        for line in cmds.up(True):
-            self.up_result.insert('end', line + '\n\n')
-
-    def uv(self, *args):
-        prop = self.uv_prop.get()
-
-        self.uv_result.delete('0.0', 'end')
-        for line in cmds.uv(prop, True):
-            self.uv_result.insert('end', line + '\n\n')
-
-    def zc(self, *args):
-        self.zc_result.delete('0.0', 'end')
-        for line in cmds.zc(False):
-            self.zc_result.insert('end', line + '\n\n')
 
     # Event handlers.
     def handle_notebook_tab_changed(self, event):
@@ -777,6 +467,107 @@ class Application:
         """
         prop = self.pf_prop.get()
         self.pfval_combo['values'] = ch.get_property_values(prop)
+
+
+# Add otherwise undefined modes.
+def make_mode_init(mode):
+    """Create an init method for a :mod:`charex` command mode."""
+    cmd = getattr(cmds, mode)
+    params = [
+        p for p in inspect.signature(cmd).parameters
+        if p not in ['row_shade', 'show_descr', 'show_long',]
+    ]
+
+    def no_param_init(self, frame, num=None):
+        # The data for the interactive fields in the tab.
+        setattr(self, f'{mode}_result', self.make_results(frame))
+
+        # Tab layout
+        label = getattr(cmds, mode).__doc__.split('\n')[0]
+        widgets = [
+            [False, 'button', label, 2, getattr(self, mode)],
+        ]
+        _ = self.build_2x3_grid(frame, widgets)
+        self.pad_kids(frame)
+
+    def one_param_init(self, frame, num=None):
+        # The data for the interactive fields in the tab.
+        setattr(self, f'{mode}_{params[0]}', tk.StringVar())
+        setattr(self, f'{mode}_result', self.make_results(frame))
+
+        # Tab layout.
+        label = getattr(cmds, mode).__doc__.split('\n')[0]
+        widgets = [
+            [True, 'entry', '', 2, getattr(self, f'{mode}_{params[0]}')],
+            [False, 'button', label, 2, getattr(self, mode)],
+        ]
+        wake_widget = self.build_2x3_grid(frame, widgets)
+        self.pad_kids(frame)
+        self.wake_focus[f'!frame{num}'] = wake_widget
+
+    fn = no_param_init
+    if len(params) == 1:
+        fn = one_param_init
+    fn.__doc__ = (
+        f'Initialize the `{mode}` tab.\n'
+        '\n'
+        ':param frame: The frame for the tab.\n'
+        ':param num: The number of the frame.\n'
+        ':return: None.\n'
+        ':rtype: NoneType\n'
+    )
+    return fn
+
+
+def make_mode_handler(mode):
+    """Create an init method for a :mod:`charex` command mode."""
+    cmd = getattr(cmds, mode)
+    params = [
+        p for p in inspect.signature(cmd).parameters
+        if p not in ['row_shade', 'show_descr', 'show_long',]
+    ]
+
+    def no_param_handler(self, *args):
+        field = getattr(self, f'{mode}_result')
+        cmd = getattr(cmds, mode)
+        field.delete('0.0', 'end')
+        for line in cmd(False):
+            field.insert('end', line + '\n')
+
+    def one_param_handler(self, *args):
+        in_field = getattr(self, f'{mode}_{params[0]}')
+        out_field = getattr(self, f'{mode}_result')
+        cmd = getattr(cmds, mode)
+
+        try:
+            out_field.delete('0.0', 'end')
+            in_data = in_field.get()
+            lines = cmd(in_data)
+            if isinstance(lines, str):
+                out_field.insert('end', lines + '\n')
+            else:
+                for line in lines:
+                    out_field.insert('end', line + '\n')
+
+        except ValueError:
+            out_field.delete('0.0', 'end')
+            out_field.insert('end', 'ERROR\n')
+
+    fn = no_param_handler
+    if len(params) == 1:
+        fn = one_param_handler
+    return fn
+
+
+for mode, item in inspect.getmembers(cmds):
+    if not inspect.isfunction(item):
+        continue
+    if len(mode) != 2:
+        continue
+    if not hasattr(Application, f'init_{mode}'):
+        setattr(Application, f'init_{mode}', make_mode_init(mode))
+    if not hasattr(Application, mode):
+        setattr(Application, mode, make_mode_handler(mode))
 
 
 def main():

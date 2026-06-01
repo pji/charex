@@ -292,6 +292,18 @@ def to_char(value: bytes | int | str) -> str:
     return value
 
 
+def to_char_sequence(text: str) -> str:
+    """Convert the code points from a defined sequence into characters.
+
+    :param codes: The code points as a string of hexadecimal
+        numbers.
+    :return: The characters as a :class:`str`.
+    :rtype: str
+    """
+    codes = [f'U+{code}' for code in text.split()]
+    return ''.join(to_char(code) for code in codes)
+
+
 def to_code(value: int | str, prefix: str = '') -> str:
     """Convert an int or character to a code point."""
     if isinstance(value, str):

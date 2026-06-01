@@ -250,9 +250,21 @@ class TestGetting:
                 'Indic_Vowel_Letter'
             )
 
+    def test_get_emoji_zwj_sequences(self):
+        """When called, :funct:`charex.db.get_emoji_zwj_sequences`
+        returns the list of emoji zwj sequences..
+        """
+        seqs = db.get_emoji_zwj_sequences()
+        assert seqs[2] == db.EmojiZWJSequence(
+            'Family',
+            '1F468 200D 1F466',
+            'RGI_Emoji_ZWJ_Sequence',
+            'family: man, boy',
+        )
+
     def test_get_emoji_zwj_sequences_category(self):
         """When called, :funct:`charex.db.get_emoji_zwj_sequence_categories`
-        returns the list of emoji zwj sequences categories.
+        returns the list of emoji zwj sequence categories.
         """
         seqs = db.get_emoji_zwj_sequence_categories()
         seqs = sorted(seqs)

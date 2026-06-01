@@ -305,13 +305,25 @@ def mode_uv(args: Namespace) -> None:
 
 
 def mode_zc(args: Namespace) -> None:
-    """Show the list of emoji ZWJ sequences.
+    """Show the list of emoji ZWJ sequence categories.
 
     :param args: The arguments used when the script was invoked.
     :return: None.
     :rtype: NoneType
     """
     for line in cmds.zc():
+        print(line)
+    print()
+
+
+def mode_zl(args: Namespace) -> None:
+    """Show the list of emoji ZWJ sequences.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    for line in cmds.zl():
         print(line)
     print()
 
@@ -886,10 +898,31 @@ def parse_zc(spa: _SubParsersAction) -> None:
     """
     sp = spa.add_parser(
         'zc',
-        aliases=['emoji_zwj_sequences', 'zwjseqs', 'zwj_sequences',],
+        aliases=[
+            'emoji_zwj_sequence_categories',
+            'zwjseqcats',
+            'zwj_sequence_categories',
+        ],
         description='Show the list of named sequences.'
     )
     sp.set_defaults(func=mode_zc)
+
+
+@subparser
+def parse_zl(spa: _SubParsersAction) -> None:
+    """Add the zc mode subparser.
+
+    :param spa: The subparser action used to add a new subparser to
+        the main parser.
+    :return: None.
+    :rtype: NoneType
+    """
+    sp = spa.add_parser(
+        'zl',
+        aliases=['emoji_zwj_sequences', 'zwjseqs', 'zwj_sequences',],
+        description='Show the list of named sequences.'
+    )
+    sp.set_defaults(func=mode_zl)
 
 
 # Command line invocation.
