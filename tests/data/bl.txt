@@ -1,0 +1,390 @@
+       0       80 Basic Latin                                                 
+      80      100 Latin-1 Supplement                                          
+     100      180 Latin Extended-A                                            
+     180      250 Latin Extended-B                                            
+     250      2b0 IPA Extensions                                              
+     2b0      300 Spacing Modifier Letters                                    
+     300      370 Combining Diacritical Marks                                 
+     370      400 Greek and Coptic                                            
+     400      500 Cyrillic                                                    
+     500      530 Cyrillic Supplement                                         
+     530      590 Armenian                                                    
+     590      600 Hebrew                                                      
+     600      700 Arabic                                                      
+     700      750 Syriac                                                      
+     750      780 Arabic Supplement                                           
+     780      7c0 Thaana                                                      
+     7c0      800 NKo                                                         
+     800      840 Samaritan                                                   
+     840      860 Mandaic                                                     
+     860      870 Syriac Supplement                                           
+     870      8a0 Arabic Extended-B                                           
+     8a0      900 Arabic Extended-A                                           
+     900      980 Devanagari                                                  
+     980      a00 Bengali                                                     
+     a00      a80 Gurmukhi                                                    
+     a80      b00 Gujarati                                                    
+     b00      b80 Oriya                                                       
+     b80      c00 Tamil                                                       
+     c00      c80 Telugu                                                      
+     c80      d00 Kannada                                                     
+     d00      d80 Malayalam                                                   
+     d80      e00 Sinhala                                                     
+     e00      e80 Thai                                                        
+     e80      f00 Lao                                                         
+     f00     1000 Tibetan                                                     
+    1000     10a0 Myanmar                                                     
+    10a0     1100 Georgian                                                    
+    1100     1200 Hangul Jamo                                                 
+    1200     1380 Ethiopic                                                    
+    1380     13a0 Ethiopic Supplement                                         
+    13a0     1400 Cherokee                                                    
+    1400     1680 Unified Canadian Aboriginal Syllabics                       
+    1680     16a0 Ogham                                                       
+    16a0     1700 Runic                                                       
+    1700     1720 Tagalog                                                     
+    1720     1740 Hanunoo                                                     
+    1740     1760 Buhid                                                       
+    1760     1780 Tagbanwa                                                    
+    1780     1800 Khmer                                                       
+    1800     18b0 Mongolian                                                   
+    18b0     1900 Unified Canadian Aboriginal Syllabics Extended              
+    1900     1950 Limbu                                                       
+    1950     1980 Tai Le                                                      
+    1980     19e0 New Tai Lue                                                 
+    19e0     1a00 Khmer Symbols                                               
+    1a00     1a20 Buginese                                                    
+    1a20     1ab0 Tai Tham                                                    
+    1ab0     1b00 Combining Diacritical Marks Extended                        
+    1b00     1b80 Balinese                                                    
+    1b80     1bc0 Sundanese                                                   
+    1bc0     1c00 Batak                                                       
+    1c00     1c50 Lepcha                                                      
+    1c50     1c80 Ol Chiki                                                    
+    1c80     1c90 Cyrillic Extended-C                                         
+    1c90     1cc0 Georgian Extended                                           
+    1cc0     1cd0 Sundanese Supplement                                        
+    1cd0     1d00 Vedic Extensions                                            
+    1d00     1d80 Phonetic Extensions                                         
+    1d80     1dc0 Phonetic Extensions Supplement                              
+    1dc0     1e00 Combining Diacritical Marks Supplement                      
+    1e00     1f00 Latin Extended Additional                                   
+    1f00     2000 Greek Extended                                              
+    2000     2070 General Punctuation                                         
+    2070     20a0 Superscripts and Subscripts                                 
+    20a0     20d0 Currency Symbols                                            
+    20d0     2100 Combining Diacritical Marks for Symbols                     
+    2100     2150 Letterlike Symbols                                          
+    2150     2190 Number Forms                                                
+    2190     2200 Arrows                                                      
+    2200     2300 Mathematical Operators                                      
+    2300     2400 Miscellaneous Technical                                     
+    2400     2440 Control Pictures                                            
+    2440     2460 Optical Character Recognition                               
+    2460     2500 Enclosed Alphanumerics                                      
+    2500     2580 Box Drawing                                                 
+    2580     25a0 Block Elements                                              
+    25a0     2600 Geometric Shapes                                            
+    2600     2700 Miscellaneous Symbols                                       
+    2700     27c0 Dingbats                                                    
+    27c0     27f0 Miscellaneous Mathematical Symbols-A                        
+    27f0     2800 Supplemental Arrows-A                                       
+    2800     2900 Braille Patterns                                            
+    2900     2980 Supplemental Arrows-B                                       
+    2980     2a00 Miscellaneous Mathematical Symbols-B                        
+    2a00     2b00 Supplemental Mathematical Operators                         
+    2b00     2c00 Miscellaneous Symbols and Arrows                            
+    2c00     2c60 Glagolitic                                                  
+    2c60     2c80 Latin Extended-C                                            
+    2c80     2d00 Coptic                                                      
+    2d00     2d30 Georgian Supplement                                         
+    2d30     2d80 Tifinagh                                                    
+    2d80     2de0 Ethiopic Extended                                           
+    2de0     2e00 Cyrillic Extended-A                                         
+    2e00     2e80 Supplemental Punctuation                                    
+    2e80     2f00 CJK Radicals Supplement                                     
+    2f00     2fe0 Kangxi Radicals                                             
+    2fe0     2ff0 No_Block                                                    
+    2ff0     3000 Ideographic Description Characters                          
+    3000     3040 CJK Symbols and Punctuation                                 
+    3040     30a0 Hiragana                                                    
+    30a0     3100 Katakana                                                    
+    3100     3130 Bopomofo                                                    
+    3130     3190 Hangul Compatibility Jamo                                   
+    3190     31a0 Kanbun                                                      
+    31a0     31c0 Bopomofo Extended                                           
+    31c0     31f0 CJK Strokes                                                 
+    31f0     3200 Katakana Phonetic Extensions                                
+    3200     3300 Enclosed CJK Letters and Months                             
+    3300     3400 CJK Compatibility                                           
+    3400     4dc0 CJK Unified Ideographs Extension A                          
+    4dc0     4e00 Yijing Hexagram Symbols                                     
+    4e00     a000 CJK Unified Ideographs                                      
+    a000     a490 Yi Syllables                                                
+    a490     a4d0 Yi Radicals                                                 
+    a4d0     a500 Lisu                                                        
+    a500     a640 Vai                                                         
+    a640     a6a0 Cyrillic Extended-B                                         
+    a6a0     a700 Bamum                                                       
+    a700     a720 Modifier Tone Letters                                       
+    a720     a800 Latin Extended-D                                            
+    a800     a830 Syloti Nagri                                                
+    a830     a840 Common Indic Number Forms                                   
+    a840     a880 Phags-pa                                                    
+    a880     a8e0 Saurashtra                                                  
+    a8e0     a900 Devanagari Extended                                         
+    a900     a930 Kayah Li                                                    
+    a930     a960 Rejang                                                      
+    a960     a980 Hangul Jamo Extended-A                                      
+    a980     a9e0 Javanese                                                    
+    a9e0     aa00 Myanmar Extended-B                                          
+    aa00     aa60 Cham                                                        
+    aa60     aa80 Myanmar Extended-A                                          
+    aa80     aae0 Tai Viet                                                    
+    aae0     ab00 Meetei Mayek Extensions                                     
+    ab00     ab30 Ethiopic Extended-A                                         
+    ab30     ab70 Latin Extended-E                                            
+    ab70     abc0 Cherokee Supplement                                         
+    abc0     ac00 Meetei Mayek                                                
+    ac00     d7b0 Hangul Syllables                                            
+    d7b0     d800 Hangul Jamo Extended-B                                      
+    d800     db80 High Surrogates                                             
+    db80     dc00 High Private Use Surrogates                                 
+    dc00     e000 Low Surrogates                                              
+    e000     f900 Private Use Area                                            
+    f900     fb00 CJK Compatibility Ideographs                                
+    fb00     fb50 Alphabetic Presentation Forms                               
+    fb50     fe00 Arabic Presentation Forms-A                                 
+    fe00     fe10 Variation Selectors                                         
+    fe10     fe20 Vertical Forms                                              
+    fe20     fe30 Combining Half Marks                                        
+    fe30     fe50 CJK Compatibility Forms                                     
+    fe50     fe70 Small Form Variants                                         
+    fe70     ff00 Arabic Presentation Forms-B                                 
+    ff00     fff0 Halfwidth and Fullwidth Forms                               
+    fff0    10000 Specials                                                    
+   10000    10080 Linear B Syllabary                                          
+   10080    10100 Linear B Ideograms                                          
+   10100    10140 Aegean Numbers                                              
+   10140    10190 Ancient Greek Numbers                                       
+   10190    101d0 Ancient Symbols                                             
+   101d0    10200 Phaistos Disc                                               
+   10200    10280 No_Block                                                    
+   10280    102a0 Lycian                                                      
+   102a0    102e0 Carian                                                      
+   102e0    10300 Coptic Epact Numbers                                        
+   10300    10330 Old Italic                                                  
+   10330    10350 Gothic                                                      
+   10350    10380 Old Permic                                                  
+   10380    103a0 Ugaritic                                                    
+   103a0    103e0 Old Persian                                                 
+   103e0    10400 No_Block                                                    
+   10400    10450 Deseret                                                     
+   10450    10480 Shavian                                                     
+   10480    104b0 Osmanya                                                     
+   104b0    10500 Osage                                                       
+   10500    10530 Elbasan                                                     
+   10530    10570 Caucasian Albanian                                          
+   10570    105c0 Vithkuqi                                                    
+   105c0    10600 Todhri                                                      
+   10600    10780 Linear A                                                    
+   10780    107c0 Latin Extended-F                                            
+   107c0    10800 No_Block                                                    
+   10800    10840 Cypriot Syllabary                                           
+   10840    10860 Imperial Aramaic                                            
+   10860    10880 Palmyrene                                                   
+   10880    108b0 Nabataean                                                   
+   108b0    108e0 No_Block                                                    
+   108e0    10900 Hatran                                                      
+   10900    10920 Phoenician                                                  
+   10920    10940 Lydian                                                      
+   10940    10980 No_Block                                                    
+   10980    109a0 Meroitic Hieroglyphs                                        
+   109a0    10a00 Meroitic Cursive                                            
+   10a00    10a60 Kharoshthi                                                  
+   10a60    10a80 Old South Arabian                                           
+   10a80    10aa0 Old North Arabian                                           
+   10aa0    10ac0 No_Block                                                    
+   10ac0    10b00 Manichaean                                                  
+   10b00    10b40 Avestan                                                     
+   10b40    10b60 Inscriptional Parthian                                      
+   10b60    10b80 Inscriptional Pahlavi                                       
+   10b80    10bb0 Psalter Pahlavi                                             
+   10bb0    10c00 No_Block                                                    
+   10c00    10c50 Old Turkic                                                  
+   10c50    10c80 No_Block                                                    
+   10c80    10d00 Old Hungarian                                               
+   10d00    10d40 Hanifi Rohingya                                             
+   10d40    10d90 Garay                                                       
+   10d90    10e60 No_Block                                                    
+   10e60    10e80 Rumi Numeral Symbols                                        
+   10e80    10ec0 Yezidi                                                      
+   10ec0    10f00 Arabic Extended-C                                           
+   10f00    10f30 Old Sogdian                                                 
+   10f30    10f70 Sogdian                                                     
+   10f70    10fb0 Old Uyghur                                                  
+   10fb0    10fe0 Chorasmian                                                  
+   10fe0    11000 Elymaic                                                     
+   11000    11080 Brahmi                                                      
+   11080    110d0 Kaithi                                                      
+   110d0    11100 Sora Sompeng                                                
+   11100    11150 Chakma                                                      
+   11150    11180 Mahajani                                                    
+   11180    111e0 Sharada                                                     
+   111e0    11200 Sinhala Archaic Numbers                                     
+   11200    11250 Khojki                                                      
+   11250    11280 No_Block                                                    
+   11280    112b0 Multani                                                     
+   112b0    11300 Khudawadi                                                   
+   11300    11380 Grantha                                                     
+   11380    11400 Tulu-Tigalari                                               
+   11400    11480 Newa                                                        
+   11480    114e0 Tirhuta                                                     
+   114e0    11580 No_Block                                                    
+   11580    11600 Siddham                                                     
+   11600    11660 Modi                                                        
+   11660    11680 Mongolian Supplement                                        
+   11680    116d0 Takri                                                       
+   116d0    11700 Myanmar Extended-C                                          
+   11700    11750 Ahom                                                        
+   11750    11800 No_Block                                                    
+   11800    11850 Dogra                                                       
+   11850    118a0 No_Block                                                    
+   118a0    11900 Warang Citi                                                 
+   11900    11960 Dives Akuru                                                 
+   11960    119a0 No_Block                                                    
+   119a0    11a00 Nandinagari                                                 
+   11a00    11a50 Zanabazar Square                                            
+   11a50    11ab0 Soyombo                                                     
+   11ab0    11ac0 Unified Canadian Aboriginal Syllabics Extended-A            
+   11ac0    11b00 Pau Cin Hau                                                 
+   11b00    11b60 Devanagari Extended-A                                       
+   11b60    11bc0 No_Block                                                    
+   11bc0    11c00 Sunuwar                                                     
+   11c00    11c70 Bhaiksuki                                                   
+   11c70    11cc0 Marchen                                                     
+   11cc0    11d00 No_Block                                                    
+   11d00    11d60 Masaram Gondi                                               
+   11d60    11db0 Gunjala Gondi                                               
+   11db0    11ee0 No_Block                                                    
+   11ee0    11f00 Makasar                                                     
+   11f00    11f60 Kawi                                                        
+   11f60    11fb0 No_Block                                                    
+   11fb0    11fc0 Lisu Supplement                                             
+   11fc0    12000 Tamil Supplement                                            
+   12000    12400 Cuneiform                                                   
+   12400    12480 Cuneiform Numbers and Punctuation                           
+   12480    12550 Early Dynastic Cuneiform                                    
+   12550    12f90 No_Block                                                    
+   12f90    13000 Cypro-Minoan                                                
+   13000    13430 Egyptian Hieroglyphs                                        
+   13430    13460 Egyptian Hieroglyph Format Controls                         
+   13460    14400 Egyptian Hieroglyphs Extended-A                             
+   14400    14680 Anatolian Hieroglyphs                                       
+   14680    16100 No_Block                                                    
+   16100    16140 Gurung Khema                                                
+   16140    16800 No_Block                                                    
+   16800    16a40 Bamum Supplement                                            
+   16a40    16a70 Mro                                                         
+   16a70    16ad0 Tangsa                                                      
+   16ad0    16b00 Bassa Vah                                                   
+   16b00    16b90 Pahawh Hmong                                                
+   16b90    16d40 No_Block                                                    
+   16d40    16d80 Kirat Rai                                                   
+   16d80    16e40 No_Block                                                    
+   16e40    16ea0 Medefaidrin                                                 
+   16ea0    16f00 No_Block                                                    
+   16f00    16fa0 Miao                                                        
+   16fa0    16fe0 No_Block                                                    
+   16fe0    17000 Ideographic Symbols and Punctuation                         
+   17000    18800 Tangut                                                      
+   18800    18b00 Tangut Components                                           
+   18b00    18d00 Khitan Small Script                                         
+   18d00    18d80 Tangut Supplement                                           
+   18d80    1aff0 No_Block                                                    
+   1aff0    1b000 Kana Extended-B                                             
+   1b000    1b100 Kana Supplement                                             
+   1b100    1b130 Kana Extended-A                                             
+   1b130    1b170 Small Kana Extension                                        
+   1b170    1b300 Nushu                                                       
+   1b300    1bc00 No_Block                                                    
+   1bc00    1bca0 Duployan                                                    
+   1bca0    1bcb0 Shorthand Format Controls                                   
+   1bcb0    1cc00 No_Block                                                    
+   1cc00    1cec0 Symbols for Legacy Computing Supplement                     
+   1cec0    1cf00 No_Block                                                    
+   1cf00    1cfd0 Znamenny Musical Notation                                   
+   1cfd0    1d000 No_Block                                                    
+   1d000    1d100 Byzantine Musical Symbols                                   
+   1d100    1d200 Musical Symbols                                             
+   1d200    1d250 Ancient Greek Musical Notation                              
+   1d250    1d2c0 No_Block                                                    
+   1d2c0    1d2e0 Kaktovik Numerals                                           
+   1d2e0    1d300 Mayan Numerals                                              
+   1d300    1d360 Tai Xuan Jing Symbols                                       
+   1d360    1d380 Counting Rod Numerals                                       
+   1d380    1d400 No_Block                                                    
+   1d400    1d800 Mathematical Alphanumeric Symbols                           
+   1d800    1dab0 Sutton SignWriting                                          
+   1dab0    1df00 No_Block                                                    
+   1df00    1e000 Latin Extended-G                                            
+   1e000    1e030 Glagolitic Supplement                                       
+   1e030    1e090 Cyrillic Extended-D                                         
+   1e090    1e100 No_Block                                                    
+   1e100    1e150 Nyiakeng Puachue Hmong                                      
+   1e150    1e290 No_Block                                                    
+   1e290    1e2c0 Toto                                                        
+   1e2c0    1e300 Wancho                                                      
+   1e300    1e4d0 No_Block                                                    
+   1e4d0    1e500 Nag Mundari                                                 
+   1e500    1e5d0 No_Block                                                    
+   1e5d0    1e600 Ol Onal                                                     
+   1e600    1e7e0 No_Block                                                    
+   1e7e0    1e800 Ethiopic Extended-B                                         
+   1e800    1e8e0 Mende Kikakui                                               
+   1e8e0    1e900 No_Block                                                    
+   1e900    1e960 Adlam                                                       
+   1e960    1ec70 No_Block                                                    
+   1ec70    1ecc0 Indic Siyaq Numbers                                         
+   1ecc0    1ed00 No_Block                                                    
+   1ed00    1ed50 Ottoman Siyaq Numbers                                       
+   1ed50    1ee00 No_Block                                                    
+   1ee00    1ef00 Arabic Mathematical Alphabetic Symbols                      
+   1ef00    1f000 No_Block                                                    
+   1f000    1f030 Mahjong Tiles                                               
+   1f030    1f0a0 Domino Tiles                                                
+   1f0a0    1f100 Playing Cards                                               
+   1f100    1f200 Enclosed Alphanumeric Supplement                            
+   1f200    1f300 Enclosed Ideographic Supplement                             
+   1f300    1f600 Miscellaneous Symbols and Pictographs                       
+   1f600    1f650 Emoticons                                                   
+   1f650    1f680 Ornamental Dingbats                                         
+   1f680    1f700 Transport and Map Symbols                                   
+   1f700    1f780 Alchemical Symbols                                          
+   1f780    1f800 Geometric Shapes Extended                                   
+   1f800    1f900 Supplemental Arrows-C                                       
+   1f900    1fa00 Supplemental Symbols and Pictographs                        
+   1fa00    1fa70 Chess Symbols                                               
+   1fa70    1fb00 Symbols and Pictographs Extended-A                          
+   1fb00    1fc00 Symbols for Legacy Computing                                
+   1fc00    20000 No_Block                                                    
+   20000    2a6e0 CJK Unified Ideographs Extension B                          
+   2a6e0    2a700 No_Block                                                    
+   2a700    2b740 CJK Unified Ideographs Extension C                          
+   2b740    2b820 CJK Unified Ideographs Extension D                          
+   2b820    2ceb0 CJK Unified Ideographs Extension E                          
+   2ceb0    2ebf0 CJK Unified Ideographs Extension F                          
+   2ebf0    2ee60 CJK Unified Ideographs Extension I                          
+   2ee60    2f800 No_Block                                                    
+   2f800    2fa20 CJK Compatibility Ideographs Supplement                     
+   2fa20    30000 No_Block                                                    
+   30000    31350 CJK Unified Ideographs Extension G                          
+   31350    323b0 CJK Unified Ideographs Extension H                          
+   323b0    e0000 No_Block                                                    
+   e0000    e0080 Tags                                                        
+   e0080    e0100 No_Block                                                    
+   e0100    e01f0 Variation Selectors Supplement                              
+   e01f0    f0000 No_Block                                                    
+   f0000   100000 Supplementary Private Use Area-A                            
+  100000   110000 Supplementary Private Use Area-B                            
+
