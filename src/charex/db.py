@@ -482,6 +482,11 @@ def get_value_range_by_code(prop: str, code: str, key: str) -> str:
 
 
 # Query data not sorted by code.
+def get_blocks() -> ValueRanges:
+    """Get the Unicode blocks."""
+    return cache.blocks
+
+
 def get_do_not_emit() -> tuple[DoNotEmit, ...]:
     """Return the contents of a `donotemit` file as a
     :class:`tuple`.

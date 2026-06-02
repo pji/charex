@@ -44,6 +44,18 @@ def subparser(
 
 
 # Running modes.
+def mode_bl(args: Namespace) -> None:
+    """Show the list of blocks.
+
+    :param args: The arguments used when the script was invoked.
+    :return: None.
+    :rtype: NoneType
+    """
+    for line in cmds.bl():
+        print(line)
+    print()
+
+
 def mode_cd(args: Namespace) -> None:
     """Decode the given address in all codecs.
 
@@ -353,6 +365,23 @@ def build_parser() -> ArgumentParser:
         fn(spa)
 
     return p
+
+
+@subparser
+def parse_bl(spa: _SubParsersAction) -> None:
+    """Add the bl mode subparser.
+
+    :param spa: The subparser action used to add a new subparser to
+        the main parser.
+    :return: None.
+    :rtype: NoneType
+    """
+    sp = spa.add_parser(
+        'bl',
+        aliases=['blocks', 'code_blocks',],
+        description='Show the list of blocks.'
+    )
+    sp.set_defaults(func=mode_bl)
 
 
 @subparser
@@ -903,7 +932,7 @@ def parse_zc(spa: _SubParsersAction) -> None:
             'zwjseqcats',
             'zwj_sequence_categories',
         ],
-        description='Show the list of named sequences.'
+        description='Show the list of emoji ZWJ sequence categories.'
     )
     sp.set_defaults(func=mode_zc)
 
@@ -920,7 +949,7 @@ def parse_zl(spa: _SubParsersAction) -> None:
     sp = spa.add_parser(
         'zl',
         aliases=['emoji_zwj_sequences', 'zwjseqs', 'zwj_sequences',],
-        description='Show the list of named sequences.'
+        description='Show the list of emoji ZWJ sequences.'
     )
     sp.set_defaults(func=mode_zl)
 

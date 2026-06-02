@@ -16,6 +16,21 @@ from charex import normal as nl
 from charex.util import vercmp
 
 
+def test_bl(capsys):
+    """When invoked, up mode should return the list of Unicode blocks."""
+    exp_path = Path('tests/data/bl.txt')
+    if vercmp(f'{db.cache.version} == v15_0'):
+        exp_path = Path('tests/data/bl_v15_0.txt')
+    if vercmp(f'{db.cache.version} == v15_1'):
+        exp_path = Path('tests/data/bl_v15_1.txt')
+    exp = exp_path.read_text()
+    cmd = (
+        'python -m charex',
+        'bl',
+    )
+    cli_test(exp, cmd, capsys)
+
+
 # Test cd mode.
 def test_cd(capsys):
     """Called with an hex string, charset mode should return the character

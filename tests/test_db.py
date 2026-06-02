@@ -222,6 +222,16 @@ class TestCache:
 
 
 class TestGetting:
+    def test_get_blocks(self):
+        """When called, :funct:`charex.db.get_blocks`
+        returns the list of blocks.
+        """
+        assert db.get_blocks()[1] == db.ValueRange(
+            0x0080,
+            0x0100,
+            'Latin-1 Supplement'
+        )
+
     def test_get_denormal_map_for_code(self):
         """Given a property and a code point,
         :func:`charex.db.get_denormal_map_for_code` should
@@ -252,7 +262,7 @@ class TestGetting:
 
     def test_get_emoji_zwj_sequences(self):
         """When called, :funct:`charex.db.get_emoji_zwj_sequences`
-        returns the list of emoji zwj sequences..
+        returns the list of emoji zwj sequences.
         """
         seqs = db.get_emoji_zwj_sequences()
         assert seqs[2] == db.EmojiZWJSequence(

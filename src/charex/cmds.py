@@ -21,6 +21,26 @@ from charex import util
 
 
 # Command functions.
+def bl(row_shade: bool = True) -> Generator[str, None, None]:
+    """List character blocks.
+
+    :param show_descr: (Optional.) Whether to show the descriptions
+        for the character sets.
+    :return: Yields each codec as a :class:`str`.
+    :rtype: str
+    """
+    term = Terminal()
+    blocks = db.get_blocks()
+    for i, block in enumerate(blocks):
+        line = ''
+        if row_shade and i % 2:
+            line = term.on_gray20
+        line += f'{block.start:8x} {block.stop:8x} {block.value:60}'
+        if row_shade:
+            line += term.normal
+        yield line
+
+
 def cd(address: str) -> Generator[str, None, None]:
     """Decode the given address in all codecs.
 
