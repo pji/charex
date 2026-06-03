@@ -57,27 +57,30 @@ From here you can type `?` to see the list of available commands::
     charex> ?
     The following commands are available:
 
+    *  bl: Show the list of blocks.
     *  cd: Decode the given address in all codecs.
     *  ce: Encode the given character in all codecs.
-    *  cl: List the registered character sets.
+    *  cl: List registered character sets.
     *  clear: Clear the terminal.
     *  ct: Count denormalization results.
     *  dm: Build a denormalization map.
-    *  dn: Denormalize the given string.
-    *  dt: Get details for the given character.
+    *  dn: Perform denormalizations.
+    *  dt: Display details for a code point.
     *  el: List the registered escape schemes.
-    *  es: Escape the string.
-    *  fl: List the registered normalization forms.
+    *  es: Escape a string using the given scheme.
+    *  fl: List registered normalization forms.
+    *  gui: Start the GUI.
     *  help: Display command list.
-    *  mf: Show the flag for a region.
-    *  nl: Normalize the given string.
-    *  ns: Normalize the given string.
+    *  mf: Create emoji sequence for a region's flag.
+    *  nl: Perform normalizations.
+    *  ns: Show the list of named sequences.
     *  pf: List characters with a given property value.
+    *  sh: Run in an interactive shell.
     *  sv: Show the list of standardized variants.
     *  up: List the Unicode properties.
-    *  uv: List the valid values of a Unicode property.
+    *  uv: List the valid values for a Unicode property.
     *  xt: Exit the charex shell.
-    *  zc: Show the emoji ZWJ sequence categories.
+    *  zc: Show the list of emoji ZWJ sequence categories.
     *  zl: Show the list of emoji ZWJ sequences.
 
     For help on individual commands, use "help {command}".
