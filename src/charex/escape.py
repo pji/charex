@@ -4,11 +4,12 @@ escape
 
 Character escape schemes.
 """
+import random
 from collections.abc import Callable
 from json import loads
 
 from charex import util
-from charex.db import cache
+from charex.db import cache, get_characters_in_block
 
 
 # Registry.
@@ -587,6 +588,20 @@ def escape_url(char: str, codec: str) -> str:
     b = char.encode(codec)
     octets = [f'%{x:02x}'.upper() for x in b]
     return ''.join(x for x in octets)
+
+
+@reg_escape('zalgo')
+def escape_zalgo(char: str, codec: str) -> str:
+    """Escape scheme for zalgo (glitch) text.
+
+    :param char: The character to escape.
+    :param codec: The character set to use when encoding the character.
+    :return: The escaped character as a :class:`str`.
+    :rtype: str
+    """
+    marks = get_characters_in_block('Combining Diacritical Marks')
+    num_marks = random.randint(1, 10)
+    return char + ''.join(random.choice(marks) for _ in range(num_marks))
 
 
 # Bulk escape.

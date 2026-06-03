@@ -487,6 +487,25 @@ def get_blocks() -> ValueRanges:
     return cache.blocks
 
 
+def get_characters_in_block(block_name: str) -> tuple[str, ...]:
+    """Get all the characters in a block."""
+    blocks = {block.value: block for block in get_blocks()}
+    block = blocks[block_name]
+    return get_characters_in_range(block)
+
+
+def get_characters_in_range(
+    values: ValueRange | Sequence[int]
+) -> tuple[str, ...]:
+    """Get all the characters in the given range."""
+    if isinstance(values, ValueRange):
+        start = values.start
+        stop = values.stop
+    else:
+        start, stop = values[:2]
+    return tuple(chr(n) for n in range(start, stop))
+
+
 def get_do_not_emit() -> tuple[DoNotEmit, ...]:
     """Return the contents of a `donotemit` file as a
     :class:`tuple`.

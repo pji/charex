@@ -49,4 +49,6 @@ sqldq    Escape scheme for MySQL encoding, based on the MySQL Specification.
 
 url      Escape scheme for URL percent encoding.
 
+zalgo    Escape scheme for zalgo (glitch) text.
+
 

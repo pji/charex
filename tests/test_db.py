@@ -232,6 +232,22 @@ class TestGetting:
             'Latin-1 Supplement'
         )
 
+    def test_get_characters_in_block(self):
+        """When given the name of a Unicode block,
+        :func:`charex.db.get_characters_in_block` should
+        return the characters in that block as a :class:`tuple`.
+        """
+        assert db.get_characters_in_block('Latin-1 Supplement') == tuple(
+            chr(n) for n in range(0x80, 0x100)
+        )
+
+    def test_get_characters_in_range(self):
+        """When given a sequence with at least two ints,
+        :func:`charex.db.get_characters_in_range` should
+        return the characters in that range as a :class:`tuple`.
+        """
+        assert db.get_characters_in_range([0x40, 0x43]) == ('@', 'A', 'B',)
+
     def test_get_denormal_map_for_code(self):
         """Given a property and a code point,
         :func:`charex.db.get_denormal_map_for_code` should

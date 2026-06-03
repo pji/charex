@@ -185,8 +185,10 @@ The following are the changes in v0.2.4:
 *   Removed official support for Python 3.11 to allow `sphinx` to be updated.
 *   Added some checking to see if Unicode properties had been mapped.
 *   Added `alias_property()` to the defined API.
+*   Added zalgo (glitch) text escape.
 *   Added the following commands:
 
+    *   `bl`: Shows the Unicode character blocks.
     *   `mf`: Makes the flag for the given ISO 3166 region code,
     *   `zc`: Lists the emoji ZWJ sequence categories.
 

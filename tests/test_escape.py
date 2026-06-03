@@ -273,6 +273,13 @@ def test_escape_url():
     assert esc.escape_url('a', 'utf8')
 
 
+# Test escape_url.
+def test_escape_zalgo():
+    """Given a character, return zalgo text for the character."""
+    esc.random.seed('spameggs')
+    assert esc.escape_zalgo('a', '') == 'ǎ̰̖̈́̆͂͂͢'
+
+
 # Tests for get_description.
 def test_get_description():
     """Given the key for an escape scheme,
